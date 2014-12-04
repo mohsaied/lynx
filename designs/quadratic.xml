@@ -1,0 +1,43 @@
+<design>
+  
+  <module type="mult_x" name="multx_inst">
+    
+	<parameter name="WIDTH" value="16"/>
+	
+	<port type="input" width="16" name="i_x"/>
+	<port type="input" width="1" name="i_valid_in"/>
+	<port type="output" width="1" name="i_ready_out"/>
+	
+	<port type="output" width="16" name="o_y"/>
+	<port type="output" width="1" name="o_valid_out"/>
+	<port type="input" width="1" name="o_ready_in"/>
+	
+  </module>
+  
+  <module type="mult_a" name="multa_inst">
+    
+	<parameter name="WIDTH" value="16"/>
+	
+	<port type="input" width="16" name="i_x"/>
+	<port type="input" width="1" name="i_valid_in"/>
+	<port type="output" width="1" name="i_ready_out"/>
+	
+	<port type="output" width="16" name="o_y"/>
+	<port type="output" width="1" name="o_valid_out"/>
+	<port type="input" width="1" name="o_ready_in"/>
+	
+  </module>
+  <module type="add_c" name="addc_inst">
+    
+	<parameter name="WIDTH" value="16"/>
+	
+	<port type="input" width="16" name="i_x"/>
+	<port type="input" width="1" name="i_valid_in"/>
+	<port type="output" width="1" name="i_ready_out"/>
+	
+	<port type="output" width="16" name="o_y"/>
+	<port type="output" width="1" name="o_valid_out"/>
+	<port type="input" width="1" name="o_ready_in"/>
+	
+  </module>
+</design>
