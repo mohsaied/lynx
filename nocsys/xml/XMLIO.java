@@ -1,12 +1,10 @@
 package nocsys.xml;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import nocsys.data.Module;
 import nocsys.data.Parameter;
@@ -16,10 +14,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-public class ParseXML {
+public class XMLIO {
 
+    /**
+     * Read an XML file describing a design. Parse it and create a List of modules that describes it. 
+     * @param designPath a string containing the path of the design
+     * @return List      a list of modules parsed from the xml file
+     * @throws Exception
+     */
     public static List<Module> readXMLDesign(String designPath) throws Exception   {
         
         // Get the DOM Builder Factory
