@@ -2,6 +2,9 @@ package nocsys.data;
 
 /**
  * The input/output ports of a Verilog module
+ * 
+ * @author Mohamed
+ * 
  */
 public class Port {
 

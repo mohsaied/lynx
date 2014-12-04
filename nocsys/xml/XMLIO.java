@@ -1,10 +1,19 @@
 package nocsys.xml;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import nocsys.data.Module;
 import nocsys.data.Parameter;
@@ -14,17 +23,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class XMLIO {
 
     /**
-     * Read an XML file describing a design. Parse it and create a List of modules that describes it. 
-     * @param designPath a string containing the path of the design
-     * @return List      a list of modules parsed from the xml file
-     * @throws Exception
+     * Read an XML file describing a design, parse it and create a List of
+     * modules that describes it.
+     * 
+     * @param designPath
+     *            a string containing the path of the design
+     * @return List a list of modules parsed from the xml file
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
      */
-    public static List<Module> readXMLDesign(String designPath) throws Exception   {
-        
+    public static List<Module> readXMLDesign(String designPath) throws ParserConfigurationException, SAXException,
+            IOException {
+
         // Get the DOM Builder Factory
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -80,15 +96,77 @@ public class XMLIO {
                 modList.add(mod);
             }
         }
-        
+
         return modList;
-        
+
+    }
+
+    /**
+     * Write a list of modules to an xml output file
+     * 
+     * @param modList
+     *            List<Module> of modules that define the design
+     * @param outputFileName
+     *            string containing path of output file
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     */
+    public static void writeXMLDesign(List<Module> modList, String outputFileName) throws ParserConfigurationException,
+            TransformerException {
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+
+        // root element is called <design>
+        Document doc = builder.newDocument();
+        Element rootElement = doc.createElement("design");
+        doc.appendChild(rootElement);
+
+        for (int i = 0; i < modList.size(); i++) {
+            // new <module> tag
+            Element modElement = doc.createElement("module");
+            // set name and type - both are required
+            modElement.setAttribute("type", modList.get(i).getType());
+            modElement.setAttribute("name", modList.get(i).getName());
+
+            // loop over parameters
+            List<Parameter> parList = modList.get(i).getParameters();
+            for (int j = 0; j < parList.size(); j++) {
+                Element parElement = doc.createElement("parameter");
+                parElement.setAttribute("name", parList.get(j).getName());
+                parElement.setAttribute("value", parList.get(j).getValue());
+                modElement.appendChild(parElement);
+            }
+
+            // loop over ports
+            List<Port> porList = modList.get(i).getPorts();
+            for (int j = 0; j < porList.size(); j++) {
+                Element porElement = doc.createElement("port");
+                porElement.setAttribute("name", porList.get(j).getName());
+                porElement.setAttribute("type", porList.get(j).getType());
+                porElement.setAttribute("width", Integer.toString(porList.get(j).getWidth()));
+                modElement.appendChild(porElement);
+            }
+
+            rootElement.appendChild(modElement);
+        }
+
+        // write the content into xml file
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(outputFileName));
+
+        transformer.transform(source, result);
     }
 
     public static void main(String[] args) throws Exception {
 
         List<Module> modList = readXMLDesign("designs/quadratic.xml");
-        
+        writeXMLDesign(modList, "designs/out.xml");
+
         // Printing the Module list populated.
         System.out.println("Modules:\n");
         for (Module mod : modList) {
