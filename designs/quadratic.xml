@@ -1,4 +1,4 @@
-<design>
+<design name="quadratic">
   
   <module type="mult_x" name="multx_inst">
     

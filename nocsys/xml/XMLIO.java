@@ -56,6 +56,9 @@ public class XMLIO {
         // Iterating through the nodes and extracting the data
         NodeList nodeList = document.getDocumentElement().getChildNodes();
 
+        String designName = document.getDocumentElement().getAttribute("name");
+        design.setName(designName);
+
         for (int i = 0; i < nodeList.getLength(); i++) {
 
             // We have encountered a <Module> tag
@@ -105,7 +108,7 @@ public class XMLIO {
      * Write a list of modules to an xml output file
      * 
      * @param design
-     *            List<Module> of modules that define the design
+     *            a Design object
      * @param outputFileName
      *            string containing path of output file
      * @throws ParserConfigurationException
@@ -120,6 +123,7 @@ public class XMLIO {
         // root element is called <design>
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("design");
+        rootElement.setAttribute("name", design.getName());
         doc.appendChild(rootElement);
 
         List<Module> modList = design.getModules();

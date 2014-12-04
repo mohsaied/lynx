@@ -10,7 +10,6 @@ import java.util.List;
  *
  */
 public class Design {
-
     String name;
     List<Module> modules;
 
@@ -18,10 +17,18 @@ public class Design {
         this.name = null;
         this.modules = new ArrayList<Module>();
     }
-    
+
     public Design(String name) {
         this.name = name;
         this.modules = new ArrayList<Module>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Module> getModules() {
@@ -35,8 +42,8 @@ public class Design {
     public void addModule(Module currModule) {
         this.modules.add(currModule);
     }
-    
-    public int getNumModules(){
+
+    public int getNumModules() {
         return modules.size();
     }
 
@@ -47,5 +54,5 @@ public class Design {
             s += mod + "\n";
         return s;
     }
-    
+
 }

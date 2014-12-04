@@ -7,7 +7,7 @@ package nocsys.data;
  * 
  */
 public class Parameter {
-    
+
     String name;
     String value;
 
@@ -15,7 +15,7 @@ public class Parameter {
         this.name = null;
         this.value = null;
     }
-    
+
     public Parameter(String name, String value) {
         this.name = name;
         this.value = value;
