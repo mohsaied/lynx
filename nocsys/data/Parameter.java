@@ -1,7 +1,7 @@
 package nocsys.data;
 
 /**
- * A name-value pair defining a parameter of a Verilog module
+ * A name-value pair defining a parameter of a Verilog module.
  * 
  * @author Mohamed
  * 

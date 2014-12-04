@@ -2,7 +2,6 @@ package nocsys.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import nocsys.data.Design;
 import nocsys.data.Module;
 import nocsys.data.Parameter;
 import nocsys.data.Port;
@@ -38,7 +38,7 @@ public class XMLIO {
      * @throws IOException
      * @throws SAXException
      */
-    public static List<Module> readXMLDesign(String designPath) throws ParserConfigurationException, SAXException,
+    public static Design readXMLDesign(String designPath) throws ParserConfigurationException, SAXException,
             IOException {
 
         // Get the DOM Builder Factory
@@ -51,7 +51,7 @@ public class XMLIO {
         // document contains the complete XML as a Tree
         Document document = builder.parse(ClassLoader.getSystemResourceAsStream(designPath));
 
-        List<Module> modList = new ArrayList<>();
+        Design design = new Design();
 
         // Iterating through the nodes and extracting the data
         NodeList nodeList = document.getDocumentElement().getChildNodes();
@@ -93,25 +93,25 @@ public class XMLIO {
                 }
 
                 // add to list of modules in this design
-                modList.add(mod);
+                design.addModule(mod);
             }
         }
 
-        return modList;
+        return design;
 
     }
 
     /**
      * Write a list of modules to an xml output file
      * 
-     * @param modList
+     * @param design
      *            List<Module> of modules that define the design
      * @param outputFileName
      *            string containing path of output file
      * @throws ParserConfigurationException
      * @throws TransformerException
      */
-    public static void writeXMLDesign(List<Module> modList, String outputFileName) throws ParserConfigurationException,
+    public static void writeXMLDesign(Design design, String outputFileName) throws ParserConfigurationException,
             TransformerException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -121,6 +121,8 @@ public class XMLIO {
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("design");
         doc.appendChild(rootElement);
+
+        List<Module> modList = design.getModules();
 
         for (int i = 0; i < modList.size(); i++) {
             // new <module> tag
@@ -164,14 +166,12 @@ public class XMLIO {
 
     public static void main(String[] args) throws Exception {
 
-        List<Module> modList = readXMLDesign("designs/quadratic.xml");
-        writeXMLDesign(modList, "designs/out.xml");
+        Design design = readXMLDesign("designs/quadratic.xml");
+
+        writeXMLDesign(design, "designs/out.xml");
 
         // Printing the Module list populated.
-        System.out.println("Modules:\n");
-        for (Module mod : modList) {
-            System.out.println(mod);
-        }
+        System.out.println(design);
 
     }
 }

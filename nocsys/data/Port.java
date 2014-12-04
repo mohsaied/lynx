@@ -1,7 +1,7 @@
 package nocsys.data;
 
 /**
- * The input/output ports of a Verilog module
+ * The input/output ports of a Verilog module.
  * 
  * @author Mohamed
  * 

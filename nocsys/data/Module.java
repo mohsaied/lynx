@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Verilog Module
+ * A Verilog Module.
  * 
  * @author Mohamed
  *
