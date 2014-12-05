@@ -1,7 +1,9 @@
 package nocsys.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -17,13 +19,13 @@ public class Module {
     String type;
     String name;
     List<Parameter> parameters;
-    List<Port> ports;
+    Map<String,Port> ports;
 
     public Module() {
         this.type = null;
         this.name = null;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new ArrayList<Port>();
+        this.ports = new HashMap<String,Port>();
         log.info("Creating new Module with no name");
     }
 
@@ -31,7 +33,7 @@ public class Module {
         this.type = type;
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new ArrayList<Port>();
+        this.ports = new HashMap<String,Port>();
         log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
@@ -63,16 +65,16 @@ public class Module {
         this.parameters.add(parameter);
     }
 
-    public List<Port> getPorts() {
+    public Map<String,Port> getPorts() {
         return ports;
     }
 
-    public void setPorts(List<Port> ports) {
+    public void setPorts(Map<String,Port> ports) {
         this.ports = ports;
     }
 
     public void addPort(Port port) {
-        this.ports.add(port);
+        this.ports.put(port.getName(),port);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class Module {
         String s = "Module: " + type + " " + name + "\n";
         for (Parameter par : parameters)
             s += par + "\n";
-        for (Port por : ports)
+        for (Port por : ports.values())
             s += por + "\n";
         return s;
     }
