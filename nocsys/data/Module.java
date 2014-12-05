@@ -72,6 +72,10 @@ public class Module {
     public void setPorts(Map<String,Port> ports) {
         this.ports = ports;
     }
+    
+    public Port getPortByName(String porName){
+        return ports.get(porName);
+    }
 
     public void addPort(Port port) {
         this.ports.put(port.getName(),port);

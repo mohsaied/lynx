@@ -3,6 +3,7 @@ package nocsys.xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -63,17 +64,19 @@ public class XMLIO {
 
         log.info("Parsing Design " + designName + " from file " + designPath);
 
+        // will only parse modules in the first pass
+        // could also disconnect them from my DOM after processing
         for (int i = 0; i < nodeList.getLength(); i++) {
 
             // We have encountered a <Module> tag
             Node node = nodeList.item(i);
 
-            if (node instanceof Element) {
+            if (node instanceof Element && node.getNodeName().equals("module")) {
                 String modName = node.getAttributes().getNamedItem("name").getNodeValue();
                 String modType = node.getAttributes().getNamedItem("type").getNodeValue();
 
-                Module mod = new Module(modType,modName);
-                
+                Module mod = new Module(modType, modName);
+
                 NodeList childNodes = node.getChildNodes();
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node cNode = childNodes.item(j);
@@ -102,6 +105,50 @@ public class XMLIO {
 
                 // add to list of modules in this design
                 design.addModule(mod);
+
+                // TODO remove this node from the nodelist
+            }
+        }
+
+        // Now that all modules are created
+        // parse connections and interfaces in second pass
+        for (int i = 0; i < nodeList.getLength(); i++) {
+
+            // We have encountered a <Module> tag
+            Node node = nodeList.item(i);
+
+            if (node instanceof Element) {
+
+                if (node.getNodeName().equals("connection")) {
+
+                    String[] start = node.getAttributes().getNamedItem("start").getNodeValue().split("\\.");
+                    assert (start.length != 2);
+                    String startMod = start[0];
+                    String startPort = start[1];
+                    
+                    String[] end = node.getAttributes().getNamedItem("end").getNodeValue().split("\\.");
+                    assert (end.length != 2);
+                    String endMod = end[0];
+                    String endPort = end[1];
+                    
+                    //fetch the ports
+                    Port startPor = design.getModuleByName(startMod).getPortByName(startPort);
+                    Port endPor = design.getModuleByName(endMod).getPortByName(endPort);
+                    
+                    //add connection
+                    startPor.addConnection(endPor);
+                    endPor.addConnection(startPor);
+
+                } else if (node.getNodeName().equals("interface")) {
+
+                    String port[] = node.getAttributes().getNamedItem("port").getNodeValue().split("\\.");
+                    assert (port.length != 2);
+                    String porMod = port[0];
+                    String porPort = port[1];
+                    String direction = node.getAttributes().getNamedItem("direction").getNodeValue();
+                    String name = node.getAttributes().getNamedItem("name").getNodeValue();
+                    // TODO add a new interface
+                }
             }
         }
 
@@ -133,17 +180,17 @@ public class XMLIO {
 
         log.info("Writing Design " + design.getName() + " to " + outputFileName);
 
-        List<Module> modList = design.getModules();
+        Map<String, Module> modList = design.getModules();
 
-        for (int i = 0; i < modList.size(); i++) {
+        for (Module mod : modList.values()) {
             // new <module> tag
             Element modElement = doc.createElement("module");
             // set name and type - both are required
-            modElement.setAttribute("type", modList.get(i).getType());
-            modElement.setAttribute("name", modList.get(i).getName());
+            modElement.setAttribute("type", mod.getType());
+            modElement.setAttribute("name", mod.getName());
 
             // loop over parameters
-            List<Parameter> parList = modList.get(i).getParameters();
+            List<Parameter> parList = mod.getParameters();
             for (int j = 0; j < parList.size(); j++) {
                 Element parElement = doc.createElement("parameter");
                 parElement.setAttribute("name", parList.get(j).getName());
@@ -152,12 +199,12 @@ public class XMLIO {
             }
 
             // loop over ports
-            List<Port> porList = modList.get(i).getPorts();
-            for (int j = 0; j < porList.size(); j++) {
+            Map<String, Port> porList = mod.getPorts();
+            for (Port por : porList.values()) {
                 Element porElement = doc.createElement("port");
-                porElement.setAttribute("name", porList.get(j).getName());
-                porElement.setAttribute("direction", porList.get(j).getDirection());
-                porElement.setAttribute("width", Integer.toString(porList.get(j).getWidth()));
+                porElement.setAttribute("name", por.getName());
+                porElement.setAttribute("direction", por.getDirection());
+                porElement.setAttribute("width", Integer.toString(por.getWidth()));
                 modElement.appendChild(porElement);
             }
 

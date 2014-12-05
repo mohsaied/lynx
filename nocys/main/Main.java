@@ -9,7 +9,7 @@ import nocys.log.MyLogger;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        
+
         @SuppressWarnings("unused")
         MyLogger log = new MyLogger(Level.OFF);
 
@@ -18,7 +18,7 @@ public class Main {
         XMLIO.writeXMLDesign(design, "designs/out.xml");
 
         // Printing the Module list populated.
-        // System.out.println(design);
+        System.out.println(design);
 
     }
 

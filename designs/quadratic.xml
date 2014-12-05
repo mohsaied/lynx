@@ -41,8 +41,12 @@
 	
   </module>
   
-  <!-- Must probably parse modules before connections, can remove that restriction later -->
+  <!-- Must parse modules before connections, can remove that restriction later -->
   
+  <connection start="multx_inst.o_y" end="multa_inst.i_x"/>
   
+  <interface port="multx.i_x" direction="input" name="x_in"/>
+  
+  <!-- At some point could make all names optional, and can derive names based on types/directions automatically -->
   
 </design>
