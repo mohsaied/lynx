@@ -54,13 +54,12 @@ public class XMLIO {
         // document contains the complete XML as a Tree
         Document document = builder.parse(ClassLoader.getSystemResourceAsStream(designPath));
 
-        Design design = new Design();
-
         // Iterating through the nodes and extracting the data
         NodeList nodeList = document.getDocumentElement().getChildNodes();
 
         String designName = document.getDocumentElement().getAttribute("name");
-        design.setName(designName);
+
+        Design design = new Design(designName);
 
         log.info("Parsing Design " + designName + " from file " + designPath);
 
@@ -70,10 +69,11 @@ public class XMLIO {
             Node node = nodeList.item(i);
 
             if (node instanceof Element) {
-                Module mod = new Module();
-                mod.setName(node.getAttributes().getNamedItem("name").getNodeValue());
-                mod.setType(node.getAttributes().getNamedItem("type").getNodeValue());
+                String modName = node.getAttributes().getNamedItem("name").getNodeValue();
+                String modType = node.getAttributes().getNamedItem("type").getNodeValue();
 
+                Module mod = new Module(modType,modName);
+                
                 NodeList childNodes = node.getChildNodes();
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node cNode = childNodes.item(j);

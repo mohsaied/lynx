@@ -2,6 +2,7 @@ package nocsys.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A Verilog Module.
@@ -10,6 +11,8 @@ import java.util.List;
  *
  */
 public class Module {
+
+    private static final Logger log = Logger.getLogger(Module.class.getName());
 
     String type;
     String name;
@@ -21,6 +24,7 @@ public class Module {
         this.name = null;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new ArrayList<Port>();
+        log.info("Creating new Module with no name");
     }
 
     public Module(String type, String name) {
@@ -28,6 +32,7 @@ public class Module {
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new ArrayList<Port>();
+        log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
     public String getType() {
@@ -73,10 +78,10 @@ public class Module {
     @Override
     public String toString() {
         String s = "Module: " + type + " " + name + "\n";
-        for (int i = 0; i < parameters.size(); i++)
-            s += parameters.get(i) + "\n";
-        for (int i = 0; i < ports.size(); i++)
-            s += ports.get(i) + "\n";
+        for (Parameter par : parameters)
+            s += par + "\n";
+        for (Port por : ports)
+            s += por + "\n";
         return s;
     }
 }

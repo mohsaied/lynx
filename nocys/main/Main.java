@@ -1,18 +1,17 @@
 package nocys.main;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import nocsys.data.Design;
 import nocsys.xml.XMLIO;
+import nocys.log.MyLogger;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
         
-        Logger mainlog = Logger.getLogger(XMLIO.class.getName());
-
-        mainlog.setLevel(Level.INFO);
+        @SuppressWarnings("unused")
+        MyLogger log = new MyLogger(Level.OFF);
 
         Design design = XMLIO.readXMLDesign("designs/quadratic.xml");
 
