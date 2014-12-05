@@ -3,6 +3,8 @@ package nocsys.xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,6 +28,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XMLIO {
+
+    private static final Logger log = Logger.getLogger(XMLIO.class.getName());
 
     /**
      * Read an XML file describing a design, parse it and create a List of
@@ -58,6 +62,8 @@ public class XMLIO {
 
         String designName = document.getDocumentElement().getAttribute("name");
         design.setName(designName);
+
+        log.info("Parsing Design " + designName + " from file " + designPath);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
 
@@ -126,6 +132,8 @@ public class XMLIO {
         rootElement.setAttribute("name", design.getName());
         doc.appendChild(rootElement);
 
+        log.info("Writing Design " + design.getName() + " to " + outputFileName);
+
         List<Module> modList = design.getModules();
 
         for (int i = 0; i < modList.size(); i++) {
@@ -170,12 +178,14 @@ public class XMLIO {
 
     public static void main(String[] args) throws Exception {
 
+        log.setLevel(Level.OFF);
+        
         Design design = readXMLDesign("designs/quadratic.xml");
 
         writeXMLDesign(design, "designs/out.xml");
 
         // Printing the Module list populated.
-        System.out.println(design);
+        //System.out.println(design);
 
     }
 }
