@@ -4,13 +4,13 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port type="input" width="16" name="i_x"/>
-	<port type="input" width="1" name="i_valid_in"/>
-	<port type="output" width="1" name="i_ready_out"/>
+	<port direction="input" width="16" name="i_x"/>
+	<port direction="input" width="1" name="i_valid_in"/>
+	<port direction="output" width="1" name="i_ready_out"/>
 	
-	<port type="output" width="16" name="o_y"/>
-	<port type="output" width="1" name="o_valid_out"/>
-	<port type="input" width="1" name="o_ready_in"/>
+	<port direction="output" width="16" name="o_y"/>
+	<port direction="output" width="1" name="o_valid_out"/>
+	<port direction="input" width="1" name="o_ready_in"/>
 	
   </module>
   
@@ -18,26 +18,31 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port type="input" width="16" name="i_x"/>
-	<port type="input" width="1" name="i_valid_in"/>
-	<port type="output" width="1" name="i_ready_out"/>
+	<port direction="input" width="16" name="i_x"/>
+	<port direction="input" width="1" name="i_valid_in"/>
+	<port direction="output" width="1" name="i_ready_out"/>
 	
-	<port type="output" width="16" name="o_y"/>
-	<port type="output" width="1" name="o_valid_out"/>
-	<port type="input" width="1" name="o_ready_in"/>
+	<port direction="output" width="16" name="o_y"/>
+	<port direction="output" width="1" name="o_valid_out"/>
+	<port direction="input" width="1" name="o_ready_in"/>
 	
   </module>
   <module type="add_c" name="addc_inst">
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port type="input" width="16" name="i_x"/>
-	<port type="input" width="1" name="i_valid_in"/>
-	<port type="output" width="1" name="i_ready_out"/>
+	<port direction="input" width="16" name="i_x"/>
+	<port direction="input" width="1" name="i_valid_in"/>
+	<port direction="output" width="1" name="i_ready_out"/>
 	
-	<port type="output" width="16" name="o_y"/>
-	<port type="output" width="1" name="o_valid_out"/>
-	<port type="input" width="1" name="o_ready_in"/>
+	<port direction="output" width="16" name="o_y"/>
+	<port direction="output" width="1" name="o_valid_out"/>
+	<port direction="input" width="1" name="o_ready_in"/>
 	
   </module>
+  
+  <!-- Must probably parse modules before connections, can remove that restriction later -->
+  
+  
+  
 </design>

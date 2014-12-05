@@ -91,9 +91,9 @@ public class XMLIO {
                             break;
                         case "port":
                             String pname = cNode.getAttributes().getNamedItem("name").getNodeValue();
-                            String type = cNode.getAttributes().getNamedItem("type").getNodeValue();
+                            String direction = cNode.getAttributes().getNamedItem("direction").getNodeValue();
                             int width = Integer.parseInt(cNode.getAttributes().getNamedItem("width").getNodeValue());
-                            Port por = new Port(pname, type, width);
+                            Port por = new Port(pname, direction, width);
                             mod.addPort(por);
                             break;
                         }
@@ -156,7 +156,7 @@ public class XMLIO {
             for (int j = 0; j < porList.size(); j++) {
                 Element porElement = doc.createElement("port");
                 porElement.setAttribute("name", porList.get(j).getName());
-                porElement.setAttribute("type", porList.get(j).getType());
+                porElement.setAttribute("direction", porList.get(j).getDirection());
                 porElement.setAttribute("width", Integer.toString(porList.get(j).getWidth()));
                 modElement.appendChild(porElement);
             }

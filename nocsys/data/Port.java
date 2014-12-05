@@ -8,28 +8,28 @@ package nocsys.data;
  */
 public class Port {
 
-    String type;
+    String direction;
     String name;
     int width;
 
     public Port() {
         name = null;
-        type = null;
+        direction = null;
         width = 0;
     }
 
-    public Port(String name, String type, int width) {
+    public Port(String name, String direction, int width) {
         this.name = name;
-        this.type = type;
+        this.direction = direction;
         this.width = width;
     }
 
-    public String getType() {
-        return type;
+    public String getDirection() {
+        return direction;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     public String getName() {
@@ -50,6 +50,6 @@ public class Port {
 
     @Override
     public String toString() {
-        return "port: " + type + " " + name + "(" + width + ")";
+        return "port: " + direction + " " + name + "(" + width + ")";
     }
 }
