@@ -17,6 +17,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import nocsys.data.Design;
+import nocsys.data.InterfacePort;
 import nocsys.data.Module;
 import nocsys.data.Parameter;
 import nocsys.data.Port;
@@ -96,7 +97,7 @@ public class XMLIO {
                             String pname = cNode.getAttributes().getNamedItem("name").getNodeValue();
                             String direction = cNode.getAttributes().getNamedItem("direction").getNodeValue();
                             int width = Integer.parseInt(cNode.getAttributes().getNamedItem("width").getNodeValue());
-                            Port por = new Port(pname, direction, width);
+                            Port por = new Port(pname, direction, width, mod);
                             mod.addPort(por);
                             break;
                         }
@@ -125,17 +126,17 @@ public class XMLIO {
                     assert (start.length != 2);
                     String startMod = start[0];
                     String startPort = start[1];
-                    
+
                     String[] end = node.getAttributes().getNamedItem("end").getNodeValue().split("\\.");
                     assert (end.length != 2);
                     String endMod = end[0];
                     String endPort = end[1];
-                    
-                    //fetch the ports
+
+                    // fetch the ports
                     Port startPor = design.getModuleByName(startMod).getPortByName(startPort);
                     Port endPor = design.getModuleByName(endMod).getPortByName(endPort);
-                    
-                    //add connection
+
+                    // add connection
                     startPor.addConnection(endPor);
                     endPor.addConnection(startPor);
 
@@ -147,7 +148,12 @@ public class XMLIO {
                     String porPort = port[1];
                     String direction = node.getAttributes().getNamedItem("direction").getNodeValue();
                     String name = node.getAttributes().getNamedItem("name").getNodeValue();
-                    // TODO add a new interface
+
+                    Port actualPort = design.getModuleByName(porMod).getPortByName(porPort);
+
+                    InterfacePort intPort = new InterfacePort(name, direction, actualPort);
+
+                    design.addInterfacePort(intPort);
                 }
             }
         }

@@ -15,11 +15,13 @@ public class Port {
     String name;
     int width;
     List<Port> connections;
+    Module parentModule;
 
     public Port() {
         name = null;
         direction = null;
         width = 0;
+        parentModule = null;
         connections = new ArrayList<Port>();
     }
 
@@ -27,6 +29,15 @@ public class Port {
         this.name = name;
         this.direction = direction;
         this.width = width;
+        parentModule = null;
+        this.connections = new ArrayList<Port>();
+    }
+
+    public Port(String name, String direction, int width, Module parentModule) {
+        this.name = name;
+        this.direction = direction;
+        this.width = width;
+        this.parentModule = parentModule;
         this.connections = new ArrayList<Port>();
     }
 
@@ -54,6 +65,14 @@ public class Port {
         this.width = width;
     }
 
+    public Module getParentModule() {
+        return parentModule;
+    }
+
+    public void setParentModule(Module parentModule) {
+        this.parentModule = parentModule;
+    }
+
     public List<Port> getConnections() {
         return connections;
     }
@@ -61,8 +80,8 @@ public class Port {
     public void setConnections(List<Port> connections) {
         this.connections = connections;
     }
-    
-    public void addConnection(Port por){
+
+    public void addConnection(Port por) {
         this.connections.add(por);
     }
 

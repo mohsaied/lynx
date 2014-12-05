@@ -45,7 +45,7 @@
   
   <connection start="multx_inst.o_y" end="multa_inst.i_x"/>
   
-  <interface port="multx.i_x" direction="input" name="x_in"/>
+  <interface port="multx_inst.i_x" direction="input" name="x_in"/>
   
   <!-- At some point could make all names optional, and can derive names based on types/directions automatically -->
   

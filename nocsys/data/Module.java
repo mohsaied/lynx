@@ -19,13 +19,13 @@ public class Module {
     String type;
     String name;
     List<Parameter> parameters;
-    Map<String,Port> ports;
+    Map<String, Port> ports;
 
     public Module() {
         this.type = null;
         this.name = null;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String,Port>();
+        this.ports = new HashMap<String, Port>();
         log.info("Creating new Module with no name");
     }
 
@@ -33,7 +33,7 @@ public class Module {
         this.type = type;
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String,Port>();
+        this.ports = new HashMap<String, Port>();
         log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
@@ -65,20 +65,20 @@ public class Module {
         this.parameters.add(parameter);
     }
 
-    public Map<String,Port> getPorts() {
+    public Map<String, Port> getPorts() {
         return ports;
     }
 
-    public void setPorts(Map<String,Port> ports) {
+    public void setPorts(Map<String, Port> ports) {
         this.ports = ports;
     }
-    
-    public Port getPortByName(String porName){
+
+    public Port getPortByName(String porName) {
         return ports.get(porName);
     }
 
     public void addPort(Port port) {
-        this.ports.put(port.getName(),port);
+        this.ports.put(port.getName(), port);
     }
 
     @Override
