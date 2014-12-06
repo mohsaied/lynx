@@ -17,7 +17,7 @@ import noclynx.xml.XMLIO;
 public class MyLogger {
 
     // classes that contain loggers
-    final String[] classes = { Main.class.getName(), XMLIO.class.getName(), Design.class.getName(),
+    private final String[] classes = { Main.class.getName(), XMLIO.class.getName(), Design.class.getName(),
             Module.class.getName() };
 
     public MyLogger() {

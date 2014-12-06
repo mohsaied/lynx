@@ -16,9 +16,9 @@ public class Design {
 
     private static final Logger log = Logger.getLogger(Design.class.getName());
 
-    String name;
-    Map<String, Module> modules;
-    List<InterfacePort> interfacePorts;
+    private String name;
+    private Map<String, Module> modules;
+    private List<InterfacePort> interfacePorts;
 
     public Design() {
         this.name = null;
@@ -34,43 +34,43 @@ public class Design {
         log.info("Creating new design: " + name);
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public final void setName(String name) {
         this.name = name;
     }
 
-    public Map<String, Module> getModules() {
+    public final Map<String, Module> getModules() {
         return modules;
     }
 
-    public void setModules(Map<String, Module> modules) {
+    public final void setModules(Map<String, Module> modules) {
         this.modules = modules;
     }
 
-    public void addModule(Module currModule) {
+    public final void addModule(Module currModule) {
         this.modules.put(currModule.getName(), currModule);
     }
 
-    public int getNumModules() {
+    public final int getNumModules() {
         return modules.size();
     }
 
-    public Module getModuleByName(String modName) {
+    public final Module getModuleByName(String modName) {
         return this.modules.get(modName);
     }
 
-    public List<InterfacePort> getInterfacePorts() {
+    public final List<InterfacePort> getInterfacePorts() {
         return interfacePorts;
     }
 
-    public void setInterfacePorts(List<InterfacePort> interfacePorts) {
+    public final void setInterfacePorts(List<InterfacePort> interfacePorts) {
         this.interfacePorts = interfacePorts;
     }
 
-    public void addInterfacePort(InterfacePort intPort) {
+    public final void addInterfacePort(InterfacePort intPort) {
         this.interfacePorts.add(intPort);
     }
 

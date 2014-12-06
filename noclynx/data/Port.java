@@ -11,11 +11,12 @@ import java.util.List;
  */
 public class Port {
 
-    String direction;
-    String name;
-    int width;
+    protected String direction;
+    protected String name;
+    protected int width;
+    
     private List<Port> connections;
-    Module parentModule;
+    private Module parentModule;
 
     public Port() {
         name = null;
@@ -41,47 +42,47 @@ public class Port {
         this.connections = new ArrayList<Port>();
     }
 
-    public String getDirection() {
+    public final String getDirection() {
         return direction;
     }
 
-    public void setDirection(String direction) {
+    public final void setDirection(String direction) {
         this.direction = direction;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public final void setName(String name) {
         this.name = name;
     }
 
-    public int getWidth() {
+    public final int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public final void setWidth(int width) {
         this.width = width;
     }
 
-    public Module getParentModule() {
+    public final Module getParentModule() {
         return parentModule;
     }
 
-    public void setParentModule(Module parentModule) {
+    public final void setParentModule(Module parentModule) {
         this.parentModule = parentModule;
     }
 
-    public List<Port> getConnections() {
+    public final List<Port> getConnections() {
         return connections;
     }
 
-    public void setConnections(List<Port> connections) {
+    public final void setConnections(List<Port> connections) {
         this.connections = connections;
     }
 
-    public void addConnection(Port por) {
+    public final void addConnection(Port por) {
         this.connections.add(por);
     }
 
@@ -91,7 +92,7 @@ public class Port {
         if (connections.size() != 0) {
             s += ", connects to: ";
             for (Port por : connections)
-                s += por.getName() + " ";
+                s += por.getName() + " in " + por.getParentModule().getName();
         }
         return s;
     }

@@ -16,10 +16,10 @@ public class Module {
 
     private static final Logger log = Logger.getLogger(Module.class.getName());
 
-    String type;
-    String name;
-    List<Parameter> parameters;
-    Map<String, Port> ports;
+    private String type;
+    private String name;
+    private List<Parameter> parameters;
+    private Map<String, Port> ports;
 
     public Module() {
         this.type = null;
@@ -37,47 +37,47 @@ public class Module {
         log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
-    public String getType() {
+    public final String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public final void setType(String type) {
         this.type = type;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public final void setName(String name) {
         this.name = name;
     }
 
-    public List<Parameter> getParameters() {
+    public final List<Parameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<Parameter> parameters) {
+    public final void setParameters(List<Parameter> parameters) {
         this.parameters = parameters;
     }
 
-    public void addParameter(Parameter parameter) {
+    public final void addParameter(Parameter parameter) {
         this.parameters.add(parameter);
     }
 
-    public Map<String, Port> getPorts() {
+    public final Map<String, Port> getPorts() {
         return ports;
     }
 
-    public void setPorts(Map<String, Port> ports) {
+    public final void setPorts(Map<String, Port> ports) {
         this.ports = ports;
     }
 
-    public Port getPortByName(String porName) {
+    public final Port getPortByName(String porName) {
         return ports.get(porName);
     }
 
-    public void addPort(Port port) {
+    public final void addPort(Port port) {
         this.ports.put(port.getName(), port);
     }
 

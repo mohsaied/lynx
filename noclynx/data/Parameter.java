@@ -8,8 +8,8 @@ package noclynx.data;
  */
 public class Parameter {
 
-    String name;
-    String value;
+    private String name;
+    private String value;
 
     public Parameter() {
         this.name = null;
@@ -21,19 +21,19 @@ public class Parameter {
         this.value = value;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public final void setName(String name) {
         this.name = name;
     }
 
-    public String getValue() {
+    public final String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public final void setValue(String value) {
         this.value = value;
     }
 

@@ -2,7 +2,7 @@ package noclynx.data;
 
 public class InterfacePort extends Port {
 
-    Port physicalPort;
+    private Port physicalPort;
 
     public InterfacePort() {
         super();
@@ -11,6 +11,14 @@ public class InterfacePort extends Port {
 
     public InterfacePort(String name, String direction, Port physicalPort) {
         super(name, direction, physicalPort.width);
+        this.physicalPort = physicalPort;
+    }
+
+    public final Port getPhysicalPort() {
+        return physicalPort;
+    }
+
+    public final void setPhysicalPort(Port physicalPort) {
         this.physicalPort = physicalPort;
     }
 
