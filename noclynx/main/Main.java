@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         @SuppressWarnings("unused")
-        MyLogger log = new MyLogger(Level.ALL);
+        MyLogger log = new MyLogger(Level.FINE);
 
         Design design = XMLIO.readXMLDesign("designs/quadratic.xml");
 
