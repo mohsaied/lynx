@@ -1,8 +1,5 @@
 package noclynx.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The input/output ports of a Verilog module.
  * 
@@ -14,32 +11,17 @@ public class Port {
     protected String direction;
     protected String name;
     protected int width;
-    
-    private List<Port> connections;
-    private Module parentModule;
 
     public Port() {
         name = null;
         direction = null;
         width = 0;
-        parentModule = null;
-        connections = new ArrayList<Port>();
     }
 
     public Port(String name, String direction, int width) {
         this.name = name;
         this.direction = direction;
         this.width = width;
-        parentModule = null;
-        this.connections = new ArrayList<Port>();
-    }
-
-    public Port(String name, String direction, int width, Module parentModule) {
-        this.name = name;
-        this.direction = direction;
-        this.width = width;
-        this.parentModule = parentModule;
-        this.connections = new ArrayList<Port>();
     }
 
     public final String getDirection() {
@@ -66,34 +48,4 @@ public class Port {
         this.width = width;
     }
 
-    public final Module getParentModule() {
-        return parentModule;
-    }
-
-    public final void setParentModule(Module parentModule) {
-        this.parentModule = parentModule;
-    }
-
-    public final List<Port> getConnections() {
-        return connections;
-    }
-
-    public final void setConnections(List<Port> connections) {
-        this.connections = connections;
-    }
-
-    public final void addConnection(Port por) {
-        this.connections.add(por);
-    }
-
-    @Override
-    public String toString() {
-        String s = "port: " + direction + " " + name + "(" + width + ")";
-        if (connections.size() != 0) {
-            s += ", connects to: ";
-            for (Port por : connections)
-                s += por.getName() + " in " + por.getParentModule().getName();
-        }
-        return s;
-    }
 }

@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import noclynx.data.Design;
 import noclynx.data.InterfacePort;
 import noclynx.data.Module;
+import noclynx.data.ModulePort;
 import noclynx.data.Parameter;
 import noclynx.data.Port;
 
@@ -96,7 +97,7 @@ public class XMLIO {
                             String pname = cNode.getAttributes().getNamedItem("name").getNodeValue();
                             String direction = cNode.getAttributes().getNamedItem("direction").getNodeValue();
                             int width = Integer.parseInt(cNode.getAttributes().getNamedItem("width").getNodeValue());
-                            Port por = new Port(pname, direction, width, mod);
+                            ModulePort por = new ModulePort(pname, direction, width, mod);
                             mod.addPort(por);
                             break;
                         }
@@ -132,8 +133,8 @@ public class XMLIO {
                     String endPort = end[1];
 
                     // fetch the ports
-                    Port startPor = design.getModuleByName(startMod).getPortByName(startPort);
-                    Port endPor = design.getModuleByName(endMod).getPortByName(endPort);
+                    ModulePort startPor = design.getModuleByName(startMod).getPortByName(startPort);
+                    ModulePort endPor = design.getModuleByName(endMod).getPortByName(endPort);
 
                     // add connection
                     startPor.addConnection(endPor);
@@ -148,7 +149,7 @@ public class XMLIO {
                     String direction = node.getAttributes().getNamedItem("direction").getNodeValue();
                     String name = node.getAttributes().getNamedItem("name").getNodeValue();
 
-                    Port actualPort = design.getModuleByName(porMod).getPortByName(porPort);
+                    ModulePort actualPort = design.getModuleByName(porMod).getPortByName(porPort);
 
                     InterfacePort intPort = new InterfacePort(name, direction, actualPort);
 
@@ -203,7 +204,7 @@ public class XMLIO {
             }
 
             // loop over ports
-            Map<String, Port> porList = mod.getPorts();
+            Map<String, ModulePort> porList = mod.getPorts();
             for (Port por : porList.values()) {
                 Element porElement = doc.createElement("port");
                 porElement.setAttribute("name", por.getName());

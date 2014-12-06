@@ -1,15 +1,21 @@
 package noclynx.data;
 
+/**
+ * Interface ports are pulled out to the top-level
+ * 
+ * @author Mohamed
+ *
+ */
 public class InterfacePort extends Port {
 
-    private Port physicalPort;
+    private ModulePort physicalPort;
 
     public InterfacePort() {
         super();
         physicalPort = null;
     }
 
-    public InterfacePort(String name, String direction, Port physicalPort) {
+    public InterfacePort(String name, String direction, ModulePort physicalPort) {
         super(name, direction, physicalPort.width);
         this.physicalPort = physicalPort;
     }
@@ -18,7 +24,7 @@ public class InterfacePort extends Port {
         return physicalPort;
     }
 
-    public final void setPhysicalPort(Port physicalPort) {
+    public final void setPhysicalPort(ModulePort physicalPort) {
         this.physicalPort = physicalPort;
     }
 

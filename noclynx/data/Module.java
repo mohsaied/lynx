@@ -19,13 +19,13 @@ public class Module {
     private String type;
     private String name;
     private List<Parameter> parameters;
-    private Map<String, Port> ports;
+    private Map<String, ModulePort> ports;
 
     public Module() {
         this.type = null;
         this.name = null;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, Port>();
+        this.ports = new HashMap<String, ModulePort>();
         log.info("Creating new Module with no name");
     }
 
@@ -33,7 +33,7 @@ public class Module {
         this.type = type;
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, Port>();
+        this.ports = new HashMap<String, ModulePort>();
         log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
@@ -65,19 +65,19 @@ public class Module {
         this.parameters.add(parameter);
     }
 
-    public final Map<String, Port> getPorts() {
+    public final Map<String, ModulePort> getPorts() {
         return ports;
     }
 
-    public final void setPorts(Map<String, Port> ports) {
+    public final void setPorts(Map<String, ModulePort> ports) {
         this.ports = ports;
     }
 
-    public final Port getPortByName(String porName) {
+    public final ModulePort getPortByName(String porName) {
         return ports.get(porName);
     }
 
-    public final void addPort(Port port) {
+    public final void addPort(ModulePort port) {
         this.ports.put(port.getName(), port);
     }
 
@@ -86,7 +86,7 @@ public class Module {
         String s = "Module: " + type + " " + name + "\n";
         for (Parameter par : parameters)
             s += par + "\n";
-        for (Port por : ports.values())
+        for (ModulePort por : ports.values())
             s += por + "\n";
         return s;
     }
