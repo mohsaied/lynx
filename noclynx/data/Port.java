@@ -6,7 +6,7 @@ package noclynx.data;
  * @author Mohamed
  * 
  */
-public class Port {
+public abstract class Port {
 
     protected String direction;
     protected String name;
