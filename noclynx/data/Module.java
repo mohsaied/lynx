@@ -1,4 +1,4 @@
-package nocsys.data;
+package noclynx.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;

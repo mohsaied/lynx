@@ -1,4 +1,4 @@
-package nocsys.data;
+package noclynx.data;
 
 /**
  * A name-value pair defining a parameter of a Verilog module.

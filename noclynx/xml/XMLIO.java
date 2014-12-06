@@ -1,8 +1,7 @@
-package nocsys.xml;
+package noclynx.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -16,11 +15,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import nocsys.data.Design;
-import nocsys.data.InterfacePort;
-import nocsys.data.Module;
-import nocsys.data.Parameter;
-import nocsys.data.Port;
+import noclynx.data.Design;
+import noclynx.data.InterfacePort;
+import noclynx.data.Module;
+import noclynx.data.Parameter;
+import noclynx.data.Port;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -107,7 +106,7 @@ public class XMLIO {
                 // add to list of modules in this design
                 design.addModule(mod);
 
-                // TODO remove this node from the nodelist
+                // TODO remove this node from the nodelist if possible
             }
         }
 
@@ -196,11 +195,10 @@ public class XMLIO {
             modElement.setAttribute("name", mod.getName());
 
             // loop over parameters
-            List<Parameter> parList = mod.getParameters();
-            for (int j = 0; j < parList.size(); j++) {
+            for (Parameter par : mod.getParameters()) {
                 Element parElement = doc.createElement("parameter");
-                parElement.setAttribute("name", parList.get(j).getName());
-                parElement.setAttribute("value", parList.get(j).getValue());
+                parElement.setAttribute("name", par.getName());
+                parElement.setAttribute("value", par.getValue());
                 modElement.appendChild(parElement);
             }
 

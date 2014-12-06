@@ -1,12 +1,12 @@
-package nocys.log;
+package noclynx.log;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nocsys.data.Design;
-import nocsys.data.Module;
-import nocsys.xml.XMLIO;
-import nocys.main.Main;
+import noclynx.data.Design;
+import noclynx.data.Module;
+import noclynx.main.Main;
+import noclynx.xml.XMLIO;
 
 /**
  * Groups and keeps track of loggers

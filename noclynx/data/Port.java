@@ -1,4 +1,4 @@
-package nocsys.data;
+package noclynx.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class Port {
     String direction;
     String name;
     int width;
-    List<Port> connections;
+    private List<Port> connections;
     Module parentModule;
 
     public Port() {

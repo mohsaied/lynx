@@ -1,4 +1,4 @@
-package nocsys.data;
+package noclynx.data;
 
 public class InterfacePort extends Port {
 
