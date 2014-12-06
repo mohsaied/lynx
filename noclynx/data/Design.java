@@ -78,7 +78,8 @@ public class Design {
     public String toString() {
         String s = "Design: " + name + "\n\n";
         for (InterfacePort por : this.interfacePorts)
-            s += por + "\n\n";
+            s += por + "\n";
+        s += "\n";
         for (Module mod : this.modules.values())
             s += mod + "\n";
         return s;

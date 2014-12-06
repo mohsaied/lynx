@@ -46,6 +46,10 @@ public class ModulePort extends Port {
         this.connections.add(por);
     }
 
+    public final String getFullName() {
+        return parentModule.getName() + "." + getName();
+    }
+
     @Override
     public String toString() {
         String s = "port: " + direction + " " + name + "(" + width + ")";

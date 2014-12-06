@@ -2,6 +2,8 @@ package noclynx.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -20,7 +22,6 @@ import noclynx.data.InterfacePort;
 import noclynx.data.Module;
 import noclynx.data.ModulePort;
 import noclynx.data.Parameter;
-import noclynx.data.Port;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -188,7 +189,10 @@ public class XMLIO {
 
         Map<String, Module> modList = design.getModules();
 
+        List<Element> connectionElements = new ArrayList<Element>();
+
         for (Module mod : modList.values()) {
+
             // new <module> tag
             Element modElement = doc.createElement("module");
             // set name and type - both are required
@@ -205,15 +209,38 @@ public class XMLIO {
 
             // loop over ports
             Map<String, ModulePort> porList = mod.getPorts();
-            for (Port por : porList.values()) {
+            for (ModulePort por : porList.values()) {
                 Element porElement = doc.createElement("port");
                 porElement.setAttribute("name", por.getName());
                 porElement.setAttribute("direction", por.getDirection());
                 porElement.setAttribute("width", Integer.toString(por.getWidth()));
                 modElement.appendChild(porElement);
+
+                // find the list of connections
+                // only go over input ports and find connections
+                if (por.getDirection().equals("input"))
+                    for (ModulePort con : por.getConnections()) {
+                        Element conElement = doc.createElement("connection");
+                        conElement.setAttribute("start", con.getFullName());
+                        conElement.setAttribute("end", por.getFullName());
+                        connectionElements.add(conElement);
+                    }
+
             }
 
             rootElement.appendChild(modElement);
+        }
+
+        for (Element conElement : connectionElements) {
+            rootElement.appendChild(conElement);
+        }
+
+        for (InterfacePort intPor : design.getInterfacePorts()) {
+            Element intPorElement = doc.createElement("interface");
+            intPorElement.setAttribute("port", intPor.getPhysicalPort().getFullName());
+            intPorElement.setAttribute("direction", intPor.getDirection());
+            intPorElement.setAttribute("name", intPor.getName());
+            rootElement.appendChild(intPorElement);
         }
 
         // write the content into xml file

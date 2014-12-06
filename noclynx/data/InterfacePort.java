@@ -20,7 +20,7 @@ public class InterfacePort extends Port {
         this.physicalPort = physicalPort;
     }
 
-    public final Port getPhysicalPort() {
+    public final ModulePort getPhysicalPort() {
         return physicalPort;
     }
 

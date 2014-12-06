@@ -41,11 +41,27 @@
 	
   </module>
   
-  <!-- Must parse modules before connections, can remove that restriction later -->
+  <!-- Must parse modules before connections and interfaces, can remove that restriction later -->
+  
+  <!-- Connections -->
   
   <connection start="multx_inst.o_y" end="multa_inst.i_x"/>
+  <connection start="multx_inst.o_valid_out" end="multa_inst.i_valid_in"/>
+  <connection start="multa_inst.i_ready_out" end="multx_inst.o_ready_in"/>
+  
+  <connection start="multa_inst.o_y" end="addc_inst.i_x"/>
+  <connection start="multa_inst.o_valid_out" end="addc_inst.i_valid_in"/>
+  <connection start="addc_inst.i_ready_out" end="multa_inst.o_ready_in"/>
+  
+  <!-- interfaces -->
   
   <interface port="multx_inst.i_x" direction="input" name="x_in"/>
+  <interface port="multx_inst.i_valid_in" direction="input" name="i_valid_in"/>
+  <interface port="multx_inst.i_ready_out" direction="output" name="i_ready_out"/>
+  
+  <interface port="addc_inst.o_y" direction="output" name="o_y"/>
+  <interface port="addc_inst.o_valid_out" direction="output" name="o_valid_out"/>
+  <interface port="addc_inst.o_ready_in" direction="input" name="o_ready_in"/>
   
   <!-- At some point could make all names optional, and can derive names based on types/directions automatically -->
   
