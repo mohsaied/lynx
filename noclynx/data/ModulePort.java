@@ -3,6 +3,12 @@ package noclynx.data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Module Ports are ports associated with a module and not the top level Design.
+ * 
+ * @author Mohamed
+ *
+ */
 public class ModulePort extends Port {
 
     private List<ModulePort> connections;
