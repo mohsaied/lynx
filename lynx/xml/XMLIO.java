@@ -244,7 +244,7 @@ public class XMLIO {
             for (Port wire : por.getConnections()) {
                 Element wireElement = doc.createElement("wire");
                 wireElement.setAttribute("top", por.getName());
-                wireElement.setAttribute("sub", wire.getFullName());
+                wireElement.setAttribute("sub", wire.getFullNameDot());
                 rootElement.appendChild(wireElement);
             }
         }
@@ -305,8 +305,8 @@ public class XMLIO {
             if (por.getDirection().equals("input"))
                 for (Port con : por.getConnections()) {
                     Element conElement = doc.createElement("connection");
-                    conElement.setAttribute("start", con.getFullName());
-                    conElement.setAttribute("end", por.getFullName());
+                    conElement.setAttribute("start", con.getFullNameDot());
+                    conElement.setAttribute("end", por.getFullNameDot());
                     connectionElements.add(conElement);
                 }
         }

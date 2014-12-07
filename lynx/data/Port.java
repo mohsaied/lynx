@@ -54,8 +54,12 @@ public class Port {
         return name;
     }
 
-    public final String getFullName() {
+    public final String getFullNameDot() {
         return parentModule.getName() + "." + name;
+    }
+
+    public final String getFullNameDash() {
+        return parentModule.getName() + "_" + name;
     }
 
     public final void setName(String name) {

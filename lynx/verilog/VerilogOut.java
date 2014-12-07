@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
+import lynx.data.Module;
 import lynx.data.Port;
 import lynx.xml.XMLIO;
 
@@ -29,7 +30,55 @@ public class VerilogOut {
 
         writeInterface(design, writer);
 
+        writeWires(design, writer);
+
+        writeModules(design, writer);
+
         writer.close();
+    }
+
+    private static void writeWires(Design design, PrintWriter writer) {
+        // loop over top-level wires and will probably need to create wires
+        // and assign statements for the outputs to avoid reg/wire problems
+
+        writer.println("//wires for the top-level");
+        for (Port por : design.getPorts().values()) {
+            if (por.getDirection().equals("output")) {
+                String widthPart = por.getWidth() > 1 ? " [" + (por.getWidth() - 1) + ":" + "0] " : " ";
+                writer.println("wire" + widthPart + por.getName() + "_wire");
+            }
+        }
+        writer.println();
+
+        // loop over all ports in the design, create a wire for each output port
+        // it may be feeding multiple input ports -- that's why
+
+        for (Module mod : design.getModules().values()) {
+            writer.println("//wires for the outputs in Module " + mod.getName());
+            for (Port por : mod.getPorts().values()) {
+                if (por.getDirection().equals("output")) {
+                    String widthPart = por.getWidth() > 1 ? " [" + (por.getWidth() - 1) + ":" + "0] " : " ";
+                    writer.println("wire" + widthPart + por.getFullNameDash() + "_wire");
+                }
+            }
+            writer.println();
+        }
+
+        writer.println();
+    }
+
+    private static void writeModules(Design design, PrintWriter writer) {
+        for (Module mod : design.getModules().values()) {
+
+            writer.println(mod.getType() + " " + mod.getName() + " (");
+
+            for (Port por : mod.getPorts().values()) {
+                writer.println("\t." + por.getName() + "(),");
+            }
+
+            writer.println(");");
+            writer.println();
+        }
     }
 
     private static void writeInterface(Design design, PrintWriter writer) {
