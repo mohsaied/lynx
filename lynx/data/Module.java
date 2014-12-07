@@ -16,24 +16,32 @@ public class Module {
 
     private static final Logger log = Logger.getLogger(Module.class.getName());
 
-    private String type;
-    private String name;
-    private List<Parameter> parameters;
-    private Map<String, ModulePort> ports;
+    protected String type;
+    protected String name;
+    protected List<Parameter> parameters;
+    protected Map<String, Port> ports;
 
     public Module() {
         this.type = null;
         this.name = null;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, ModulePort>();
+        this.ports = new HashMap<String, Port>();
         log.info("Creating new Module with no name");
+    }
+
+    public Module(String type) {
+        this.type = type;
+        this.name = type + "_inst";
+        this.parameters = new ArrayList<Parameter>();
+        this.ports = new HashMap<String, Port>();
+        log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
     public Module(String type, String name) {
         this.type = type;
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, ModulePort>();
+        this.ports = new HashMap<String, Port>();
         log.info("Creating new Module. name: " + name + ", type: " + type);
     }
 
@@ -65,28 +73,29 @@ public class Module {
         this.parameters.add(parameter);
     }
 
-    public final Map<String, ModulePort> getPorts() {
+    public final Map<String, Port> getPorts() {
         return ports;
     }
 
-    public final void setPorts(Map<String, ModulePort> ports) {
+    public final void setPorts(Map<String, Port> ports) {
         this.ports = ports;
     }
 
-    public final ModulePort getPortByName(String porName) {
+    public final Port getPortByName(String porName) {
         return ports.get(porName);
     }
 
-    public final void addPort(ModulePort port) {
+    public final void addPort(Port port) {
         this.ports.put(port.getName(), port);
     }
+    
 
     @Override
     public String toString() {
         String s = "Module: " + type + " " + name + "\n";
         for (Parameter par : parameters)
             s += par + "\n";
-        for (ModulePort por : ports.values())
+        for (Port por : ports.values())
             s += por + "\n";
         return s;
     }

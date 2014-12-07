@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
-import lynx.data.InterfacePort;
+import lynx.data.Port;
 import lynx.xml.XMLIO;
 
 /**
@@ -36,9 +36,9 @@ public class VerilogOut {
         writer.println("module " + design.getName());
         writer.println("(");
 
-        int numPorts = design.getInterfacePorts().size();
+        int numPorts = design.getPorts().size();
 
-        for (InterfacePort intPort : design.getInterfacePorts().values()) {
+        for (Port intPort : design.getPorts().values()) {
             String widthPart = intPort.getWidth() > 1 ? " [" + (intPort.getWidth() - 1) + ":" + "0] " : " ";
             writer.print("\t" + intPort.getDirection() + widthPart + intPort.getName());
             if (numPorts-- == 1)

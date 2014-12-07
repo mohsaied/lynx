@@ -53,15 +53,26 @@
   <connection start="multa_inst.o_valid_out" end="addc_inst.i_valid_in"/>
   <connection start="addc_inst.i_ready_out" end="multa_inst.o_ready_in"/>
   
+  <!-- top-level wires are connections from top-level to submodules -->
+  
+  <wire top="x_in" sub="multx_inst.i_x"/>
+  <wire top="x_valid_in" sub="multx_inst.i_valid_in"/>
+  <wire sub="multx_inst.i_ready_out" top="x_ready_out"/>
+  
+  <wire sub="addc_inst.o_y" top="y_out"/>
+  <wire sub="addc_inst.o_valid_out" top="y_valid_out"/>
+  <wire top="y_ready_in" sub="addc_inst.o_ready_in"/>
+  
+  
   <!-- interfaces -->
   
-  <interface port="multx_inst.i_x" direction="input" name="x_in"/>
-  <interface port="multx_inst.i_valid_in" direction="input" name="i_valid_in"/>
-  <interface port="multx_inst.i_ready_out" direction="output" name="i_ready_out"/>
+  <port direction="input" width="16" name="x_in"/>
+  <port direction="input" width="1" name="x_valid_in"/>
+  <port direction="output" width="1" name="x_ready_out"/>
   
-  <interface port="addc_inst.o_y" direction="output" name="o_y"/>
-  <interface port="addc_inst.o_valid_out" direction="output" name="o_valid_out"/>
-  <interface port="addc_inst.o_ready_in" direction="input" name="o_ready_in"/>
+  <port direction="output" width="16" name="y_out"/>
+  <port direction="output" width="1" name="y_valid_out"/>
+  <port direction="input" width="1" name="y_ready_in"/>
   
   <!-- At some point could make all names optional, and can derive names based on types/directions automatically -->
   
