@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import lynx.data.Design;
 import lynx.log.MyLogger;
 import lynx.xml.XMLIO;
+import lynx.verilog.VerilogOut;
 
 public class Main {
 
@@ -16,9 +17,11 @@ public class Main {
         Design design = XMLIO.readXMLDesign("designs/quadratic.xml");
 
         XMLIO.writeXMLDesign(design, "designs/out.xml");
+        
+        VerilogOut.writeVerilogDesign(design);
 
         // Printing the current design
-        System.out.println(design);
+        //System.out.println(design);
 
     }
 
