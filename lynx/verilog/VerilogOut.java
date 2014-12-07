@@ -9,6 +9,12 @@ import lynx.data.Design;
 import lynx.data.InterfacePort;
 import lynx.xml.XMLIO;
 
+/**
+ * Functions to write design to Verilog
+ * 
+ * @author Mohamed
+ *
+ */
 public class VerilogOut {
 
     private static final Logger log = Logger.getLogger(XMLIO.class.getName());
@@ -30,9 +36,15 @@ public class VerilogOut {
         writer.println("module " + design.getName());
         writer.println("(");
 
+        int numPorts = design.getInterfacePorts().size();
+
         for (InterfacePort intPort : design.getInterfacePorts().values()) {
             String widthPart = intPort.getWidth() > 1 ? " [" + (intPort.getWidth() - 1) + ":" + "0] " : " ";
-            writer.println("\t" + intPort.getDirection() + widthPart + intPort.getName() + ";");
+            writer.print("\t" + intPort.getDirection() + widthPart + intPort.getName());
+            if (numPorts-- == 1)
+                writer.println("");
+            else
+                writer.println(",");
         }
 
         writer.println(");");
