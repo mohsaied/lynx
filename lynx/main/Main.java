@@ -1,10 +1,10 @@
-package noclynx.main;
+package lynx.main;
 
 import java.util.logging.Level;
 
-import noclynx.data.Design;
-import noclynx.log.MyLogger;
-import noclynx.xml.XMLIO;
+import lynx.data.Design;
+import lynx.log.MyLogger;
+import lynx.xml.XMLIO;
 
 public class Main {
 
@@ -17,7 +17,7 @@ public class Main {
 
         XMLIO.writeXMLDesign(design, "designs/out.xml");
 
-        // Printing the Module list populated.
+        // Printing the current design
         System.out.println(design);
 
     }

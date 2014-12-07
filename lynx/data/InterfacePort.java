@@ -1,4 +1,4 @@
-package noclynx.data;
+package lynx.data;
 
 /**
  * Interface ports are pulled out to the top-level

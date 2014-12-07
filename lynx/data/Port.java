@@ -1,4 +1,4 @@
-package noclynx.data;
+package lynx.data;
 
 /**
  * The input/output ports of a Verilog module.

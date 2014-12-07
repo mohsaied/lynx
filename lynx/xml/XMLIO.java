@@ -1,4 +1,4 @@
-package noclynx.xml;
+package lynx.xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,11 +17,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import noclynx.data.Design;
-import noclynx.data.InterfacePort;
-import noclynx.data.Module;
-import noclynx.data.ModulePort;
-import noclynx.data.Parameter;
+import lynx.data.Design;
+import lynx.data.InterfacePort;
+import lynx.data.Module;
+import lynx.data.ModulePort;
+import lynx.data.Parameter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

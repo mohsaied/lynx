@@ -1,12 +1,12 @@
-package noclynx.log;
+package lynx.log;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import noclynx.data.Design;
-import noclynx.data.Module;
-import noclynx.main.Main;
-import noclynx.xml.XMLIO;
+import lynx.data.Design;
+import lynx.data.Module;
+import lynx.main.Main;
+import lynx.xml.XMLIO;
 
 /**
  * Groups and keeps track of loggers

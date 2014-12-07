@@ -1,4 +1,4 @@
-package noclynx.data;
+package lynx.data;
 
 import java.util.ArrayList;
 import java.util.List;
