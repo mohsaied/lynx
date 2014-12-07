@@ -30,7 +30,7 @@ public class VerilogOut {
         writer.println("module " + design.getName());
         writer.println("(");
 
-        for (InterfacePort intPort : design.getInterfacePorts()) {
+        for (InterfacePort intPort : design.getInterfacePorts().values()) {
             String widthPart = intPort.getWidth() > 1 ? " [" + (intPort.getWidth() - 1) + ":" + "0] " : " ";
             writer.println("\t" + intPort.getDirection() + widthPart + intPort.getName() + ";");
         }

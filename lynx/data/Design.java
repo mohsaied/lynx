@@ -1,8 +1,6 @@
 package lynx.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -18,19 +16,19 @@ public class Design {
 
     private String name;
     private Map<String, Module> modules;
-    private List<InterfacePort> interfacePorts;
+    private Map<String, InterfacePort> interfacePorts;
 
     public Design() {
         this.name = null;
         this.modules = new HashMap<String, Module>();
-        this.interfacePorts = new ArrayList<InterfacePort>();
+        this.interfacePorts = new HashMap<String, InterfacePort>();
         log.info("Creating new design with no name");
     }
 
     public Design(String name) {
         this.name = name;
         this.modules = new HashMap<String, Module>();
-        this.interfacePorts = new ArrayList<InterfacePort>();
+        this.interfacePorts = new HashMap<String, InterfacePort>();
         log.info("Creating new design: " + name);
     }
 
@@ -62,22 +60,32 @@ public class Design {
         return this.modules.get(modName);
     }
 
-    public final List<InterfacePort> getInterfacePorts() {
+    public final Map<String, InterfacePort> getInterfacePorts() {
         return interfacePorts;
     }
 
-    public final void setInterfacePorts(List<InterfacePort> interfacePorts) {
+    public final void setInterfacePorts(Map<String, InterfacePort> interfacePorts) {
         this.interfacePorts = interfacePorts;
     }
 
     public final void addInterfacePort(InterfacePort intPort) {
-        this.interfacePorts.add(intPort);
+        if (!this.interfacePorts.containsKey(intPort.getName()))
+            this.interfacePorts.put(intPort.getName(), intPort);
+    }
+
+    public void addInterfacePort(String name, String direction, ModulePort physicalPort) {
+        if (this.interfacePorts.containsKey(name)) {
+            this.interfacePorts.get(name).addPhysicalPort(physicalPort);
+        } else {
+            InterfacePort intPort = new InterfacePort(name, direction, physicalPort);
+            this.interfacePorts.put(name, intPort);
+        }
     }
 
     @Override
     public String toString() {
         String s = "Design: " + name + "\n\n";
-        for (InterfacePort por : this.interfacePorts)
+        for (InterfacePort por : this.interfacePorts.values())
             s += por + "\n";
         s += "\n";
         for (Module mod : this.modules.values())

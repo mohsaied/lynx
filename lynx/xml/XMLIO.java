@@ -152,9 +152,11 @@ public class XMLIO {
 
                     ModulePort actualPort = design.getModuleByName(porMod).getPortByName(porPort);
 
-                    InterfacePort intPort = new InterfacePort(name, direction, actualPort);
-
-                    design.addInterfacePort(intPort);
+                    
+                    //InterfacePort intPort = new InterfacePort(name, direction, actualPort);
+                    //design.addInterfacePort(intPort);
+                    
+                    design.addInterfacePort(name, direction, actualPort);
                 }
             }
         }
@@ -235,12 +237,14 @@ public class XMLIO {
             rootElement.appendChild(conElement);
         }
 
-        for (InterfacePort intPor : design.getInterfacePorts()) {
-            Element intPorElement = doc.createElement("interface");
-            intPorElement.setAttribute("port", intPor.getPhysicalPort().getFullName());
-            intPorElement.setAttribute("direction", intPor.getDirection());
-            intPorElement.setAttribute("name", intPor.getName());
-            rootElement.appendChild(intPorElement);
+        for (InterfacePort intPort : design.getInterfacePorts().values()) {
+            for (ModulePort phyPort : intPort.getPhysicalPorts()) {
+                Element intPorElement = doc.createElement("interface");
+                intPorElement.setAttribute("port", phyPort.getFullName());
+                intPorElement.setAttribute("direction", intPort.getDirection());
+                intPorElement.setAttribute("name", intPort.getName());
+                rootElement.appendChild(intPorElement);
+            }
         }
 
         // write the content into xml file
