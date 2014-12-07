@@ -113,7 +113,6 @@ public class XMLIO {
         }
 
         return design;
-
     }
 
     private static void parseWire(Node node, Design design) {
@@ -193,7 +192,10 @@ public class XMLIO {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
         String direction = node.getAttributes().getNamedItem("direction").getNodeValue();
         int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
-        return new Port(pname, direction, width, mod);
+        int arrayWidth = 1; // leave this attribute optional
+        if (node.getAttributes().getNamedItem("array_width") != null)
+            arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
+        return new Port(pname, direction, width, arrayWidth, mod);
     }
 
     /**
@@ -256,6 +258,8 @@ public class XMLIO {
             intPorElement.setAttribute("direction", intPort.getDirection());
             intPorElement.setAttribute("name", intPort.getName());
             intPorElement.setAttribute("width", Integer.toString(intPort.getWidth()));
+            if (intPort.getArrayWidth() != 1)
+                intPorElement.setAttribute("array_width", Integer.toString(intPort.getArrayWidth()));
             rootElement.appendChild(intPorElement);
         }
     }
@@ -298,6 +302,8 @@ public class XMLIO {
             porElement.setAttribute("name", por.getName());
             porElement.setAttribute("direction", por.getDirection());
             porElement.setAttribute("width", Integer.toString(por.getWidth()));
+            if (por.getArrayWidth() != 1)
+                porElement.setAttribute("arrray_width", Integer.toString(por.getArrayWidth()));
             modElement.appendChild(porElement);
 
             // find the list of connections

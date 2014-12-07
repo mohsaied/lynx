@@ -14,6 +14,10 @@ public class Port {
     private String direction;
     private String name;
     private int width;
+    /**
+     * for 2D verilog ports
+     */
+    private int arrayWidth;
     private Module parentModule;
 
     private List<Port> connections;
@@ -22,6 +26,7 @@ public class Port {
         name = null;
         direction = null;
         width = 0;
+        arrayWidth = 1;
         parentModule = null;
         connections = new ArrayList<Port>();
     }
@@ -30,6 +35,7 @@ public class Port {
         this.name = name;
         this.direction = direction;
         this.width = width;
+        arrayWidth = 1;
         parentModule = null;
         connections = new ArrayList<Port>();
     }
@@ -38,6 +44,25 @@ public class Port {
         this.name = name;
         this.direction = direction;
         this.width = width;
+        arrayWidth = 1;
+        this.parentModule = parentModule;
+        connections = new ArrayList<Port>();
+    }
+
+    public Port(String name, String direction, int width, int arrayWidth) {
+        this.name = name;
+        this.direction = direction;
+        this.width = width;
+        this.arrayWidth = arrayWidth;
+        parentModule = null;
+        connections = new ArrayList<Port>();
+    }
+
+    public Port(String name, String direction, int width, int arrayWidth, Module parentModule) {
+        this.name = name;
+        this.direction = direction;
+        this.width = width;
+        this.arrayWidth = arrayWidth;
         this.parentModule = parentModule;
         connections = new ArrayList<Port>();
     }
@@ -72,6 +97,14 @@ public class Port {
 
     public final void setWidth(int width) {
         this.width = width;
+    }
+
+    public final int getArrayWidth() {
+        return arrayWidth;
+    }
+
+    public final void setArrayWidth(int arrayWidth) {
+        this.arrayWidth = arrayWidth;
     }
 
     public final Module getParentModule() {

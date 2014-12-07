@@ -64,7 +64,6 @@ public class VerilogOut {
             writer.println();
         }
 
-        writer.println();
     }
 
     private static void writeModules(Design design, PrintWriter writer) {
@@ -90,6 +89,9 @@ public class VerilogOut {
         for (Port intPort : design.getPorts().values()) {
             String widthPart = intPort.getWidth() > 1 ? " [" + (intPort.getWidth() - 1) + ":" + "0] " : " ";
             writer.print("\t" + intPort.getDirection() + widthPart + intPort.getName());
+            String arrayWidthPart = intPort.getArrayWidth() > 1 ? " [" + (intPort.getArrayWidth() - 1) + ":" + "0] "
+                    : "";
+            writer.print(arrayWidthPart);
             if (numPorts-- == 1)
                 writer.println("");
             else
