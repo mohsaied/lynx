@@ -1,5 +1,6 @@
 package lynx.log;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,17 +25,23 @@ public class MyLogger {
 
     public MyLogger() {
 
-        for (String currClass : classes) {
-            Logger log = Logger.getLogger(currClass);
-            log.setLevel(Level.ALL);
-        }
+        this(Level.ALL);
 
     }
 
     public MyLogger(Level logLevel) {
 
+        MyFormatter formatter = new MyFormatter();
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(formatter);
+
         for (String currClass : classes) {
             Logger log = Logger.getLogger(currClass);
+
+            log.setUseParentHandlers(false);
+
+            log.addHandler(handler);
+
             log.setLevel(logLevel);
         }
 
