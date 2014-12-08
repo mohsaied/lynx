@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import lynx.data.Design;
 import lynx.log.MyLogger;
+import lynx.noc.Interconnect;
 import lynx.xml.XMLIO;
 import lynx.verilog.VerilogOut;
 
@@ -15,6 +16,8 @@ public class Main {
         MyLogger log = new MyLogger(Level.INFO);
 
         Design design = XMLIO.readXMLDesign("designs/quadratic.xml");
+
+        Interconnect.addNoc(design);
 
         XMLIO.writeXMLDesign(design, "designs/out.xml");
 

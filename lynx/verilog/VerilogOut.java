@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.data.Module;
 import lynx.data.Port;
-import lynx.xml.XMLIO;
 
 /**
  * Functions to write design to Verilog
@@ -18,7 +17,7 @@ import lynx.xml.XMLIO;
  */
 public class VerilogOut {
 
-    private static final Logger log = Logger.getLogger(XMLIO.class.getName());
+    private static final Logger log = Logger.getLogger(VerilogOut.class.getName());
 
     public static void writeVerilogDesign(Design design) throws FileNotFoundException, UnsupportedEncodingException {
 
@@ -44,8 +43,7 @@ public class VerilogOut {
         writer.println("//wires for the top-level");
         for (Port por : design.getPorts().values()) {
             if (por.getDirection().equals("output")) {
-                String widthPart = por.getWidth() > 1 ? " [" + (por.getWidth() - 1) + ":" + "0] " : " ";
-                writer.println("wire" + widthPart + por.getName() + "_wire");
+                writeWire(por,writer);
             }
         }
         writer.println();
@@ -57,13 +55,19 @@ public class VerilogOut {
             writer.println("//wires for the outputs in Module " + mod.getName());
             for (Port por : mod.getPorts().values()) {
                 if (por.getDirection().equals("output")) {
-                    String widthPart = por.getWidth() > 1 ? " [" + (por.getWidth() - 1) + ":" + "0] " : " ";
-                    writer.println("wire" + widthPart + por.getFullNameDash() + "_wire");
+                    writeWire(por, writer);
                 }
             }
             writer.println();
         }
 
+    }
+
+
+    private static void writeWire(Port por, PrintWriter writer) {
+        String widthPart = getWidthPart(por);
+        String arrayWidthPart = getArrayWidthPart(por);
+        writer.println("wire" + widthPart + por.getFullNameDash() + "_wire" + arrayWidthPart + ";");
     }
 
     private static void writeModules(Design design, PrintWriter writer) {
@@ -87,11 +91,9 @@ public class VerilogOut {
         int numPorts = design.getPorts().size();
 
         for (Port intPort : design.getPorts().values()) {
-            String widthPart = intPort.getWidth() > 1 ? " [" + (intPort.getWidth() - 1) + ":" + "0] " : " ";
-            writer.print("\t" + intPort.getDirection() + widthPart + intPort.getName());
-            String arrayWidthPart = intPort.getArrayWidth() > 1 ? " [" + (intPort.getArrayWidth() - 1) + ":" + "0] "
-                    : "";
-            writer.print(arrayWidthPart);
+            String widthPart = getWidthPart(intPort);
+            String arrayWidthPart = getArrayWidthPart(intPort);
+            writer.print("\t" + intPort.getDirection() + widthPart + intPort.getName() + arrayWidthPart);
             if (numPorts-- == 1)
                 writer.println("");
             else
@@ -100,6 +102,14 @@ public class VerilogOut {
 
         writer.println(");");
         writer.println();
+    }
+
+    private static String getArrayWidthPart(Port por) {
+        return por.getArrayWidth() > 1 ? " [0:" + (por.getArrayWidth() - 1) + "]" : "";
+    }
+
+    private static String getWidthPart(Port por) {
+        return por.getWidth() > 1 ? " [" + (por.getWidth() - 1) + ":" + "0] " : " ";
     }
 
     private static void writePreamble(Design design, PrintWriter writer) {
