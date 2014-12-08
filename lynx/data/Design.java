@@ -17,13 +17,11 @@ public class Design extends Module {
     private Map<String, Module> modules;
 
     public Design() {
-        super();
-        this.modules = new HashMap<String, Module>();
-        log.info("Creating new design with no name");
+        this(null);
     }
 
     public Design(String name) {
-        super("top", name);
+        super(name, name + "_inst");
         this.modules = new HashMap<String, Module>();
         log.info("Creating new design: " + name);
     }

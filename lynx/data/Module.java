@@ -22,19 +22,11 @@ public class Module {
     protected Map<String, Port> ports;
 
     public Module() {
-        this.type = null;
-        this.name = null;
-        this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, Port>();
-        log.info("Creating new Module with no name");
+        this(null, null);
     }
 
     public Module(String type) {
-        this.type = type;
-        this.name = type + "_inst";
-        this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, Port>();
-        log.info("Creating new Module. name: " + name + ", type: " + type);
+        this(type, null);
     }
 
     public Module(String type, String name) {
@@ -42,7 +34,7 @@ public class Module {
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new HashMap<String, Port>();
-        log.info("Creating new Module. name: " + name + ", type: " + type);
+        log.info("Creating new Module, name: " + name + ", type: " + type);
     }
 
     public final String getType() {
@@ -88,7 +80,6 @@ public class Module {
     public final void addPort(Port port) {
         this.ports.put(port.getName(), port);
     }
-    
 
     @Override
     public String toString() {

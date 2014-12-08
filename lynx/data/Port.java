@@ -23,39 +23,19 @@ public class Port {
     private List<Port> connections;
 
     public Port() {
-        name = null;
-        direction = null;
-        width = 0;
-        arrayWidth = 1;
-        parentModule = null;
-        connections = new ArrayList<Port>();
+        this(null, null, 0, 1, null);
     }
 
     public Port(String name, String direction, int width) {
-        this.name = name;
-        this.direction = direction;
-        this.width = width;
-        arrayWidth = 1;
-        parentModule = null;
-        connections = new ArrayList<Port>();
+        this(name, direction, width, 1, null);
     }
 
     public Port(String name, String direction, int width, Module parentModule) {
-        this.name = name;
-        this.direction = direction;
-        this.width = width;
-        arrayWidth = 1;
-        this.parentModule = parentModule;
-        connections = new ArrayList<Port>();
+        this(name, direction, width, 1, parentModule);
     }
 
     public Port(String name, String direction, int width, int arrayWidth) {
-        this.name = name;
-        this.direction = direction;
-        this.width = width;
-        this.arrayWidth = arrayWidth;
-        parentModule = null;
-        connections = new ArrayList<Port>();
+        this(name, direction, width, arrayWidth, null);
     }
 
     public Port(String name, String direction, int width, int arrayWidth, Module parentModule) {

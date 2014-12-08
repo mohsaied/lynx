@@ -12,8 +12,7 @@ public class Parameter {
     private String value;
 
     public Parameter() {
-        this.name = null;
-        this.value = null;
+        this(null, null);
     }
 
     public Parameter(String name, String value) {
