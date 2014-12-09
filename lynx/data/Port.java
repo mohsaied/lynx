@@ -29,18 +29,6 @@ public class Port {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, Direction direction, int width) {
-        this(name, direction, width, 1, PortType.UNKNOWN, null, false);
-    }
-
-    public Port(String name, Direction direction, int width, Module parentModule) {
-        this(name, direction, width, 1, PortType.UNKNOWN, parentModule, false);
-    }
-
-    public Port(String name, Direction direction, int width, int arrayWidth) {
-        this(name, direction, width, arrayWidth, PortType.UNKNOWN, null, false);
-    }
-
     public Port(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
         this(name, direction, width, arrayWidth, PortType.UNKNOWN, parentModule, false);
     }
