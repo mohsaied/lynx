@@ -319,12 +319,12 @@ public class XMLIO {
 
     private static void writeModulesAndConnections(Document doc, Element rootElement, Design design) {
 
-        Map<String, Module> modList = design.getModules();
+        List<Module> modList = design.getAllModules();
 
         List<Element> connectionElements = new ArrayList<Element>();
 
         // loop over modules
-        for (Module mod : modList.values()) {
+        for (Module mod : modList) {
 
             // new <module> tag
             Element modElement = doc.createElement("module");

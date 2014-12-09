@@ -16,9 +16,7 @@ public class Port {
     private Direction direction;
     private String name;
     private int width;
-    /**
-     * for 2D verilog ports
-     */
+    /** for 2D verilog ports */
     private int arrayWidth;
     private PortType type;
     private Module parentModule;

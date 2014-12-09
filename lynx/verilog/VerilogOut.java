@@ -71,7 +71,7 @@ public class VerilogOut {
     }
 
     private static void writeModules(Design design, PrintWriter writer) {
-        for (Module mod : design.getModules().values()) {
+        for (Module mod : design.getAllModules()) {
 
             writer.println(mod.getType() + " " + mod.getName() + " (");
 
