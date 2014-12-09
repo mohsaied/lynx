@@ -4,12 +4,13 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lynx.Interconnect.NocInterconnect;
 import lynx.data.Design;
 import lynx.data.Module;
 import lynx.main.Main;
-import lynx.noc.Interconnect;
 import lynx.verilog.VerilogOut;
 import lynx.xml.XmlDesign;
+import lynx.xml.XmlNoc;
 
 /**
  * Groups and keeps track of loggers
@@ -21,7 +22,7 @@ public class MyLogger {
 
     // classes that contain loggers
     private final String[] classes = { Main.class.getName(), XmlDesign.class.getName(), Design.class.getName(),
-            Module.class.getName(), VerilogOut.class.getName(), Interconnect.class.getName() };
+            Module.class.getName(), VerilogOut.class.getName(), NocInterconnect.class.getName(), XmlNoc.class.getName() };
 
     public MyLogger() {
 

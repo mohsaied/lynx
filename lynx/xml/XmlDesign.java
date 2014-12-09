@@ -72,7 +72,7 @@ public class XmlDesign {
         // could also disconnect them from my DOM after processing
         for (int i = 0; i < nodeList.getLength(); i++) {
 
-            // We have encountered a <Module> tag
+            // We have encountered an xml tag
             Node node = nodeList.item(i);
 
             if (node instanceof Element) {

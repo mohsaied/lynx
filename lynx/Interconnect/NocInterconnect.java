@@ -1,6 +1,11 @@
-package lynx.noc;
+package lynx.Interconnect;
 
+import java.io.IOException;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import lynx.data.Design;
 import lynx.data.MyEnums.*;
@@ -11,6 +16,7 @@ import lynx.data.Noc;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.Translator;
+import lynx.xml.XmlNoc;
 
 /**
  * Utility class that adds NoC components and connects them to the design
@@ -18,11 +24,11 @@ import lynx.data.Translator;
  * @author Mohamed
  *
  */
-public class Interconnect {
+public class NocInterconnect {
 
-    private static final Logger log = Logger.getLogger(Interconnect.class.getName());
+    private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
-    public static void addNoc(Design design) {
+    public static void addNoc(Design design) throws ParserConfigurationException, SAXException, IOException {
         log.info("Adding NoC circuitry...");
 
         insertNocInterface(design);
@@ -30,8 +36,9 @@ public class Interconnect {
         insertTranslators(design);
     }
 
-    private static void insertNocInterface(Design design) {
-        Noc nocInterface = new Noc();
+    private static void insertNocInterface(Design design) throws ParserConfigurationException, SAXException,
+            IOException {
+        Noc nocInterface = XmlNoc.readXMLNoC("designs/noc.xml");
 
         // parameters
         nocInterface.addParameter(new Parameter("WIDTH_NOC", "150"));
