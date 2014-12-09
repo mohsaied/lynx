@@ -20,6 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.MyEnums.*;
+import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
@@ -78,7 +79,7 @@ public class XMLIO {
 
                 switch (node.getNodeName()) {
                 case "module":
-                    Module mod = parseModule(node, design);
+                    DesignModule mod = parseModule(node, design);
                     design.addModule(mod);
                     break;
                 case "port":
@@ -155,11 +156,11 @@ public class XMLIO {
 
     }
 
-    private static Module parseModule(Node node, Design design) {
+    private static DesignModule parseModule(Node node, Design design) {
         String modName = node.getAttributes().getNamedItem("name").getNodeValue();
         String modType = node.getAttributes().getNamedItem("type").getNodeValue();
 
-        Module mod = new Module(modType, modName);
+        DesignModule mod = new DesignModule(modType, modName);
 
         NodeList childNodes = node.getChildNodes();
         for (int j = 0; j < childNodes.getLength(); j++) {
@@ -336,7 +337,8 @@ public class XMLIO {
 
             connectionElements.addAll(writePortsAndFindConnections(doc, modElement, mod));
 
-            writeBundles(doc, modElement, mod);
+            if (mod instanceof DesignModule)
+                writeBundles(doc, modElement, (DesignModule) mod);
 
             rootElement.appendChild(modElement);
         }
@@ -346,7 +348,7 @@ public class XMLIO {
         }
     }
 
-    private static void writeBundles(Document doc, Element modElement, Module mod) {
+    private static void writeBundles(Document doc, Element modElement, DesignModule mod) {
 
         for (Bundle bun : mod.getBundles()) {
             Element bunElement = doc.createElement("Bundle");

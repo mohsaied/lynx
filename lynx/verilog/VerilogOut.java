@@ -52,7 +52,7 @@ public class VerilogOut {
         // loop over all ports in the design, create a wire for each output port
         // it may be feeding multiple input ports -- that's why
 
-        for (Module mod : design.getModules().values()) {
+        for (Module mod : design.getAllModules()) {
             writer.println("//wires for the outputs in Module " + mod.getName());
             for (Port por : mod.getPorts().values()) {
                 if (por.getDirection() == Direction.OUTPUT) {

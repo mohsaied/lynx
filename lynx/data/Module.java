@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author Mohamed
  *
  */
-public class Module {
+public abstract class Module {
 
     private static final Logger log = Logger.getLogger(Module.class.getName());
 
@@ -20,8 +20,6 @@ public class Module {
     protected String name;
     protected List<Parameter> parameters;
     protected Map<String, Port> ports;
-
-    private List<Bundle> bundles;
 
     public Module() {
         this(null, null);
@@ -36,7 +34,6 @@ public class Module {
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new HashMap<String, Port>();
-        this.bundles = new ArrayList<Bundle>();
         log.info("Creating new Module, name: " + name + ", type: " + type);
     }
 
@@ -74,14 +71,6 @@ public class Module {
 
     public final void addPort(Port port) {
         this.ports.put(port.getName(), port);
-    }
-
-    public List<Bundle> getBundles() {
-        return bundles;
-    }
-
-    public void addBundle(Bundle bun) {
-        bundles.add(bun);
     }
 
     @Override

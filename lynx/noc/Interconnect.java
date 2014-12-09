@@ -5,7 +5,9 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.data.MyEnums.*;
 import lynx.data.Bundle;
+import lynx.data.DesignModule;
 import lynx.data.Module;
+import lynx.data.Noc;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.Translator;
@@ -23,46 +25,46 @@ public class Interconnect {
     public static void addNoc(Design design) {
         log.info("Adding NoC circuitry...");
 
-        insertFabricInterface(design);
+        insertNocInterface(design);
 
         insertTranslators(design);
     }
 
-    private static void insertFabricInterface(Design design) {
-        Module fabricInterface = new Module("fabric_interface", "fi_inst");
+    private static void insertNocInterface(Design design) {
+        Noc nocInterface = new Noc();
 
         // parameters
-        fabricInterface.addParameter(new Parameter("WIDTH_NOC", "150"));
-        fabricInterface.addParameter(new Parameter("WIDTH_RTL", "600"));
-        fabricInterface.addParameter(new Parameter("N", "16"));
-        fabricInterface.addParameter(new Parameter("NUM_VC", "2"));
-        fabricInterface.addParameter(new Parameter("DEPTH_PER_VC", "16"));
-        fabricInterface.addParameter(new Parameter("VERBOSE", "1"));
-        fabricInterface.addParameter(new Parameter("VC_ADDRESS_WIDTH", "$clog2(NUM_VC)"));
-        fabricInterface.addParameter(new Parameter("[VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1]",
+        nocInterface.addParameter(new Parameter("WIDTH_NOC", "150"));
+        nocInterface.addParameter(new Parameter("WIDTH_RTL", "600"));
+        nocInterface.addParameter(new Parameter("N", "16"));
+        nocInterface.addParameter(new Parameter("NUM_VC", "2"));
+        nocInterface.addParameter(new Parameter("DEPTH_PER_VC", "16"));
+        nocInterface.addParameter(new Parameter("VERBOSE", "1"));
+        nocInterface.addParameter(new Parameter("VC_ADDRESS_WIDTH", "$clog2(NUM_VC)"));
+        nocInterface.addParameter(new Parameter("[VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1]",
                 "'{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"));
 
         // ports
-        fabricInterface.addPort(new Port("clk_noc", Direction.INPUT, 1, 1, fabricInterface));
-        fabricInterface.addPort(new Port("rst", Direction.INPUT, 1, 1, fabricInterface));
-        fabricInterface.addPort(new Port("clk_rtl", Direction.INPUT, 16, 1, fabricInterface));
-        fabricInterface.addPort(new Port("clk_int", Direction.INPUT, 16, 1, fabricInterface));
+        nocInterface.addPort(new Port("clk_noc", Direction.INPUT, 1, 1, nocInterface));
+        nocInterface.addPort(new Port("rst", Direction.INPUT, 1, 1, nocInterface));
+        nocInterface.addPort(new Port("clk_rtl", Direction.INPUT, 16, 1, nocInterface));
+        nocInterface.addPort(new Port("clk_int", Direction.INPUT, 16, 1, nocInterface));
 
-        fabricInterface.addPort(new Port("i_packets_in", Direction.INPUT, 600, 16, fabricInterface));
-        fabricInterface.addPort(new Port("i_valids_in", Direction.INPUT, 1, 16, fabricInterface));
-        fabricInterface.addPort(new Port("i_readys_out", Direction.OUTPUT, 1, 16, fabricInterface));
+        nocInterface.addPort(new Port("i_packets_in", Direction.INPUT, 600, 16, nocInterface));
+        nocInterface.addPort(new Port("i_valids_in", Direction.INPUT, 1, 16, nocInterface));
+        nocInterface.addPort(new Port("i_readys_out", Direction.OUTPUT, 1, 16, nocInterface));
 
-        fabricInterface.addPort(new Port("o_packets_out", Direction.OUTPUT, 600, 16, fabricInterface));
-        fabricInterface.addPort(new Port("o_valids_out", Direction.OUTPUT, 1, 16, fabricInterface));
-        fabricInterface.addPort(new Port("o_readys_in", Direction.INPUT, 1, 16, fabricInterface));
+        nocInterface.addPort(new Port("o_packets_out", Direction.OUTPUT, 600, 16, nocInterface));
+        nocInterface.addPort(new Port("o_valids_out", Direction.OUTPUT, 1, 16, nocInterface));
+        nocInterface.addPort(new Port("o_readys_in", Direction.INPUT, 1, 16, nocInterface));
 
-        design.setFabricInterface(fabricInterface);
+        design.setFabricInterface(nocInterface);
     }
 
     private static void insertTranslators(Design design) {
 
         // loop over all modules and insert translators
-        for (Module mod : design.getModules().values()) {
+        for (DesignModule mod : design.getModules().values()) {
             for (Bundle bun : mod.getBundles()) {
                 switch (bun.getDirection()) {
                 case INPUT:

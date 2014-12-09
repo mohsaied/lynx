@@ -15,3 +15,5 @@
 /Port$Direction.class
 /Port$PortType.class
 /Translator.class
+/DesignModule.class
+/Noc.class

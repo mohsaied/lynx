@@ -2,6 +2,12 @@ package lynx.data;
 
 import lynx.data.MyEnums.Direction;
 
+/**
+ * Translators are modules between a DesignModule bundle and an Noc
+ * 
+ * @author Mohamed
+ *
+ */
 public class Translator extends Module {
 
     private Module parentModule;
