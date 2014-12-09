@@ -1,4 +1,4 @@
-package lynx.Interconnect;
+package lynx.interconnect;
 
 import java.io.IOException;
 import java.util.logging.Logger;

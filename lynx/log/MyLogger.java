@@ -4,9 +4,9 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lynx.Interconnect.NocInterconnect;
 import lynx.data.Design;
 import lynx.data.Module;
+import lynx.interconnect.NocInterconnect;
 import lynx.main.Main;
 import lynx.verilog.VerilogOut;
 import lynx.xml.XmlDesign;

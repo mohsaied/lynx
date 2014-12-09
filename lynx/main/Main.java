@@ -2,8 +2,8 @@ package lynx.main;
 
 import java.util.logging.Level;
 
-import lynx.Interconnect.NocInterconnect;
 import lynx.data.Design;
+import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
 import lynx.xml.XmlDesign;
 import lynx.verilog.VerilogOut;
