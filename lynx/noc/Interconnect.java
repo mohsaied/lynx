@@ -3,6 +3,7 @@ package lynx.noc;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
+import lynx.data.MyEnums.*;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
@@ -16,11 +17,13 @@ import lynx.data.Port;
 public class Interconnect {
 
     private static final Logger log = Logger.getLogger(Interconnect.class.getName());
-    
+
     public static void addNoc(Design design) {
         log.info("Adding NoC circuitry...");
-        
+
         insertFabricInterface(design);
+
+        insertTranslators(design);
     }
 
     private static void insertFabricInterface(Design design) {
@@ -38,21 +41,28 @@ public class Interconnect {
                 "'{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"));
 
         // ports
-        FabricInterface.addPort(new Port("clk_noc", "input", 1, 1, FabricInterface));
-        FabricInterface.addPort(new Port("rst", "input", 1, 1, FabricInterface));
-        FabricInterface.addPort(new Port("clk_rtl", "input", 16, 1, FabricInterface));
-        FabricInterface.addPort(new Port("clk_int", "input", 16, 1, FabricInterface));
+        FabricInterface.addPort(new Port("clk_noc", Direction.INPUT, 1, 1, FabricInterface));
+        FabricInterface.addPort(new Port("rst", Direction.INPUT, 1, 1, FabricInterface));
+        FabricInterface.addPort(new Port("clk_rtl", Direction.INPUT, 16, 1, FabricInterface));
+        FabricInterface.addPort(new Port("clk_int", Direction.INPUT, 16, 1, FabricInterface));
 
-        FabricInterface.addPort(new Port("i_packets_in", "input", 600, 16, FabricInterface));
-        FabricInterface.addPort(new Port("i_valids_in", "input", 1, 16, FabricInterface));
-        FabricInterface.addPort(new Port("i_readys_out", "output", 1, 16, FabricInterface));
+        FabricInterface.addPort(new Port("i_packets_in", Direction.INPUT, 600, 16, FabricInterface));
+        FabricInterface.addPort(new Port("i_valids_in", Direction.INPUT, 1, 16, FabricInterface));
+        FabricInterface.addPort(new Port("i_readys_out", Direction.OUTPUT, 1, 16, FabricInterface));
 
-        FabricInterface.addPort(new Port("o_packets_out", "output", 600, 16, FabricInterface));
-        FabricInterface.addPort(new Port("o_valids_out", "output", 1, 16, FabricInterface));
-        FabricInterface.addPort(new Port("o_readys_in", "input", 1, 16, FabricInterface));
+        FabricInterface.addPort(new Port("o_packets_out", Direction.OUTPUT, 600, 16, FabricInterface));
+        FabricInterface.addPort(new Port("o_valids_out", Direction.OUTPUT, 1, 16, FabricInterface));
+        FabricInterface.addPort(new Port("o_readys_in", Direction.INPUT, 1, 16, FabricInterface));
 
         design.addModule(FabricInterface);
     }
 
+    private static void insertTranslators(Design design) {
+
+        // TODO loop over all modules and insert one or two translators
+        // Number of translators depends on whether one or both interfaces
+        // connect to NoC
+
+    }
 
 }

@@ -21,9 +21,9 @@ public class VerilogOut {
 
     public static void writeVerilogDesign(Design design) throws FileNotFoundException, UnsupportedEncodingException {
 
-        log.info("Writing out design to " + design.getName() + ".v");
+        log.info("Writing out design to " + design.getType() + ".v");
 
-        PrintWriter writer = new PrintWriter("designs/" + design.getName() + ".v", "UTF-8");
+        PrintWriter writer = new PrintWriter("designs/" + design.getType() + ".v", "UTF-8");
 
         writePreamble(design, writer);
 
@@ -43,7 +43,7 @@ public class VerilogOut {
         writer.println("//wires for the top-level");
         for (Port por : design.getPorts().values()) {
             if (por.getDirection().equals("output")) {
-                writeWire(por,writer);
+                writeWire(por, writer);
             }
         }
         writer.println();
@@ -62,7 +62,6 @@ public class VerilogOut {
         }
 
     }
-
 
     private static void writeWire(Port por, PrintWriter writer) {
         String widthPart = getWidthPart(por);
@@ -85,7 +84,7 @@ public class VerilogOut {
     }
 
     private static void writeInterface(Design design, PrintWriter writer) {
-        writer.println("module " + design.getName());
+        writer.println("module " + design.getType());
         writer.println("(");
 
         int numPorts = design.getPorts().size();

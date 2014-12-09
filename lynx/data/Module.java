@@ -21,6 +21,8 @@ public class Module {
     protected List<Parameter> parameters;
     protected Map<String, Port> ports;
 
+    private List<Bundle> bundles;
+
     public Module() {
         this(null, null);
     }
@@ -34,6 +36,7 @@ public class Module {
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new HashMap<String, Port>();
+        this.bundles = new ArrayList<Bundle>();
         log.info("Creating new Module, name: " + name + ", type: " + type);
     }
 
@@ -57,10 +60,6 @@ public class Module {
         return parameters;
     }
 
-    public final void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
     public final void addParameter(Parameter parameter) {
         this.parameters.add(parameter);
     }
@@ -69,16 +68,20 @@ public class Module {
         return ports;
     }
 
-    public final void setPorts(Map<String, Port> ports) {
-        this.ports = ports;
-    }
-
     public final Port getPortByName(String porName) {
         return ports.get(porName);
     }
 
     public final void addPort(Port port) {
         this.ports.put(port.getName(), port);
+    }
+
+    public List<Bundle> getBundles() {
+        return bundles;
+    }
+
+    public void addBundle(Bundle bun) {
+        bundles.add(bun);
     }
 
     @Override

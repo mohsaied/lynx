@@ -5,3 +5,12 @@
 /NewDesign.class
 /InterfacePort.class
 /ModulePort.class
+/Bundle.class
+/Direction.class
+/MyEnums.class
+/Type.class
+/PortType.class
+/MyEnums$Direction.class
+/MyEnums$PortType.class
+/Port$Direction.class
+/Port$PortType.class

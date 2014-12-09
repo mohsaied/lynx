@@ -30,10 +30,6 @@ public class Design extends Module {
         return modules;
     }
 
-    public final void setModules(Map<String, Module> modules) {
-        this.modules = modules;
-    }
-
     public final void addModule(Module currModule) {
         this.modules.put(currModule.getName(), currModule);
     }

@@ -4,13 +4,15 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port direction="input" width="16" name="i_x"/>
-	<port direction="input" width="1" name="i_valid_in"/>
-	<port direction="output" width="1" name="i_ready_out"/>
+	<port direction="input" width="16" name="i_x" type="data"/>
+	<port direction="input" width="1" name="i_valid_in" type="valid"/>
+	<port direction="output" width="1" name="i_ready_out" type="ready"/>
 	
-	<port direction="output" width="16" name="o_y"/>
-	<port direction="output" width="1" name="o_valid_out"/>
-	<port direction="input" width="1" name="o_ready_in"/>
+	<bundle>
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
 	
   </module>
   
@@ -18,30 +20,36 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port direction="input" width="16" name="i_x"/>
-	<port direction="input" width="1" name="i_valid_in"/>
-	<port direction="output" width="1" name="i_ready_out"/>
+	<bundle>
+		<port direction="input" width="16" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
 	
-	<port direction="output" width="16" name="o_y"/>
-	<port direction="output" width="1" name="o_valid_out"/>
-	<port direction="input" width="1" name="o_ready_in"/>
+	<bundle>
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
 	
   </module>
   <module type="add_c" name="addc_inst">
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<port direction="input" width="16" name="i_x"/>
-	<port direction="input" width="1" name="i_valid_in"/>
-	<port direction="output" width="1" name="i_ready_out"/>
+	<bundle>
+		<port direction="input" width="16" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
 	
-	<port direction="output" width="16" name="o_y"/>
-	<port direction="output" width="1" name="o_valid_out"/>
-	<port direction="input" width="1" name="o_ready_in"/>
+	<port direction="output" width="16" name="o_y" type="data"/>
+	<port direction="output" width="1" name="o_valid_out" type="valid"/>
+	<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	
   </module>
   
-  <!-- Must parse modules before connections and interfaces, can remove that restriction later -->
+  <!-- Must parse modules before connections and bundles, can remove that restriction later -->
   
   <!-- Connections -->
   
@@ -64,7 +72,7 @@
   <wire top="y_ready_in" sub="addc_inst.o_ready_in"/>
   
   
-  <!-- interfaces -->
+  <!-- bundles -->
   
   <port direction="input" width="16" name="x_in"/>
   <port direction="input" width="1" name="x_valid_in"/>

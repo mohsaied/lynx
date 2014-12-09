@@ -17,7 +17,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import lynx.data.Bundle;
 import lynx.data.Design;
+import lynx.data.MyEnums.*;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
@@ -80,7 +82,7 @@ public class XMLIO {
                     design.addModule(mod);
                     break;
                 case "port":
-                    Port intPort = parsePort(node, design);
+                    Port intPort = parsePort(node, design, false);
                     design.addPort(intPort);
                     break;
                 case "parameter":
@@ -119,7 +121,7 @@ public class XMLIO {
         String topPort = node.getAttributes().getNamedItem("top").getNodeValue();
 
         String[] sub = node.getAttributes().getNamedItem("sub").getNodeValue().split("\\.");
-        assert (sub.length != 2);
+        assert sub.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + sub;
         String subMod = sub[0];
         String subPort = sub[1];
 
@@ -134,12 +136,12 @@ public class XMLIO {
     private static void parseConnection(Node node, Design design) {
 
         String[] start = node.getAttributes().getNamedItem("start").getNodeValue().split("\\.");
-        assert (start.length != 2);
+        assert start.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + start;
         String startMod = start[0];
         String startPort = start[1];
 
         String[] end = node.getAttributes().getNamedItem("end").getNodeValue().split("\\.");
-        assert (end.length != 2);
+        assert end.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + end;
         String endMod = end[0];
         String endPort = end[1];
 
@@ -173,13 +175,57 @@ public class XMLIO {
                     mod.addParameter(par);
                     break;
                 case "port":
-                    Port por = parsePort(cNode, mod);
+                    Port por = parsePort(cNode, mod, false);
                     mod.addPort(por);
                     break;
+                case "bundle":
+                    Bundle bun = parseBundle(cNode, mod);
+                    mod.addBundle(bun);
+                    break;
+                default:
+                    assert false : "Unexpected tag \"" + cNode.getNodeName() + "\"";
                 }
             }
         }
         return mod;
+    }
+
+    private static Bundle parseBundle(Node node, Module mod) {
+        Bundle bun = new Bundle();
+
+        // loop over the ports in a bundle
+        NodeList childNodes = node.getChildNodes();
+        for (int j = 0; j < childNodes.getLength(); j++) {
+            Node cNode = childNodes.item(j);
+
+            // Identifying the child tag of Module encountered
+            if (cNode instanceof Element) {
+                if (cNode.getNodeName().equals("port")) {
+
+                    // parse this port and add it to module
+                    Port por = parsePort(cNode, mod, true);
+                    mod.addPort(por);
+
+                    // now add this port to the bundle
+                    switch (por.getType()) {
+                    case DATA:
+                        bun.addDataPort(por);
+                        break;
+                    case VALID:
+                        bun.setValidPort(por);
+                        break;
+                    case READY:
+                        bun.setReadyPort(por);
+                        break;
+                    default:
+                        assert false : "\"" + por.getType()
+                                + "\" is unexpected in a bundle, only data/valid/ready allowed";
+                    }
+                }
+            }
+        }
+
+        return bun;
     }
 
     private static Parameter parseParameter(Node node, Module mod) {
@@ -188,14 +234,21 @@ public class XMLIO {
         return new Parameter(name, value);
     }
 
-    private static Port parsePort(Node node, Module mod) {
+    private static Port parsePort(Node node, Module mod, boolean bundled) {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
-        String direction = node.getAttributes().getNamedItem("direction").getNodeValue();
+        Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
+                : Direction.OUTPUT;
+        PortType type = PortType.UNKNOWN;
+        if (node.getAttributes().getNamedItem("type") != null) {
+            String typeString = node.getAttributes().getNamedItem("type").getNodeValue();
+            type = typeString.equals("data") ? PortType.DATA : typeString.equals("valid") ? PortType.VALID : typeString
+                    .equals("ready") ? PortType.READY : PortType.UNKNOWN;
+        }
         int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
         int arrayWidth = 1; // leave this attribute optional
         if (node.getAttributes().getNamedItem("array_width") != null)
             arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
-        return new Port(pname, direction, width, arrayWidth, mod);
+        return new Port(pname, direction, width, arrayWidth, type, mod, bundled);
     }
 
     /**
@@ -217,7 +270,7 @@ public class XMLIO {
         // root element is called <design>
         Document doc = builder.newDocument();
         Element rootElement = doc.createElement("design");
-        rootElement.setAttribute("name", design.getName());
+        rootElement.setAttribute("name", design.getType());
         doc.appendChild(rootElement);
 
         log.info("Writing Design " + design.getName() + " to " + outputFileName);
@@ -255,7 +308,7 @@ public class XMLIO {
     private static void writeTopLevelPorts(Document doc, Element rootElement, Design design) {
         for (Port intPort : design.getPorts().values()) {
             Element intPorElement = doc.createElement("port");
-            intPorElement.setAttribute("direction", intPort.getDirection());
+            intPorElement.setAttribute("direction", intPort.getDirectionString());
             intPorElement.setAttribute("name", intPort.getName());
             intPorElement.setAttribute("width", Integer.toString(intPort.getWidth()));
             if (intPort.getArrayWidth() != 1)
@@ -283,12 +336,28 @@ public class XMLIO {
 
             connectionElements.addAll(writePortsAndFindConnections(doc, modElement, mod));
 
+            writeBundles(doc, modElement, mod);
+
             rootElement.appendChild(modElement);
         }
 
         for (Element conElement : connectionElements) {
             rootElement.appendChild(conElement);
         }
+    }
+
+    private static void writeBundles(Document doc, Element modElement, Module mod) {
+
+        for (Bundle bun : mod.getBundles()) {
+            Element bunElement = doc.createElement("Bundle");
+
+            for (Port por : bun.getAllPorts()) {
+                writePort(doc, bunElement, por);
+            }
+
+            modElement.appendChild(bunElement);
+        }
+
     }
 
     private static List<Element> writePortsAndFindConnections(Document doc, Element modElement, Module mod) {
@@ -298,13 +367,9 @@ public class XMLIO {
         // loop over ports
         Map<String, Port> porList = mod.getPorts();
         for (Port por : porList.values()) {
-            Element porElement = doc.createElement("port");
-            porElement.setAttribute("name", por.getName());
-            porElement.setAttribute("direction", por.getDirection());
-            porElement.setAttribute("width", Integer.toString(por.getWidth()));
-            if (por.getArrayWidth() != 1)
-                porElement.setAttribute("arrray_width", Integer.toString(por.getArrayWidth()));
-            modElement.appendChild(porElement);
+
+            if (!por.isBundled())
+                writePort(doc, modElement, por);
 
             // find the list of connections
             // only go over input ports and find connections
@@ -318,6 +383,18 @@ public class XMLIO {
         }
 
         return connectionElements;
+    }
+
+    private static void writePort(Document doc, Element parentElement, Port por) {
+        Element porElement = doc.createElement("port");
+        porElement.setAttribute("name", por.getName());
+        porElement.setAttribute("direction", por.getDirectionString());
+        porElement.setAttribute("width", Integer.toString(por.getWidth()));
+        if (por.getType() != PortType.UNKNOWN)
+            porElement.setAttribute("type", por.getTypeString());
+        if (por.getArrayWidth() != 1)
+            porElement.setAttribute("arrray_width", Integer.toString(por.getArrayWidth()));
+        parentElement.appendChild(porElement);
     }
 
     private static void writeParameters(Document doc, Element modElement, Module mod) {

@@ -3,6 +3,8 @@ package lynx.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import lynx.data.MyEnums.*;
+
 /**
  * The input/output ports of a Verilog module.
  * 
@@ -11,47 +13,65 @@ import java.util.List;
  */
 public class Port {
 
-    private String direction;
+    private Direction direction;
     private String name;
     private int width;
     /**
      * for 2D verilog ports
      */
     private int arrayWidth;
+    private PortType type;
     private Module parentModule;
 
     private List<Port> connections;
 
+    private boolean isBundled;
+
     public Port() {
-        this(null, null, 0, 1, null);
+        this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, String direction, int width) {
-        this(name, direction, width, 1, null);
+    public Port(String name, Direction direction, int width) {
+        this(name, direction, width, 1, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, String direction, int width, Module parentModule) {
-        this(name, direction, width, 1, parentModule);
+    public Port(String name, Direction direction, int width, Module parentModule) {
+        this(name, direction, width, 1, PortType.UNKNOWN, parentModule, false);
     }
 
-    public Port(String name, String direction, int width, int arrayWidth) {
-        this(name, direction, width, arrayWidth, null);
+    public Port(String name, Direction direction, int width, int arrayWidth) {
+        this(name, direction, width, arrayWidth, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, String direction, int width, int arrayWidth, Module parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
+        this(name, direction, width, arrayWidth, PortType.UNKNOWN, null, false);
+    }
+
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule) {
+        this(name, direction, width, arrayWidth, type, parentModule, false);
+    }
+
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
+            boolean isBundled) {
         this.name = name;
         this.direction = direction;
         this.width = width;
         this.arrayWidth = arrayWidth;
+        this.type = type;
         this.parentModule = parentModule;
         connections = new ArrayList<Port>();
+        this.isBundled = isBundled;
     }
 
-    public final String getDirection() {
+    public final Direction getDirection() {
         return direction;
     }
 
-    public final void setDirection(String direction) {
+    public String getDirectionString() {
+        return direction.toString();
+    }
+
+    public final void setDirection(Direction direction) {
         this.direction = direction;
     }
 
@@ -87,6 +107,18 @@ public class Port {
         this.arrayWidth = arrayWidth;
     }
 
+    public PortType getType() {
+        return type;
+    }
+
+    public String getTypeString() {
+        return type.toString();
+    }
+
+    public void setType(PortType type) {
+        this.type = type;
+    }
+
     public final Module getParentModule() {
         return parentModule;
     }
@@ -99,12 +131,16 @@ public class Port {
         return connections;
     }
 
-    public final void setConnections(List<Port> connections) {
-        this.connections = connections;
-    }
-
     public final void addConnection(Port por) {
         this.connections.add(por);
+    }
+
+    public boolean isBundled() {
+        return isBundled;
+    }
+
+    public void setBundled(boolean isBundled) {
+        this.isBundled = isBundled;
     }
 
     @Override
