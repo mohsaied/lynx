@@ -1,6 +1,8 @@
 package lynx.xml;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,17 +15,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import lynx.data.Noc;
-
 public class XmlNoc {
 
     private static final Logger log = Logger.getLogger(XmlNoc.class.getName());
 
-    public static Noc readXMLNoC(String nocPath) throws ParserConfigurationException, SAXException, IOException {
+    public static Map<String, Integer> readXMLNoC(String nocPath) throws ParserConfigurationException, SAXException,
+            IOException {
 
         log.info("Parsing NoC description file " + nocPath);
 
-        Noc noc = new Noc();
+        Map<String, Integer> varMap = new HashMap<String, Integer>();
 
         // Get the DOM Builder Factory
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -49,28 +50,14 @@ public class XmlNoc {
 
             if (node instanceof Element && node.getNodeName().equals("parameter")) {
 
-                switch (node.getAttributes().getNamedItem("name").getNodeValue()) {
-                case "width":
-                    nocWidth = Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
-                    break;
-                case "num_routers":
-                    nocNumRouters = Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
-                    break;
-                case "num_vcs":
-                    nocNumVcs = Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
-                    break;
-                case "vc_depth":
-                    nocVcDepth = Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue());
-                    break;
-                }
+                String parName = node.getAttributes().getNamedItem("name").getNodeValue();
+                varMap.put(parName, Integer.parseInt(node.getAttributes().getNamedItem("value").getNodeValue()));
             }
         }
 
         log.info("Found NoC with width=" + nocWidth + ", num_routers=" + nocNumRouters + ", num_vcs=" + nocNumVcs
                 + ", vc_depth=" + nocVcDepth);
 
-        noc.configureNoC(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth);
-
-        return noc;
+        return varMap;
     }
 }

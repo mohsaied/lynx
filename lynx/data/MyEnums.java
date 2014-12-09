@@ -39,4 +39,20 @@ public class MyEnums {
         }
     }
 
+    public enum TranslatorType {
+        PACKETIZER("packetizer"), 
+        DEPACKETIZER("depacketizer");
+
+        private final String name;
+
+        private TranslatorType(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
 }

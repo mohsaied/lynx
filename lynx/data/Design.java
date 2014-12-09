@@ -60,7 +60,7 @@ public class Design extends Module {
         return this.modules.get(modName);
     }
 
-    public Module getFabricInterface() {
+    public Noc getFabricInterface() {
         return nocInterface;
     }
 

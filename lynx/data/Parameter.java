@@ -19,6 +19,11 @@ public class Parameter {
         this.name = name;
         this.value = value;
     }
+    
+    public Parameter(String name, int value) {
+        this.name = name;
+        this.value = Integer.toString(value);
+    }
 
     public final String getName() {
         return name;
