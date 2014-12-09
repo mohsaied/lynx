@@ -8,6 +8,7 @@ import lynx.data.Bundle;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.data.Translator;
 
 /**
  * Utility class that adds NoC components and connects them to the design
@@ -78,7 +79,7 @@ public class Interconnect {
     }
 
     private static void insertPacketizer(Bundle bun, Module mod, Design design) {
-        Module packetizer = new Module("packetizer", mod.getName() + "_pkt");
+        Translator packetizer = new Translator("packetizer", mod.getName() + "_pkt", mod, bun);
 
         int width = bun.getWidth();
         String widthString = Integer.toString(width);
@@ -104,7 +105,7 @@ public class Interconnect {
     }
 
     private static void insertDepacketizer(Bundle bun, Module mod, Design design) {
-        Module depacketizer = new Module("depacketizer", mod.getName() + "_depkt");
+        Translator depacketizer = new Translator("depacketizer", mod.getName() + "_depkt", mod, bun);
 
         int width = bun.getWidth();
         String widthString = Integer.toString(width);
