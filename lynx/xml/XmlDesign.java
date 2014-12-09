@@ -31,9 +31,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class XMLIO {
+public class XmlDesign {
 
-    private static final Logger log = Logger.getLogger(XMLIO.class.getName());
+    private static final Logger log = Logger.getLogger(XmlDesign.class.getName());
 
     /**
      * Read an XML file describing a design, parse it and create a List of

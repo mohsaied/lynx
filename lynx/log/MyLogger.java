@@ -9,7 +9,7 @@ import lynx.data.Module;
 import lynx.main.Main;
 import lynx.noc.Interconnect;
 import lynx.verilog.VerilogOut;
-import lynx.xml.XMLIO;
+import lynx.xml.XmlDesign;
 
 /**
  * Groups and keeps track of loggers
@@ -20,7 +20,7 @@ import lynx.xml.XMLIO;
 public class MyLogger {
 
     // classes that contain loggers
-    private final String[] classes = { Main.class.getName(), XMLIO.class.getName(), Design.class.getName(),
+    private final String[] classes = { Main.class.getName(), XmlDesign.class.getName(), Design.class.getName(),
             Module.class.getName(), VerilogOut.class.getName(), Interconnect.class.getName() };
 
     public MyLogger() {

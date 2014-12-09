@@ -9,8 +9,11 @@ package lynx.data;
  */
 public class Noc extends Module {
 
+    private static final String nocName = "fabric_interface";
+    private static final String nocInstName = "fi_inst";
+
     public Noc() {
-        super("fabric_interface", "fi_inst");
+        super(nocName, nocInstName);
     }
 
 }
