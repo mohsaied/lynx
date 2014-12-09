@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.data.Module;
 import lynx.data.Port;
+import lynx.data.MyEnums.Direction;
 
 /**
  * Functions to write design to Verilog
@@ -42,7 +43,7 @@ public class VerilogOut {
 
         writer.println("//wires for the top-level");
         for (Port por : design.getPorts().values()) {
-            if (por.getDirection().equals("output")) {
+            if (por.getDirection() == Direction.OUTPUT) {
                 writeWire(por, writer);
             }
         }
@@ -54,7 +55,7 @@ public class VerilogOut {
         for (Module mod : design.getModules().values()) {
             writer.println("//wires for the outputs in Module " + mod.getName());
             for (Port por : mod.getPorts().values()) {
-                if (por.getDirection().equals("output")) {
+                if (por.getDirection() == Direction.OUTPUT) {
                     writeWire(por, writer);
                 }
             }

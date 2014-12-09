@@ -44,7 +44,7 @@ public class Port {
     }
 
     public Port(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
-        this(name, direction, width, arrayWidth, PortType.UNKNOWN, null, false);
+        this(name, direction, width, arrayWidth, PortType.UNKNOWN, parentModule, false);
     }
 
     public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule) {
