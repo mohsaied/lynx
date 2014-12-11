@@ -42,12 +42,20 @@ public class Noc extends Module {
 
     public Noc() {
         super(nocName, nocInstName);
+        
         configureNoC(defaultNocWidth, defaultNocNumRouters, defaultNocNumVcs, defaultNocVcDepth);
+        calculateDerivedParameters();
+        addNocParameters();
+        addNocPorts();
     }
 
     public Noc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
         super(nocName, nocInstName);
+
         configureNoC(nocPath);
+        calculateDerivedParameters();
+        addNocParameters();
+        addNocPorts();
     }
 
     public void configureNoC(String nocPath) throws ParserConfigurationException, SAXException, IOException {
@@ -72,12 +80,13 @@ public class Noc extends Module {
             nocVcDepth = varMap.get(xmlVcDepth);
         else
             nocVcDepth = defaultNocVcDepth;
+    }
 
-        calculateDerivedParameters();
-
-        addNocParameters();
-
-        addNocPorts();
+    private void configureNoC(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth) {
+        this.nocWidth = nocWidth;
+        this.nocNumRouters = nocNumRouters;
+        this.nocNumVcs = nocNumVcs;
+        this.nocVcDepth = nocVcDepth;
     }
 
     public int getWidth() {
@@ -106,15 +115,6 @@ public class Noc extends Module {
 
     public int getVcAddressWidth() {
         return this.nocVcAddressWidth;
-    }
-
-    private void configureNoC(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth) {
-        this.nocWidth = nocWidth;
-        this.nocNumRouters = nocNumRouters;
-        this.nocNumVcs = nocNumVcs;
-        this.nocVcDepth = nocVcDepth;
-
-        calculateDerivedParameters();
     }
 
     private void calculateDerivedParameters() {

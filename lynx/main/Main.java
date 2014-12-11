@@ -15,17 +15,20 @@ public class Main {
         @SuppressWarnings("unused")
         MyLogger log = new MyLogger(Level.INFO);
 
+        // read XML design
         Design design = XmlDesign.readXMLDesign("designs/quadratic.xml");
 
-        NocInterconnect.addNoc(design);
+        // add NoC circuitry - NoC and translators
+        NocInterconnect.addNoc(design, "designs/noc.xml");
 
+        // write out XML design
         XmlDesign.writeXMLDesign(design, "designs/out.xml");
 
+        // write out verilog design
         VerilogOut.writeVerilogDesign(design);
 
         // Printing the current design
         // System.out.println(design);
-
     }
 
 }

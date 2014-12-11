@@ -60,12 +60,12 @@ public class Design extends Module {
         return this.modules.get(modName);
     }
 
-    public Noc getFabricInterface() {
+    public Noc getNoc() {
         return nocInterface;
     }
 
-    public void setFabricInterface(Noc fabricInterface) {
-        this.nocInterface = fabricInterface;
+    public void setNoc(Noc nocInterface) {
+        this.nocInterface = nocInterface;
     }
 
     public List<Translator> getTranslators() {

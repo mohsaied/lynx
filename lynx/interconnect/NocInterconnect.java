@@ -25,18 +25,33 @@ public class NocInterconnect {
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
     public static void addNoc(Design design) throws ParserConfigurationException, SAXException, IOException {
-        log.info("Adding NoC circuitry...");
-
-        insertNocInterface(design);
-
-        insertTranslators(design);
+        addNoc(design, null);
     }
 
-    private static void insertNocInterface(Design design) throws ParserConfigurationException, SAXException,
+    public static void addNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException,
             IOException {
 
-        Noc nocInterface = new Noc("designs/noc.xml");
-        design.setFabricInterface(nocInterface);
+        // want to make sure that it's only called once
+        assert design.getNoc() == null : "NoC is already defined, will not overwrite!";
+
+        log.info("Adding NoC circuitry...");
+
+        insertNoc(design, nocPath);
+
+        insertTranslators(design);
+
+    }
+
+    private static void insertNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException,
+            IOException {
+
+        Noc noc;
+        if (nocPath == null)
+            noc = new Noc();
+        else
+            noc = new Noc(nocPath);
+
+        design.setNoc(noc);
     }
 
     private static void insertTranslators(Design design) {
@@ -59,12 +74,12 @@ public class NocInterconnect {
     }
 
     private static void insertPacketizer(Bundle bun, Module mod, Design design) {
-        Translator packetizer = new Translator(design.getFabricInterface(), mod, bun);
+        Translator packetizer = new Translator(design.getNoc(), mod, bun);
         design.addTranslator(packetizer);
     }
 
     private static void insertDepacketizer(Bundle bun, Module mod, Design design) {
-        Translator depacketizer = new Translator(design.getFabricInterface(), mod, bun);
+        Translator depacketizer = new Translator(design.getNoc(), mod, bun);
         design.addTranslator(depacketizer);
     }
 

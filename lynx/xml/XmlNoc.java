@@ -36,11 +36,6 @@ public class XmlNoc {
         // document contains the complete XML as a Tree
         Document document = builder.parse(ClassLoader.getSystemResourceAsStream(nocPath));
 
-        int nocWidth = -1;
-        int nocNumRouters = -1;
-        int nocNumVcs = -1;
-        int nocVcDepth = -1;
-
         // Iterating through the nodes and extracting the data
         NodeList nodeList = document.getDocumentElement().getChildNodes();
 
@@ -55,8 +50,8 @@ public class XmlNoc {
             }
         }
 
-        log.info("Found NoC with width=" + nocWidth + ", num_routers=" + nocNumRouters + ", num_vcs=" + nocNumVcs
-                + ", vc_depth=" + nocVcDepth);
+        log.info("Found NoC with width=" + varMap.get("width") + ", num_routers=" + varMap.get("num_routers") + ", num_vcs=" + varMap.get("num_vcs")
+                + ", vc_depth=" + varMap.get("vc_depth"));
 
         return varMap;
     }
