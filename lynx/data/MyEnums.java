@@ -17,6 +17,17 @@ public class MyEnums {
         public String toString() {
             return name;
         }
+        
+        public String toShortString() {
+            switch (name) {
+            case "input":
+                return "in";
+            case "output":
+                return "out";
+            default:
+                return "un";
+            }
+        }
     }
 
     public enum PortType {
@@ -26,6 +37,7 @@ public class MyEnums {
         DST("dst"),
         CLK("clk"), 
         RST("rst"), 
+        TOP("top"),
         UNKNOWN("unknown");
 
         private final String name;
