@@ -1,8 +1,5 @@
 package lynx.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lynx.data.MyEnums.*;
 
 /**
@@ -11,7 +8,7 @@ import lynx.data.MyEnums.*;
  * @author Mohamed
  * 
  */
-public final class Port {
+public class Port {
 
     private Direction direction;
     private String name;
@@ -20,8 +17,6 @@ public final class Port {
     private int arrayWidth;
     private PortType type;
     private Module parentModule;
-
-    private List<Port> connections;
 
     private boolean isBundled;
 
@@ -45,7 +40,6 @@ public final class Port {
         this.arrayWidth = arrayWidth;
         this.type = type;
         this.parentModule = parentModule;
-        connections = new ArrayList<Port>();
         this.isBundled = isBundled;
     }
 
@@ -113,14 +107,6 @@ public final class Port {
         this.parentModule = parentModule;
     }
 
-    public final List<Port> getConnections() {
-        return connections;
-    }
-
-    public final void addConnection(Port por) {
-        this.connections.add(por);
-    }
-
     public boolean isBundled() {
         return isBundled;
     }
@@ -132,11 +118,6 @@ public final class Port {
     @Override
     public String toString() {
         String s = "port: " + direction + " " + name + "(" + width + ")";
-        if (connections.size() != 0) {
-            s += ", connects to: ";
-            for (Port por : connections)
-                s += por.getName() + " in " + por.getParentModule().getName();
-        }
         return s;
     }
 
