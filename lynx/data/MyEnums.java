@@ -22,7 +22,8 @@ public class MyEnums {
     public enum PortType {
         DATA("data"), 
         VALID("valid"), 
-        READY("ready"), 
+        READY("ready"),  
+        DST("dst"),
         CLK("clk"), 
         RST("rst"), 
         UNKNOWN("unknown");

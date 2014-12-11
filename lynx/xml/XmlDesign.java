@@ -219,6 +219,9 @@ public class XmlDesign {
                     case READY:
                         bun.setReadyPort(por);
                         break;
+                    case DST:
+                        bun.setDstPort(por);
+                        break;
                     default:
                         assert false : "\"" + por.getType()
                                 + "\" is unexpected in a bundle, only data/valid/ready allowed";

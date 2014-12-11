@@ -19,16 +19,18 @@ public class Bundle {
     private Map<String, Port> dataPorts;
     private Port validPort;
     private Port readyPort;
+    private Port dstPort;
 
     private Direction direction;
     private int width;
-    
+
     private Translator translator;
 
     public Bundle() {
         dataPorts = new HashMap<String, Port>();
         validPort = null;
         readyPort = null;
+        dstPort = null;
         width = 0;
         direction = Direction.UNKNOWN;
         translator = null;
@@ -45,6 +47,7 @@ public class Bundle {
             direction = dataPort.getDirection();
 
         assert direction == dataPort.getDirection() : "Cannot bundle data ports with different directions";
+        assert (direction == Direction.OUTPUT) || (direction == Direction.INPUT && dstPort == null) : "Input bundles cannot have a dst port";
     }
 
     public final Port getValidPort() {
@@ -61,6 +64,15 @@ public class Bundle {
 
     public final void setReadyPort(Port readyPort) {
         this.readyPort = readyPort;
+    }
+
+    public final Port getDstPort() {
+        return dstPort;
+    }
+
+    public final void setDstPort(Port addrPort) {
+        assert direction == Direction.OUTPUT : "Input bundles cannot have a dst port";
+        this.dstPort = addrPort;
     }
 
     public final Direction getDirection() {
@@ -82,6 +94,8 @@ public class Bundle {
         if (validPort != null)
             allPorts.add(validPort);
         if (readyPort != null)
+            allPorts.add(readyPort);
+        if (dstPort != null)
             allPorts.add(readyPort);
 
         return allPorts;
