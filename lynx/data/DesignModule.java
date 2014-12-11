@@ -1,8 +1,7 @@
 package lynx.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A user-entered Module
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public class DesignModule extends Module {
 
-    private List<Bundle> bundles;
+    private Map<String, Bundle> bundles;
 
     public DesignModule() {
         this(null, null);
@@ -24,14 +23,18 @@ public class DesignModule extends Module {
 
     public DesignModule(String type, String name) {
         super(type, name);
-        bundles = new ArrayList<Bundle>();
+        bundles = new HashMap<String, Bundle>();
     }
 
-    public List<Bundle> getBundles() {
+    public Map<String, Bundle> getBundles() {
         return bundles;
     }
 
+    public Bundle getBundleByName(String bunName) {
+        return bundles.get(bunName);
+    }
+
     public void addBundle(Bundle bun) {
-        bundles.add(bun);
+        bundles.put(bun.getName(), bun);
     }
 }
