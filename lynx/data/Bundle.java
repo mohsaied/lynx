@@ -14,7 +14,7 @@ import lynx.data.MyEnums.Direction;
  * @author Mohamed
  *
  */
-public class Bundle {
+public final class Bundle {
 
     private Map<String, Port> dataPorts;
     private Port validPort;

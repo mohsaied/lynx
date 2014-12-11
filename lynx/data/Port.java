@@ -11,7 +11,7 @@ import lynx.data.MyEnums.*;
  * @author Mohamed
  * 
  */
-public class Port {
+public final class Port {
 
     private Direction direction;
     private String name;

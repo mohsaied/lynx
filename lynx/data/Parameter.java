@@ -6,7 +6,7 @@ package lynx.data;
  * @author Mohamed
  * 
  */
-public class Parameter {
+public final class Parameter {
 
     private String name;
     private String value;

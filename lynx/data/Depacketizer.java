@@ -3,7 +3,7 @@ package lynx.data;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.TranslatorType;
 
-public class Depacketizer extends Translator {
+public final class Depacketizer extends Translator {
 
     private Port nocDataOut;
     private Port nocValidOut;

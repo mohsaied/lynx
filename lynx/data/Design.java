@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author Mohamed
  *
  */
-public class Design extends Module {
+public final class Design extends Module {
 
     private static final Logger log = Logger.getLogger(Design.class.getName());
 
