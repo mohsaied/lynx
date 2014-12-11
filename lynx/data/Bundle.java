@@ -16,6 +16,8 @@ import lynx.data.MyEnums.Direction;
  */
 public final class Bundle {
 
+    private String name;
+
     private Map<String, Port> dataPorts;
     private Port validPort;
     private Port readyPort;
@@ -26,7 +28,20 @@ public final class Bundle {
 
     private Translator translator;
 
+    private Module parentModule;
+
+    private List<Bundle> connections;
+
     public Bundle() {
+        this(null);
+    }
+
+    public Bundle(String name) {
+        this(null, null);
+    }
+
+    public Bundle(String name, Module parentModule) {
+        this.name = name;
         dataPorts = new HashMap<String, Port>();
         validPort = null;
         readyPort = null;
@@ -34,6 +49,16 @@ public final class Bundle {
         width = 0;
         direction = Direction.UNKNOWN;
         translator = null;
+        this.parentModule = parentModule;
+        this.connections = new ArrayList<Bundle>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public final Map<String, Port> getDataPorts() {
@@ -107,6 +132,22 @@ public final class Bundle {
 
     public final void setTranslator(Translator translator) {
         this.translator = translator;
+    }
+
+    public Module getParentModule() {
+        return parentModule;
+    }
+
+    public void setParentModule(Module parentModule) {
+        this.parentModule = parentModule;
+    }
+
+    public List<Bundle> getConnections() {
+        return connections;
+    }
+
+    public void addConnection(Bundle connection) {
+        this.connections.add(connection);
     }
 
 }
