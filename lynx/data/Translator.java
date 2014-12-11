@@ -24,14 +24,17 @@ public class Translator extends Module {
     }
 
     public Translator(Noc parentNoc, Module parentModule, Bundle parentBundle, TranslatorType type) {
-        super(type.toString(), parentModule.getName() + "_" + type.toString());
+        super(type.toString(), parentModule.getName() + "_" + type.toShortString());
         this.parentNoc = parentNoc;
         this.parentModule = parentModule;
         this.parentBundle = parentBundle;
+        parentBundle.setTranslator(this);
         this.direction = parentBundle.getDirection();
         this.translatorType = type;
 
         addTranslatorParmetersAndPorts();
+
+        connectTranslatorToBundles();
     }
 
     public Module getParentModule() {
@@ -97,6 +100,21 @@ public class Translator extends Module {
         this.addPort(new Port("o_data_out", Direction.OUTPUT, parentBundle.getWidth(), 1, this));
         this.addPort(new Port("o_valid_out", Direction.OUTPUT, 1, 1, this));
         this.addPort(new Port("o_ready_in", Direction.INPUT, 1, 1, this));
+    }
+
+    private void connectTranslatorToBundles() {
+
+        // each translator has a parent module and bundle
+        // connect the module side but leave the NoC side unconnected for now
+
+        // depends on direction
+        // packetizer connects from module(bundle) data/valid to packetizer
+        // data/valid
+
+        if (translatorType == TranslatorType.PACKETIZER) {
+            
+        }
+
     }
 
 }

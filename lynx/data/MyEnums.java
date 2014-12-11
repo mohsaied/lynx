@@ -53,6 +53,17 @@ public class MyEnums {
         public String toString() {
             return name;
         }
+
+        public String toShortString() {
+            switch (name) {
+            case "packetizer":
+                return "pkt";
+            case "depacketizer":
+                return "dpkt";
+            default:
+                return "error";
+            }
+        }
     }
 
 }

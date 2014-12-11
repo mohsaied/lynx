@@ -34,12 +34,13 @@ public class NocInterconnect {
         // want to make sure that it's only called once
         assert design.getNoc() == null : "NoC is already defined, will not overwrite!";
 
-        log.info("Adding NoC circuitry...");
+        log.info("Adding NoC (fabric interface)");
 
         insertNoc(design, nocPath);
 
-        insertTranslators(design);
+        log.info("Adding Translators and connecting them to modules");
 
+        insertTranslators(design);
     }
 
     private static void insertNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException,

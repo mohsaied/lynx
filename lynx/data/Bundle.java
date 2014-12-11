@@ -22,6 +22,8 @@ public class Bundle {
 
     private Direction direction;
     private int width;
+    
+    private Translator translator;
 
     public Bundle() {
         dataPorts = new HashMap<String, Port>();
@@ -29,6 +31,7 @@ public class Bundle {
         readyPort = null;
         width = 0;
         direction = Direction.UNKNOWN;
+        translator = null;
     }
 
     public final Map<String, Port> getDataPorts() {
@@ -72,7 +75,7 @@ public class Bundle {
         this.width += width;
     }
 
-    public List<Port> getAllPorts() {
+    public final List<Port> getAllPorts() {
         List<Port> allPorts = new ArrayList<Port>();
 
         allPorts.addAll(dataPorts.values());
@@ -82,6 +85,14 @@ public class Bundle {
             allPorts.add(readyPort);
 
         return allPorts;
+    }
+
+    public final Translator getTranslator() {
+        return translator;
+    }
+
+    public final void setTranslator(Translator translator) {
+        this.translator = translator;
     }
 
 }

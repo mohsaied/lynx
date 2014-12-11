@@ -150,7 +150,8 @@ public class XmlDesign {
         Port startPor = design.getModuleByName(startMod).getPortByName(startPort);
         Port endPor = design.getModuleByName(endMod).getPortByName(endPort);
 
-        // add connection
+        // add connection (connection is added both at the origin
+        // and destination, but each of them must have a different direction)
         startPor.addConnection(endPor);
         endPor.addConnection(startPor);
 
