@@ -7,12 +7,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import lynx.data.Depacketizer;
 import lynx.data.Design;
 import lynx.data.Bundle;
 import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Noc;
-import lynx.data.Translator;
+import lynx.data.Packetizer;
 
 /**
  * Utility class that adds NoC components and connects them to the design
@@ -75,12 +76,12 @@ public class NocInterconnect {
     }
 
     private static void insertPacketizer(Bundle bun, Module mod, Design design) {
-        Translator packetizer = new Translator(design.getNoc(), mod, bun);
+        Packetizer packetizer = new Packetizer(design.getNoc(), mod, bun);
         design.addTranslator(packetizer);
     }
 
     private static void insertDepacketizer(Bundle bun, Module mod, Design design) {
-        Translator depacketizer = new Translator(design.getNoc(), mod, bun);
+        Depacketizer depacketizer = new Depacketizer(design.getNoc(), mod, bun);
         design.addTranslator(depacketizer);
     }
 

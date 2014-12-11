@@ -1,6 +1,5 @@
 package lynx.data;
 
-import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.TranslatorType;
 
 /**
@@ -9,19 +8,13 @@ import lynx.data.MyEnums.TranslatorType;
  * @author Mohamed
  *
  */
-public class Translator extends Module {
+public abstract class Translator extends Module {
 
-    private Noc parentNoc;
-    private Module parentModule;
-    private Bundle parentBundle;
-    private Direction direction;
-    private TranslatorType translatorType;
+    protected Noc parentNoc;
+    protected Module parentModule;
+    protected Bundle parentBundle;
 
-    public Translator(Noc parentNoc, Module parentModule, Bundle parentBundle) {
-        this(parentNoc, parentModule, parentBundle,
-                parentBundle.getDirection() == Direction.INPUT ? TranslatorType.DEPACKETIZER
-                        : TranslatorType.DEPACKETIZER);
-    }
+    protected TranslatorType type;
 
     public Translator(Noc parentNoc, Module parentModule, Bundle parentBundle, TranslatorType type) {
         super(type.toString(), parentModule.getName() + "_" + type.toShortString());
@@ -29,12 +22,7 @@ public class Translator extends Module {
         this.parentModule = parentModule;
         this.parentBundle = parentBundle;
         parentBundle.setTranslator(this);
-        this.direction = parentBundle.getDirection();
-        this.translatorType = type;
-
-        addTranslatorParmetersAndPorts();
-
-        connectTranslatorToBundles();
+        this.type = type;
     }
 
     public Module getParentModule() {
@@ -45,76 +33,8 @@ public class Translator extends Module {
         return parentBundle;
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public TranslatorType getTranslatorType() {
-        return translatorType;
-    }
-
-    private void addTranslatorParmetersAndPorts() {
-        switch (translatorType) {
-        case PACKETIZER:
-            addPacketizerParametersAndPorts();
-            break;
-        case DEPACKETIZER:
-            addDepacketizerParametersAndPorts();
-            break;
-        }
-    }
-
-    private void addPacketizerParametersAndPorts() {
-
-        // parameters
-        this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
-        this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
-        this.addParameter(new Parameter("WIDTH_IN", parentBundle.getWidth()));
-        this.addParameter(new Parameter("WIDTH_OUT", parentNoc.getInterfaceWidth()));
-        this.addParameter(new Parameter("ASSIGNED_VC", "0"));
-
-        // ports
-        this.addPort(new Port("i_data_in", Direction.INPUT, parentBundle.getWidth(), 1, this));
-        this.addPort(new Port("i_valid_in", Direction.INPUT, 1, 1, this));
-        this.addPort(new Port("i_dest_in", Direction.INPUT, parentNoc.getAddressWidth(), 1, this));
-        this.addPort(new Port("i_ready_out", Direction.OUTPUT, 1, 1, this));
-
-        this.addPort(new Port("o_data_out", Direction.OUTPUT, parentNoc.getWidth(), 1, this));
-        this.addPort(new Port("o_valid_out", Direction.OUTPUT, 1, 1, this));
-        this.addPort(new Port("o_ready_in", Direction.INPUT, 1, 1, this));
-
-    }
-
-    private void addDepacketizerParametersAndPorts() {
-        // parameters
-        this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
-        this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
-        this.addParameter(new Parameter("WIDTH_PKT", parentNoc.getInterfaceWidth()));
-        this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
-
-        // ports
-        this.addPort(new Port("i_packet_in", Direction.INPUT, parentNoc.getWidth(), 1, this));
-        this.addPort(new Port("i_valid_in", Direction.INPUT, 1, 1, this));
-        this.addPort(new Port("i_ready_out", Direction.OUTPUT, 1, 1, this));
-
-        this.addPort(new Port("o_data_out", Direction.OUTPUT, parentBundle.getWidth(), 1, this));
-        this.addPort(new Port("o_valid_out", Direction.OUTPUT, 1, 1, this));
-        this.addPort(new Port("o_ready_in", Direction.INPUT, 1, 1, this));
-    }
-
-    private void connectTranslatorToBundles() {
-
-        // each translator has a parent module and bundle
-        // connect the module side but leave the NoC side unconnected for now
-
-        // depends on direction
-        // packetizer connects from module(bundle) data/valid to packetizer
-        // data/valid
-
-        if (translatorType == TranslatorType.PACKETIZER) {
-            
-        }
-
+    public TranslatorType TranslatorType() {
+        return type;
     }
 
 }

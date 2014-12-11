@@ -18,3 +18,5 @@
 /DesignModule.class
 /Noc.class
 /MyEnums$TranslatorType.class
+/Packetizer.class
+/Depacketizer.class
