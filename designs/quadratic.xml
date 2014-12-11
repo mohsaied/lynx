@@ -8,7 +8,7 @@
 	<port direction="input" width="1" name="i_valid_in" type="valid"/>
 	<port direction="output" width="1" name="i_ready_out" type="ready"/>
 	
-	<bundle>
+	<bundle name="outbun">
 		<port direction="output" width="16" name="o_y" type="data"/>
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
@@ -20,13 +20,13 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<bundle>
+	<bundle name="inbun">
 		<port direction="input" width="16" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
 		<port direction="output" width="1" name="i_ready_out" type="ready"/>
 	</bundle>
 	
-	<bundle>
+	<bundle name="outbun">
 		<port direction="output" width="16" name="o_y" type="data"/>
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
@@ -37,7 +37,7 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
-	<bundle>
+	<bundle name="inbun">
 		<port direction="input" width="16" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
 		<port direction="output" width="1" name="i_ready_out" type="ready"/>
@@ -53,13 +53,9 @@
   
   <!-- Connections -->
   
-  <connection start="multx_inst.o_y" end="multa_inst.i_x"/>
-  <connection start="multx_inst.o_valid_out" end="multa_inst.i_valid_in"/>
-  <connection start="multa_inst.i_ready_out" end="multx_inst.o_ready_in"/>
+  <connection start="multx_inst.outbun" end="multa_inst.inbun"/>
   
-  <connection start="multa_inst.o_y" end="addc_inst.i_x"/>
-  <connection start="multa_inst.o_valid_out" end="addc_inst.i_valid_in"/>
-  <connection start="addc_inst.i_ready_out" end="multa_inst.o_ready_in"/>
+  <connection start="multa_inst.outbun" end="addc_inst.inbun"/>
   
   <!-- top-level wires are connections from top-level to submodules -->
   

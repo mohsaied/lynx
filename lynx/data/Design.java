@@ -50,8 +50,10 @@ public final class Design extends Module {
         List<Module> allModules = new ArrayList<Module>();
 
         allModules.addAll(modules.values());
-        allModules.add(nocInterface);
-        allModules.addAll(translators);
+        if (nocInterface != null)
+            allModules.add(nocInterface);
+        if (!translators.isEmpty())
+            allModules.addAll(translators);
 
         return allModules;
     }

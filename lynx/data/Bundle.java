@@ -57,6 +57,10 @@ public final class Bundle {
         return name;
     }
 
+    public String getFullName() {
+        return parentModule.getName() + "." + name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

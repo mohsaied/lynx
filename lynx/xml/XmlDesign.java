@@ -2,9 +2,7 @@ package lynx.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +22,7 @@ import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.data.TopPort;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -83,7 +82,7 @@ public class XmlDesign {
                     design.addModule(mod);
                     break;
                 case "port":
-                    Port intPort = parsePort(node, design, false);
+                    Port intPort = parseTopPort(node, design, false);
                     design.addPort(intPort);
                     break;
                 case "parameter":
@@ -91,7 +90,6 @@ public class XmlDesign {
                     design.addParameter(par);
                     break;
                 }
-
             }
         }
 
@@ -127,33 +125,33 @@ public class XmlDesign {
         String subPort = sub[1];
 
         // fetch the ports
-        Port topPor = design.getPortByName(topPort);
+        TopPort topPor = (TopPort) design.getPortByName(topPort);
         Port subPor = design.getModuleByName(subMod).getPortByName(subPort);
 
         // add connection
-        topPor.addConnection(subPor);
+        topPor.addWire(subPor);
     }
 
     private static void parseConnection(Node node, Design design) {
 
         String[] start = node.getAttributes().getNamedItem("start").getNodeValue().split("\\.");
-        assert start.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + start;
-        String startMod = start[0];
-        String startPort = start[1];
+        assert start.length == 2 : "Bundle name must be in \"Module.Bundle\" format, this is wrong: " + start;
+        String startModName = start[0];
+        String startBunName = start[1];
 
         String[] end = node.getAttributes().getNamedItem("end").getNodeValue().split("\\.");
-        assert end.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + end;
-        String endMod = end[0];
-        String endPort = end[1];
+        assert end.length == 2 : "Bundle name must be in \"Module.Bundle\" format, this is wrong: " + end;
+        String endModName = end[0];
+        String endBunName = end[1];
 
         // fetch the ports
-        Port startPor = design.getModuleByName(startMod).getPortByName(startPort);
-        Port endPor = design.getModuleByName(endMod).getPortByName(endPort);
+        Bundle startBun = ((DesignModule) design.getModuleByName(startModName)).getBundleByName(startBunName);
+        Bundle endBun = ((DesignModule) design.getModuleByName(endModName)).getBundleByName(endBunName);
 
         // add connection (connection is added both at the origin
         // and destination, but each of them must have a different direction)
-        startPor.addConnection(endPor);
-        endPor.addConnection(startPor);
+        startBun.addConnection(endBun);
+        endBun.addConnection(startBun);
 
     }
 
@@ -193,7 +191,8 @@ public class XmlDesign {
     }
 
     private static Bundle parseBundle(Node node, Module mod) {
-        Bundle bun = new Bundle();
+
+        Bundle bun = new Bundle(node.getAttributes().getNamedItem("name").getNodeValue(), mod);
 
         // loop over the ports in a bundle
         NodeList childNodes = node.getChildNodes();
@@ -256,6 +255,17 @@ public class XmlDesign {
         return new Port(pname, direction, width, arrayWidth, type, mod, bundled);
     }
 
+    private static Port parseTopPort(Node node, Design design, boolean bundled) {
+        String pname = node.getAttributes().getNamedItem("name").getNodeValue();
+        Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
+                : Direction.OUTPUT;
+        int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
+        int arrayWidth = 1; // leave this attribute optional
+        if (node.getAttributes().getNamedItem("array_width") != null)
+            arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
+        return new TopPort(pname, direction, width, arrayWidth, design);
+    }
+
     /**
      * Write a list of modules to an xml output file
      * 
@@ -280,11 +290,13 @@ public class XmlDesign {
 
         log.info("Writing Design " + design.getName() + " to " + outputFileName);
 
-        writeModulesAndConnections(doc, rootElement, design);
+        writeModules(doc, rootElement, design);
 
         writeParameters(doc, rootElement, design);
 
         writeTopLevelPorts(doc, rootElement, design);
+
+        writeConnections(doc, rootElement, design);
 
         writeWires(doc, rootElement, design);
 
@@ -299,9 +311,25 @@ public class XmlDesign {
         transformer.transform(source, result);
     }
 
+    private static void writeConnections(Document doc, Element rootElement, Design design) {
+        // loop over modules, find bundles, then find their connections
+        for (DesignModule mod : design.getModules().values()) {
+            for (Bundle fromBun : mod.getBundles().values()) {
+                if (fromBun.getDirection() == Direction.OUTPUT) {
+                    for (Bundle toBun : fromBun.getConnections()) {
+                        Element connectionElement = doc.createElement("connection");
+                        connectionElement.setAttribute("start", fromBun.getFullName());
+                        connectionElement.setAttribute("end", toBun.getFullName());
+                        rootElement.appendChild(connectionElement);
+                    }
+                }
+            }
+        }
+    }
+
     private static void writeWires(Document doc, Element rootElement, Design design) {
         for (Port por : design.getPorts().values()) {
-            for (Port wire : por.getConnections()) {
+            for (Port wire : ((TopPort) por).getWires()) {
                 Element wireElement = doc.createElement("wire");
                 wireElement.setAttribute("top", por.getName());
                 wireElement.setAttribute("sub", wire.getFullNameDot());
@@ -322,11 +350,9 @@ public class XmlDesign {
         }
     }
 
-    private static void writeModulesAndConnections(Document doc, Element rootElement, Design design) {
+    private static void writeModules(Document doc, Element rootElement, Design design) {
 
         List<Module> modList = design.getAllModules();
-
-        List<Element> connectionElements = new ArrayList<Element>();
 
         // loop over modules
         for (Module mod : modList) {
@@ -339,23 +365,21 @@ public class XmlDesign {
 
             writeParameters(doc, modElement, mod);
 
-            connectionElements.addAll(writePortsAndFindConnections(doc, modElement, mod));
+            writePorts(doc, modElement, mod);
 
             if (mod instanceof DesignModule)
                 writeBundles(doc, modElement, (DesignModule) mod);
 
             rootElement.appendChild(modElement);
         }
-
-        for (Element conElement : connectionElements) {
-            rootElement.appendChild(conElement);
-        }
     }
 
     private static void writeBundles(Document doc, Element modElement, DesignModule mod) {
 
-        for (Bundle bun : mod.getBundles()) {
+        for (Bundle bun : mod.getBundles().values()) {
             Element bunElement = doc.createElement("Bundle");
+
+            bunElement.setAttribute("name", bun.getName());
 
             for (Port por : bun.getAllPorts()) {
                 writePort(doc, bunElement, por);
@@ -366,29 +390,14 @@ public class XmlDesign {
 
     }
 
-    private static List<Element> writePortsAndFindConnections(Document doc, Element modElement, Module mod) {
+    private static void writePorts(Document doc, Element modElement, Module mod) {
 
-        List<Element> connectionElements = new ArrayList<Element>();
-
-        // loop over ports
-        Map<String, Port> porList = mod.getPorts();
-        for (Port por : porList.values()) {
+        // loop over ports and only print unbundled ones
+        for (Port por : mod.getPorts().values()) {
 
             if (!por.isBundled())
                 writePort(doc, modElement, por);
-
-            // find the list of connections
-            // only go over input ports and find connections
-            if (por.getDirection().equals("input"))
-                for (Port con : por.getConnections()) {
-                    Element conElement = doc.createElement("connection");
-                    conElement.setAttribute("start", con.getFullNameDot());
-                    conElement.setAttribute("end", por.getFullNameDot());
-                    connectionElements.add(conElement);
-                }
         }
-
-        return connectionElements;
     }
 
     private static void writePort(Document doc, Element parentElement, Port por) {

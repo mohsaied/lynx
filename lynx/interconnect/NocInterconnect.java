@@ -60,7 +60,7 @@ public class NocInterconnect {
 
         // loop over all modules and insert translators
         for (DesignModule mod : design.getModules().values()) {
-            for (Bundle bun : mod.getBundles()) {
+            for (Bundle bun : mod.getBundles().values()) {
                 switch (bun.getDirection()) {
                 case INPUT:
                     insertPacketizer(bun, mod, design);
