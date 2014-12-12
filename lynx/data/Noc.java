@@ -42,7 +42,7 @@ public class Noc extends Module<Port> {
 
     public Noc() {
         super(nocName, nocInstName);
-        
+
         configureNoC(defaultNocWidth, defaultNocNumRouters, defaultNocNumVcs, defaultNocVcDepth);
         calculateDerivedParameters();
         addNocParameters();

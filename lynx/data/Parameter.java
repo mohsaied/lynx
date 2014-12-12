@@ -19,7 +19,7 @@ public final class Parameter {
         this.name = name;
         this.value = value;
     }
-    
+
     public Parameter(String name, int value) {
         this.name = name;
         this.value = Integer.toString(value);

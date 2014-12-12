@@ -50,8 +50,8 @@ public class XmlNoc {
             }
         }
 
-        log.info("Found NoC with width=" + varMap.get("width") + ", num_routers=" + varMap.get("num_routers") + ", num_vcs=" + varMap.get("num_vcs")
-                + ", vc_depth=" + varMap.get("vc_depth"));
+        log.info("Found NoC with width=" + varMap.get("width") + ", num_routers=" + varMap.get("num_routers")
+                + ", num_vcs=" + varMap.get("num_vcs") + ", vc_depth=" + varMap.get("vc_depth"));
 
         return varMap;
     }

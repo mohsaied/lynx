@@ -28,12 +28,13 @@ public class Port {
         this(name, direction, width, arrayWidth, PortType.UNKNOWN, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module<? extends Port> parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type,
+            Module<? extends Port> parentModule) {
         this(name, direction, width, arrayWidth, type, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module<? extends Port> parentModule,
-            boolean isBundled) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type,
+            Module<? extends Port> parentModule, boolean isBundled) {
         this.name = name;
         this.direction = direction;
         this.width = width;

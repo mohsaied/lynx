@@ -5,7 +5,6 @@ import java.util.logging.LogRecord;
 
 public class MyFormatter extends Formatter {
 
-
     @Override
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder(1000);

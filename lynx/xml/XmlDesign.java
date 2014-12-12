@@ -152,7 +152,6 @@ public class XmlDesign {
         // and destination, but each of them must have a different direction)
         startBun.addConnection(endBun);
         endBun.addConnection(startBun);
-
     }
 
     private static DesignModule parseModule(Node node, Design design) {
