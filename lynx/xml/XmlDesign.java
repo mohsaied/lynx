@@ -75,18 +75,12 @@ public class XmlDesign {
 
             if (node instanceof Element) {
 
+                // currently we only have a module/connection tag at the top
+                // level
                 switch (node.getNodeName()) {
                 case "module":
                     DesignModule mod = parseModule(node, design);
                     design.addModule(mod);
-                    break;
-                case "port":
-                    Port intPort = parsePort(node, design, false);
-                    design.addPort(intPort);
-                    break;
-                case "parameter":
-                    Parameter par = parseParameter(node, design);
-                    design.addParameter(par);
                     break;
                 }
             }
@@ -105,30 +99,11 @@ public class XmlDesign {
                 case "connection":
                     parseConnection(node, design);
                     break;
-                case "wire":
-                    parseWire(node, design);
-                    break;
                 }
             }
         }
 
         return design;
-    }
-
-    private static void parseWire(Node node, Design design) {
-        String topPort = node.getAttributes().getNamedItem("top").getNodeValue();
-
-        String[] sub = node.getAttributes().getNamedItem("sub").getNodeValue().split("\\.");
-        assert sub.length == 2 : "Port name must be in \"Module.Port\" format, this is wrong: " + sub;
-        String subMod = sub[0];
-        String subPort = sub[1];
-
-        // fetch the ports
-        Port topPor = design.getPortByName(topPort);
-        Port subPor = design.getModuleByName(subMod).getPortByName(subPort);
-
-        // add connection
-        topPor.addWire(subPor);
     }
 
     private static void parseConnection(Node node, Design design) {
@@ -281,7 +256,7 @@ public class XmlDesign {
 
         writeParameters(doc, rootElement, design);
 
-        writeTopLevelPorts(doc, rootElement, design);
+        writePorts(doc, rootElement, design);
 
         writeConnections(doc, rootElement, design);
 
@@ -315,6 +290,7 @@ public class XmlDesign {
     }
 
     private static void writeWires(Document doc, Element rootElement, Design design) {
+        // top level
         for (Port por : design.getPorts().values()) {
             for (Port wire : por.getWires()) {
                 Element wireElement = doc.createElement("wire");
@@ -323,17 +299,17 @@ public class XmlDesign {
                 rootElement.appendChild(wireElement);
             }
         }
-    }
 
-    private static void writeTopLevelPorts(Document doc, Element rootElement, Design design) {
-        for (Port intPort : design.getPorts().values()) {
-            Element intPorElement = doc.createElement("port");
-            intPorElement.setAttribute("direction", intPort.getDirectionString());
-            intPorElement.setAttribute("name", intPort.getName());
-            intPorElement.setAttribute("width", Integer.toString(intPort.getWidth()));
-            if (intPort.getArrayWidth() != 1)
-                intPorElement.setAttribute("array_width", Integer.toString(intPort.getArrayWidth()));
-            rootElement.appendChild(intPorElement);
+        // all modules
+        for (Module mod : design.getAllModules()) {
+            for (Port por : mod.getPorts().values()) {
+                for (Port wire : por.getWires()) {
+                    Element wireElement = doc.createElement("wire");
+                    wireElement.setAttribute("top", por.getName());
+                    wireElement.setAttribute("sub", wire.getFullNameDot());
+                    rootElement.appendChild(wireElement);
+                }
+            }
         }
     }
 

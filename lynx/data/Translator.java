@@ -25,6 +25,10 @@ public abstract class Translator extends Module {
         this.type = type;
     }
 
+    public Noc getParentNoc() {
+        return parentNoc;
+    }
+    
     public DesignModule getParentModule() {
         return parentModule;
     }

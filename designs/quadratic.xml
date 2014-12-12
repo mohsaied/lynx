@@ -49,7 +49,7 @@
 	
   </module>
   
-  <!-- Must parse modules before connections and bundles, can remove that restriction later -->
+  <!-- Must parse modules before connections, can remove that restriction later -->
   
   <!-- Connections -->
   
@@ -57,27 +57,5 @@
   
   <connection start="multa_inst.outbun" end="addc_inst.inbun"/>
   
-  <!-- top-level wires are connections from top-level to submodules -->
-  
-  <wire top="x_in" sub="multx_inst.i_x"/>
-  <wire top="x_valid_in" sub="multx_inst.i_valid_in"/>
-  <wire sub="multx_inst.i_ready_out" top="x_ready_out"/>
-  
-  <wire sub="addc_inst.o_y" top="y_out"/>
-  <wire sub="addc_inst.o_valid_out" top="y_valid_out"/>
-  <wire top="y_ready_in" sub="addc_inst.o_ready_in"/>
-  
-  
-  <!-- bundles -->
-  
-  <port direction="input" width="16" name="x_in"/>
-  <port direction="input" width="1" name="x_valid_in"/>
-  <port direction="output" width="1" name="x_ready_out"/>
-  
-  <port direction="output" width="16" name="y_out"/>
-  <port direction="output" width="1" name="y_valid_out"/>
-  <port direction="input" width="1" name="y_ready_in"/>
-  
-  <!-- At some point could make all names optional, and can derive names based on types/directions automatically -->
   
 </design>
