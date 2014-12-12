@@ -13,7 +13,7 @@ public final class Depacketizer extends Translator {
     private Port modValidIn;
     private Port modReadyOut;
 
-    public Depacketizer(Noc parentNoc, Module parentModule, Bundle parentBundle) {
+    public Depacketizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.DEPACKETIZER);
 
         addDepacketizerParametersAndPorts();

@@ -82,7 +82,7 @@ public class XmlDesign {
                     design.addModule(mod);
                     break;
                 case "port":
-                    Port intPort = parseTopPort(node, design, false);
+                    TopPort intPort = parseTopPort(node, design, false);
                     design.addPort(intPort);
                     break;
                 case "parameter":
@@ -190,7 +190,7 @@ public class XmlDesign {
         return mod;
     }
 
-    private static Bundle parseBundle(Node node, Module mod) {
+    private static Bundle parseBundle(Node node, DesignModule mod) {
 
         Bundle bun = new Bundle(node.getAttributes().getNamedItem("name").getNodeValue(), mod);
 
@@ -232,13 +232,13 @@ public class XmlDesign {
         return bun;
     }
 
-    private static Parameter parseParameter(Node node, Module mod) {
+    private static Parameter parseParameter(Node node, Module<? extends Port> mod) {
         String name = node.getAttributes().getNamedItem("name").getNodeValue();
         String value = node.getAttributes().getNamedItem("value").getNodeValue();
         return new Parameter(name, value);
     }
 
-    private static Port parsePort(Node node, Module mod, boolean bundled) {
+    private static Port parsePort(Node node, Module<? extends Port> mod, boolean bundled) {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
         Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
                 : Direction.OUTPUT;
@@ -255,7 +255,7 @@ public class XmlDesign {
         return new Port(pname, direction, width, arrayWidth, type, mod, bundled);
     }
 
-    private static Port parseTopPort(Node node, Design design, boolean bundled) {
+    private static TopPort parseTopPort(Node node, Design design, boolean bundled) {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
         Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
                 : Direction.OUTPUT;
@@ -352,10 +352,10 @@ public class XmlDesign {
 
     private static void writeModules(Document doc, Element rootElement, Design design) {
 
-        List<Module> modList = design.getAllModules();
+        List<Module<Port>> modList = design.getAllModules();
 
         // loop over modules
-        for (Module mod : modList) {
+        for (Module<Port> mod : modList) {
 
             // new <module> tag
             Element modElement = doc.createElement("module");
@@ -390,7 +390,7 @@ public class XmlDesign {
 
     }
 
-    private static void writePorts(Document doc, Element modElement, Module mod) {
+    private static void writePorts(Document doc, Element modElement, Module<Port> mod) {
 
         // loop over ports and only print unbundled ones
         for (Port por : mod.getPorts().values()) {
@@ -412,7 +412,7 @@ public class XmlDesign {
         parentElement.appendChild(porElement);
     }
 
-    private static void writeParameters(Document doc, Element modElement, Module mod) {
+    private static void writeParameters(Document doc, Element modElement, Module<? extends Port> mod) {
         // loop over parameters
         for (Parameter par : mod.getParameters()) {
             Element parElement = doc.createElement("parameter");

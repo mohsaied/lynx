@@ -20,7 +20,7 @@ public final class Packetizer extends Translator {
     private Port nocValidOut;
     private Port nocReadyIn;
 
-    public Packetizer(Noc parentNoc, Module parentModule, Bundle parentBundle) {
+    public Packetizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.PACKETIZER);
 
         addPacketizerParametersAndPorts();

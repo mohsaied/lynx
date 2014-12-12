@@ -11,7 +11,6 @@ import lynx.data.Depacketizer;
 import lynx.data.Design;
 import lynx.data.Bundle;
 import lynx.data.DesignModule;
-import lynx.data.Module;
 import lynx.data.Noc;
 import lynx.data.Packetizer;
 
@@ -75,12 +74,12 @@ public class NocInterconnect {
         }
     }
 
-    private static void insertPacketizer(Bundle bun, Module mod, Design design) {
+    private static void insertPacketizer(Bundle bun, DesignModule mod, Design design) {
         Packetizer packetizer = new Packetizer(design.getNoc(), mod, bun);
         design.addTranslator(packetizer);
     }
 
-    private static void insertDepacketizer(Bundle bun, Module mod, Design design) {
+    private static void insertDepacketizer(Bundle bun, DesignModule mod, Design design) {
         Depacketizer depacketizer = new Depacketizer(design.getNoc(), mod, bun);
         design.addTranslator(depacketizer);
     }

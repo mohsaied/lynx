@@ -16,7 +16,7 @@ public class Port {
     /** for 2D verilog ports */
     private int arrayWidth;
     private PortType type;
-    private Module parentModule;
+    private Module<? extends Port> parentModule;
 
     private boolean isBundled;
 
@@ -24,15 +24,15 @@ public class Port {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, Module<? extends Port> parentModule) {
         this(name, direction, width, arrayWidth, PortType.UNKNOWN, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module<? extends Port> parentModule) {
         this(name, direction, width, arrayWidth, type, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module<? extends Port> parentModule,
             boolean isBundled) {
         this.name = name;
         this.direction = direction;
@@ -99,11 +99,11 @@ public class Port {
         this.type = type;
     }
 
-    public final Module getParentModule() {
+    public final Module<? extends Port> getParentModule() {
         return parentModule;
     }
 
-    public final void setParentModule(Module parentModule) {
+    public final void setParentModule(Module<? extends Port> parentModule) {
         this.parentModule = parentModule;
     }
 

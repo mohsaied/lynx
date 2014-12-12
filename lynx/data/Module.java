@@ -12,14 +12,14 @@ import java.util.logging.Logger;
  * @author Mohamed
  *
  */
-public abstract class Module {
+public abstract class Module<P extends Port> {
 
     private static final Logger log = Logger.getLogger(Module.class.getName());
 
     protected String type;
     protected String name;
     protected List<Parameter> parameters;
-    protected Map<String, Port> ports;
+    protected Map<String, P> ports;
 
     public Module() {
         this(null, null);
@@ -33,7 +33,7 @@ public abstract class Module {
         this.type = type;
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
-        this.ports = new HashMap<String, Port>();
+        this.ports = new HashMap<String, P>();
         log.info("Creating new Module, name: " + name + ", type: " + type);
     }
 
@@ -61,15 +61,15 @@ public abstract class Module {
         this.parameters.add(parameter);
     }
 
-    public final Map<String, Port> getPorts() {
+    public Map<String, P> getPorts() {
         return ports;
     }
 
-    public final Port getPortByName(String porName) {
+    public P getPortByName(String porName) {
         return ports.get(porName);
     }
 
-    public final void addPort(Port port) {
+    public void addPort(P port) {
         this.ports.put(port.getName(), port);
     }
 
@@ -78,7 +78,7 @@ public abstract class Module {
         String s = "Module: " + type + " " + name + "\n";
         for (Parameter par : parameters)
             s += par + "\n";
-        for (Port por : ports.values())
+        for (P por : ports.values())
             s += por + "\n";
         return s;
     }

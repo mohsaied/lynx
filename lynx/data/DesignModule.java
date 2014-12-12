@@ -9,7 +9,7 @@ import java.util.Map;
  * @author Mohamed
  *
  */
-public class DesignModule extends Module {
+public class DesignModule extends Module<Port> {
 
     private Map<String, Bundle> bundles;
 

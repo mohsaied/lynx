@@ -28,7 +28,7 @@ public final class Bundle {
 
     private Translator translator;
 
-    private Module parentModule;
+    private DesignModule parentModule;
 
     private List<Bundle> connections;
 
@@ -40,7 +40,7 @@ public final class Bundle {
         this(null, null);
     }
 
-    public Bundle(String name, Module parentModule) {
+    public Bundle(String name, DesignModule parentModule) {
         this.name = name;
         dataPorts = new HashMap<String, Port>();
         validPort = null;
@@ -138,11 +138,11 @@ public final class Bundle {
         this.translator = translator;
     }
 
-    public Module getParentModule() {
+    public DesignModule getParentModule() {
         return parentModule;
     }
 
-    public void setParentModule(Module parentModule) {
+    public void setParentModule(DesignModule parentModule) {
         this.parentModule = parentModule;
     }
 

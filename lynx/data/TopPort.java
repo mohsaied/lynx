@@ -20,7 +20,7 @@ public final class TopPort extends Port {
         this(null, Direction.UNKNOWN, 0, 1, null);
     }
 
-    public TopPort(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
+    public TopPort(String name, Direction direction, int width, int arrayWidth, Module<? extends Port> parentModule) {
         super(name, direction, width, arrayWidth, PortType.TOP, parentModule, false);
         wires = new ArrayList<Port>();
     }

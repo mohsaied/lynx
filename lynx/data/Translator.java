@@ -8,15 +8,15 @@ import lynx.data.MyEnums.TranslatorType;
  * @author Mohamed
  *
  */
-public abstract class Translator extends Module {
+public abstract class Translator extends Module<Port> {
 
     protected Noc parentNoc;
-    protected Module parentModule;
+    protected DesignModule parentModule;
     protected Bundle parentBundle;
 
     protected TranslatorType type;
 
-    public Translator(Noc parentNoc, Module parentModule, Bundle parentBundle, TranslatorType type) {
+    public Translator(Noc parentNoc, DesignModule parentModule, Bundle parentBundle, TranslatorType type) {
         super(type.toString(), parentModule.getName() + "_" + type.toShortString());
         this.parentNoc = parentNoc;
         this.parentModule = parentModule;
@@ -25,7 +25,7 @@ public abstract class Translator extends Module {
         this.type = type;
     }
 
-    public Module getParentModule() {
+    public DesignModule getParentModule() {
         return parentModule;
     }
 
