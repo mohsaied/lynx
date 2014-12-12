@@ -125,7 +125,7 @@ public class XmlDesign {
         String subPort = sub[1];
 
         // fetch the ports
-        TopPort topPor = (TopPort) design.getPortByName(topPort);
+        TopPort topPor = design.getPortByName(topPort);
         Port subPor = design.getModuleByName(subMod).getPortByName(subPort);
 
         // add connection
@@ -328,8 +328,8 @@ public class XmlDesign {
     }
 
     private static void writeWires(Document doc, Element rootElement, Design design) {
-        for (Port por : design.getPorts().values()) {
-            for (Port wire : ((TopPort) por).getWires()) {
+        for (TopPort por : design.getPorts().values()) {
+            for (Port wire : por.getWires()) {
                 Element wireElement = doc.createElement("wire");
                 wireElement.setAttribute("top", por.getName());
                 wireElement.setAttribute("sub", wire.getFullNameDot());
