@@ -125,8 +125,12 @@ public class Noc extends Module {
     private void calculateDerivedParameters() {
         // derived parameters
         nocInterfaceWidth = 4 * nocWidth;
-        nocAddressWidth = (int) Math.ceil(Math.log10(nocNumRouters));
-        nocVcAddressWidth = (int) Math.ceil(Math.log10(nocNumVcs));
+        nocAddressWidth = clog2(nocNumRouters);
+        nocVcAddressWidth = clog2(nocNumVcs);
+    }
+
+    private int clog2(double num) {
+        return (int) (Math.log(num) / Math.log(2));
     }
 
     private void addNocParameters() {

@@ -11,6 +11,7 @@
 	<bundle name="outbun">
 		<port direction="output" width="16" name="o_y" type="data"/>
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>
 	
@@ -29,6 +30,7 @@
 	<bundle name="outbun">
 		<port direction="output" width="16" name="o_y" type="data"/>
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>
 	

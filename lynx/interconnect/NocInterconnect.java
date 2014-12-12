@@ -61,10 +61,10 @@ public class NocInterconnect {
         for (DesignModule mod : design.getModules().values()) {
             for (Bundle bun : mod.getBundles().values()) {
                 switch (bun.getDirection()) {
-                case INPUT:
+                case OUTPUT:
                     insertPacketizer(bun, mod, design);
                     break;
-                case OUTPUT:
+                case INPUT:
                     insertDepacketizer(bun, mod, design);
                     break;
                 default:

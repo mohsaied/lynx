@@ -12,7 +12,6 @@ import lynx.data.MyEnums.TranslatorType;
  */
 public final class Packetizer extends Translator {
 
-
     public Packetizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.PACKETIZER);
 
@@ -47,10 +46,32 @@ public final class Packetizer extends Translator {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now
+        // that will be connected later depending on design effort or extra info
+        // should be done in lynx.interconnect somewhere
 
-        // depends on direction
-        // packetizer connects from module(bundle) data/valid to packetizer
-        // data/valid
+        // connect data
+        Port pktDataIn = getPort(PortType.DATA, Direction.INPUT);
+        Port modDataOut = parentBundle.getDataPort();
+        pktDataIn.addWire(modDataOut);
+        modDataOut.addWire(pktDataIn);
+
+        // connect valid
+        Port pktValidIn = getPort(PortType.VALID, Direction.INPUT);
+        Port modValidOut = parentBundle.getValidPort();
+        pktValidIn.addWire(modValidOut);
+        modValidOut.addWire(pktValidIn);
+        
+        // connect valid
+        Port pktDstIn = getPort(PortType.DST, Direction.INPUT);
+        Port modDstOut = parentBundle.getDstPort();
+        pktDstIn.addWire(modDstOut);
+        modDstOut.addWire(pktDstIn);
+        
+        // connect ready
+        Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);
+        Port modReadyIn = parentBundle.getReadyPort();
+        pktReadyOut.addWire(modReadyIn);
+        modReadyIn.addWire(pktReadyOut);
 
     }
 

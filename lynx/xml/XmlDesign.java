@@ -44,8 +44,7 @@ public class XmlDesign {
      * @throws IOException
      * @throws SAXException
      */
-    public static Design readXMLDesign(String designPath) throws ParserConfigurationException, SAXException,
-            IOException {
+    public static Design readXMLDesign(String designPath) throws ParserConfigurationException, SAXException, IOException {
 
         // Get the DOM Builder Factory
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -195,8 +194,7 @@ public class XmlDesign {
                         bun.setDstPort(por);
                         break;
                     default:
-                        assert false : "\"" + por.getType()
-                                + "\" is unexpected in a bundle, only data/valid/ready allowed";
+                        assert false : "\"" + por.getType() + "\" is unexpected in a bundle, only data/valid/ready allowed";
                     }
                 }
             }
@@ -219,7 +217,7 @@ public class XmlDesign {
         if (node.getAttributes().getNamedItem("type") != null) {
             String typeString = node.getAttributes().getNamedItem("type").getNodeValue();
             type = typeString.equals("data") ? PortType.DATA : typeString.equals("valid") ? PortType.VALID : typeString
-                    .equals("ready") ? PortType.READY : PortType.UNKNOWN;
+                    .equals("ready") ? PortType.READY : typeString.equals("dst") ? PortType.DST : PortType.UNKNOWN;
         }
         int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
         int arrayWidth = 1; // leave this attribute optional
@@ -290,6 +288,9 @@ public class XmlDesign {
     }
 
     private static void writeWires(Document doc, Element rootElement, Design design) {
+
+        // TODO are we going to differentiate between top-mod and mod-mod wires
+
         // top level
         for (Port por : design.getPorts().values()) {
             for (Port wire : por.getWires()) {
@@ -303,11 +304,13 @@ public class XmlDesign {
         // all modules
         for (Module mod : design.getAllModules()) {
             for (Port por : mod.getPorts().values()) {
-                for (Port wire : por.getWires()) {
-                    Element wireElement = doc.createElement("wire");
-                    wireElement.setAttribute("top", por.getName());
-                    wireElement.setAttribute("sub", wire.getFullNameDot());
-                    rootElement.appendChild(wireElement);
+                if (por.getDirection() == Direction.OUTPUT) {
+                    for (Port wire : por.getWires()) {
+                        Element wireElement = doc.createElement("wire");
+                        wireElement.setAttribute("start", por.getFullNameDot());
+                        wireElement.setAttribute("end", wire.getFullNameDot());
+                        rootElement.appendChild(wireElement);
+                    }
                 }
             }
         }

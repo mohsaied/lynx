@@ -37,10 +37,26 @@ public final class Depacketizer extends Translator {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now
+        // that will be connected later depending on design effort or extra info
+        // should be done in lynx.interconnect somewhere
 
-        // depends on direction
-        // packetizer connects from module(bundle) data/valid to packetizer
-        // data/valid
+        // connect data
+        Port pktDataOut = getPort(PortType.DATA, Direction.OUTPUT);
+        Port modDataIn = parentBundle.getDataPort();
+        pktDataOut.addWire(modDataIn);
+        modDataIn.addWire(pktDataOut);
+
+        // connect valid
+        Port pktValidOut = getPort(PortType.VALID, Direction.OUTPUT);
+        Port modValidIn = parentBundle.getValidPort();
+        pktValidOut.addWire(modValidIn);
+        modValidIn.addWire(pktValidOut);
+        
+        // connect ready
+        Port pktReadyIn = getPort(PortType.READY, Direction.INPUT);
+        Port modReadyOut = parentBundle.getReadyPort();
+        pktReadyIn.addWire(modReadyOut);
+        modReadyOut.addWire(pktReadyIn);
 
     }
 }

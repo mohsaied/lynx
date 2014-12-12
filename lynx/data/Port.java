@@ -37,8 +37,7 @@ public class Port {
         this(name, direction, width, arrayWidth, type, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
-            boolean isBundled) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule, boolean isBundled) {
         this.name = name;
         this.direction = direction;
         this.width = width;
@@ -117,8 +116,12 @@ public class Port {
         return wires;
     }
 
-    public final void addWire(Port wires) {
-        this.wires.add(wires);
+    public final void addWire(Port wire) {
+        assert (wire.getDirection() != this.getDirection()) : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
+                + " of same direction " + this.getDirection();
+        assert wire.getWidth() == this.getWidth() : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
+                + " of different widths " + wire.getWidth() + " and " + this.getWidth();
+        this.wires.add(wire);
     }
 
     public boolean isBundled() {
