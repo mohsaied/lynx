@@ -22,7 +22,6 @@ import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
-import lynx.data.TopPort;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,7 +81,7 @@ public class XmlDesign {
                     design.addModule(mod);
                     break;
                 case "port":
-                    TopPort intPort = parseTopPort(node, design, false);
+                    Port intPort = parsePort(node, design, false);
                     design.addPort(intPort);
                     break;
                 case "parameter":
@@ -125,7 +124,7 @@ public class XmlDesign {
         String subPort = sub[1];
 
         // fetch the ports
-        TopPort topPor = design.getPortByName(topPort);
+        Port topPor = design.getPortByName(topPort);
         Port subPor = design.getModuleByName(subMod).getPortByName(subPort);
 
         // add connection
@@ -231,13 +230,13 @@ public class XmlDesign {
         return bun;
     }
 
-    private static Parameter parseParameter(Node node, Module<? extends Port> mod) {
+    private static Parameter parseParameter(Node node, Module mod) {
         String name = node.getAttributes().getNamedItem("name").getNodeValue();
         String value = node.getAttributes().getNamedItem("value").getNodeValue();
         return new Parameter(name, value);
     }
 
-    private static Port parsePort(Node node, Module<? extends Port> mod, boolean bundled) {
+    private static Port parsePort(Node node, Module mod, boolean bundled) {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
         Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
                 : Direction.OUTPUT;
@@ -252,17 +251,6 @@ public class XmlDesign {
         if (node.getAttributes().getNamedItem("array_width") != null)
             arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
         return new Port(pname, direction, width, arrayWidth, type, mod, bundled);
-    }
-
-    private static TopPort parseTopPort(Node node, Design design, boolean bundled) {
-        String pname = node.getAttributes().getNamedItem("name").getNodeValue();
-        Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
-                : Direction.OUTPUT;
-        int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
-        int arrayWidth = 1; // leave this attribute optional
-        if (node.getAttributes().getNamedItem("array_width") != null)
-            arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
-        return new TopPort(pname, direction, width, arrayWidth, design);
     }
 
     /**
@@ -327,7 +315,7 @@ public class XmlDesign {
     }
 
     private static void writeWires(Document doc, Element rootElement, Design design) {
-        for (TopPort por : design.getPorts().values()) {
+        for (Port por : design.getPorts().values()) {
             for (Port wire : por.getWires()) {
                 Element wireElement = doc.createElement("wire");
                 wireElement.setAttribute("top", por.getName());
@@ -351,10 +339,10 @@ public class XmlDesign {
 
     private static void writeModules(Document doc, Element rootElement, Design design) {
 
-        List<Module<Port>> modList = design.getAllModules();
+        List<Module> modList = design.getAllModules();
 
         // loop over modules
-        for (Module<Port> mod : modList) {
+        for (Module mod : modList) {
 
             // new <module> tag
             Element modElement = doc.createElement("module");
@@ -389,7 +377,7 @@ public class XmlDesign {
 
     }
 
-    private static void writePorts(Document doc, Element modElement, Module<Port> mod) {
+    private static void writePorts(Document doc, Element modElement, Module mod) {
 
         // loop over ports and only print unbundled ones
         for (Port por : mod.getPorts().values()) {
@@ -407,11 +395,11 @@ public class XmlDesign {
         if (por.getType() != PortType.UNKNOWN)
             porElement.setAttribute("type", por.getTypeString());
         if (por.getArrayWidth() != 1)
-            porElement.setAttribute("arrray_width", Integer.toString(por.getArrayWidth()));
+            porElement.setAttribute("array_width", Integer.toString(por.getArrayWidth()));
         parentElement.appendChild(porElement);
     }
 
-    private static void writeParameters(Document doc, Element modElement, Module<? extends Port> mod) {
+    private static void writeParameters(Document doc, Element modElement, Module mod) {
         // loop over parameters
         for (Parameter par : mod.getParameters()) {
             Element parElement = doc.createElement("parameter");

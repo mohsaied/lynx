@@ -21,7 +21,7 @@ public final class Bundle {
     private Map<String, Port> dataPorts;
     private Port validPort;
     private Port readyPort;
-    private Port dstPort;
+    private Port dstPort; //will be null for depkt
 
     private Direction direction;
     private int width;

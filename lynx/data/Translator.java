@@ -8,7 +8,7 @@ import lynx.data.MyEnums.TranslatorType;
  * @author Mohamed
  *
  */
-public abstract class Translator extends Module<Port> {
+public abstract class Translator extends Module {
 
     protected Noc parentNoc;
     protected DesignModule parentModule;

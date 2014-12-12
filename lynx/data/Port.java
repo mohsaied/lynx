@@ -1,5 +1,8 @@
 package lynx.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lynx.data.MyEnums.*;
 
 /**
@@ -16,7 +19,9 @@ public class Port {
     /** for 2D verilog ports */
     private int arrayWidth;
     private PortType type;
-    private Module<? extends Port> parentModule;
+
+    private Module parentModule;
+    private List<Port> wires;
 
     private boolean isBundled;
 
@@ -24,23 +29,23 @@ public class Port {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, Module<? extends Port> parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, Module parentModule) {
         this(name, direction, width, arrayWidth, PortType.UNKNOWN, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type,
-            Module<? extends Port> parentModule) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule) {
         this(name, direction, width, arrayWidth, type, parentModule, false);
     }
 
-    public Port(String name, Direction direction, int width, int arrayWidth, PortType type,
-            Module<? extends Port> parentModule, boolean isBundled) {
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
+            boolean isBundled) {
         this.name = name;
         this.direction = direction;
         this.width = width;
         this.arrayWidth = arrayWidth;
         this.type = type;
         this.parentModule = parentModule;
+        this.wires = new ArrayList<Port>();
         this.isBundled = isBundled;
     }
 
@@ -100,12 +105,20 @@ public class Port {
         this.type = type;
     }
 
-    public final Module<? extends Port> getParentModule() {
+    public final Module getParentModule() {
         return parentModule;
     }
 
-    public final void setParentModule(Module<? extends Port> parentModule) {
+    public final void setParentModule(Module parentModule) {
         this.parentModule = parentModule;
+    }
+
+    public final List<Port> getWires() {
+        return wires;
+    }
+
+    public final void addWire(Port wires) {
+        this.wires.add(wires);
     }
 
     public boolean isBundled() {

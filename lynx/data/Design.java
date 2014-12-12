@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author Mohamed
  *
  */
-public final class Design extends Module<TopPort> {
+public final class Design extends Module {
 
     private static final Logger log = Logger.getLogger(Design.class.getName());
 
@@ -46,8 +46,8 @@ public final class Design extends Module<TopPort> {
         return modules.size();
     }
 
-    public final List<Module<Port>> getAllModules() {
-        List<Module<Port>> allModules = new ArrayList<Module<Port>>();
+    public final List<Module> getAllModules() {
+        List<Module> allModules = new ArrayList<Module>();
 
         allModules.addAll(modules.values());
         if (nocInterface != null)
@@ -58,7 +58,7 @@ public final class Design extends Module<TopPort> {
         return allModules;
     }
 
-    public final Module<? extends Port> getModuleByName(String modName) {
+    public final Module getModuleByName(String modName) {
         return this.modules.get(modName);
     }
 
@@ -81,10 +81,10 @@ public final class Design extends Module<TopPort> {
     @Override
     public String toString() {
         String s = "Design: " + name + "\n\n";
-        for (TopPort por : this.ports.values())
+        for (Port por : this.ports.values())
             s += por + "\n";
         s += "\n";
-        for (Module<? extends Port> mod : this.modules.values())
+        for (Module mod : this.modules.values())
             s += mod + "\n";
         return s;
     }
