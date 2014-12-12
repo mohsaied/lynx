@@ -38,20 +38,20 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("ASSIGNED_VC", "0"));
 
         // ports
-        modDataIn = new Port("i_data_in", Direction.INPUT, parentBundle.getWidth(), 1, this);
+        modDataIn = new Port("i_data_in", Direction.INPUT, parentBundle.getWidth(), this);
         this.addPort(modDataIn);
-        modValidIn = new Port("i_valid_in", Direction.INPUT, 1, 1, this);
+        modValidIn = new Port("i_valid_in", Direction.INPUT, 1, this);
         this.addPort(modValidIn);
-        modDestIn = new Port("i_dest_in", Direction.INPUT, parentNoc.getAddressWidth(), 1, this);
+        modDestIn = new Port("i_dest_in", Direction.INPUT, parentNoc.getAddressWidth(), this);
         this.addPort(modDestIn);
-        modReadyOut = new Port("i_ready_out", Direction.OUTPUT, 1, 1, this);
+        modReadyOut = new Port("i_ready_out", Direction.OUTPUT, 1, this);
         this.addPort(modReadyOut);
 
-        nocDataOut = new Port("o_data_out", Direction.OUTPUT, parentNoc.getWidth(), 1, this);
+        nocDataOut = new Port("o_data_out", Direction.OUTPUT, parentNoc.getWidth(), this);
         this.addPort(nocDataOut);
-        nocValidOut = new Port("o_valid_out", Direction.OUTPUT, 1, 1, this);
+        nocValidOut = new Port("o_valid_out", Direction.OUTPUT, 1, this);
         this.addPort(nocValidOut);
-        nocReadyIn = new Port("o_ready_in", Direction.INPUT, 1, 1, this);
+        nocReadyIn = new Port("o_ready_in", Direction.INPUT, 1, this);
         this.addPort(nocReadyIn);
     }
 

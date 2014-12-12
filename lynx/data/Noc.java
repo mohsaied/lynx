@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 import lynx.xml.XmlNoc;
 
 /**
@@ -89,6 +90,10 @@ public class Noc extends Module {
         this.nocVcDepth = nocVcDepth;
     }
 
+    public Port getPort(PortType type, Direction direction, int router) {
+        return getPortByName(buildNocPortName(type, direction, router));
+    }
+
     public int getWidth() {
         return this.nocWidth;
     }
@@ -133,24 +138,30 @@ public class Noc extends Module {
         this.addParameter(new Parameter("DEPTH_PER_VC", nocVcDepth));
         this.addParameter(new Parameter("VERBOSE", "1"));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", "$clog2(NUM_VC)"));
-        this.addParameter(new Parameter("[VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1]",
-                "'{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"));
+        this.addParameter(new Parameter("[VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1]", "'{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"));
     }
 
     private void addNocPorts() {
         // ports
-        this.addPort(new Port("clk_noc", Direction.INPUT, 1, 1, this));
-        this.addPort(new Port("rst", Direction.INPUT, 1, 1, this));
-        this.addPort(new Port("clk_rtl", Direction.INPUT, nocNumRouters, 1, this));
-        this.addPort(new Port("clk_int", Direction.INPUT, nocNumRouters, 1, this));
+        this.addPort(new Port("clk", Direction.INPUT, 1, this));
+        this.addPort(new Port("rst", Direction.INPUT, 1, this));
 
-        this.addPort(new Port("i_packets_in", Direction.INPUT, nocInterfaceWidth, nocNumRouters, this));
-        this.addPort(new Port("i_valids_in", Direction.INPUT, 1, nocNumRouters, this));
-        this.addPort(new Port("i_readys_out", Direction.OUTPUT, 1, nocNumRouters, this));
+        for (int i = 0; i < nocNumRouters; i++) {
+            this.addPort(new Port(buildNocPortName(PortType.CLK, Direction.INPUT, i), Direction.INPUT, 1, this));
+            this.addPort(new Port(buildNocPortName(PortType.CLKINT, Direction.INPUT, i), Direction.INPUT, 1, this));
 
-        this.addPort(new Port("o_packets_out", Direction.OUTPUT, nocInterfaceWidth, nocNumRouters, this));
-        this.addPort(new Port("o_valids_out", Direction.OUTPUT, 1, nocNumRouters, this));
-        this.addPort(new Port("o_readys_in", Direction.INPUT, 1, nocNumRouters, this));
+            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.INPUT, i), Direction.INPUT, nocInterfaceWidth, this));
+            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.INPUT, i), Direction.INPUT, 1, this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.OUTPUT, i), Direction.OUTPUT, 1, this));
+
+            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.OUTPUT, i), Direction.OUTPUT, nocInterfaceWidth, this));
+            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.OUTPUT, i), Direction.OUTPUT, 1, this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, 1, this));
+        }
+    }
+
+    private String buildNocPortName(PortType type, Direction direction, int router) {
+        return "r" + router + "_" + type + "_" + direction.toShortString();
     }
 
 }

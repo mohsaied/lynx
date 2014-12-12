@@ -36,6 +36,7 @@ public class MyEnums {
         READY("ready"),  
         DST("dst"),
         CLK("clk"), 
+        CLKINT("clkint"),
         RST("rst"), 
         TOP("top"),
         UNKNOWN("unknown");

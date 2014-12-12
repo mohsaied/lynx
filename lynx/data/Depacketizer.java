@@ -29,18 +29,18 @@ public final class Depacketizer extends Translator {
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
 
         // ports
-        nocDataOut = new Port("i_packet_in", Direction.INPUT, parentNoc.getWidth(), 1, this);
+        nocDataOut = new Port("i_packet_in", Direction.INPUT, parentNoc.getWidth(), this);
         this.addPort(nocDataOut);
-        nocValidOut = new Port("i_valid_in", Direction.INPUT, 1, 1, this);
+        nocValidOut = new Port("i_valid_in", Direction.INPUT, 1, this);
         this.addPort(nocValidOut);
-        nocReadyIn = new Port("i_ready_out", Direction.OUTPUT, 1, 1, this);
+        nocReadyIn = new Port("i_ready_out", Direction.OUTPUT, 1, this);
         this.addPort(nocReadyIn);
 
-        modDataIn = new Port("o_data_out", Direction.OUTPUT, parentBundle.getWidth(), 1, this);
+        modDataIn = new Port("o_data_out", Direction.OUTPUT, parentBundle.getWidth(), this);
         this.addPort(modDataIn);
-        modValidIn = new Port("o_valid_out", Direction.OUTPUT, 1, 1, this);
+        modValidIn = new Port("o_valid_out", Direction.OUTPUT, 1, this);
         this.addPort(modValidIn);
-        modReadyOut = new Port("o_ready_in", Direction.INPUT, 1, 1, this);
+        modReadyOut = new Port("o_ready_in", Direction.INPUT, 1, this);
         this.addPort(modReadyOut);
     }
 
