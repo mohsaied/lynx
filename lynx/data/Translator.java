@@ -55,4 +55,6 @@ public abstract class Translator extends Module {
 
     protected abstract void addParametersAndPorts();
 
+    public abstract void connectToRouter(int router);
+
 }

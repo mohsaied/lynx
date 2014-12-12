@@ -28,8 +28,7 @@ public class NocInterconnect {
         addNoc(design, null);
     }
 
-    public static void addNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException,
-            IOException {
+    public static void addNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException, IOException {
 
         // want to make sure that it's only called once
         assert design.getNoc() == null : "NoC is already defined, will not overwrite!";
@@ -41,10 +40,36 @@ public class NocInterconnect {
         log.info("Adding Translators and connecting them to modules");
 
         insertTranslators(design);
+
+        log.info("Figuring out the best location of modules on the NoC...");
+
+        // not implemented yet
+        // after this step, each module/bundle should be associated to a router
+        // currently it is user-provided
+
+        log.info("Connecting to NoC");
+
+        connectNoc(design);
     }
 
-    private static void insertNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException,
-            IOException {
+    private static void connectNoc(Design design) {
+        // this method will only connect modules if they are already assigned
+        // and so will assert if a module is not assigned yet
+
+        for (DesignModule mod : design.getDesignModules().values()) {
+            assert mod.getRouter() != -1 : "Attempting to connect module to NoC, but module wasn't mapped to a router!";
+
+            // loop over bundles and connect their translators to the router
+            int router = mod.getRouter();
+
+            for (Bundle bun : mod.getBundles().values()) {
+                bun.connectToRouter(router);
+            }
+        }
+
+    }
+
+    private static void insertNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException, IOException {
 
         Noc noc;
         if (nocPath == null)
@@ -58,7 +83,7 @@ public class NocInterconnect {
     private static void insertTranslators(Design design) {
 
         // loop over all modules and insert translators
-        for (DesignModule mod : design.getModules().values()) {
+        for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle bun : mod.getBundles().values()) {
                 switch (bun.getDirection()) {
                 case OUTPUT:

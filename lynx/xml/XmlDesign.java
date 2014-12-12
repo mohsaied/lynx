@@ -130,8 +130,11 @@ public class XmlDesign {
     private static DesignModule parseModule(Node node, Design design) {
         String modName = node.getAttributes().getNamedItem("name").getNodeValue();
         String modType = node.getAttributes().getNamedItem("type").getNodeValue();
+        int router = -1;
+        if (node.getAttributes().getNamedItem("router") != null)
+            router = Integer.parseInt(node.getAttributes().getNamedItem("router").getNodeValue());
 
-        DesignModule mod = new DesignModule(modType, modName);
+        DesignModule mod = new DesignModule(modType, modName, router);
 
         NodeList childNodes = node.getChildNodes();
         for (int j = 0; j < childNodes.getLength(); j++) {
@@ -273,7 +276,7 @@ public class XmlDesign {
 
     private static void writeConnections(Document doc, Element rootElement, Design design) {
         // loop over modules, find bundles, then find their connections
-        for (DesignModule mod : design.getModules().values()) {
+        for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle fromBun : mod.getBundles().values()) {
                 if (fromBun.getDirection() == Direction.OUTPUT) {
                     for (Bundle toBun : fromBun.getConnections()) {
@@ -328,6 +331,8 @@ public class XmlDesign {
             // set name and type - both are required
             modElement.setAttribute("type", mod.getType());
             modElement.setAttribute("name", mod.getName());
+            if (mod instanceof DesignModule && ((DesignModule) mod).getRouter() != -1)
+                modElement.setAttribute("router", Integer.toString(((DesignModule) mod).getRouter()));
 
             writeParameters(doc, modElement, mod);
 

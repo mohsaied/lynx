@@ -13,6 +13,8 @@ public class DesignModule extends Module {
 
     private Map<String, Bundle> bundles;
 
+    private int router;
+
     public DesignModule() {
         this(null, null);
     }
@@ -22,8 +24,13 @@ public class DesignModule extends Module {
     }
 
     public DesignModule(String type, String name) {
+        this(type, name, -1);
+    }
+
+    public DesignModule(String type, String name, int router) {
         super(type, name);
         bundles = new HashMap<String, Bundle>();
+        this.router = router;
     }
 
     public Map<String, Bundle> getBundles() {
@@ -36,5 +43,13 @@ public class DesignModule extends Module {
 
     public void addBundle(Bundle bun) {
         bundles.put(bun.getName(), bun);
+    }
+
+    public int getRouter() {
+        return router;
+    }
+
+    public void setRouter(int router) {
+        this.router = router;
     }
 }

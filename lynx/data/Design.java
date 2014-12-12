@@ -34,7 +34,7 @@ public final class Design extends Module {
         log.info("Creating new design: " + name);
     }
 
-    public final Map<String, DesignModule> getModules() {
+    public final Map<String, DesignModule> getDesignModules() {
         return modules;
     }
 

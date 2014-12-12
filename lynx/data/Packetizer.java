@@ -36,7 +36,7 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
-        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getInterfaceWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
@@ -60,19 +60,40 @@ public final class Packetizer extends Translator {
         Port modValidOut = parentBundle.getValidPort();
         pktValidIn.addWire(modValidOut);
         modValidOut.addWire(pktValidIn);
-        
+
         // connect valid
         Port pktDstIn = getPort(PortType.DST, Direction.INPUT);
         Port modDstOut = parentBundle.getDstPort();
         pktDstIn.addWire(modDstOut);
         modDstOut.addWire(pktDstIn);
-        
+
         // connect ready
         Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);
         Port modReadyIn = parentBundle.getReadyPort();
         pktReadyOut.addWire(modReadyIn);
         modReadyIn.addWire(pktReadyOut);
+    }
 
+    @Override
+    public final void connectToRouter(int router) {
+
+        // data
+        Port pktDataOut = getPort(PortType.DATA, Direction.OUTPUT);
+        Port nocDataIn = parentNoc.getPort(PortType.DATA, Direction.INPUT, router);
+        pktDataOut.addWire(nocDataIn);
+        nocDataIn.addWire(pktDataOut);
+
+        // valid
+        Port pktValidOut = getPort(PortType.VALID, Direction.OUTPUT);
+        Port nocValidIn = parentNoc.getPort(PortType.VALID, Direction.INPUT, router);
+        pktValidOut.addWire(nocValidIn);
+        nocValidIn.addWire(pktValidOut);
+
+        // ready
+        Port pktReadyIn = getPort(PortType.READY, Direction.INPUT);
+        Port nocReadyOut = parentNoc.getPort(PortType.READY, Direction.OUTPUT, router);
+        pktReadyIn.addWire(nocReadyOut);
+        nocReadyOut.addWire(pktReadyIn);
     }
 
 }

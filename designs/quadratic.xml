@@ -1,6 +1,6 @@
 <design name="quadratic">
   
-  <module type="mult_x" name="multx_inst">
+  <module type="mult_x" name="multx_inst" router="0">
     
 	<parameter name="WIDTH" value="16"/>
 	
@@ -17,7 +17,7 @@
 	
   </module>
   
-  <module type="mult_a" name="multa_inst">
+  <module type="mult_a" name="multa_inst" router="1">
     
 	<parameter name="WIDTH" value="16"/>
 	
@@ -35,7 +35,7 @@
 	</bundle>
 	
   </module>
-  <module type="add_c" name="addc_inst">
+  <module type="add_c" name="addc_inst" router="2">
     
 	<parameter name="WIDTH" value="16"/>
 	

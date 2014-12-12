@@ -23,7 +23,7 @@ public final class Depacketizer extends Translator {
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
 
         // ports
-        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentNoc.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentNoc.getInterfaceWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
@@ -51,12 +51,34 @@ public final class Depacketizer extends Translator {
         Port modValidIn = parentBundle.getValidPort();
         pktValidOut.addWire(modValidIn);
         modValidIn.addWire(pktValidOut);
-        
+
         // connect ready
         Port pktReadyIn = getPort(PortType.READY, Direction.INPUT);
         Port modReadyOut = parentBundle.getReadyPort();
         pktReadyIn.addWire(modReadyOut);
         modReadyOut.addWire(pktReadyIn);
+    }
+
+    @Override
+    public final void connectToRouter(int router) {
+
+        // data
+        Port pktDataIn = getPort(PortType.DATA, Direction.INPUT);
+        Port nocDataOut = parentNoc.getPort(PortType.DATA, Direction.OUTPUT, router);
+        pktDataIn.addWire(nocDataOut);
+        nocDataOut.addWire(pktDataIn);
+
+        // valid
+        Port pktValidIn = getPort(PortType.VALID, Direction.INPUT);
+        Port nocValidOut = parentNoc.getPort(PortType.VALID, Direction.OUTPUT, router);
+        pktValidIn.addWire(nocValidOut);
+        nocValidOut.addWire(pktValidIn);
+
+        // ready
+        Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);
+        Port nocReadyIn = parentNoc.getPort(PortType.READY, Direction.INPUT, router);
+        pktReadyOut.addWire(nocReadyIn);
+        nocReadyIn.addWire(pktReadyOut);
 
     }
 }
