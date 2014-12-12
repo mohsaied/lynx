@@ -130,7 +130,7 @@ public class Noc extends Module {
     }
 
     private int clog2(double num) {
-        return (int) (Math.log(num) / Math.log(2));
+        return (int) Math.ceil((Math.log(num) / Math.log(2)));
     }
 
     private void addNocParameters() {
