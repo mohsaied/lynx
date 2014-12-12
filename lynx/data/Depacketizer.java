@@ -9,12 +9,13 @@ public final class Depacketizer extends Translator {
     public Depacketizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.DEPACKETIZER);
 
-        addDepacketizerParametersAndPorts();
+        addParametersAndPorts();
 
-        connectDepacketizerToBundle();
+        connectToBundle();
     }
 
-    private void addDepacketizerParametersAndPorts() {
+    @Override
+    protected final void addParametersAndPorts() {
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
@@ -31,7 +32,8 @@ public final class Depacketizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
 
-    private void connectDepacketizerToBundle() {
+    @Override
+    protected final void connectToBundle() {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now

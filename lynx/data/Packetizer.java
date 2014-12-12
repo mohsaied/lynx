@@ -16,12 +16,13 @@ public final class Packetizer extends Translator {
     public Packetizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.PACKETIZER);
 
-        addPacketizerParametersAndPorts();
+        addParametersAndPorts();
 
-        connectPacketizerToBundle();
+        connectToBundle();
     }
 
-    private void addPacketizerParametersAndPorts() {
+    @Override
+    protected final void addParametersAndPorts() {
 
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
@@ -41,7 +42,8 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
 
-    private void connectPacketizerToBundle() {
+    @Override
+    protected final void connectToBundle() {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now

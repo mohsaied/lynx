@@ -26,7 +26,7 @@ public abstract class Translator extends Module {
         parentBundle.setTranslator(this);
         this.type = type;
     }
-    
+
     public Port getPort(PortType type, Direction direction) {
         return getPortByName(buildPortName(type, direction));
     }
@@ -34,7 +34,7 @@ public abstract class Translator extends Module {
     public Noc getParentNoc() {
         return parentNoc;
     }
-    
+
     public DesignModule getParentModule() {
         return parentModule;
     }
@@ -46,9 +46,13 @@ public abstract class Translator extends Module {
     public TranslatorType TranslatorType() {
         return type;
     }
-    
+
     protected String buildPortName(PortType type, Direction direction) {
         return type + "_" + direction.toShortString();
     }
+
+    protected abstract void connectToBundle();
+
+    protected abstract void addParametersAndPorts();
 
 }
