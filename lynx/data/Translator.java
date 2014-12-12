@@ -1,5 +1,7 @@
 package lynx.data;
 
+import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
 
 /**
@@ -24,6 +26,10 @@ public abstract class Translator extends Module {
         parentBundle.setTranslator(this);
         this.type = type;
     }
+    
+    public Port getPort(PortType type, Direction direction) {
+        return getPortByName(buildPortName(type, direction));
+    }
 
     public Noc getParentNoc() {
         return parentNoc;
@@ -39,6 +45,10 @@ public abstract class Translator extends Module {
 
     public TranslatorType TranslatorType() {
         return type;
+    }
+    
+    protected String buildPortName(PortType type, Direction direction) {
+        return type + "_" + direction.toShortString();
     }
 
 }

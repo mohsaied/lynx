@@ -1,17 +1,10 @@
 package lynx.data;
 
 import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
 
 public final class Depacketizer extends Translator {
-
-    private Port nocDataOut;
-    private Port nocValidOut;
-    private Port nocReadyIn;
-
-    private Port modDataIn;
-    private Port modValidIn;
-    private Port modReadyOut;
 
     public Depacketizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.DEPACKETIZER);
@@ -29,19 +22,13 @@ public final class Depacketizer extends Translator {
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
 
         // ports
-        nocDataOut = new Port("i_packet_in", Direction.INPUT, parentNoc.getWidth(), this);
-        this.addPort(nocDataOut);
-        nocValidOut = new Port("i_valid_in", Direction.INPUT, 1, this);
-        this.addPort(nocValidOut);
-        nocReadyIn = new Port("i_ready_out", Direction.OUTPUT, 1, this);
-        this.addPort(nocReadyIn);
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentNoc.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
+        this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
-        modDataIn = new Port("o_data_out", Direction.OUTPUT, parentBundle.getWidth(), this);
-        this.addPort(modDataIn);
-        modValidIn = new Port("o_valid_out", Direction.OUTPUT, 1, this);
-        this.addPort(modValidIn);
-        modReadyOut = new Port("o_ready_in", Direction.INPUT, 1, this);
-        this.addPort(modReadyOut);
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentBundle.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
+        this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
 
     private void connectDepacketizerToBundle() {

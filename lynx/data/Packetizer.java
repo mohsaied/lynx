@@ -1,6 +1,7 @@
 package lynx.data;
 
 import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
 
 /**
@@ -11,14 +12,6 @@ import lynx.data.MyEnums.TranslatorType;
  */
 public final class Packetizer extends Translator {
 
-    private Port modDataIn;
-    private Port modValidIn;
-    private Port modDestIn;
-    private Port modReadyOut;
-
-    private Port nocDataOut;
-    private Port nocValidOut;
-    private Port nocReadyIn;
 
     public Packetizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
         super(parentNoc, parentModule, parentBundle, TranslatorType.PACKETIZER);
@@ -38,21 +31,14 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("ASSIGNED_VC", "0"));
 
         // ports
-        modDataIn = new Port("i_data_in", Direction.INPUT, parentBundle.getWidth(), this);
-        this.addPort(modDataIn);
-        modValidIn = new Port("i_valid_in", Direction.INPUT, 1, this);
-        this.addPort(modValidIn);
-        modDestIn = new Port("i_dest_in", Direction.INPUT, parentNoc.getAddressWidth(), this);
-        this.addPort(modDestIn);
-        modReadyOut = new Port("i_ready_out", Direction.OUTPUT, 1, this);
-        this.addPort(modReadyOut);
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentBundle.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
+        this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
-        nocDataOut = new Port("o_data_out", Direction.OUTPUT, parentNoc.getWidth(), this);
-        this.addPort(nocDataOut);
-        nocValidOut = new Port("o_valid_out", Direction.OUTPUT, 1, this);
-        this.addPort(nocValidOut);
-        nocReadyIn = new Port("o_ready_in", Direction.INPUT, 1, this);
-        this.addPort(nocReadyIn);
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
+        this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
 
     private void connectPacketizerToBundle() {
@@ -65,4 +51,5 @@ public final class Packetizer extends Translator {
         // data/valid
 
     }
+
 }
