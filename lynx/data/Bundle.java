@@ -1,9 +1,7 @@
 package lynx.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lynx.data.MyEnums.Direction;
 
@@ -18,10 +16,10 @@ public final class Bundle {
 
     private String name;
 
-    private Map<String, Port> dataPorts;
+    private Port dataPort;
     private Port validPort;
     private Port readyPort;
-    private Port dstPort; //will be null for depkt
+    private Port dstPort; // will be null for depkt
 
     private Direction direction;
     private int width;
@@ -42,7 +40,7 @@ public final class Bundle {
 
     public Bundle(String name, DesignModule parentModule) {
         this.name = name;
-        dataPorts = new HashMap<String, Port>();
+        dataPort = null;
         validPort = null;
         readyPort = null;
         dstPort = null;
@@ -65,12 +63,12 @@ public final class Bundle {
         this.name = name;
     }
 
-    public final Map<String, Port> getDataPorts() {
-        return dataPorts;
+    public final Port getDataPort() {
+        return dataPort;
     }
 
     public final void addDataPort(Port dataPort) {
-        this.dataPorts.put(dataPort.getName(), dataPort);
+        this.dataPort = dataPort;
         addToWidth(dataPort.getWidth());
         if (direction == Direction.UNKNOWN)
             direction = dataPort.getDirection();
@@ -83,6 +81,8 @@ public final class Bundle {
         return validPort;
     }
 
+    // TODO add some asserts to double check directions whenever setting any
+    // port of a bundle
     public final void setValidPort(Port validPort) {
         this.validPort = validPort;
     }
@@ -100,7 +100,7 @@ public final class Bundle {
     }
 
     public final void setDstPort(Port addrPort) {
-        assert direction == Direction.OUTPUT : "Input bundles cannot have a dst port";
+        assert direction == Direction.OUTPUT || direction == Direction.UNKNOWN : "Input bundles cannot have a dst port";
         this.dstPort = addrPort;
     }
 
@@ -119,7 +119,8 @@ public final class Bundle {
     public final List<Port> getAllPorts() {
         List<Port> allPorts = new ArrayList<Port>();
 
-        allPorts.addAll(dataPorts.values());
+        if (dataPort != null)
+            allPorts.add(dataPort);
         if (validPort != null)
             allPorts.add(validPort);
         if (readyPort != null)
