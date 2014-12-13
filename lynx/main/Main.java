@@ -3,6 +3,7 @@ package lynx.main;
 import java.util.logging.Level;
 
 import lynx.data.Design;
+import lynx.graphics.Utils;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
 import lynx.xml.XmlDesign;
@@ -26,6 +27,9 @@ public class Main {
 
         // write out verilog design
         VerilogOut.writeVerilogDesign(design);
+
+        // draw fcns
+        Utils.initWindow(design);
 
         // Printing the current design
         // System.out.println(design);

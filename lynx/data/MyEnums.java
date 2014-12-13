@@ -1,6 +1,8 @@
 package lynx.data;
 
 public class MyEnums {
+    
+    public static final String NOCLYNX = "NoCLynx";
 
     public enum Direction {
         INPUT("input"), 
