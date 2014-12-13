@@ -1,20 +1,21 @@
 package lynx.graphics;
 
 import java.awt.Graphics;
+import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
 import lynx.data.Design;
 import lynx.data.DesignModule;
 
-public class GraphVis extends JPanel {
+public class GraphPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     Design design;
 
-    public GraphVis(Design design) {
-        super();
+    public GraphPanel(Design design) {
+        super(new GridLayout(1, 1));
         this.design = design;
     }
 
@@ -32,6 +33,5 @@ public class GraphVis extends JPanel {
         for (DesignModule mod : design.getDesignModules().values()) {
             g.drawString(mod.getName(), 100, 100 + 20 * i++);
         }
-
     }
 }
