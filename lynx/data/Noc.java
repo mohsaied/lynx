@@ -40,6 +40,7 @@ public class Noc extends Module {
     private int nocInterfaceWidth;
     private int nocAddressWidth;
     private int nocVcAddressWidth;
+    private int nocNumRoutersPerDimension;
 
     public Noc() {
         super(nocName, nocInstName);
@@ -122,11 +123,17 @@ public class Noc extends Module {
         return this.nocVcAddressWidth;
     }
 
+    public int getNumRoutersPerDimension() {
+        return this.nocNumRoutersPerDimension;
+    }
+
     private void calculateDerivedParameters() {
         // derived parameters
         nocInterfaceWidth = 4 * nocWidth;
         nocAddressWidth = clog2(nocNumRouters);
         nocVcAddressWidth = clog2(nocNumVcs);
+        this.nocNumRoutersPerDimension = (int) Math.sqrt(nocNumRouters);
+        assert Math.ceil(Math.sqrt(nocNumRouters)) == Math.sqrt(nocNumRouters) : "Number of routers must be a square (2, 4, 9, 16, etc..)";
     }
 
     private int clog2(double num) {

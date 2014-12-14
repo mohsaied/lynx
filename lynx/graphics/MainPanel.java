@@ -10,7 +10,7 @@ import lynx.data.Design;
 
 public class MainPanel extends JPanel {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     public MainPanel(Design design) {
         super(new GridLayout(1, 1));
@@ -22,6 +22,11 @@ public class MainPanel extends JPanel {
         GraphPanel panel1 = new GraphPanel(design);
         tabbedPane.addTab("Graph", null, panel1, "Visualize the provided connectivity graph");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        //Second tab is the NoC
+        NocPanel panel2 = new NocPanel(design);
+        tabbedPane.addTab("NoC", null, panel2, "The NoC topology and module placement thereon");
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
 
         // Add the tabbed pane to this panel.
         this.add(tabbedPane);
