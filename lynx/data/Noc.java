@@ -154,8 +154,8 @@ public class Noc extends Module {
 
     private void addNocPorts() {
         // ports
-        this.addPort(new Port("clk", Direction.INPUT, 1, this));
-        this.addPort(new Port("rst", Direction.INPUT, 1, this));
+        this.addPort(new Port("clk", Direction.INPUT, PortType.CLK, this, "noc.clk"));
+        this.addPort(new Port("rst", Direction.INPUT, PortType.RST, this, "noc.rst"));
 
         for (int i = 0; i < nocNumRouters; i++) {
             this.addPort(new Port(buildNocPortName(PortType.CLK, Direction.INPUT, i), Direction.INPUT, 1, this));

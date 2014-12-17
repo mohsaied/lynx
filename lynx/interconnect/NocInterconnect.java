@@ -11,8 +11,10 @@ import lynx.data.Depacketizer;
 import lynx.data.Design;
 import lynx.data.Bundle;
 import lynx.data.DesignModule;
+import lynx.data.Module;
 import lynx.data.Noc;
 import lynx.data.Packetizer;
+import lynx.data.Port;
 
 /**
  * Utility class that adds NoC components and connects them to the design
@@ -50,6 +52,23 @@ public class NocInterconnect {
         log.info("Connecting to NoC");
 
         connectNoc(design);
+
+        log.info("Inferring top-level ports, and connecting the wires to submodules");
+
+        inferTopLevelPorts(design);
+
+    }
+
+    private static void inferTopLevelPorts(Design design) {
+        // loop over all modules and all ports - the ports that have a global
+        // export
+        for (Module mod : design.getAllModules()) {
+            for (Port por : mod.getPorts().values()) {
+                if (por.getGlobalPortName() != null) {
+                    design.addPort(por);
+                }
+            }
+        }
     }
 
     private static void connectNoc(Design design) {

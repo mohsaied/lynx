@@ -27,15 +27,27 @@ public class Port {
     private String globalPortName;
 
     public Port() {
-        this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
+        this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false, null);
+    }
+
+    public Port(String name, Direction direction, Module parentModule) {
+        this(name, direction, 1, 1, PortType.UNKNOWN, parentModule, false, null);
+    }
+
+    public Port(String name, Direction direction, Module parentModule, String globalPortName) {
+        this(name, direction, 1, 1, PortType.UNKNOWN, parentModule, false, null);
+    }
+
+    public Port(String name, Direction direction, PortType type, Module parentModule, String globalPortName) {
+        this(name, direction, 1, 1, type, parentModule, false, globalPortName);
     }
 
     public Port(String name, Direction direction, int width, Module parentModule) {
-        this(name, direction, width, 1, PortType.UNKNOWN, parentModule, false);
+        this(name, direction, width, 1, PortType.UNKNOWN, parentModule, false, null);
     }
 
     public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule) {
-        this(name, direction, width, arrayWidth, type, parentModule, false);
+        this(name, direction, width, arrayWidth, type, parentModule, false, null);
     }
 
     public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule, boolean isBundled) {
@@ -54,6 +66,10 @@ public class Port {
         this.isBundled = isBundled;
         this.setGlobalPortName(globalPortName);
         assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
+    }
+
+    public Port(Port basePort, Design design) {
+        this(basePort.globalPortName, basePort.direction, basePort.width, basePort.arrayWidth, basePort.type, design, false, null);
     }
 
     public final Direction getDirection() {
@@ -125,8 +141,8 @@ public class Port {
     }
 
     public final void addWire(Port wire) {
-        assert (wire.getDirection() != this.getDirection()) : "Attempting to connect " + wire.getFullNameDot() + " and "
-                + getFullNameDot() + " of same direction " + this.getDirection();
+        assert ((wire.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
+                + wire.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
         assert wire.getWidth() == this.getWidth() : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
                 + " of different widths " + wire.getWidth() + " and " + this.getWidth();
         this.wires.add(wire);

@@ -18,7 +18,7 @@ public final class Design extends Module {
 
     private Map<String, DesignModule> modules;
 
-    private Noc nocInterface;
+    private Noc noc;
 
     private List<Translator> translators;
 
@@ -29,7 +29,7 @@ public final class Design extends Module {
     public Design(String name) {
         super(name, name + "_inst");
         this.modules = new HashMap<String, DesignModule>();
-        this.nocInterface = null;
+        this.noc = null;
         this.translators = new ArrayList<Translator>();
         log.info("Creating new design: " + name);
     }
@@ -50,8 +50,8 @@ public final class Design extends Module {
         List<Module> allModules = new ArrayList<Module>();
 
         allModules.addAll(modules.values());
-        if (nocInterface != null)
-            allModules.add(nocInterface);
+        if (noc != null)
+            allModules.add(noc);
         if (!translators.isEmpty())
             allModules.addAll(translators);
 
@@ -63,11 +63,11 @@ public final class Design extends Module {
     }
 
     public Noc getNoc() {
-        return nocInterface;
+        return noc;
     }
 
-    public void setNoc(Noc nocInterface) {
-        this.nocInterface = nocInterface;
+    public void setNoc(Noc noc) {
+        this.noc = noc;
     }
 
     public List<Translator> getTranslators() {
@@ -76,6 +76,21 @@ public final class Design extends Module {
 
     public void addTranslator(Translator translator) {
         this.translators.add(translator);
+    }
+
+    @Override
+    public void addPort(Port wire) {
+        // if we dont have a port with the same name
+        // create a new one and add to it a wire
+        if (!this.getPorts().containsKey(wire.getGlobalPortName())) {
+            Port topPort = new Port(wire, this);
+            topPort.addWire(wire);
+            super.addPort(topPort);
+        } else {
+            // if we do have a port, we'll just add another wire to it
+            Port topPort = this.getPortByName(wire.getGlobalPortName());
+            topPort.addWire(wire);
+        }
     }
 
     @Override
