@@ -11,7 +11,7 @@ import lynx.verilog.VerilogOut;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public final static void main(String[] args) throws Exception {
 
         @SuppressWarnings("unused")
         MyLogger log = new MyLogger(Level.INFO);

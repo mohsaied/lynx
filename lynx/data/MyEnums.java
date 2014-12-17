@@ -2,7 +2,7 @@ package lynx.data;
 
 public class MyEnums {
     
-    public static final String NOCLYNX = "NoCLynx";
+    public static final String NOCLYNX = "NOCLYNX";
 
     public enum Direction {
         INPUT("input"), 

@@ -45,6 +45,11 @@ public class GraphPanel extends JPanel {
         for (DesignModule mod : design.getDesignModules().values()) {
             Object vertex = graph.insertVertex(parent, null, mod.getName(), 100 + 250 * i++, 100, 100, 75);
             vertices.put(mod.getName(), vertex);
+            /*
+            for(Bundle bun:mod.getBundles().values()){
+                Object bundle = graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25);
+            }
+            */
         }
 
         for (DesignModule mod : design.getDesignModules().values()) {
