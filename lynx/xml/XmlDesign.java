@@ -331,7 +331,7 @@ public class XmlDesign {
         // top level
         for (Port por : design.getPorts().values()) {
             for (Port wire : por.getWires()) {
-                Element wireElement = doc.createElement("wire");
+                Element wireElement = doc.createElement("top_wire");
                 wireElement.setAttribute("top", por.getName());
                 wireElement.setAttribute("sub", wire.getFullNameDot());
                 rootElement.appendChild(wireElement);
