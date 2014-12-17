@@ -214,19 +214,53 @@ public class XmlDesign {
 
     private static Port parsePort(Node node, Module mod, boolean bundled) {
         String pname = node.getAttributes().getNamedItem("name").getNodeValue();
+
         Direction direction = node.getAttributes().getNamedItem("direction").getNodeValue().equals("input") ? Direction.INPUT
                 : Direction.OUTPUT;
-        PortType type = PortType.UNKNOWN;
+
+        PortType type = PortType.UNKNOWN; // port type is optional
         if (node.getAttributes().getNamedItem("type") != null) {
             String typeString = node.getAttributes().getNamedItem("type").getNodeValue();
-            type = typeString.equals("data") ? PortType.DATA : typeString.equals("valid") ? PortType.VALID : typeString
-                    .equals("ready") ? PortType.READY : typeString.equals("dst") ? PortType.DST : PortType.UNKNOWN;
+            switch (typeString) {
+            case "data":
+                type = PortType.DATA;
+                break;
+            case "valid":
+                type = PortType.VALID;
+                break;
+            case "ready":
+                type = PortType.READY;
+                break;
+            case "dst":
+                type = PortType.DST;
+                break;
+            case "clk":
+                type = PortType.CLK;
+                break;
+            case "rst":
+                type = PortType.RST;
+                break;
+            default:
+                type = PortType.UNKNOWN;
+                break;
+            }
         }
-        int width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
+
+        int width = 1; // width is optional too and default is 1
+        if (node.getAttributes().getNamedItem("width") != null)
+            width = Integer.parseInt(node.getAttributes().getNamedItem("width").getNodeValue());
+
         int arrayWidth = 1; // leave this attribute optional
         if (node.getAttributes().getNamedItem("array_width") != null)
             arrayWidth = Integer.parseInt(node.getAttributes().getNamedItem("arrayWidth").getNodeValue());
-        return new Port(pname, direction, width, arrayWidth, type, mod, bundled);
+
+        String globalPortName = null; // also optional
+        if (!bundled) {
+            globalPortName = pname;
+            if (node.getAttributes().getNamedItem("global") != null)
+                globalPortName = node.getAttributes().getNamedItem("global").getNodeValue();
+        }
+        return new Port(pname, direction, width, arrayWidth, type, mod, bundled, globalPortName);
     }
 
     /**

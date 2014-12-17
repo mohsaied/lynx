@@ -24,6 +24,7 @@ public class Port {
     private List<Port> wires;
 
     private boolean isBundled;
+    private String globalPortName;
 
     public Port() {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false);
@@ -38,6 +39,11 @@ public class Port {
     }
 
     public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule, boolean isBundled) {
+        this(name, direction, width, arrayWidth, type, parentModule, isBundled, null);
+    }
+
+    public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
+            boolean isBundled, String globalPortName) {
         this.name = name;
         this.direction = direction;
         this.width = width;
@@ -46,6 +52,8 @@ public class Port {
         this.parentModule = parentModule;
         this.wires = new ArrayList<Port>();
         this.isBundled = isBundled;
+        this.setGlobalPortName(globalPortName);
+        assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
     }
 
     public final Direction getDirection() {
@@ -117,8 +125,8 @@ public class Port {
     }
 
     public final void addWire(Port wire) {
-        assert (wire.getDirection() != this.getDirection()) : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
-                + " of same direction " + this.getDirection();
+        assert (wire.getDirection() != this.getDirection()) : "Attempting to connect " + wire.getFullNameDot() + " and "
+                + getFullNameDot() + " of same direction " + this.getDirection();
         assert wire.getWidth() == this.getWidth() : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
                 + " of different widths " + wire.getWidth() + " and " + this.getWidth();
         this.wires.add(wire);
@@ -130,6 +138,14 @@ public class Port {
 
     public void setBundled(boolean isBundled) {
         this.isBundled = isBundled;
+    }
+
+    public final String getGlobalPortName() {
+        return globalPortName;
+    }
+
+    public final void setGlobalPortName(String globalPortName) {
+        this.globalPortName = globalPortName;
     }
 
     @Override

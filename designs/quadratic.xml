@@ -4,6 +4,8 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	
 	<port direction="input" width="16" name="i_x" type="data"/>
 	<port direction="input" width="1" name="i_valid_in" type="valid"/>
 	<port direction="output" width="1" name="i_ready_out" type="ready"/>
@@ -21,6 +23,8 @@
     
 	<parameter name="WIDTH" value="16"/>
 	
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	
 	<bundle name="inbun">
 		<port direction="input" width="16" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -36,6 +40,8 @@
 	
   </module>
   <module type="add_c" name="addc_inst" router="2">
+
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
     
 	<parameter name="WIDTH" value="16"/>
 	
