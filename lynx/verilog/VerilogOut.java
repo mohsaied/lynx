@@ -41,13 +41,11 @@ public class VerilogOut {
         // loop over top-level wires and will probably need to create wires
         // and assign statements for the outputs to avoid reg/wire problems
 
-        writer.println("//wires for the top-level");
-        for (Port por : design.getPorts().values()) {
-            if (por.getDirection() == Direction.OUTPUT) {
-                writeWire(por, writer);
-            }
-        }
-        writer.println();
+        /*
+         * writer.println("//wires for the top-level"); for (Port por :
+         * design.getPorts().values()) { if (por.getDirection() ==
+         * Direction.OUTPUT) { writeWire(por, writer); } } writer.println();
+         */
 
         // loop over all ports in the design, create a wire for each output port
         // it may be feeding multiple input ports -- that's why
@@ -76,7 +74,7 @@ public class VerilogOut {
             writer.println(mod.getType() + " " + mod.getName() + " (");
 
             for (Port por : mod.getPorts().values()) {
-                writer.println("\t." + por.getName() + "(),");
+                writer.println("\t." + por.getName() + "(" + por.getConnectingWireName() + "),");
             }
 
             writer.println(");");

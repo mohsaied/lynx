@@ -2,6 +2,7 @@ package lynx.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import lynx.data.MyEnums.*;
 
@@ -12,6 +13,8 @@ import lynx.data.MyEnums.*;
  * 
  */
 public class Port {
+
+    private static final Logger log = Logger.getLogger(Design.class.getName());
 
     private Direction direction;
     private String name;
@@ -24,6 +27,7 @@ public class Port {
     private List<Port> wires;
 
     private boolean isBundled;
+    private boolean isGlobal;
     private String globalPortName;
 
     public Port() {
@@ -64,6 +68,7 @@ public class Port {
         this.parentModule = parentModule;
         this.wires = new ArrayList<Port>();
         this.isBundled = isBundled;
+        this.isGlobal = globalPortName != null;
         this.setGlobalPortName(globalPortName);
         assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
     }
@@ -156,6 +161,14 @@ public class Port {
         this.isBundled = isBundled;
     }
 
+    public final boolean isGlobal() {
+        return isGlobal;
+    }
+
+    public final void setGlobal(boolean isGlobal) {
+        this.isGlobal = isGlobal;
+    }
+
     public final String getGlobalPortName() {
         return globalPortName;
     }
@@ -170,4 +183,28 @@ public class Port {
         return s;
     }
 
+    public final String getConnectingWireName() {
+
+        // first check if this is a conduit, we'll need to connect it to the
+        // top-level port
+        if (this.isGlobal) {
+            return globalPortName;
+        } else {
+            // if this port isn't connected to the top-level, then we should
+            // find which wire connects it
+            if (direction == Direction.OUTPUT) {
+                return this.getFullNameDash() + "_wire";
+            } else if (direction == Direction.INPUT) {
+                if (wires.size() == 1) {
+                    return wires.get(0).getFullNameDash() + "_wire";
+                } else {
+                    assert wires.size() <= 1 : "Input port " + this.getFullNameDash() + " cannot have multiple (" + wires.size()
+                            + ") drivers";
+                    if (!(this.parentModule instanceof Noc))
+                        log.warning("Input port " + this.getFullNameDash() + " is unconnected");
+                }
+            }
+        }
+        return "";
+    }
 }
