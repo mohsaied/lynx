@@ -57,11 +57,11 @@ public class DesignModule extends Module {
         this.router = router;
     }
 
-    public List<String> getConnectedModuleNames() {
+    public List<String> getConnectedModuleNames(Direction dir) {
         List<String> mods = new ArrayList<String>();
 
         for (Bundle bun : bundles.values()) {
-            if (bun.getDirection() == Direction.OUTPUT)
+            if (bun.getDirection() == dir)
                 for (Bundle conBun : bun.getConnections()) {
                     DesignModule conMod = conBun.getParentModule();
                     mods.add(conMod.getName());

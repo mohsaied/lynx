@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import lynx.data.MyEnums.Direction;
+
 /**
  * A top-level design.
  * 
@@ -17,6 +19,7 @@ public final class Design extends Module {
     private static final Logger log = Logger.getLogger(Design.class.getName());
 
     private Map<String, DesignModule> modules;
+    private Map<String, Integer> moduleIndices;
 
     private Noc noc;
 
@@ -29,6 +32,7 @@ public final class Design extends Module {
     public Design(String name) {
         super(name, name + "_inst");
         this.modules = new HashMap<String, DesignModule>();
+        this.moduleIndices = new HashMap<String, Integer>();
         this.noc = null;
         this.translators = new ArrayList<Translator>();
         log.info("Creating new design: " + name);
@@ -40,6 +44,8 @@ public final class Design extends Module {
 
     public final void addModule(DesignModule currModule) {
         this.modules.put(currModule.getName(), currModule);
+        // hash module name with an index
+        this.moduleIndices.put(currModule.getName(), this.moduleIndices.size());
     }
 
     public final int getNumModules() {
@@ -104,6 +110,14 @@ public final class Design extends Module {
         return s;
     }
 
+    private DesignModule getModuleByIndex(int modIndex) {
+        for (String modName : this.moduleIndices.keySet()) {
+            if (this.moduleIndices.get(modName) == modIndex)
+                return (DesignModule) getModuleByName(modName);
+        }
+        return null;
+    }
+
     public double[][] getAdjacencyMatrix() {
         int numModules = modules.size();
         double[][] matrix = new double[numModules][numModules];
@@ -112,28 +126,31 @@ public final class Design extends Module {
             for (int j = 0; j < numModules; j++)
                 matrix[i][j] = 0;
 
-        // good idea to associate a number with a module name
-        // the number is the matrix entry location
-        Map<String, Integer> moduleNames = new HashMap<String, Integer>();
-        int i = 0;
-        for (String modName : getDesignModules().keySet()) {
-            moduleNames.put(modName, new Integer(i++));
-        }
-
-        for (String modName : moduleNames.keySet()) {
+        for (String modName : this.moduleIndices.keySet()) {
 
             // current module
             DesignModule currModule = (DesignModule) getModuleByName(modName);
             // current module index
-            i = moduleNames.get(modName);
+            int i = this.moduleIndices.get(modName);
 
             // find all modules connected to module i
-            List<String> conMods = currModule.getConnectedModuleNames();
+            List<String> conMods = currModule.getConnectedModuleNames(Direction.OUTPUT);
             for (String conModName : conMods) {
-                int j = moduleNames.get(conModName);
+                int j = this.moduleIndices.get(conModName);
                 matrix[i][j] = 1;
             }
         }
         return matrix;
     }
+
+    public int getModuleInDegree(int modIndex) {
+        DesignModule currModule = this.getModuleByIndex(modIndex);
+        return currModule.getConnectedModuleNames(Direction.INPUT).size();
+    }
+
+    public int getModuleOutDegree(int modIndex) {
+        DesignModule currModule = this.getModuleByIndex(modIndex);
+        return currModule.getConnectedModuleNames(Direction.OUTPUT).size();
+    }
+
 }

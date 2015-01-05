@@ -190,4 +190,19 @@ public class Noc extends Module {
             }
         return matrix;
     }
+
+    public int getRouterDegree(int routerIndex) {
+        // corner router?
+        if (routerIndex == 0 || routerIndex == nocNumRoutersPerDimension - 1 || routerIndex == nocNumRouters - 1
+                || routerIndex == nocNumRouters - nocNumRoutersPerDimension)
+            return 2;
+        // edge router?
+        else if (routerIndex < nocNumRoutersPerDimension || routerIndex % nocNumRoutersPerDimension == 0
+                || routerIndex % nocNumRoutersPerDimension == nocNumRoutersPerDimension - 1
+                || routerIndex >= nocNumRouters - nocNumRoutersPerDimension)
+            return 3;
+        // center router
+        else
+            return 4;
+    }
 }
