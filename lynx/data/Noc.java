@@ -175,4 +175,19 @@ public class Noc extends Module {
         return "r" + router + "_" + type + "_" + direction.toShortString();
     }
 
+    public double[][] getAdjacencyMatrix() {
+        double[][] matrix = new double[nocNumRouters][nocNumRouters];
+        // init matrix
+        for (int i = 0; i < nocNumRouters; i++)
+            for (int j = 0; j < nocNumRouters; j++)
+                matrix[i][j] = 0;
+        for (int i = 0; i < nocNumRouters; i++)
+            for (int j = 0; j < nocNumRouters; j++) {
+                // we only have a mesh for now
+                // each router (i) is connected to four other routers
+                if (j == i - 1 || j == i + 1 || j == i + nocNumRouters || j == i - nocNumRouters)
+                    matrix[i][j] = 1;
+            }
+        return matrix;
+    }
 }

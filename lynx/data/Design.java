@@ -104,4 +104,36 @@ public final class Design extends Module {
         return s;
     }
 
+    public double[][] getAdjacencyMatrix() {
+        int numModules = modules.size();
+        double[][] matrix = new double[numModules][numModules];
+        // init matrix
+        for (int i = 0; i < numModules; i++)
+            for (int j = 0; j < numModules; j++)
+                matrix[i][j] = 0;
+
+        // good idea to associate a number with a module name
+        // the number is the matrix entry location
+        Map<String, Integer> moduleNames = new HashMap<String, Integer>();
+        int i = 0;
+        for (String modName : getDesignModules().keySet()) {
+            moduleNames.put(modName, new Integer(i++));
+        }
+
+        for (String modName : moduleNames.keySet()) {
+
+            // current module
+            DesignModule currModule = (DesignModule) getModuleByName(modName);
+            // current module index
+            i = moduleNames.get(modName);
+
+            // find all modules connected to module i
+            List<String> conMods = currModule.getConnectedModuleNames();
+            for (String conModName : conMods) {
+                int j = moduleNames.get(conModName);
+                matrix[i][j] = 1;
+            }
+        }
+        return matrix;
+    }
 }

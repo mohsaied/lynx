@@ -1,7 +1,11 @@
 package lynx.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import lynx.data.MyEnums.Direction;
 
 /**
  * A user-entered Module
@@ -51,5 +55,19 @@ public class DesignModule extends Module {
 
     public void setRouter(int router) {
         this.router = router;
+    }
+
+    public List<String> getConnectedModuleNames() {
+        List<String> mods = new ArrayList<String>();
+
+        for (Bundle bun : bundles.values()) {
+            if (bun.getDirection() == Direction.OUTPUT)
+                for (Bundle conBun : bun.getConnections()) {
+                    DesignModule conMod = conBun.getParentModule();
+                    mods.add(conMod.getName());
+                }
+        }
+
+        return mods;
     }
 }

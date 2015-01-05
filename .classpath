@@ -7,5 +7,10 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/Mohamed/Dropbox/PhD/Software/noclynx/jgraphx_lib/docs/api"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="commons-math3-3.4/commons-math3-3.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Users/Mohamed/Dropbox/PhD/Software/noclynx/commons-math3-3.4/docs/apidocs"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path=""/>
 </classpath>
