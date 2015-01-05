@@ -185,7 +185,7 @@ public class Noc extends Module {
             for (int j = 0; j < nocNumRouters; j++) {
                 // we only have a mesh for now
                 // each router (i) is connected to four other routers
-                if (j == i - 1 || j == i + 1 || j == i + nocNumRouters || j == i - nocNumRouters)
+                if ((j == (i - 1)) || (j == (i + 1)) || (j == (i + nocNumRoutersPerDimension)) || (j == (i - nocNumRoutersPerDimension)))
                     matrix[i][j] = 1;
             }
         return matrix;

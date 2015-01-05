@@ -17,19 +17,52 @@ public class NocMapping {
 
         final int n = design.getNumModules();
         final int m = design.getNoc().getNumRouters();
-        double[][] permMatrix = new double[n][m];
+        double[][] permMatrixValues = new double[n][m];
 
         // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
         for (int i = 0; i < n; i++)
             for (int j = 0; j < m; j++)
                 if (design.getModuleInDegree(i) <= design.getNoc().getRouterDegree(j)
                         && design.getModuleOutDegree(i) <= design.getNoc().getRouterDegree(j))
-                    permMatrix[i][j] = 1;
+                    permMatrixValues[i][j] = 1;
                 else
-                    permMatrix[i][j] = 0;
+                    permMatrixValues[i][j] = 0;
 
-        System.out.println(designMatrix.toString());
-        System.out.println(nocMatrix.toString());
+        RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+
+        System.out.println(designMatrix);
+        System.out.println(nocMatrix);
+        System.out.println(permMatrix);
+        prettyPrint("designMatrix", designMatrix);
+        prettyPrint("nocMatrix", nocMatrix);
+        prettyPrint("permMatrix", permMatrix);
     }
 
+    public static void prettyPrint(String matName, RealMatrix m) {
+        System.out.println(matName);
+        System.out.print("   ");
+        for (int i = 0; i < m.getColumnDimension(); i++) {
+            System.out.print(i);
+            if (i >= 9)
+                System.out.print(" ");
+            else
+                System.out.print("  ");
+        }
+        System.out.println();
+        System.out.print("   ");
+        for (int i = 0; i < m.getColumnDimension(); i++) {
+            System.out.print("|  ");
+        }
+        System.out.println();
+        for (int i = 0; i < m.getRowDimension(); i++) {
+            if (i <= 9)
+                System.out.print(i + "--");
+            else
+                System.out.print(i + "-");
+            for (int j = 0; j < m.getColumnDimension(); j++) {
+                System.out.print((int) (m.getEntry(i, j)) + "  ");
+            }
+            System.out.println();
+        }
+    }
 }
