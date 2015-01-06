@@ -23,8 +23,8 @@ public class Main {
         // add NoC circuitry - NoC and translators
         NocInterconnect.addNoc(design, "designs/noc.xml");
 
-        //find possible locations on the NoC
-        NocMapping.Ullman(design);
+        // find possible locations on the NoC
+        NocMapping.ullman(design);
 
         // write out XML design
         XmlDesign.writeXMLDesign(design, "designs/out.xml");

@@ -7,18 +7,21 @@ import lynx.data.Design;
 
 public class NocMapping {
 
-    public static void Ullman(Design design) {
-        // find candidate NoC placements
+    public static void ullman(Design design) {
+
+        // get adjacency matrices of design and NoC
         double[][] designMatrixValues = design.getAdjacencyMatrix();
         double[][] nocMatrixValues = design.getNoc().getAdjacencyMatrix();
-
         RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
         RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
 
+        // create the permutation matrix which specifies which module is mapped
+        // onto which NoC router
         final int n = design.getNumModules();
         final int m = design.getNoc().getNumRouters();
         double[][] permMatrixValues = new double[n][m];
 
+        // create initial permMatrix
         // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
         for (int i = 0; i < n; i++)
             for (int j = 0; j < m; j++)
@@ -27,15 +30,91 @@ public class NocMapping {
                     permMatrixValues[i][j] = 1;
                 else
                     permMatrixValues[i][j] = 0;
-
         RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
 
-        System.out.println(designMatrix);
-        System.out.println(nocMatrix);
-        System.out.println(permMatrix);
-        prettyPrint("designMatrix", designMatrix);
-        prettyPrint("nocMatrix", nocMatrix);
+        // current row we are investigating
+        int currRow = 0;
+        // array holding the used columns
+        boolean[] usedColumns = new boolean[permMatrix.getColumnDimension()];
+        for (int i = 0; i < usedColumns.length; i++)
+            usedColumns[i] = false;
+        // start the recursion for DFS
+        ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
+
+        // System.out.println(designMatrix);
+        // System.out.println(nocMatrix);
+        // System.out.println(permMatrix);
+        // prettyPrint("designMatrix", designMatrix);
+        // prettyPrint("nocMatrix", nocMatrix);
+        // prettyPrint("permMatrix", permMatrix);
+    }
+
+    private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
+            RealMatrix permMatrix) {
+
+        // check the permMatrix if it is a valid isomorphism if we permuted all
+        // the rows
+        if (currRow >= (permMatrix.getRowDimension())) {
+            if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
+                System.out.println("Found a valid mapping!");
+                prettyPrint("permMatrix", permMatrix);
+                return;
+            }
+        } else { // recurse
+            for (int i = 0; i < usedColumns.length; i++) {
+                if (!usedColumns[i]) {
+
+                    // for this row, set the current (row,column) to 1 and the
+                    // rest
+                    // (row,other_columns) to 0
+                    for (int j = 0; j < usedColumns.length; j++)
+                        permMatrix.setEntry(currRow, j, i == j ? 1 : 0);
+
+                    //prettyPrint("permMatrix", permMatrix);
+
+                    usedColumns[i] = true;
+                    ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrix);
+                    usedColumns[i] = false;
+                }
+            }
+        }
+    }
+
+    private static boolean isValidMapping(RealMatrix designMatrix, RealMatrix nocMatrix, RealMatrix permMatrix) {
+
         prettyPrint("permMatrix", permMatrix);
+
+        // first check if there is more than one 1 in any column, in which case
+        // it's invalid
+        for (int i = 0; i < permMatrix.getColumnDimension(); i++) {
+            double[] currCol = permMatrix.getColumn(i);
+            boolean firstOne = false;
+            for (int j = 0; j < currCol.length; j++) {
+                if (currCol[j] == 1.0 && !firstOne) {
+                    firstOne = true;
+                } else if (currCol[j] == 1.0 && firstOne) {
+                    System.out.println("Too many ones");
+                    return false;
+                }
+            }
+        }
+
+        // validation matrix is allowed to have more 1s (edges) than the
+        // subgraph we're trying to map
+        RealMatrix valMatrix = permMatrix.multiply((permMatrix.multiply(nocMatrix)).transpose());
+
+        prettyPrint("valMatrix", valMatrix);
+
+        // is this a valid permMatrix?
+        for (int i = 0; i < designMatrix.getColumnDimension(); i++)
+            for (int j = 0; j < designMatrix.getRowDimension(); j++)
+                if ((designMatrix.getEntry(i, j) == 1) && (valMatrix.getEntry(i, j) != 1)) {
+                    System.out.println("invalid");
+                    return false;
+                }
+
+        System.out.println("valid!");
+        return true;
     }
 
     public static void prettyPrint(String matName, RealMatrix m) {

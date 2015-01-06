@@ -256,7 +256,11 @@ public class XmlDesign {
 
         String globalPortName = null; // also optional
         if (!bundled) {
-            globalPortName = mod.getName() + "." + pname; // TODO this isnt nice! should be returned from the object to ensure consistency
+            globalPortName = mod.getName() + "." + pname; // TODO this isnt
+                                                          // nice! should be
+                                                          // returned from the
+                                                          // object to ensure
+                                                          // consistency
             if (node.getAttributes().getNamedItem("global") != null)
                 globalPortName = node.getAttributes().getNamedItem("global").getNodeValue();
         }
