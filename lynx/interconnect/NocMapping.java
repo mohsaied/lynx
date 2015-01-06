@@ -41,6 +41,8 @@ public class NocMapping {
         // start the recursion for DFS
         ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
 
+        System.out.println("Number of solutions found = " + numSols);
+
         // System.out.println(designMatrix);
         // System.out.println(nocMatrix);
         // System.out.println(permMatrix);
@@ -49,8 +51,12 @@ public class NocMapping {
         // prettyPrint("permMatrix", permMatrix);
     }
 
+    static int numSols = 0;
+
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
             RealMatrix permMatrix) {
+
+        // prettyPrint("permMatrix", permMatrix);
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
@@ -58,6 +64,7 @@ public class NocMapping {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 System.out.println("Found a valid mapping!");
                 prettyPrint("permMatrix", permMatrix);
+                numSols++;
                 return;
             }
         } else { // recurse
@@ -70,8 +77,6 @@ public class NocMapping {
                     for (int j = 0; j < usedColumns.length; j++)
                         permMatrix.setEntry(currRow, j, i == j ? 1 : 0);
 
-                    //prettyPrint("permMatrix", permMatrix);
-
                     usedColumns[i] = true;
                     ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrix);
                     usedColumns[i] = false;
@@ -82,7 +87,7 @@ public class NocMapping {
 
     private static boolean isValidMapping(RealMatrix designMatrix, RealMatrix nocMatrix, RealMatrix permMatrix) {
 
-        prettyPrint("permMatrix", permMatrix);
+        // prettyPrint("permMatrix", permMatrix);
 
         // first check if there is more than one 1 in any column, in which case
         // it's invalid
@@ -103,8 +108,6 @@ public class NocMapping {
         // subgraph we're trying to map
         RealMatrix valMatrix = permMatrix.multiply((permMatrix.multiply(nocMatrix)).transpose());
 
-        prettyPrint("valMatrix", valMatrix);
-
         // is this a valid permMatrix?
         for (int i = 0; i < designMatrix.getColumnDimension(); i++)
             for (int j = 0; j < designMatrix.getRowDimension(); j++)
@@ -112,6 +115,8 @@ public class NocMapping {
                     System.out.println("invalid");
                     return false;
                 }
+
+        prettyPrint("valMatrix", valMatrix);
 
         System.out.println("valid!");
         return true;
