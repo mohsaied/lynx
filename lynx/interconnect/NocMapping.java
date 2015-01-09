@@ -7,7 +7,12 @@ import lynx.data.Design;
 
 public class NocMapping {
 
+    private static int numSols;
+
     public static void ullman(Design design) {
+
+        // initialize the number of solutions to 0
+        numSols = 0;
 
         // get adjacency matrices of design and NoC
         double[][] designMatrixValues = design.getAdjacencyMatrix();
@@ -50,8 +55,6 @@ public class NocMapping {
         // prettyPrint("nocMatrix", nocMatrix);
         // prettyPrint("permMatrix", permMatrix);
     }
-
-    static int numSols = 0;
 
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
             RealMatrix permMatrix) {
