@@ -16,7 +16,7 @@ public class NocMapping {
 
         // get adjacency matrices of design and NoC
         double[][] designMatrixValues = design.getAdjacencyMatrix();
-        double[][] nocMatrixValues = design.getNoc().getAdjacencyMatrix();
+        double[][] nocMatrixValues = design.getNoc().getFullAdjacencyMatrix();
         RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
         RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
 
@@ -43,8 +43,25 @@ public class NocMapping {
         boolean[] usedColumns = new boolean[permMatrix.getColumnDimension()];
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
-        // start the recursion for DFS
-        ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
+
+        for (int maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
+
+            double[][] newNocMatrixValues = new double[design.getNoc().getNumRouters()][design.getNoc().getNumRouters()];
+            // control legal # hops
+            for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
+                for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+                    if (nocMatrixValues[i][j] > maxLegalHops)
+                        newNocMatrixValues[i][j] = 0;
+                    else
+                        newNocMatrixValues[i][j] = 1;
+                }
+            }
+
+            nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
+
+            // start the recursion for DFS
+            ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
+        }
 
         System.out.println("Number of solutions found = " + numSols);
 
@@ -65,8 +82,8 @@ public class NocMapping {
         // the rows
         if (currRow >= (permMatrix.getRowDimension())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
-                System.out.println("Found a valid mapping!");
-                prettyPrint("permMatrix", permMatrix);
+                // System.out.println("Found a valid mapping!");
+                // prettyPrint("permMatrix", permMatrix);
                 numSols++;
                 return;
             }
@@ -101,7 +118,7 @@ public class NocMapping {
                 if (currCol[j] == 1.0 && !firstOne) {
                     firstOne = true;
                 } else if (currCol[j] == 1.0 && firstOne) {
-                    System.out.println("Too many ones");
+                    // System.out.println("Too many ones");
                     return false;
                 }
             }
@@ -115,13 +132,13 @@ public class NocMapping {
         for (int i = 0; i < designMatrix.getColumnDimension(); i++)
             for (int j = 0; j < designMatrix.getRowDimension(); j++)
                 if ((designMatrix.getEntry(i, j) == 1) && (valMatrix.getEntry(i, j) != 1)) {
-                    System.out.println("invalid");
+                    // System.out.println("invalid");
                     return false;
                 }
 
-        prettyPrint("valMatrix", valMatrix);
+        // prettyPrint("valMatrix", valMatrix);
 
-        System.out.println("valid!");
+        // System.out.println("valid!");
         return true;
     }
 
