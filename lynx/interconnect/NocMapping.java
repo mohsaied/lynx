@@ -44,7 +44,8 @@ public class NocMapping {
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
-        for (int maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
+        int maxLegalHops;
+        for (maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
 
             double[][] newNocMatrixValues = new double[design.getNoc().getNumRouters()][design.getNoc().getNumRouters()];
             // control legal # hops
@@ -59,11 +60,16 @@ public class NocMapping {
 
             nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
 
-            // start the recursion for DFS
+            numSols = 0;
+            
+            // search!
             ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
+            
+            System.out.println("Number of solutions found = " + numSols + ", at maxHops = " + maxLegalHops);
+            if(maxLegalHops == design.getNoc().getMaxHops())
+                break;
         }
 
-        System.out.println("Number of solutions found = " + numSols);
 
         // System.out.println(designMatrix);
         // System.out.println(nocMatrix);

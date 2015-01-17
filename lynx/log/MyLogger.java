@@ -4,30 +4,19 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lynx.data.Design;
-import lynx.data.Module;
-import lynx.interconnect.NocInterconnect;
-import lynx.main.Main;
-import lynx.verilog.VerilogOut;
-import lynx.xml.XmlDesign;
-import lynx.xml.XmlNoc;
-
 /**
- * Groups and keeps track of loggers
+ * Creates the parent logger and formats it properly
  * 
  * @author Mohamed
  *
  */
 public class MyLogger {
 
-    // classes that contain loggers
-    private final String[] classes = { Main.class.getName(), XmlDesign.class.getName(), Design.class.getName(),
-            Module.class.getName(), VerilogOut.class.getName(), NocInterconnect.class.getName(), XmlNoc.class.getName() };
+    private Logger mainLog;
 
     public MyLogger() {
 
         this(Level.ALL);
-
     }
 
     public MyLogger(Level logLevel) {
@@ -36,15 +25,12 @@ public class MyLogger {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(formatter);
 
-        for (String currClass : classes) {
-            Logger log = Logger.getLogger(currClass);
-
-            log.setUseParentHandlers(false);
-
-            log.addHandler(handler);
-
-            log.setLevel(logLevel);
-        }
-
+        // only need to create a parent logger with the parent namespace (in my
+        // case that's "lynx"), and any child automatically inherits all of its
+        // properties upon creation
+        mainLog = Logger.getLogger("lynx");
+        mainLog.setUseParentHandlers(false);
+        mainLog.addHandler(handler);
+        mainLog.setLevel(logLevel);
     }
 }
