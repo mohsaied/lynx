@@ -1,15 +1,25 @@
 package lynx.interconnect;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import lynx.data.Design;
+import lynx.data.Noc;
 
 public class NocMapping {
+
+    private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
     private static int numSols;
 
     public static void ullman(Design design) {
+
+        log.setLevel(Level.ALL);
 
         // initialize the number of solutions to 0
         numSols = 0;
@@ -44,6 +54,9 @@ public class NocMapping {
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
+        // list of valid mappings found
+        List<RealMatrix> validMappings = new ArrayList<RealMatrix>();
+
         int maxLegalHops;
         for (maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
 
@@ -61,26 +74,111 @@ public class NocMapping {
             nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
 
             numSols = 0;
-            
+            validMappings.clear();
+
             // search!
-            ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix);
-            
-            System.out.println("Number of solutions found = " + numSols + ", at maxHops = " + maxLegalHops);
-            if(maxLegalHops == design.getNoc().getMaxHops())
+            ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, validMappings);
+
+            log.info("Number of solutions found = " + numSols + "(" + validMappings.size() + ")" + ", at maxHops = "
+                    + maxLegalHops);
+
+            if (maxLegalHops == design.getNoc().getMaxHops())
                 break;
         }
 
+        // at this point all the solutions we want are stored in validMappings
+        // create new list , each entry has another list of equiv-sim mappings
+        List<ArrayList<RealMatrix>> equivSimMappings = new ArrayList<ArrayList<RealMatrix>>();
 
-        // System.out.println(designMatrix);
-        // System.out.println(nocMatrix);
-        // System.out.println(permMatrix);
-        // prettyPrint("designMatrix", designMatrix);
-        // prettyPrint("nocMatrix", nocMatrix);
-        // prettyPrint("permMatrix", permMatrix);
+        for (RealMatrix currMapping : validMappings) {
+
+            // prettyPrint("", currMapping);
+
+            boolean foundEquiv = false;
+
+            // first search through equivSimMappings and check if there's an
+            for (ArrayList<RealMatrix> mappingList : equivSimMappings) {
+
+                if (isEquivMapping(currMapping, mappingList.get(0), designMatrix, design)) {
+                    foundEquiv = true;
+                    mappingList.add(currMapping);
+                    break;
+                }
+            }
+
+            // if no equivalent mapping was found, create a new entry
+            if (!foundEquiv) {
+                ArrayList<RealMatrix> newMappingList = new ArrayList<RealMatrix>();
+                newMappingList.add(currMapping);
+                equivSimMappings.add(newMappingList);
+            }
+
+        }
+
+        System.out.println("equivSimMappingSize = " + equivSimMappings.size());
+
+    }
+
+    private static boolean isEquivMapping(RealMatrix mapping1, RealMatrix mapping2, RealMatrix designMatrix, Design design) {
+
+        // two things to satisfy sim-equivalence
+        // (1) number of hops between any two modules are the same
+        // (2) traffic intersections on path between two modules are the same
+
+        int numModules = mapping1.getRowDimension();
+
+        // System.out.println();
+
+        for (int i = 0; i < numModules; i++) {
+            for (int j = 0; j < numModules; j++) {
+
+                // elaborate path between module i and j
+                // is there a connection from i and j?
+                if (designMatrix.getEntry(i, j) == 1) {
+
+                    // (1) get number of hops
+
+                    // first find router indices for each mapping
+                    int start1 = getOnePosFromRow(i, mapping1);
+                    int start2 = getOnePosFromRow(i, mapping2);
+                    int end1 = getOnePosFromRow(j, mapping1);
+                    int end2 = getOnePosFromRow(j, mapping2);
+
+                    // System.out.print("m1(" + start1 + "," + end1 + ")" +
+                    // "m2(" + start2 + "," + end2 + ")");
+
+                    if (Noc.getNumberOfHops(start1, end1, design.getNoc()) != Noc.getNumberOfHops(start2, end2, design.getNoc())) {
+                        // System.out.println(" no");
+                        return false;
+                    } else {
+                        // System.out.println(" yes");
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static int getOnePosFromRow(int rowIndex, RealMatrix matrix) {
+
+        double[] matrixRow = matrix.getRow(rowIndex);
+
+        // prettyPrint("getonepos", matrix);
+
+        for (int i = 0; i < matrixRow.length; i++)
+            if (matrixRow[i] == 1.0) {
+                // System.out.println("index"+i);
+                return i;
+            }
+
+        assert false : "Cannot find any 1 in this matrix row";
+
+        return 0;
     }
 
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
-            RealMatrix permMatrix) {
+            RealMatrix permMatrix, List<RealMatrix> validMappings) {
 
         // prettyPrint("permMatrix", permMatrix);
 
@@ -91,6 +189,8 @@ public class NocMapping {
                 // System.out.println("Found a valid mapping!");
                 // prettyPrint("permMatrix", permMatrix);
                 numSols++;
+                RealMatrix permMatrixCopy = MatrixUtils.createRealMatrix((permMatrix.getData()));
+                validMappings.add(permMatrixCopy);
                 return;
             }
         } else { // recurse
@@ -104,7 +204,7 @@ public class NocMapping {
                         permMatrix.setEntry(currRow, j, i == j ? 1 : 0);
 
                     usedColumns[i] = true;
-                    ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrix);
+                    ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrix, validMappings);
                     usedColumns[i] = false;
                 }
             }

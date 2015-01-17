@@ -201,13 +201,14 @@ public class Noc extends Module {
         for (int i = 0; i < nocNumRouters; i++)
             for (int j = 0; j < nocNumRouters; j++) {
                 // router connectivity is an int representing # hops
-                matrix[i][j] = getNumberOfHops(i, j, nocNumRoutersPerDimension);
+                matrix[i][j] = getNumberOfHops(i, j, this);
             }
         return matrix;
     }
 
-    private double getNumberOfHops(int i, int j, int nocNumRoutersPerDimension) {
-        return Math.floor((Math.abs(i - j) / nocNumRoutersPerDimension)) + Math.abs(i - j) % nocNumRoutersPerDimension;
+    public static double getNumberOfHops(int i, int j, Noc noc) {
+        return Math.floor((Math.abs(i - j) / noc.getNumRoutersPerDimension())) + Math.abs(i - j)
+                % noc.getNumRoutersPerDimension();
     }
 
     public int getRouterDegree(int routerIndex) {
@@ -226,6 +227,6 @@ public class Noc extends Module {
     }
 
     public int getMaxHops() {
-        return (int) getNumberOfHops(0, nocNumRouters-1, nocNumRoutersPerDimension);
+        return (int) getNumberOfHops(0, nocNumRouters - 1, this);
     }
 }
