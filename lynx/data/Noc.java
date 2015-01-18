@@ -243,6 +243,8 @@ public class Noc extends Module {
         int fromCol = getNocCol(fromRouter);
         int toRow = getNocRow(toRouter);
         int toCol = getNocCol(toRouter);
+        
+        //System.out.println("from "+fromRouter+"("+fromCol+","+fromRow+")"+" to "+toRouter+"("+toCol+","+toRow+")");
 
         // find the path that constitutes this XY route
         int currRouter = fromRouter;
@@ -250,6 +252,8 @@ public class Noc extends Module {
         int currCol = fromCol;
         // X direction first
         while (currCol != toCol) {
+
+            //System.out.println("col " + currCol + " router " + currRouter);
 
             if (currCol < toCol)
                 currRouter = currRouter + 1;
@@ -265,6 +269,8 @@ public class Noc extends Module {
         // Y direction second
         while (currRow != toRow) {
 
+            //System.out.println("row " + currRow + " router " + currRouter);
+
             if (currRow < toRow)
                 currRouter = currRouter + nocNumRoutersPerDimension;
             else
@@ -279,10 +285,10 @@ public class Noc extends Module {
     }
 
     private int getNocCol(int router) {
-        return router / nocNumRoutersPerDimension;
+        return router % nocNumRoutersPerDimension;
     }
 
     private int getNocRow(int router) {
-        return router % nocNumRoutersPerDimension;
+        return router / nocNumRoutersPerDimension;
     }
 }
