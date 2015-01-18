@@ -52,7 +52,7 @@ public class NocMapping {
             usedColumns[i] = false;
 
         // list of valid mappings found
-        List<RealMatrix> validMappings = new ArrayList<RealMatrix>();
+        List<Mapping> validMappings = new ArrayList<Mapping>();
 
         int maxLegalHops;
         for (maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
@@ -83,24 +83,26 @@ public class NocMapping {
 
         // at this point all the solutions we want are stored in validMappings
         // create new list , each entry has another list of equiv-sim mappings
-        List<ArrayList<RealMatrix>> equivSimMappings = sortMappings(validMappings, designMatrix, design);
+        List<ArrayList<Mapping>> equivSimMappings = sortMappings(validMappings, designMatrix, design);
 
         log.info("Uniquified mappings from " + validMappings.size() + " to " + equivSimMappings.size());
 
+        // rank the solutions found from best to worst
+
     }
 
-    private static List<ArrayList<RealMatrix>> sortMappings(List<RealMatrix> validMappings, RealMatrix designMatrix, Design design) {
+    private static List<ArrayList<Mapping>> sortMappings(List<Mapping> validMappings, RealMatrix designMatrix, Design design) {
 
-        List<ArrayList<RealMatrix>> equivSimMappings = new ArrayList<ArrayList<RealMatrix>>();
+        List<ArrayList<Mapping>> equivSimMappings = new ArrayList<ArrayList<Mapping>>();
 
-        for (RealMatrix currMapping : validMappings) {
+        for (Mapping currMapping : validMappings) {
 
             // prettyPrint("", currMapping);
 
             boolean foundEquiv = false;
 
             // first search through equivSimMappings and check if there's an
-            for (ArrayList<RealMatrix> mappingList : equivSimMappings) {
+            for (ArrayList<Mapping> mappingList : equivSimMappings) {
 
                 if (isEquivMapping(currMapping, mappingList.get(0), designMatrix, design)) {
                     foundEquiv = true;
@@ -111,7 +113,7 @@ public class NocMapping {
 
             // if no equivalent mapping was found, create a new entry
             if (!foundEquiv) {
-                ArrayList<RealMatrix> newMappingList = new ArrayList<RealMatrix>();
+                ArrayList<Mapping> newMappingList = new ArrayList<Mapping>();
                 newMappingList.add(currMapping);
                 equivSimMappings.add(newMappingList);
             }
@@ -120,13 +122,13 @@ public class NocMapping {
         return equivSimMappings;
     }
 
-    private static boolean isEquivMapping(RealMatrix mapping1, RealMatrix mapping2, RealMatrix designMatrix, Design design) {
+    private static boolean isEquivMapping(Mapping mapping1, Mapping mapping2, RealMatrix designMatrix, Design design) {
 
         // two things to satisfy sim-equivalence
         // (1) number of hops between any two modules are the same
         // (2) traffic intersections on path between two modules are the same
 
-        int numModules = mapping1.getRowDimension();
+        int numModules = mapping1.getMapMatrix().getRowDimension();
 
         // System.out.println();
 
@@ -140,10 +142,10 @@ public class NocMapping {
                     // (1) get number of hops
 
                     // first find router indices for each mapping
-                    int start1 = getOnePosFromRow(i, mapping1);
-                    int start2 = getOnePosFromRow(i, mapping2);
-                    int end1 = getOnePosFromRow(j, mapping1);
-                    int end2 = getOnePosFromRow(j, mapping2);
+                    int start1 = getOnePosFromRow(i, mapping1.getMapMatrix());
+                    int start2 = getOnePosFromRow(i, mapping2.getMapMatrix());
+                    int end1 = getOnePosFromRow(j, mapping1.getMapMatrix());
+                    int end2 = getOnePosFromRow(j, mapping2.getMapMatrix());
 
                     // System.out.print("m1(" + start1 + "," + end1 + ")" +
                     // "m2(" + start2 + "," + end2 + ")");
@@ -179,7 +181,7 @@ public class NocMapping {
     }
 
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
-            RealMatrix permMatrix, List<RealMatrix> validMappings) {
+            RealMatrix permMatrix, List<Mapping> validMappings) {
 
         // prettyPrint("permMatrix", permMatrix);
 
@@ -189,8 +191,8 @@ public class NocMapping {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping!");
                 // prettyPrint("permMatrix", permMatrix);
-                RealMatrix permMatrixCopy = MatrixUtils.createRealMatrix((permMatrix.getData()));
-                validMappings.add(permMatrixCopy);
+                Mapping permMatrixMapping = new Mapping(permMatrix.getData());
+                validMappings.add(permMatrixMapping);
                 return;
             }
         } else { // recurse
