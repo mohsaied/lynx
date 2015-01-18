@@ -15,14 +15,11 @@ public class NocMapping {
 
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
-    private static int numSols;
-
     public static void ullman(Design design) {
 
         log.setLevel(Level.ALL);
 
         // initialize the number of solutions to 0
-        numSols = 0;
 
         // get adjacency matrices of design and NoC
         double[][] designMatrixValues = design.getAdjacencyMatrix();
@@ -73,14 +70,12 @@ public class NocMapping {
 
             nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
 
-            numSols = 0;
             validMappings.clear();
 
             // search!
             ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, validMappings);
 
-            log.info("Number of solutions found = " + numSols + "(" + validMappings.size() + ")" + ", at maxHops = "
-                    + maxLegalHops);
+            log.info("Number of solutions found = " + validMappings.size() + ", at maxHops = " + maxLegalHops);
 
             if (maxLegalHops == design.getNoc().getMaxHops())
                 break;
@@ -88,6 +83,14 @@ public class NocMapping {
 
         // at this point all the solutions we want are stored in validMappings
         // create new list , each entry has another list of equiv-sim mappings
+        List<ArrayList<RealMatrix>> equivSimMappings = sortMappings(validMappings, designMatrix, design);
+
+        log.info("Uniquified mappings from " + validMappings.size() + " to " + equivSimMappings.size());
+
+    }
+
+    private static List<ArrayList<RealMatrix>> sortMappings(List<RealMatrix> validMappings, RealMatrix designMatrix, Design design) {
+
         List<ArrayList<RealMatrix>> equivSimMappings = new ArrayList<ArrayList<RealMatrix>>();
 
         for (RealMatrix currMapping : validMappings) {
@@ -112,11 +115,9 @@ public class NocMapping {
                 newMappingList.add(currMapping);
                 equivSimMappings.add(newMappingList);
             }
-
         }
 
-        System.out.println("equivSimMappingSize = " + equivSimMappings.size());
-
+        return equivSimMappings;
     }
 
     private static boolean isEquivMapping(RealMatrix mapping1, RealMatrix mapping2, RealMatrix designMatrix, Design design) {
@@ -188,7 +189,6 @@ public class NocMapping {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping!");
                 // prettyPrint("permMatrix", permMatrix);
-                numSols++;
                 RealMatrix permMatrixCopy = MatrixUtils.createRealMatrix((permMatrix.getData()));
                 validMappings.add(permMatrixCopy);
                 return;
