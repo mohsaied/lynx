@@ -24,7 +24,7 @@ public class Main {
         NocInterconnect.addNoc(design, "designs/noc.xml");
 
         // find possible locations on the NoC
-        NocMapping.ullman(design);
+        NocMapping.findMappings(design);
 
         // write out XML design
         XmlDesign.writeXMLDesign(design, "designs/out.xml");
