@@ -19,6 +19,7 @@ public class Main {
 
         // read XML design
         Design design = XmlDesign.readXMLDesign("designs/quadratic.xml");
+        design.update();
 
         // add NoC circuitry - NoC and translators
         NocInterconnect.addNoc(design, "designs/noc.xml");

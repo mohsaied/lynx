@@ -21,6 +21,8 @@ public final class Design extends Module {
     private Map<String, DesignModule> modules;
     private Map<String, Integer> moduleIndices;
 
+    private List<Connection> allConnections;
+
     private Noc noc;
 
     private List<Translator> translators;
@@ -33,6 +35,7 @@ public final class Design extends Module {
         super(name, name + "_inst");
         this.modules = new HashMap<String, DesignModule>();
         this.moduleIndices = new HashMap<String, Integer>();
+        this.allConnections = new ArrayList<Connection>();
         this.noc = null;
         this.translators = new ArrayList<Translator>();
         log.info("Creating new design: " + name);
@@ -151,6 +154,33 @@ public final class Design extends Module {
     public int getModuleOutDegree(int modIndex) {
         DesignModule currModule = this.getModuleByIndex(modIndex);
         return currModule.getConnectedModuleNames(Direction.OUTPUT).size();
+    }
+
+    public int getModuleIndex(String fromModuleName) {
+        return this.moduleIndices.get(fromModuleName);
+    }
+
+    public List<Connection> getAllConnections() {
+        return allConnections;
+    }
+
+    public void update() {
+
+        allConnections.clear();
+
+        for (DesignModule mod : this.modules.values()) {
+
+            // find all modules connected to module i
+            Map<String, Bundle> conBuns = mod.getBundles();
+            for (Bundle bun : conBuns.values()) {
+                if (bun.getDirection() == Direction.OUTPUT) {
+                    for (Bundle toBun : bun.getConnections()) {
+                        Connection con = new Connection(bun, toBun, this);
+                        allConnections.add(con);
+                    }
+                }
+            }
+        }
     }
 
 }
