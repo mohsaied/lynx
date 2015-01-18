@@ -1,6 +1,8 @@
 package lynx.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -136,7 +138,7 @@ public class Noc extends Module {
         assert Math.ceil(Math.sqrt(nocNumRouters)) == Math.sqrt(nocNumRouters) : "Number of routers must be a square (2, 4, 9, 16, etc..)";
     }
 
-    private int clog2(double num) {
+    public static int clog2(double num) {
         return (int) Math.ceil((Math.log(num) / Math.log(2)));
     }
 
@@ -175,7 +177,7 @@ public class Noc extends Module {
         return "r" + router + "_" + type + "_" + direction.toShortString();
     }
 
-    public double[][] getAdjacencyMatrix() {
+    public final double[][] getAdjacencyMatrix() {
         double[][] matrix = new double[nocNumRouters][nocNumRouters];
         // init matrix
         for (int i = 0; i < nocNumRouters; i++)
@@ -192,7 +194,7 @@ public class Noc extends Module {
         return matrix;
     }
 
-    public double[][] getFullAdjacencyMatrix() {
+    public final double[][] getFullAdjacencyMatrix() {
         double[][] matrix = new double[nocNumRouters][nocNumRouters];
         // init matrix
         for (int i = 0; i < nocNumRouters; i++)
@@ -211,7 +213,7 @@ public class Noc extends Module {
                 % noc.getNumRoutersPerDimension();
     }
 
-    public int getRouterDegree(int routerIndex) {
+    public final int getRouterDegree(int routerIndex) {
         // corner router?
         if (routerIndex == 0 || routerIndex == nocNumRoutersPerDimension - 1 || routerIndex == nocNumRouters - 1
                 || routerIndex == nocNumRouters - nocNumRoutersPerDimension)
@@ -226,7 +228,61 @@ public class Noc extends Module {
             return 4;
     }
 
-    public int getMaxHops() {
+    public final int getMaxHops() {
         return (int) getNumberOfHops(0, nocNumRouters - 1, this);
+    }
+
+    public final List<Integer> getPath(int fromRouter, int toRouter) {
+
+        List<Integer> path = new ArrayList<Integer>();
+
+        // TODO configurable routing function
+        // will hard-code XY routing for now
+
+        int fromRow = getNocRow(fromRouter);
+        int fromCol = getNocCol(fromRouter);
+        int toRow = getNocRow(toRouter);
+        int toCol = getNocCol(toRouter);
+
+        // find the path that constitutes this XY route
+        int currRouter = fromRouter;
+        path.add(currRouter);
+        int currCol = fromCol;
+        // X direction first
+        while (currCol != toCol) {
+
+            if (currCol < toCol)
+                currRouter = currRouter + 1;
+            else
+                currRouter = currRouter - 1;
+
+            currCol = getNocCol(currRouter);
+
+            path.add(currRouter);
+        }
+
+        int currRow = fromRow;
+        // Y direction second
+        while (currRow != toRow) {
+
+            if (currRow < toRow)
+                currRouter = currRouter + nocNumRoutersPerDimension;
+            else
+                currRouter = currRouter - nocNumRoutersPerDimension;
+
+            currRow = getNocRow(currRouter);
+
+            path.add(currRouter);
+        }
+
+        return path;
+    }
+
+    private int getNocCol(int router) {
+        return router / nocNumRoutersPerDimension;
+    }
+
+    private int getNocRow(int router) {
+        return router % nocNumRoutersPerDimension;
     }
 }
