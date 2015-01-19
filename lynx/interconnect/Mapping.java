@@ -7,7 +7,6 @@ import java.util.Map;
 
 import lynx.data.Connection;
 import lynx.data.Design;
-import lynx.data.Noc;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -94,36 +93,54 @@ public class Mapping {
         // (1) number of hops between any two modules are the same
         // (2) traffic intersections on path between two modules are the same
 
-        int numModules = this.getMapMatrix().getRowDimension();
-
         // System.out.println();
 
-        for (int i = 0; i < numModules; i++) {
-            for (int j = 0; j < numModules; j++) {
+        // (1) verify number of hops
+        for (Connection con : design.getConnections()) {
 
-                // elaborate path between module i and j
-                // is there a connection from i and j?
-                if (design.getAdjacencyMatrix()[i][j] == 1) {
+            if (this.getConnectionPath(con).size() != mapping2.getConnectionPath(con).size())
+                return false;
 
-                    // (1) get number of hops
+        }
 
-                    // first find router indices for each mapping
-                    int start1 = this.getModuleRouterIndex(i);
-                    int start2 = mapping2.getModuleRouterIndex(i);
-                    int end1 = this.getModuleRouterIndex(j);
-                    int end2 = mapping2.getModuleRouterIndex(j);
+        // (2) verify identical traffic intersections
+        for (Connection con : design.getConnections()) {
 
-                    // System.out.print("m1(" + start1 + "," + end1 + ")" +
-                    // "m2(" + start2 + "," + end2 + ")");
+            // for each connection get the path
+            // we already know it has the same number of hops
 
-                    if (Noc.getNumberOfHops(start1, end1, design.getNoc()) != Noc.getNumberOfHops(start2, end2, design.getNoc())) {
-                        // System.out.println(" no");
-                        return false;
-                    } else {
-                        // System.out.println(" yes");
-                    }
+            List<Integer> path = this.getConnectionPath(con);
+            List<Integer> path2 = mapping2.getConnectionPath(con);
+
+            assert path.size() == path2.size() : "Paths should have the same number of hops if they got this far";
+
+            for (int i = 0; i < path.size() - 1; i++) {
+
+                String linkString = linkString(path.get(i), path.get(i + 1));
+                String linkString2 = linkString(path2.get(i), path2.get(i + 1));
+
+                List<Connection> link1 = this.getLinkUtilization(linkString);
+                List<Connection> link2 = mapping2.getLinkUtilization(linkString2);
+
+                // otherwise compare traffic on each link and return false if
+                // it's non-identical
+                if (!identicalTrafficOnTwoLinks(link1, link2)) {
+                    return false;
                 }
             }
+        }
+
+        return true;
+    }
+
+    private boolean identicalTrafficOnTwoLinks(List<Connection> link1, List<Connection> link2) {
+
+        if (link1.size() != link2.size())
+            return false;
+
+        for (Connection con : link1) {
+            if (!link2.contains(con))
+                return false;
         }
 
         return true;
@@ -146,12 +163,12 @@ public class Mapping {
         return 0;
     }
 
-    public final Map<Connection, List<Integer>> getConnectionPaths() {
-        return connectionPaths;
+    public final List<Integer> getConnectionPath(Connection con) {
+        return connectionPaths.get(con);
     }
 
-    public final Map<String, List<Connection>> getLinkUtilization() {
-        return linkUtilization;
+    public final List<Connection> getLinkUtilization(String linkString) {
+        return linkUtilization.get(linkString);
     }
 
     public RealMatrix getMapMatrix() {
