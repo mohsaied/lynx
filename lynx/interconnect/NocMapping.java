@@ -82,15 +82,32 @@ public class NocMapping {
 
         // at this point all the solutions we want are stored in validMappings
         // create new list , each entry has another list of equiv-sim mappings
-        List<ArrayList<Mapping>> equivSimMappings = sortMappings(validMappings, designMatrix, design);
+        List<ArrayList<Mapping>> equivSimMappings = binMappings(validMappings, designMatrix, design);
 
         log.info("Uniquified mappings from " + validMappings.size() + " to " + equivSimMappings.size());
 
-        // rank the solutions found from best to worst
+        // sort the unique mappings by latency and traffic
+        rankMappings(equivSimMappings);
+
+        log.info("Ranked " + equivSimMappings.size() + " unique mappings");
 
     }
 
-    private static List<ArrayList<Mapping>> sortMappings(List<Mapping> validMappings, RealMatrix designMatrix, Design design) {
+    private static void rankMappings(List<ArrayList<Mapping>> equivSimMappings) {
+        // rank the solutions found from best to worst
+        for (int i = 0; i < equivSimMappings.size(); i++) {
+            for (int j = i + 1; j < equivSimMappings.size(); j++) {
+
+                if (equivSimMappings.get(j).get(0).compare(equivSimMappings.get(i).get(0))) {
+                    ArrayList<Mapping> temp = equivSimMappings.get(j);
+                    equivSimMappings.set(j, equivSimMappings.get(i));
+                    equivSimMappings.set(i, temp);
+                }
+            }
+        }
+    }
+
+    private static List<ArrayList<Mapping>> binMappings(List<Mapping> validMappings, RealMatrix designMatrix, Design design) {
 
         List<ArrayList<Mapping>> equivSimMappings = new ArrayList<ArrayList<Mapping>>();
 

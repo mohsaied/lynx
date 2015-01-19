@@ -146,6 +146,71 @@ public class Mapping {
         return true;
     }
 
+    public boolean compare(Mapping mapping2) {
+
+        // a mapping is better than the other if
+        // (1) fewer number of hops
+        // (2) less traffic
+
+        // note: we return true if this is better than mapping2
+
+        // (1) if a mapping has fewer paths with elongated hops, they win
+        int score1 = 0;
+        int score2 = 0;
+        for (Connection con : design.getConnections()) {
+
+            int size1 = this.getConnectionPath(con).size();
+            int size2 = mapping2.getConnectionPath(con).size();
+            if (size1 < size2) {
+                score1++;
+            } else if (size1 > size2) {
+                score2++;
+            }
+        }
+
+        if (score1 > score2)
+            return true;
+        else if (score1 < score2)
+            return false;
+
+        // reset scores
+        score1 = 0;
+        score2 = 0;
+
+        // (2) find max traffic on each path
+        for (Connection con : design.getConnections()) {
+
+            // for each connection get the path
+            // we already know it has the same number of hops
+
+            List<Integer> path = this.getConnectionPath(con);
+            List<Integer> path2 = mapping2.getConnectionPath(con);
+
+            int maxUtil = 0;
+            int maxUtil2 = 0;
+            for (int currUtil : path) {
+                if(currUtil > maxUtil)
+                    maxUtil = currUtil;
+            }
+            for (int currUtil : path2) {
+                if(currUtil > maxUtil2)
+                    maxUtil2 = currUtil;
+            }
+            
+            if(maxUtil < maxUtil2)
+                score1++;
+            else if (maxUtil > maxUtil2)
+                score2++;
+        }
+
+        if (score1 > score2)
+            return true;
+        else if (score1 < score2)
+            return false;
+
+        return true;
+    }
+
     public int getModuleRouterIndex(int modIndex) {
 
         double[] matrixRow = mapMatrix.getRow(modIndex);
