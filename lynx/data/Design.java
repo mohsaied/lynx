@@ -160,7 +160,7 @@ public final class Design extends Module {
         return this.moduleIndices.get(fromModuleName);
     }
 
-    public List<Connection> getAllConnections() {
+    public List<Connection> getConnections() {
         return allConnections;
     }
 
