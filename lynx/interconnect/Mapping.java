@@ -20,7 +20,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class Mapping {
 
     private RealMatrix mapMatrix;
-    private Design design;
+    Design design;
 
     // path for each connection
     // connection --> path
@@ -157,18 +157,26 @@ public class Mapping {
         // (1) if a mapping has fewer paths with elongated hops, they win
         int score1 = 0;
         int score2 = 0;
+        int totLat1 = 0;
+        int totLat2 = 0;
         for (Connection con : design.getConnections()) {
 
             int size1 = this.getConnectionPath(con).size();
             int size2 = mapping2.getConnectionPath(con).size();
             if (size1 < size2) {
+                totLat1 += (size2 - size1);
                 score1++;
             } else if (size1 > size2) {
+                totLat2 += (size1 - size2);
                 score2++;
             }
         }
 
-        if (score1 > score2)
+        if (totLat1 > totLat2)
+            return true;
+        else if (totLat1 < totLat2)
+            return false;
+        else if (score1 > score2)
             return true;
         else if (score1 < score2)
             return false;
@@ -189,15 +197,15 @@ public class Mapping {
             int maxUtil = 0;
             int maxUtil2 = 0;
             for (int currUtil : path) {
-                if(currUtil > maxUtil)
+                if (currUtil > maxUtil)
                     maxUtil = currUtil;
             }
             for (int currUtil : path2) {
-                if(currUtil > maxUtil2)
+                if (currUtil > maxUtil2)
                     maxUtil2 = currUtil;
             }
-            
-            if(maxUtil < maxUtil2)
+
+            if (maxUtil < maxUtil2)
                 score1++;
             else if (maxUtil > maxUtil2)
                 score2++;

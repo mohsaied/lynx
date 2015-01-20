@@ -20,5 +20,4 @@ public class Utils {
         gui.setBounds(100, 100, 800, 600);
         gui.setVisible(true);
     }
-
 }

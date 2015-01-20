@@ -9,6 +9,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import lynx.data.Design;
+import lynx.data.Connection;
 
 public class NocMapping {
 
@@ -101,12 +102,42 @@ public class NocMapping {
             for (int j = i + 1; j < equivSimMappings.size(); j++) {
 
                 if (equivSimMappings.get(j).get(0).compare(equivSimMappings.get(i).get(0))) {
+
+                    /*
+                    // find the latencies of mapping at i and j
+                    Mapping first = equivSimMappings.get(i).get(0);
+                    Connection con1 = first.design.getConnections().get(0);
+                    Connection con2 = first.design.getConnections().get(1);
+
+                    int firstOne = first.getConnectionPath(con1).size() - 1;
+                    int firsttwo = first.getConnectionPath(con2).size() - 1;
+
+                    Mapping second = equivSimMappings.get(j).get(0);
+                    int secondOne = second.getConnectionPath(con1).size() - 1;
+                    int secondtwo = second.getConnectionPath(con2).size() - 1;
+
+                    System.out.println("swap (" + firstOne + "," + firsttwo + ") with the better (" + secondOne + "," + secondtwo
+                            + ")");
+                    */
+                    
                     ArrayList<Mapping> temp = equivSimMappings.get(j);
                     equivSimMappings.set(j, equivSimMappings.get(i));
                     equivSimMappings.set(i, temp);
                 }
             }
         }
+
+        /*
+        for (int i = 0; i < equivSimMappings.size(); i++) {
+            Mapping first = equivSimMappings.get(i).get(0);
+            Connection con1 = first.design.getConnections().get(0);
+            Connection con2 = first.design.getConnections().get(1);
+
+            int firstOne = first.getConnectionPath(con1).size() - 1;
+            int firsttwo = first.getConnectionPath(con2).size() - 1;
+            System.out.println("sorted " + i + " (" + firstOne + "," + firsttwo + ")");
+        }
+        */
     }
 
     private static List<ArrayList<Mapping>> binMappings(List<Mapping> validMappings, RealMatrix designMatrix, Design design) {

@@ -65,7 +65,7 @@ public class NocPanel extends JPanel {
                 }
             }
         });
-        
+
         versionIndex.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 if (event.getSource() == versionIndex) {
