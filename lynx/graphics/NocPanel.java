@@ -1,24 +1,80 @@
 package lynx.graphics;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
+import lynx.interconnect.Mapping;
 
 public class NocPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    Design design;
+    private Design design;
+    private int selectedMapping;
+    private int selectedVersion;
+
+    private JPanel controlPanel;
+    JComboBox<Integer> mappingIndex;
+    JComboBox<Integer> versionIndex;
 
     public NocPanel(Design design) {
-        super(new GridLayout(1, 1));
+        super(new FlowLayout());
         this.design = design;
+        selectedMapping = 0;
+        selectedVersion = 0;
+
+        controlPanel = new JPanel(new GridLayout(1, 1));
+        controlPanel.setBounds(0, 0, 15, 10);
+        this.add(controlPanel);
+
+        int numMappings = design.getMappings().size();
+        int numVersions = design.getMappings().get(selectedMapping).size();
+
+        mappingIndex = new JComboBox<Integer>();
+        for (int i = 0; i < numMappings; i++)
+            mappingIndex.addItem(i);
+        controlPanel.add(mappingIndex);
+
+        versionIndex = new JComboBox<Integer>();
+        for (int i = 0; i < numVersions; i++)
+            versionIndex.addItem(i);
+        controlPanel.add(versionIndex);
+
+        configureDropDowns();
+    }
+
+    private void configureDropDowns() {
+        mappingIndex.setSelectedItem(selectedMapping);
+        versionIndex.setSelectedItem(selectedVersion);
+
+        mappingIndex.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getSource() == mappingIndex) {
+                    selectedMapping = mappingIndex.getSelectedIndex();
+                    repaint();
+                }
+            }
+        });
+        
+        versionIndex.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getSource() == versionIndex) {
+                    selectedVersion = versionIndex.getSelectedIndex();
+                    repaint();
+                }
+            }
+        });
+
     }
 
     public void paintComponent(Graphics g) {
@@ -34,10 +90,12 @@ public class NocPanel extends JPanel {
     }
 
     private void drawDesign(Graphics g) {
+
+        Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
+
         for (DesignModule mod : design.getDesignModules().values()) {
-            if (mod.getRouter() != -1) {
-                drawMod(g, mod, mod.getRouter());
-            }
+            int modIndex = design.getModuleIndex(mod.getName());
+            drawMod(g, mod, currMapping.getModuleRouterIndex(modIndex));
         }
     }
 

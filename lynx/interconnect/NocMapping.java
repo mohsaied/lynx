@@ -91,6 +91,8 @@ public class NocMapping {
 
         log.info("Ranked " + equivSimMappings.size() + " unique mappings");
 
+        design.setMappings(equivSimMappings);
+
     }
 
     private static void rankMappings(List<ArrayList<Mapping>> equivSimMappings) {

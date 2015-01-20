@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
+import lynx.interconnect.Mapping;
 
 /**
  * A top-level design.
@@ -27,6 +28,8 @@ public final class Design extends Module {
 
     private List<Translator> translators;
 
+    private List<ArrayList<Mapping>> mappings;
+
     public Design() {
         this(null);
     }
@@ -38,6 +41,7 @@ public final class Design extends Module {
         this.allConnections = new ArrayList<Connection>();
         this.noc = null;
         this.translators = new ArrayList<Translator>();
+        this.mappings = null;
         log.info("Creating new design: " + name);
     }
 
@@ -181,6 +185,14 @@ public final class Design extends Module {
                 }
             }
         }
+    }
+
+    public List<ArrayList<Mapping>> getMappings() {
+        return mappings;
+    }
+
+    public void setMappings(List<ArrayList<Mapping>> equivSimMappings) {
+        mappings = equivSimMappings;
     }
 
 }
