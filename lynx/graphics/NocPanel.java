@@ -1,15 +1,24 @@
 package lynx.graphics;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
@@ -18,6 +27,8 @@ import lynx.interconnect.Mapping;
 public class NocPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = Logger.getLogger(NocPanel.class.getName());
 
     private Design design;
     private int selectedMapping;
@@ -29,6 +40,7 @@ public class NocPanel extends JPanel {
 
     public NocPanel(Design design) {
         super(new FlowLayout());
+        log.setLevel(Level.ALL);
         this.design = design;
         selectedMapping = 0;
         selectedVersion = 0;
@@ -55,12 +67,18 @@ public class NocPanel extends JPanel {
 
     private void configureDropDowns() {
         mappingIndex.setSelectedItem(selectedMapping);
-        versionIndex.setSelectedItem(selectedVersion);
 
         mappingIndex.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
                 if (event.getSource() == mappingIndex) {
                     selectedMapping = mappingIndex.getSelectedIndex();
+
+                    int numVersions = design.getMappings().get(selectedMapping).size();
+                    versionIndex.removeAllItems();
+                    for (int i = 0; i < numVersions; i++)
+                        versionIndex.addItem(i);
+                    versionIndex.setSelectedItem(0);
+
                     repaint();
                 }
             }
@@ -96,6 +114,64 @@ public class NocPanel extends JPanel {
         for (DesignModule mod : design.getDesignModules().values()) {
             int modIndex = design.getModuleIndex(mod.getName());
             drawMod(g, mod, currMapping.getModuleRouterIndex(modIndex));
+        }
+
+        // draw the connections
+        drawConnections(g, currMapping);
+
+    }
+
+    private void drawConnections(Graphics g, Mapping currMapping) {
+
+        Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
+        double[][] nocLinks = design.getNoc().getAdjacencyMatrix();
+
+        // initialize used link indices (none are used at the start)
+        for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
+            for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+                if (nocLinks[i][j] == 1.0) {
+                    List<Integer> emptyList = new ArrayList<Integer>();
+                    linkIndices.put(Mapping.linkString(i, j), emptyList);
+                }
+            }
+        }
+
+        // loop over all connection paths
+        int x = 0;
+        for (Connection con : design.getConnections()) {
+            List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
+
+            // determine connection drawIndex
+            int drawIndex = 0;
+            for (int i = 0; i < path.size() - 1; i++) {
+                int fromRouter = path.get(i);
+                int toRouter = path.get(i + 1);
+                String linkStr = Mapping.linkString(fromRouter, toRouter);
+                while (linkIndices.get(linkStr).contains(drawIndex)) {
+                    drawIndex++;
+                }
+                String oppLinkStr = Mapping.linkString(toRouter, fromRouter);
+                linkIndices.get(linkStr).add(drawIndex);
+                linkIndices.get(oppLinkStr).add(drawIndex);
+            }
+            g.drawString("" + drawIndex, 10 * (++x), 10);
+
+            // draw the connection on the links
+            for (int i = 0; i < path.size() - 1; i++) {
+                int fromRouter = path.get(i);
+                int toRouter = path.get(i + 1);
+                int fromX = 100 + (fromRouter % design.getNoc().getNumRoutersPerDimension()) * 100;
+                int fromY = 100 + (fromRouter / design.getNoc().getNumRoutersPerDimension()) * 100;
+                int toX = 100 + (toRouter % design.getNoc().getNumRoutersPerDimension()) * 100;
+                int toY = 100 + (toRouter / design.getNoc().getNumRoutersPerDimension()) * 100;
+                if (drawIndex % 2 == 0)
+                    g.setColor(Color.RED);
+                else
+                    g.setColor(Color.GREEN);
+
+                ((Graphics2D) g).setStroke(new BasicStroke(2));
+                g.drawLine(fromX + drawIndex * 5, fromY + drawIndex * 5, toX + drawIndex * 5, toY + drawIndex * 5);
+            }
         }
     }
 
