@@ -43,12 +43,6 @@ public class NocInterconnect {
 
         insertTranslators(design);
 
-        log.info("Figuring out the best location of modules on the NoC...");
-
-        // not implemented yet
-        // after this step, each module/bundle should be associated to a router
-        // currently it is user-provided
-
         log.info("Connecting to NoC");
 
         connectNoc(design);

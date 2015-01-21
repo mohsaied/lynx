@@ -16,10 +16,10 @@ public class Main {
 
         @SuppressWarnings("unused")
         // MyLogger log = new MyLogger(Level.INFO);
-        MyLogger log = new MyLogger(Level.OFF);
+        MyLogger log = new MyLogger(Level.ALL);
 
         // read XML design
-        Design design = XmlDesign.readXMLDesign("designs/quadratic.xml");
+        Design design = XmlDesign.readXMLDesign("designs/chain.xml");
         design.update();
 
         // add NoC circuitry - NoC and translators

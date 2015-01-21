@@ -2,6 +2,7 @@ package lynx.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
 
@@ -14,6 +15,8 @@ import lynx.data.MyEnums.Direction;
  */
 public final class Bundle {
 
+    private static final Logger log = Logger.getLogger(Bundle.class.getName());
+    
     private String name;
 
     private Port dataPort;
@@ -49,6 +52,7 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
+        log.info("Creating new bundle, name = "+name);;
     }
 
     public String getName() {

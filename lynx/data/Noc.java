@@ -208,9 +208,9 @@ public class Noc extends Module {
         return matrix;
     }
 
-    public static double getNumberOfHops(int i, int j, Noc noc) {
-        return Math.floor((Math.abs(i - j) / noc.getNumRoutersPerDimension())) + Math.abs(i - j)
-                % noc.getNumRoutersPerDimension();
+    public double getNumberOfHops(int i, int j, Noc noc) {
+        //return Math.floor((Math.abs(i - j) / noc.getNumRoutersPerDimension())) + Math.abs(i - j) % noc.getNumRoutersPerDimension();
+        return getPath(i,j).size()-1;
     }
 
     public final int getRouterDegree(int routerIndex) {
