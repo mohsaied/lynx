@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -27,8 +28,8 @@ public class NocMapping {
         double[][] nocMatrixValues = design.getNoc().getFullAdjacencyMatrix();
         RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
         RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
-        
-        //prettyPrint("nocMatrix", nocMatrix);
+
+        // prettyPrint("nocMatrix", nocMatrix);
 
         // create the permutation matrix which specifies which module is mapped
         // onto which NoC router
@@ -46,6 +47,7 @@ public class NocMapping {
                 else
                     permMatrixValues[i][j] = 0;
         RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+        RealMatrix origPermMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
 
         // current row we are investigating
         int currRow = 0;
@@ -60,12 +62,11 @@ public class NocMapping {
         int maxLegalHops;
         for (maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
 
-            
             double[][] newNocMatrixValues = new double[design.getNoc().getNumRouters()][design.getNoc().getNumRouters()];
             // control legal # hops
             for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
                 for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
-                    if (nocMatrixValues[i][j] > maxLegalHops)
+                    if (nocMatrixValues[i][j] > maxLegalHops || nocMatrixValues[i][j] == 0)
                         newNocMatrixValues[i][j] = 0;
                     else
                         newNocMatrixValues[i][j] = 1;
@@ -73,14 +74,15 @@ public class NocMapping {
             }
 
             nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
-            //prettyPrint("nocMatrix",nocMatrix);
+            // prettyPrint("nocMatrix",nocMatrix);
 
             validMappings.clear();
 
             // search!
-            ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, validMappings, design);
+            ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, design);
 
-            log.info("Number of solutions found = " + validMappings.size() + ", at maxHops = " + maxLegalHops);
+            log.info("Number of solutions found = " + validMappings.size() + ", at maxHops = " + maxLegalHops + ", numrecs = "
+                    + numRecs);
 
             if (maxLegalHops == design.getNoc().getMaxHops())
                 break;
@@ -178,34 +180,139 @@ public class NocMapping {
         return equivSimMappings;
     }
 
-    private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
-            RealMatrix permMatrix, List<Mapping> validMappings, Design design) {
+    public static void main(String[] args) {
 
+        // get adjacency matrices of design and NoC
+        double[][] designMatrixValues = { { 0, 1, 0 }, { 1, 0, 1 }, { 0, 1, 0 } };
+        double[][] nocMatrixValues = { { 0, 1, 0, 0 }, { 1, 0, 1, 1 }, { 0, 1, 0, 0 }, { 0, 1, 0, 0 } };
+        RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
+        RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
+
+        // prettyPrint("nocMatrix", nocMatrix);
+
+        // create the permutation matrix which specifies which module is mapped
+        // onto which NoC router
+        final int n = 3;
+        final int m = 4;
+        double[][] permMatrixValues = new double[n][m];
+
+        // create initial permMatrix
+        // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (DoubleStream.of(designMatrixValues[i]).sum() <= DoubleStream.of(nocMatrixValues[j]).sum())
+                    permMatrixValues[i][j] = 1;
+                else
+                    permMatrixValues[i][j] = 0;
+        RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+        RealMatrix origPermMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+
+        // current row we are investigating
+        int currRow = 0;
+        // array holding the used columns
+        boolean[] usedColumns = new boolean[permMatrix.getColumnDimension()];
+        for (int i = 0; i < usedColumns.length; i++)
+            usedColumns[i] = false;
+
+        // list of valid mappings found
+        List<Mapping> validMappings = new ArrayList<Mapping>();
+
+        numSols = 0;
+        numRecs = 0;
+        System.out.println("Starting recursion with:");
+
+        ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, null);
+
+        System.out.println("Number of solutions found = " + numSols);
+        System.out.println("Number of recursions = " + numRecs);
+    }
+
+    static int numSols;
+    static int numRecs;
+
+    private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
+            RealMatrix permMatrix, RealMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
+
+        numRecs++;
+        // System.out.println("---------\ncurrRow = " + currRow);
         // prettyPrint("permMatrix", permMatrix);
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
         if (currRow >= (permMatrix.getRowDimension())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
-                // System.out.println("Found a valid mapping!");
-                // prettyPrint("permMatrix", permMatrix);
-                Mapping permMatrixMapping = new Mapping(permMatrix.getData(), design);
-                validMappings.add(permMatrixMapping);
+                // System.out.println("Found a valid mapping ^^");
+                if (design != null) {
+                    Mapping permMatrixMapping = new Mapping(permMatrix.getData(), design);
+                    validMappings.add(permMatrixMapping);
+                }
+                numSols++;
                 return;
             }
-        } else { // recurse
+        } else {
+
+            RealMatrix permMatrixCopy = MatrixUtils.createRealMatrix(permMatrix.getData());
+
+            // prune permMatrix
+            ullmanPrune(permMatrixCopy, designMatrix, nocMatrix);
+
+            // recurse
             for (int i = 0; i < usedColumns.length; i++) {
                 if (!usedColumns[i]) {
 
-                    // for this row, set the current (row,column) to 1 and the
-                    // rest
+                    if (origPermMatrix.getEntry(currRow, i) == 0)
+                        continue;
+
+                    // for this row, set the current (row,column) to 1 and all
                     // (row,other_columns) to 0
                     for (int j = 0; j < usedColumns.length; j++)
-                        permMatrix.setEntry(currRow, j, i == j ? 1 : 0);
+                        permMatrixCopy.setEntry(currRow, j, i == j ? 1 : 0);
 
                     usedColumns[i] = true;
-                    ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrix, validMappings, design);
+                    ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrixCopy, origPermMatrix,
+                            validMappings, design);
                     usedColumns[i] = false;
+                }
+            }
+        }
+        return;
+    }
+
+    private static void ullmanPrune(RealMatrix permMatrixCopy, RealMatrix designMatrix, RealMatrix nocMatrix) {
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (int i = 0; i < permMatrixCopy.getRowDimension(); i++) {
+                for (int j = 0; j < permMatrixCopy.getColumnDimension(); j++) {
+                    if (permMatrixCopy.getEntry(i, j) == 1) {
+                        // for all neighbours of mod i in designMatrix
+                        for (int x = 0; x < designMatrix.getRow(i).length; x++) {
+                            // means we have a connection here
+                            if (designMatrix.getRow(i)[x] == 1) {
+                                // now check nocMatrix to see if it has a
+                                // valid neighbour
+                                // that means that x (which is a neighbour
+                                // of i)
+                                // should have a 1 in the permMatrix to j
+
+                                // check permMatrix in all neighbours to j,
+                                // in row x
+                                boolean found = false;
+                                for (int y = 0; y < nocMatrix.getRow(j).length; y++) {
+                                    if (permMatrixCopy.getEntry(x, y) == 1) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) {
+                                    permMatrixCopy.setEntry(i, j, 0);
+                                    System.out.println("prune");
+                                    changed = true;
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
         }
