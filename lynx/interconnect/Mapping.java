@@ -193,13 +193,20 @@ public class Mapping {
 
             int maxUtil = 0;
             int maxUtil2 = 0;
-            for (int currUtil : path) {
+
+            for (int i = 0; i < path.size() - 1; i++) {
+
+                String linkString = linkString(path.get(i), path.get(i + 1));
+                int currUtil = this.getLinkUtilization(linkString).size();
                 if (currUtil > maxUtil)
                     maxUtil = currUtil;
             }
-            for (int currUtil : path2) {
-                if (currUtil > maxUtil2)
-                    maxUtil2 = currUtil;
+            for (int i = 0; i < path2.size() - 1; i++) {
+
+                String linkString2 = linkString(path2.get(i), path2.get(i + 1));
+                int currUtil2 = mapping2.getLinkUtilization(linkString2).size();
+                if (currUtil2 > maxUtil2)
+                    maxUtil2 = currUtil2;
             }
 
             if (maxUtil < maxUtil2)

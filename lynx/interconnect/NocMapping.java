@@ -211,7 +211,7 @@ public class NocMapping {
         if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping ^^");
-                if (design != null ){//&& validMappings.size() < 10000) {
+                if (design != null && validMappings.size() < 1000000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
