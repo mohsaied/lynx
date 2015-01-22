@@ -34,7 +34,6 @@
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>
   </module>
-  <!--
   <module type="dummy" name="x4" router="3">
 	<bundle name="inbun">
 		<port direction="input" width="16" name="i_x" type="data"/>
@@ -48,6 +47,7 @@
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>
   </module>
+  <!--
   <module type="dummy" name="x5" router="4">
 	<bundle name="inbun">
 		<port direction="input" width="16" name="i_x" type="data"/>
@@ -142,9 +142,9 @@
   
   <connection start="x1.outbun" end="x2.inbun"/>
   <connection start="x2.outbun" end="x3.inbun"/>
-  <connection start="x3.outbun" end="x11.inbun"/>
-  <!--
-  <connection start="x4.outbun" end="x5.inbun"/>  
+  <connection start="x3.outbun" end="x4.inbun"/>
+  <connection start="x4.outbun" end="x11.inbun"/> 
+  <!-- 
   <connection start="x5.outbun" end="x6.inbun"/>
   <connection start="x6.outbun" end="x7.inbun"/>
   <connection start="x7.outbun" end="x8.inbun"/>
