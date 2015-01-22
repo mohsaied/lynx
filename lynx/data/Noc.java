@@ -194,8 +194,8 @@ public class Noc extends Module {
         return matrix;
     }
 
-    public final double[][] getFullAdjacencyMatrix() {
-        double[][] matrix = new double[nocNumRouters][nocNumRouters];
+    public final int[][] getFullAdjacencyMatrix() {
+        int[][] matrix = new int[nocNumRouters][nocNumRouters];
         // init matrix
         for (int i = 0; i < nocNumRouters; i++)
             for (int j = 0; j < nocNumRouters; j++)
@@ -208,7 +208,7 @@ public class Noc extends Module {
         return matrix;
     }
 
-    public double getNumberOfHops(int i, int j, Noc noc) {
+    public int getNumberOfHops(int i, int j, Noc noc) {
         //return Math.floor((Math.abs(i - j) / noc.getNumRoutersPerDimension())) + Math.abs(i - j) % noc.getNumRoutersPerDimension();
         return getPath(i,j).size()-1;
     }

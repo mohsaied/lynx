@@ -8,9 +8,6 @@ import java.util.Map;
 import lynx.data.Connection;
 import lynx.data.Design;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-
 /**
  * A mapping of a design onto an NoC
  *
@@ -19,7 +16,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public class Mapping {
 
-    private RealMatrix mapMatrix;
+    private BoolMatrix mapMatrix;
     Design design;
 
     // path for each connection
@@ -30,8 +27,8 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
-    public Mapping(double[][] mapMatrixValues, Design design) {
-        mapMatrix = MatrixUtils.createRealMatrix(mapMatrixValues);
+    public Mapping(boolean[][] mapMatrixValues, Design design) {
+        mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
         findConnectionPaths();
         findLinkUtilization();
@@ -221,13 +218,10 @@ public class Mapping {
 
     public int getModuleRouterIndex(int modIndex) {
 
-        double[] matrixRow = mapMatrix.getRow(modIndex);
-
-        // prettyPrint("getonepos", matrix);
+        boolean[] matrixRow = mapMatrix.getRow(modIndex);
 
         for (int i = 0; i < matrixRow.length; i++)
-            if (matrixRow[i] == 1.0) {
-                // System.out.println("index"+i);
+            if (matrixRow[i]) {
                 return i;
             }
 
@@ -244,7 +238,7 @@ public class Mapping {
         return linkUtilization.get(linkString);
     }
 
-    public RealMatrix getMapMatrix() {
+    public BoolMatrix getMapMatrix() {
         return mapMatrix;
     }
 }

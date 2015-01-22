@@ -44,16 +44,24 @@ public class BoolMatrix {
         System.out.println(m.multiply(m2).transpose());
     }
 
-    public boolean[][] getMatrixValues() {
+    public boolean[][] getData() {
         return boolMatrix;
     }
 
-    public void setEntry(int xpos, int ypos, boolean value) {
-        this.boolMatrix[xpos][ypos] = value;
+    public void setEntry(int i, int j, boolean value) {
+        this.boolMatrix[i][j] = value;
+        // update efficient matrix representation
+        if (value) {
+            efficientMatrixRows[i] = efficientMatrixRows[i] | (1 << j);
+            efficientMatrixCols[j] = efficientMatrixCols[j] | (1 << i);
+        } else {
+            efficientMatrixRows[i] = efficientMatrixRows[i] & ~(1 << j);
+            efficientMatrixCols[j] = efficientMatrixCols[j] & ~(1 << i);
+        }
     }
 
-    public boolean getEntry(int xpos, int ypos) {
-        return this.boolMatrix[xpos][ypos];
+    public boolean getEntry(int i, int j) {
+        return this.boolMatrix[i][j];
     }
 
     public int getNumRows() {
@@ -79,7 +87,7 @@ public class BoolMatrix {
 
     public BoolMatrix multiply(BoolMatrix m) {
 
-        assert this.getNumRows() == m.getNumCols() && this.getNumCols() == m.getNumRows() : "Matrix dimensions ("
+        assert this.getNumCols() == m.getNumRows() : "Matrix dimensions ("
                 + this.getNumRows() + "," + this.getNumCols() + ")" + " and (" + m.getNumRows() + "," + m.getNumCols() + ")"
                 + " don't match for multiplication";
 
@@ -101,6 +109,66 @@ public class BoolMatrix {
     private boolean rowXColumn(long row, long col) {
         // only works for matrices in which each row/column has a single one
         return ((row & col) > 0);
+    }
+
+    public boolean[] getRow(int i) {
+        return boolMatrix[i];
+    }
+
+    public boolean[] getColumn(int j) {
+        boolean[] col = new boolean[numRows];
+        for (int i = 0; i < numRows; i++) {
+            col[i] = boolMatrix[i][j];
+        }
+        return col;
+    }
+
+    public int sumRow(int i) {
+        boolean[] row = getRow(i);
+        int sum = 0;
+        for (int j = 0; j < row.length; j++) {
+            if (row[j])
+                sum++;
+        }
+        return sum;
+    }
+
+    public int sumCol(int i) {
+        boolean[] col = getColumn(i);
+        int sum = 0;
+        for (int j = 0; j < col.length; j++) {
+            if (col[j])
+                sum++;
+        }
+        return sum;
+    }
+
+    public boolean moreThanOneOnePerColumn(int i) {
+        boolean[] col = getColumn(i);
+        boolean firstOne = false;
+        for (int j = 0; j < col.length; j++) {
+            if (col[j] && !firstOne)
+                firstOne = true;
+            else if (col[j] && firstOne)
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public BoolMatrix clone() {
+
+        boolean[][] origArray = this.getData();
+        // deep copy
+        boolean[][] copyArray = new boolean[origArray.length][origArray[0].length];
+
+        for (int i = 0; i < origArray.length; i++) {
+            for (int j = 0; j < origArray[0].length; j++) {
+                copyArray[i][j] = origArray[i][j];
+            }
+        }
+
+        return new BoolMatrix(copyArray);
     }
 
     @Override

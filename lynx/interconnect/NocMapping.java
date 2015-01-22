@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.DoubleStream;
-
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
 
 import lynx.data.Design;
 
@@ -24,10 +20,10 @@ public class NocMapping {
         // initialize the number of solutions to 0
 
         // get adjacency matrices of design and NoC
-        double[][] designMatrixValues = design.getAdjacencyMatrix();
-        double[][] nocMatrixValues = design.getNoc().getFullAdjacencyMatrix();
-        RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
-        RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
+        boolean[][] designMatrixValues = design.getAdjacencyMatrix();
+        int[][] nocMatrixValues = design.getNoc().getFullAdjacencyMatrix();
+        BoolMatrix designMatrix = new BoolMatrix(designMatrixValues);
+        BoolMatrix nocMatrix;
 
         // prettyPrint("nocMatrix", nocMatrix);
 
@@ -35,7 +31,7 @@ public class NocMapping {
         // onto which NoC router
         final int n = design.getNumModules();
         final int m = design.getNoc().getNumRouters();
-        double[][] permMatrixValues = new double[n][m];
+        boolean[][] permMatrixValues = new boolean[n][m];
 
         // create initial permMatrix
         // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
@@ -43,16 +39,16 @@ public class NocMapping {
             for (int j = 0; j < m; j++)
                 if (design.getModuleInDegree(i) <= design.getNoc().getRouterDegree(j)
                         && design.getModuleOutDegree(i) <= design.getNoc().getRouterDegree(j))
-                    permMatrixValues[i][j] = 1;
+                    permMatrixValues[i][j] = true;
                 else
-                    permMatrixValues[i][j] = 0;
-        RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
-        RealMatrix origPermMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+                    permMatrixValues[i][j] = false;
+        BoolMatrix permMatrix = new BoolMatrix(permMatrixValues);
+        BoolMatrix origPermMatrix = new BoolMatrix(permMatrixValues);
 
         // current row we are investigating
         int currRow = 0;
         // array holding the used columns
-        boolean[] usedColumns = new boolean[permMatrix.getColumnDimension()];
+        boolean[] usedColumns = new boolean[permMatrix.getNumCols()];
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
@@ -62,18 +58,18 @@ public class NocMapping {
         int maxLegalHops;
         for (maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
 
-            double[][] newNocMatrixValues = new double[design.getNoc().getNumRouters()][design.getNoc().getNumRouters()];
+            boolean[][] newNocMatrixValues = new boolean[design.getNoc().getNumRouters()][design.getNoc().getNumRouters()];
             // control legal # hops
             for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
                 for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
                     if (nocMatrixValues[i][j] > maxLegalHops || nocMatrixValues[i][j] == 0)
-                        newNocMatrixValues[i][j] = 0;
+                        newNocMatrixValues[i][j] = false;
                     else
-                        newNocMatrixValues[i][j] = 1;
+                        newNocMatrixValues[i][j] = true;
                 }
             }
 
-            nocMatrix = MatrixUtils.createRealMatrix(newNocMatrixValues);
+            nocMatrix = new BoolMatrix(newNocMatrixValues);
             // prettyPrint("nocMatrix",nocMatrix);
 
             validMappings.clear();
@@ -149,7 +145,7 @@ public class NocMapping {
          */
     }
 
-    private static List<ArrayList<Mapping>> binMappings(List<Mapping> validMappings, RealMatrix designMatrix, Design design) {
+    private static List<ArrayList<Mapping>> binMappings(List<Mapping> validMappings, BoolMatrix designMatrix, Design design) {
 
         List<ArrayList<Mapping>> equivSimMappings = new ArrayList<ArrayList<Mapping>>();
 
@@ -183,34 +179,37 @@ public class NocMapping {
     public static void main(String[] args) {
 
         // get adjacency matrices of design and NoC
-        double[][] designMatrixValues = { { 1, 1, 1, 1 }, { 1, 0, 1, 1 }, { 1, 0, 1, 1 }, { 1, 1, 1, 1 } };
-        double[][] nocMatrixValues = { { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 0, 1, 1 }, { 1, 1, 1, 1 } };
-        RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
-        RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
+        boolean[][] designMatrixValues = { { false, true, false }, { true, false, true }, { false, true, false } };
+        boolean[][] nocMatrixValues = { { false, true, false, false }, { true, false, true, true },
+                { false, true, false, false }, { false, true, false, false } };
+        BoolMatrix designMatrix = new BoolMatrix(designMatrixValues);
+        BoolMatrix nocMatrix = new BoolMatrix(nocMatrixValues);
 
+        // prettyPrint("designMatrix", designMatrix);
         // prettyPrint("nocMatrix", nocMatrix);
 
         // create the permutation matrix which specifies which module is mapped
         // onto which NoC router
-        final int n = 4;
+        final int n = 3;
         final int m = 4;
-        double[][] permMatrixValues = new double[n][m];
+        boolean[][] permMatrixValues = new boolean[n][m];
 
         // create initial permMatrix
         // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
         for (int i = 0; i < n; i++)
             for (int j = 0; j < m; j++)
-                if (DoubleStream.of(designMatrixValues[i]).sum() <= DoubleStream.of(nocMatrixValues[j]).sum())
-                    permMatrixValues[i][j] = 1;
-                else
-                    permMatrixValues[i][j] = 0;
-        RealMatrix permMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
-        RealMatrix origPermMatrix = MatrixUtils.createRealMatrix(permMatrixValues);
+                if (designMatrix.sumRow(i) <= nocMatrix.sumRow(j)) {
+                    permMatrixValues[i][j] = true;
+                } else {
+                    permMatrixValues[i][j] = false;
+                }
+        BoolMatrix permMatrix = new BoolMatrix(permMatrixValues);
+        BoolMatrix origPermMatrix = permMatrix.clone();
 
         // current row we are investigating
         int currRow = 0;
         // array holding the used columns
-        boolean[] usedColumns = new boolean[permMatrix.getColumnDimension()];
+        boolean[] usedColumns = new boolean[permMatrix.getNumCols()];
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
@@ -230,8 +229,8 @@ public class NocMapping {
     static int numSols;
     static int numRecs;
 
-    private static void ullmanRecurse(boolean[] usedColumns, int currRow, RealMatrix designMatrix, RealMatrix nocMatrix,
-            RealMatrix permMatrix, RealMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
+    private static void ullmanRecurse(boolean[] usedColumns, int currRow, BoolMatrix designMatrix, BoolMatrix nocMatrix,
+            BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
 
         numRecs++;
         //System.out.println("---------\ncurrRow = " + currRow);
@@ -239,11 +238,11 @@ public class NocMapping {
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
-        if (currRow >= (permMatrix.getRowDimension())) {
+        if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 //System.out.println("Found a valid mapping ^^");
                 if (design != null) {
-                    Mapping permMatrixMapping = new Mapping(permMatrix.getData(), design);
+                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
                 numSols++;
@@ -251,7 +250,7 @@ public class NocMapping {
             }
         } else {
 
-            RealMatrix permMatrixCopy = MatrixUtils.createRealMatrix(permMatrix.getData());
+            BoolMatrix permMatrixCopy = permMatrix.clone();
 
             // prune permMatrix
             ullmanPrune(permMatrixCopy, designMatrix, nocMatrix);
@@ -260,13 +259,13 @@ public class NocMapping {
             for (int i = 0; i < usedColumns.length; i++) {
                 if (!usedColumns[i]) {
 
-                    if (origPermMatrix.getEntry(currRow, i) == 0)
+                    if (!origPermMatrix.getEntry(currRow, i))
                         continue;
 
                     // for this row, set the current (row,column) to 1 and all
                     // (row,other_columns) to 0
                     for (int j = 0; j < usedColumns.length; j++)
-                        permMatrixCopy.setEntry(currRow, j, i == j ? 1 : 0);
+                        permMatrixCopy.setEntry(currRow, j, i == j ? true : false);
 
                     usedColumns[i] = true;
                     ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrixCopy, origPermMatrix,
@@ -278,17 +277,17 @@ public class NocMapping {
         return;
     }
 
-    private static void ullmanPrune(RealMatrix permMatrixCopy, RealMatrix designMatrix, RealMatrix nocMatrix) {
+    private static void ullmanPrune(BoolMatrix permMatrixCopy, BoolMatrix designMatrix, BoolMatrix nocMatrix) {
         boolean changed = true;
         while (changed) {
             changed = false;
-            for (int i = 0; i < permMatrixCopy.getRowDimension(); i++) {
-                for (int j = 0; j < permMatrixCopy.getColumnDimension(); j++) {
-                    if (permMatrixCopy.getEntry(i, j) == 1) {
+            for (int i = 0; i < permMatrixCopy.getNumRows(); i++) {
+                for (int j = 0; j < permMatrixCopy.getNumCols(); j++) {
+                    if (permMatrixCopy.getEntry(i, j)) {
                         // for all neighbours of mod i in designMatrix
                         for (int x = 0; x < designMatrix.getRow(i).length; x++) {
                             // means we have a connection here
-                            if (designMatrix.getRow(i)[x] == 1) {
+                            if (designMatrix.getRow(i)[x]) {
                                 // now check nocMatrix to see if it has a
                                 // valid neighbour
                                 // that means that x (which is a neighbour
@@ -299,13 +298,13 @@ public class NocMapping {
                                 // in row x
                                 boolean found = false;
                                 for (int y = 0; y < nocMatrix.getRow(j).length; y++) {
-                                    if (permMatrixCopy.getEntry(x, y) == 1) {
+                                    if (permMatrixCopy.getEntry(x, y)) {
                                         found = true;
                                         break;
                                     }
                                 }
                                 if (!found) {
-                                    permMatrixCopy.setEntry(i, j, 0);
+                                    permMatrixCopy.setEntry(i, j, false);
                                     System.out.println("prune");
                                     changed = true;
                                 }
@@ -318,68 +317,42 @@ public class NocMapping {
         }
     }
 
-    private static boolean isValidMapping(RealMatrix designMatrix, RealMatrix nocMatrix, RealMatrix permMatrix) {
+    private static boolean isValidMapping(BoolMatrix designMatrix, BoolMatrix nocMatrix, BoolMatrix permMatrix) {
 
         // prettyPrint("permMatrix", permMatrix);
 
-        // first check if there is more than one 1 in any column, in which case
-        // it's invalid
-        for (int i = 0; i < permMatrix.getColumnDimension(); i++) {
-            double[] currCol = permMatrix.getColumn(i);
-            boolean firstOne = false;
-            for (int j = 0; j < currCol.length; j++) {
-                if (currCol[j] == 1.0 && !firstOne) {
-                    firstOne = true;
-                } else if (currCol[j] == 1.0 && firstOne) {
-                    // System.out.println("Too many ones");
-                    return false;
-                }
+        // first check if there is more than one 1 in any column
+        for (int i = 0; i < permMatrix.getNumCols(); i++) {
+            if (permMatrix.moreThanOneOnePerColumn(i)) {
+                return false;
             }
         }
 
         // validation matrix is allowed to have more 1s (edges) than the
         // subgraph we're trying to map
-        RealMatrix valMatrix = permMatrix.multiply((permMatrix.multiply(nocMatrix)).transpose());
+        BoolMatrix valMatrix = permMatrix.multiply((permMatrix.multiply(nocMatrix)).transpose());
+
+        // prettyPrint("permMatrix", permMatrix);
+        // prettyPrint("nocMatrix", nocMatrix);
+        // prettyPrint("permMatrix.multiply(nocMatrix)",
+        // permMatrix.multiply(nocMatrix));
+        // prettyPrint("valMatrix", valMatrix);
 
         // is this a valid permMatrix?
-        for (int i = 0; i < designMatrix.getColumnDimension(); i++)
-            for (int j = 0; j < designMatrix.getRowDimension(); j++)
-                if ((designMatrix.getEntry(i, j) == 1) && (valMatrix.getEntry(i, j) != 1)) {
+        for (int i = 0; i < designMatrix.getNumRows(); i++)
+            for (int j = 0; j < designMatrix.getNumCols(); j++)
+                if ((designMatrix.getEntry(i, j) == true) && (valMatrix.getEntry(i, j) != true)) {
                     // System.out.println("invalid");
                     return false;
                 }
-
-        // prettyPrint("valMatrix", valMatrix);
 
         // System.out.println("valid!");
         return true;
     }
 
-    public static void prettyPrint(String matName, RealMatrix m) {
-        System.out.println(matName);
-        System.out.print("   ");
-        for (int i = 0; i < m.getColumnDimension(); i++) {
-            System.out.print(i);
-            if (i >= 9)
-                System.out.print(" ");
-            else
-                System.out.print("  ");
-        }
-        System.out.println();
-        System.out.print("   ");
-        for (int i = 0; i < m.getColumnDimension(); i++) {
-            System.out.print("|  ");
-        }
-        System.out.println();
-        for (int i = 0; i < m.getRowDimension(); i++) {
-            if (i <= 9)
-                System.out.print(i + "--");
-            else
-                System.out.print(i + "-");
-            for (int j = 0; j < m.getColumnDimension(); j++) {
-                System.out.print((int) (m.getEntry(i, j)) + "  ");
-            }
-            System.out.println();
-        }
+    public static void prettyPrint(String name, BoolMatrix m) {
+        System.out.println(name);
+        System.out.println(m);
     }
+
 }

@@ -125,13 +125,13 @@ public final class Design extends Module {
         return null;
     }
 
-    public double[][] getAdjacencyMatrix() {
+    public boolean[][] getAdjacencyMatrix() {
         int numModules = modules.size();
-        double[][] matrix = new double[numModules][numModules];
+        boolean[][] matrix = new boolean[numModules][numModules];
         // init matrix
         for (int i = 0; i < numModules; i++)
             for (int j = 0; j < numModules; j++)
-                matrix[i][j] = 0;
+                matrix[i][j] = false;
 
         for (String modName : this.moduleIndices.keySet()) {
 
@@ -144,7 +144,7 @@ public final class Design extends Module {
             List<String> conMods = currModule.getConnectedModuleNames(Direction.OUTPUT);
             for (String conModName : conMods) {
                 int j = this.moduleIndices.get(conModName);
-                matrix[i][j] = 1;
+                matrix[i][j] = true;
             }
         }
         return matrix;
