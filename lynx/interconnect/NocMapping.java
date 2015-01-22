@@ -183,8 +183,8 @@ public class NocMapping {
     public static void main(String[] args) {
 
         // get adjacency matrices of design and NoC
-        double[][] designMatrixValues = { { 0, 1, 0 }, { 1, 0, 1 }, { 0, 1, 0 } };
-        double[][] nocMatrixValues = { { 0, 1, 0, 0 }, { 1, 0, 1, 1 }, { 0, 1, 0, 0 }, { 0, 1, 0, 0 } };
+        double[][] designMatrixValues = { { 1, 1, 1, 1 }, { 1, 0, 1, 1 }, { 1, 0, 1, 1 }, { 1, 1, 1, 1 } };
+        double[][] nocMatrixValues = { { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 0, 1, 1 }, { 1, 1, 1, 1 } };
         RealMatrix designMatrix = MatrixUtils.createRealMatrix(designMatrixValues);
         RealMatrix nocMatrix = MatrixUtils.createRealMatrix(nocMatrixValues);
 
@@ -192,7 +192,7 @@ public class NocMapping {
 
         // create the permutation matrix which specifies which module is mapped
         // onto which NoC router
-        final int n = 3;
+        final int n = 4;
         final int m = 4;
         double[][] permMatrixValues = new double[n][m];
 
@@ -234,14 +234,14 @@ public class NocMapping {
             RealMatrix permMatrix, RealMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
 
         numRecs++;
-        // System.out.println("---------\ncurrRow = " + currRow);
-        // prettyPrint("permMatrix", permMatrix);
+        //System.out.println("---------\ncurrRow = " + currRow);
+        //prettyPrint("permMatrix", permMatrix);
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
         if (currRow >= (permMatrix.getRowDimension())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
-                // System.out.println("Found a valid mapping ^^");
+                //System.out.println("Found a valid mapping ^^");
                 if (design != null) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.getData(), design);
                     validMappings.add(permMatrixMapping);

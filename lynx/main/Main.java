@@ -26,7 +26,10 @@ public class Main {
         NocInterconnect.addNoc(design, "designs/noc.xml");
 
         // find possible locations on the NoC
+        long startTime = System.nanoTime();
         NocMapping.findMappings(design);
+        long endTime = System.nanoTime();
+        System.out.println("Elapsed Time = " + (endTime - startTime) / 1e9 + " seconds");
 
         // write out XML design
         XmlDesign.writeXMLDesign(design, "designs/out.xml");
