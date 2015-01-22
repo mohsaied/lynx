@@ -11,6 +11,9 @@ public class NocMapping {
 
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
+    static int numSols;
+    static int numRecs;
+
     public static void findMappings(Design design) {
 
         log.setLevel(Level.ALL);
@@ -107,43 +110,12 @@ public class NocMapping {
 
                 if (equivSimMappings.get(j).get(0).compare(equivSimMappings.get(i).get(0))) {
 
-                    /*
-                     * // find the latencies of mapping at i and j Mapping first
-                     * = equivSimMappings.get(i).get(0); Connection con1 =
-                     * first.design.getConnections().get(0); Connection con2 =
-                     * first.design.getConnections().get(1);
-                     * 
-                     * int firstOne = first.getConnectionPath(con1).size() - 1;
-                     * int firsttwo = first.getConnectionPath(con2).size() - 1;
-                     * 
-                     * Mapping second = equivSimMappings.get(j).get(0); int
-                     * secondOne = second.getConnectionPath(con1).size() - 1;
-                     * int secondtwo = second.getConnectionPath(con2).size() -
-                     * 1;
-                     * 
-                     * System.out.println("swap (" + firstOne + "," + firsttwo +
-                     * ") with the better (" + secondOne + "," + secondtwo +
-                     * ")");
-                     */
-
                     ArrayList<Mapping> temp = equivSimMappings.get(j);
                     equivSimMappings.set(j, equivSimMappings.get(i));
                     equivSimMappings.set(i, temp);
                 }
             }
         }
-
-        /*
-         * for (int i = 0; i < equivSimMappings.size(); i++) { Mapping first =
-         * equivSimMappings.get(i).get(0); Connection con1 =
-         * first.design.getConnections().get(0); Connection con2 =
-         * first.design.getConnections().get(1);
-         * 
-         * int firstOne = first.getConnectionPath(con1).size() - 1; int firsttwo
-         * = first.getConnectionPath(con2).size() - 1;
-         * System.out.println("sorted " + i + " (" + firstOne + "," + firsttwo +
-         * ")"); }
-         */
     }
 
     private static List<ArrayList<Mapping>> binMappings(List<Mapping> validMappings, BoolMatrix designMatrix, Design design) {
@@ -227,9 +199,6 @@ public class NocMapping {
         System.out.println("Number of recursions = " + numRecs);
     }
 
-    static int numSols;
-    static int numRecs;
-
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, BoolMatrix designMatrix, BoolMatrix nocMatrix,
             BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
 
@@ -242,7 +211,7 @@ public class NocMapping {
         if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping ^^");
-                if (design != null && validMappings.size() < 1000) {
+                if (design != null ){//&& validMappings.size() < 10000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
