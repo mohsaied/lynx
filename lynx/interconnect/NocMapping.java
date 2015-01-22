@@ -73,12 +73,13 @@ public class NocMapping {
             // prettyPrint("nocMatrix",nocMatrix);
 
             validMappings.clear();
+            numSols = 0;
 
             // search!
             ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, design);
 
-            log.info("Number of solutions found = " + validMappings.size() + ", at maxHops = " + maxLegalHops + ", numrecs = "
-                    + numRecs);
+            log.info("Number of solutions found = " + validMappings.size() + "(" + numSols + ")" + ", at maxHops = "
+                    + maxLegalHops + ", numrecs = " + numRecs);
 
             if (maxLegalHops == design.getNoc().getMaxHops())
                 break;
@@ -233,15 +234,15 @@ public class NocMapping {
             BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
 
         numRecs++;
-        //System.out.println("---------\ncurrRow = " + currRow);
-        //prettyPrint("permMatrix", permMatrix);
+        // System.out.println("---------\ncurrRow = " + currRow);
+        // prettyPrint("permMatrix", permMatrix);
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
         if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
-                //System.out.println("Found a valid mapping ^^");
-                if (design != null) {
+                // System.out.println("Found a valid mapping ^^");
+                if (design != null && validMappings.size() < 1000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
@@ -264,8 +265,7 @@ public class NocMapping {
 
                     // for this row, set the current (row,column) to 1 and all
                     // (row,other_columns) to 0
-                    for (int j = 0; j < usedColumns.length; j++)
-                        permMatrixCopy.setEntry(currRow, j, i == j ? true : false);
+                    permMatrixCopy.setOneColInRow(currRow, i);
 
                     usedColumns[i] = true;
                     ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrixCopy, origPermMatrix,

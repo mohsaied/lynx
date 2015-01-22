@@ -87,9 +87,8 @@ public class BoolMatrix {
 
     public BoolMatrix multiply(BoolMatrix m) {
 
-        assert this.getNumCols() == m.getNumRows() : "Matrix dimensions ("
-                + this.getNumRows() + "," + this.getNumCols() + ")" + " and (" + m.getNumRows() + "," + m.getNumCols() + ")"
-                + " don't match for multiplication";
+        assert this.getNumCols() == m.getNumRows() : "Matrix dimensions (" + this.getNumRows() + "," + this.getNumCols() + ")"
+                + " and (" + m.getNumRows() + "," + m.getNumCols() + ")" + " don't match for multiplication";
 
         int numRows = this.getNumRows();
         int numCols = m.getNumCols();
@@ -198,6 +197,14 @@ public class BoolMatrix {
             s += "\n";
         }
         return s;
+    }
+
+    public void setOneColInRow(int currRow, int i) {
+
+        for (int j = 0; j < getNumCols(); j++){
+            setEntry(currRow, j, i == j ? true : false);
+        }
+
     }
 
 }
