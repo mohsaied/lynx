@@ -1,4 +1,4 @@
-<design name="quadratic">
+<design name="chain">
   
   <module type="dummy" name="x1" router="0">
 	<bundle name="outbun">

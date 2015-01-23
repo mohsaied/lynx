@@ -13,6 +13,7 @@ public class NocMapping {
 
     static int numSols;
     static int numRecs;
+    static int numPrune;
 
     public static void findMappings(Design design) {
 
@@ -36,22 +37,10 @@ public class NocMapping {
         final int m = design.getNoc().getNumRouters();
         boolean[][] permMatrixValues = new boolean[n][m];
 
-        // create initial permMatrix
-        // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                if (design.getModuleInDegree(i) <= design.getNoc().getRouterDegree(j)
-                        && design.getModuleOutDegree(i) <= design.getNoc().getRouterDegree(j))
-                    permMatrixValues[i][j] = true;
-                else
-                    permMatrixValues[i][j] = false;
-        BoolMatrix permMatrix = new BoolMatrix(permMatrixValues);
-        BoolMatrix origPermMatrix = new BoolMatrix(permMatrixValues);
-
         // current row we are investigating
         int currRow = 0;
         // array holding the used columns
-        boolean[] usedColumns = new boolean[permMatrix.getNumCols()];
+        boolean[] usedColumns = new boolean[design.getNoc().getNumRouters()];
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
@@ -73,19 +62,37 @@ public class NocMapping {
             }
 
             nocMatrix = new BoolMatrix(newNocMatrixValues);
+
+            // create initial permMatrix
+            // initial matrix should have 1s if deg(modMati) >= deg(nocMati)
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    // check both incoming and outgoing edges
+                    if (designMatrix.sumRow(i) <= nocMatrix.sumRow(j) && designMatrix.sumCol(i) <= nocMatrix.sumCol(j))
+                        permMatrixValues[i][j] = true;
+                    else
+                        permMatrixValues[i][j] = false;
+            BoolMatrix permMatrix = new BoolMatrix(permMatrixValues);
+            BoolMatrix origPermMatrix = new BoolMatrix(permMatrixValues);
+
+            // prettyPrint("initial permMatrix",permMatrix);
             // prettyPrint("nocMatrix",nocMatrix);
+            // prettyPrint("designMatrix",designMatrix);
 
             validMappings.clear();
             numSols = 0;
+            numRecs = 0;
+            numPrune = 0;
 
             // search!
             ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, design);
 
             log.info("Number of solutions found = " + validMappings.size() + "(" + numSols + ")" + ", at maxHops = "
-                    + maxLegalHops + ", numrecs = " + numRecs);
+                    + maxLegalHops + ", numRecs = " + numRecs + ", numPrune = " + numPrune);
 
-            if (maxLegalHops == design.getNoc().getMaxHops())
+            if (numSols > 0)
                 break;
+
         }
 
         // at this point all the solutions we want are stored in validMappings
@@ -222,14 +229,18 @@ public class NocMapping {
 
             BoolMatrix permMatrixCopy = permMatrix.clone();
 
+            // prettyPrint("bp: permMatrix", permMatrixCopy);
+
             // prune permMatrix
             ullmanPrune(permMatrixCopy, designMatrix, nocMatrix);
+
+            // prettyPrint("ap: permMatrix", permMatrixCopy);
 
             // recurse
             for (int i = 0; i < usedColumns.length; i++) {
                 if (!usedColumns[i]) {
 
-                    if (!origPermMatrix.getEntry(currRow, i))
+                    if (!permMatrix.getEntry(currRow, i))
                         continue;
 
                     // for this row, set the current (row,column) to 1 and all
@@ -274,10 +285,9 @@ public class NocMapping {
                                 }
                                 if (!found) {
                                     permMatrixCopy.setEntry(i, j, false);
-                                    System.out.println("prune");
                                     changed = true;
+                                    numPrune++;
                                 }
-
                             }
                         }
                     }
