@@ -159,9 +159,10 @@ public class NocMapping {
     public static void main(String[] args) {
 
         // get adjacency matrices of design and NoC
-        boolean[][] designMatrixValues = { { false, true, false }, { true, false, true }, { false, true, false } };
-        boolean[][] nocMatrixValues = { { false, true, false, false }, { true, false, true, true },
-                { false, true, false, false }, { false, true, false, false } };
+        boolean[][] designMatrixValues = { { false, true, false }, { false, false, true }, { false, false, false } };
+
+        boolean[][] nocMatrixValues = { { false, true, false }, { true, false, true }, { false, true, false } };
+
         BoolMatrix designMatrix = new BoolMatrix(designMatrixValues);
         BoolMatrix nocMatrix = new BoolMatrix(nocMatrixValues);
 
@@ -171,7 +172,7 @@ public class NocMapping {
         // create the permutation matrix which specifies which module is mapped
         // onto which NoC router
         final int n = 3;
-        final int m = 4;
+        final int m = 3;
         boolean[][] permMatrixValues = new boolean[n][m];
 
         // create initial permMatrix
@@ -198,26 +199,28 @@ public class NocMapping {
 
         numSols = 0;
         numRecs = 0;
+        numPrune = 0;
         System.out.println("Starting recursion with:");
 
         ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, null);
 
         System.out.println("Number of solutions found = " + numSols);
         System.out.println("Number of recursions = " + numRecs);
+        System.out.println("Number of pruning = " + numPrune);
     }
 
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, BoolMatrix designMatrix, BoolMatrix nocMatrix,
             BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
 
         numRecs++;
-        // System.out.println("---------\ncurrRow = " + currRow);
-        // prettyPrint("permMatrix", permMatrix);
+        //System.out.println("---------\ncurrRow = " + currRow);
+        //prettyPrint("permMatrix", permMatrix);
 
         // check the permMatrix if it is a valid isomorphism if we permuted all
         // the rows
         if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
-                // System.out.println("Found a valid mapping ^^");
+                //System.out.println("Found a valid mapping ^^");
                 if (design != null && validMappings.size() < 1000000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
@@ -261,10 +264,11 @@ public class NocMapping {
         boolean changed = true;
         while (changed) {
             changed = false;
-            for (int i = 0; i < permMatrixCopy.getNumRows(); i++) {
-                for (int j = 0; j < permMatrixCopy.getNumCols(); j++) {
+            for (int i = 0; i < permMatrixCopy.getNumRows(); i++)
+                for (int j = 0; j < permMatrixCopy.getNumCols(); j++)
                     if (permMatrixCopy.getEntry(i, j)) {
-                        // for all neighbours of mod i in designMatrix
+                        // for all outgoing connections to neighbours of mod i
+                        // in designMatrix
                         for (int x = 0; x < designMatrix.getRow(i).length; x++) {
                             // means we have a connection here
                             if (designMatrix.getRow(i)[x]) {
@@ -277,12 +281,15 @@ public class NocMapping {
                                 // check permMatrix in all neighbours to j,
                                 // in row x
                                 boolean found = false;
-                                for (int y = 0; y < nocMatrix.getRow(j).length; y++) {
-                                    if (permMatrixCopy.getEntry(x, y)) {
-                                        found = true;
-                                        break;
+                                // neighbours of current router j (to which i is
+                                // mapped)
+                                for (int y = 0; y < nocMatrix.getRow(j).length; y++)
+                                    if (nocMatrix.getRow(j)[y]) {
+                                        if (permMatrixCopy.getEntry(x, y)) {
+                                            found = true;
+                                            break;
+                                        }
                                     }
-                                }
                                 if (!found) {
                                     permMatrixCopy.setEntry(i, j, false);
                                     changed = true;
@@ -290,9 +297,42 @@ public class NocMapping {
                                 }
                             }
                         }
+                        // for all incoming connections to neighbours of mod i
+                        // in designMatrix
+                        for (int x = 0; x < designMatrix.getColumn(i).length; x++) {
+                            // means we have a connection here
+                            if (designMatrix.getColumn(i)[x]) {
+                                //System.out.print("Checking to see if col neighbour of " + i + "(noc=" + j + ")" + ", node " + x);
+                                // now check nocMatrix to see if it has a
+                                // valid neighbour
+                                // that means that x (which is a neighbour
+                                // of i)
+                                // should have a 1 in the permMatrix to j
+
+                                // check permMatrix in all neighbours to j,
+                                // in row x
+                                boolean found = false;
+                                // neighbours of current router j (to which i is
+                                // mapped)
+                                for (int y = 0; y < nocMatrix.getColumn(j).length; y++)
+                                    if (nocMatrix.getColumn(j)[y]) {
+                                        //System.out.print(" has a valid mapping on noc node " + y);
+                                        if (permMatrixCopy.getEntry(x, y)) {
+                                            //System.out.println(": yes");
+                                            found = true;
+                                            break;
+                                        }
+                                       // System.out.println();
+                                    }
+                                if (!found) {
+                                    permMatrixCopy.setEntry(i, j, false);
+                                    changed = true;
+                                    numPrune++;
+                                    //System.out.println("prune");
+                                }
+                            }
+                        }
                     }
-                }
-            }
         }
     }
 
