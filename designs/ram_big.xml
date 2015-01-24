@@ -1,0 +1,167 @@
+<design name="ram">
+  
+  <module type="master" name="m0" router="0">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m1" router="1">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m2" router="2">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m3" router="3">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m4" router="4">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m5" router="5">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m6" router="6">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m7" router="7">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m8" router="8">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m9" router="9">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m10" router="10">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m11" router="11">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m12" router="12">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m13" router="13">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m14" router="14">
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="ram" name="ram0" router="15">
+	<bundle name="inbun">
+		<port direction="input" width="16" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="m0.outbun" end="ram0.inbun"/>
+  <connection start="m1.outbun" end="ram0.inbun"/>
+  <connection start="m2.outbun" end="ram0.inbun"/>
+  <connection start="m3.outbun" end="ram0.inbun"/>
+  <connection start="m4.outbun" end="ram0.inbun"/>
+  <connection start="m5.outbun" end="ram0.inbun"/>
+  <connection start="m6.outbun" end="ram0.inbun"/>
+  <connection start="m7.outbun" end="ram0.inbun"/>
+  <connection start="m8.outbun" end="ram0.inbun"/>
+  <connection start="m9.outbun" end="ram0.inbun"/>
+  <connection start="m10.outbun" end="ram0.inbun"/>
+  <connection start="m11.outbun" end="ram0.inbun"/>
+  <connection start="m12.outbun" end="ram0.inbun"/>
+  <connection start="m13.outbun" end="ram0.inbun"/>
+  <connection start="m14.outbun" end="ram0.inbun"/>
+  
+  
+</design>

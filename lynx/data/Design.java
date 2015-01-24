@@ -170,6 +170,67 @@ public final class Design extends Module {
 
     public void update() {
 
+        System.out.println("Before Sort:");
+        for (String modName : moduleIndices.keySet()) {
+            System.out.println(modName + ": " + moduleIndices.get(modName));
+        }
+        System.out.println();
+
+        // sort moduleindices by radix
+        // (a module with a higher radix should have a lower module index)
+
+        Map<String, Integer> radices = new HashMap<String, Integer>();
+
+        // find the # connections for each module
+        for (String modString : moduleIndices.keySet()) {
+
+            DesignModule m = (DesignModule) getModuleByName(modString);
+
+            int modRadixOut = m.getConnectedModuleNames(Direction.OUTPUT).size();
+            int modRadixIn = m.getConnectedModuleNames(Direction.INPUT).size();
+            int maxRadix = Math.max(modRadixIn, modRadixOut);
+
+            radices.put(modString, maxRadix);
+        }
+
+        ArrayList<String> sortedModules = new ArrayList<String>();
+        for (String modName : radices.keySet()) {
+            sortedModules.add(modName);
+        }
+
+        // sort by radix
+        for (int i = 0; i < sortedModules.size(); i++) {
+            for (int j = i; j < sortedModules.size(); j++) {
+
+                // loop over sortedModules and do insertion sort into new array
+                int currRadix = radices.get(sortedModules.get(i));
+                int otherRadix = radices.get(sortedModules.get(j));
+
+                if (otherRadix > currRadix) {
+                    String temp = sortedModules.get(j);
+                    sortedModules.set(j, sortedModules.get(i));
+                    sortedModules.set(i, temp);
+                }
+            }
+        }
+
+        // insert back into moduleIndices sorted
+        for (String modName : moduleIndices.keySet()) {
+            int pos = 0;
+            for (int j = 0; j < sortedModules.size(); j++)
+                if (sortedModules.get(j).equals(modName)) {
+                    pos = j;
+                    break;
+                }
+            moduleIndices.put(modName, pos);
+        }
+
+        System.out.println("After Sort:");
+        for (String modName : moduleIndices.keySet()) {
+            System.out.println(modName + ": " + moduleIndices.get(modName));
+        }
+        System.out.println();
+
         allConnections.clear();
 
         for (DesignModule mod : this.modules.values()) {
