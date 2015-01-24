@@ -1,5 +1,12 @@
 package lynx.interconnect;
 
+
+/**
+ * A binary (1/0) 2D matrix class
+ *
+ * @author Mohamed
+ * 
+ */
 public class BoolMatrix {
 
     private boolean[][] boolMatrix;
