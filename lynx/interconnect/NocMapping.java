@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lynx.data.Connection;
 import lynx.data.Design;
+import lynx.data.Noc;
 
 /**
  * Algorithms to map a design onto an NoC
@@ -100,14 +100,19 @@ public class NocMapping {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping ^^");
                 // update best_total_latency and
-                int currLatency = computeLatency(permMatrix, design);
+                int currLatency;
+                if (design != null)
+                    currLatency = computeLatency(permMatrix, designMatrix, design.getNoc());
+                else
+                    currLatency = computeLatency(permMatrix, designMatrix, new Noc());
+
                 if (currLatency < bestTotalLatency) {
+                    System.out.println("best latency: " + bestTotalLatency + " -> " + currLatency);
                     bestTotalLatency = currLatency;
-                    System.out.println(currLatency + " " + bestTotalLatency);
                 }
                 if (numSols % 10000 == 0)
-                    System.out.println(numSols + " " + numRecs + " " + numPrune + " " + bestTotalLatency);
-                if (design != null && validMappings.size() < 10000) {
+                    System.out.println("log info: " + numSols + " " + numRecs + " " + numPrune + " " + bestTotalLatency);
+                if (design != null) {// && validMappings.size() < 10000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
@@ -146,20 +151,23 @@ public class NocMapping {
         return;
     }
 
-    private static int computeLatency(BoolMatrix permMatrix, Design design) {
+    private static int computeLatency(BoolMatrix permMatrix, BoolMatrix designMatrix, Noc noc) {
 
         int totLatency = 0;
         // for each connection
-        for (Connection con : design.getConnections()) {
-            int fromMod = con.getFromModuleIndex();
-            int toMod = con.getToModuleIndex();
 
-            // find the routers
-            int fromRouter = permMatrix.getOnePosFromRow(fromMod);
-            int toRouter = permMatrix.getOnePosFromRow(toMod);
+        // find connections from designmatrix
+        for (int fromMod = 0; fromMod < designMatrix.getNumRows(); fromMod++)
+            for (int toMod = 0; toMod < designMatrix.getNumCols(); toMod++)
+                if (designMatrix.getEntry(fromMod, toMod)) {
 
-            totLatency += design.getNoc().getNumberOfHops(fromRouter, toRouter);
-        }
+                    // find the routers
+                    int fromRouter = permMatrix.getOnePosFromRow(fromMod);
+                    int toRouter = permMatrix.getOnePosFromRow(toMod);
+
+                    totLatency += noc.getNumberOfHops(fromRouter, toRouter);
+
+                }
 
         return totLatency;
     }
