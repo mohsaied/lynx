@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lynx.data.Connection;
 import lynx.data.Design;
 
 /**
@@ -18,9 +19,10 @@ public class NocMapping {
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
     // counters
-    private static int numSols;
-    private static int numRecs;
-    private static int numPrune;
+    private static long numSols;
+    private static long numRecs;
+    private static long numPrune;
+    private static int bestTotalLatency;
 
     public static void findMappings(Design design) {
 
@@ -56,6 +58,7 @@ public class NocMapping {
             numSols = 0;
             numRecs = 0;
             numPrune = 0;
+            bestTotalLatency = 9999;
 
             // search for valid mappings
             ullmanRecurse(usedColumns, 0, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, design);
@@ -96,8 +99,14 @@ public class NocMapping {
         if (currRow >= (permMatrix.getNumRows())) {
             if (isValidMapping(designMatrix, nocMatrix, permMatrix)) {
                 // System.out.println("Found a valid mapping ^^");
+                // update best_total_latency and
+                int currLatency = computeLatency(permMatrix, design);
+                if (currLatency < bestTotalLatency) {
+                    bestTotalLatency = currLatency;
+                    System.out.println(currLatency + " " + bestTotalLatency);
+                }
                 if (numSols % 10000 == 0)
-                    System.out.println(numSols + " " + numRecs + " " + numPrune);
+                    System.out.println(numSols + " " + numRecs + " " + numPrune + " " + bestTotalLatency);
                 if (design != null && validMappings.size() < 10000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
@@ -135,6 +144,24 @@ public class NocMapping {
             }
         }
         return;
+    }
+
+    private static int computeLatency(BoolMatrix permMatrix, Design design) {
+
+        int totLatency = 0;
+        // for each connection
+        for (Connection con : design.getConnections()) {
+            int fromMod = con.getFromModuleIndex();
+            int toMod = con.getToModuleIndex();
+
+            // find the routers
+            int fromRouter = permMatrix.getOnePosFromRow(fromMod);
+            int toRouter = permMatrix.getOnePosFromRow(toMod);
+
+            totLatency += design.getNoc().getNumberOfHops(fromRouter, toRouter);
+        }
+
+        return totLatency;
     }
 
     private static void ullmanPrune(BoolMatrix permMatrixCopy, BoolMatrix designMatrix, BoolMatrix nocMatrix) {

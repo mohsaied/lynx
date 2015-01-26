@@ -1,6 +1,5 @@
 package lynx.interconnect;
 
-
 /**
  * A binary (1/0) 2D matrix class
  *
@@ -208,10 +207,18 @@ public class BoolMatrix {
 
     public void setOneColInRow(int currRow, int i) {
 
-        for (int j = 0; j < getNumCols(); j++){
+        for (int j = 0; j < getNumCols(); j++) {
             setEntry(currRow, j, i == j ? true : false);
         }
 
     }
 
+    public int getOnePosFromRow(int row) {
+        boolean[] currRow = getRow(row);
+        for (int i = 0; i < currRow.length; i++) {
+            if (currRow[i])
+                return i;
+        }
+        return currRow.length;
+    }
 }
