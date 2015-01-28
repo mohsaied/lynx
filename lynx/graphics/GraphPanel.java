@@ -26,6 +26,11 @@ public class GraphPanel extends JPanel {
         this.design = design;
     }
 
+
+    public void setDesign(Design design) {
+        this.design = design;
+    }
+    
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 

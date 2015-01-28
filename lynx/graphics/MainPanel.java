@@ -11,21 +11,23 @@ import lynx.data.Design;
 public class MainPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+    private GraphPanel graphPanel;
+    private NocPanel nocPanel;
 
     public MainPanel(Design design) {
         super(new GridLayout(1, 1));
 
-        //panel has a tabbed pane on it
+        // panel has a tabbed pane on it
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        //first tab is the graph of given application
-        GraphPanel panel1 = new GraphPanel(design);
-        tabbedPane.addTab("Graph", null, panel1, "Visualize the provided connectivity graph");
+        // first tab is the graph of given application
+        graphPanel = new GraphPanel(design);
+        tabbedPane.addTab("Graph", null, graphPanel, "Visualize the provided connectivity graph");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        //Second tab is the NoC
-        NocPanel panel2 = new NocPanel(design);
-        tabbedPane.addTab("NoC", null, panel2, "The NoC topology and module placement thereon");
+        // Second tab is the NoC
+        nocPanel = new NocPanel(design);
+        tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
 
         // Add the tabbed pane to this panel.
@@ -33,6 +35,13 @@ public class MainPanel extends JPanel {
 
         // The following line enables to use scrolling tabs.
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+
     }
 
+    public void setDesign(Design design) {
+        graphPanel.setDesign(design);
+        nocPanel.setDesign(design);
+        graphPanel.repaint();
+        nocPanel.repaint();
+    }
 }

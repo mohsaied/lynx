@@ -42,27 +42,41 @@ public class NocPanel extends JPanel {
         super(new FlowLayout());
         log.setLevel(Level.ALL);
         this.design = design;
-        selectedMapping = 0;
-        selectedVersion = 0;
 
-        controlPanel = new JPanel(new GridLayout(1, 1));
-        controlPanel.setBounds(0, 0, 15, 10);
-        this.add(controlPanel);
+        initPane();
 
-        int numMappings = design.getMappings().size();
-        int numVersions = design.getMappings().get(selectedMapping).size();
+    }
 
-        mappingIndex = new JComboBox<Integer>();
-        for (int i = 0; i < numMappings; i++)
-            mappingIndex.addItem(i);
-        controlPanel.add(mappingIndex);
+    public void setDesign(Design design) {
+        this.design = design;
+        initPane();
+    }
 
-        versionIndex = new JComboBox<Integer>();
-        for (int i = 0; i < numVersions; i++)
-            versionIndex.addItem(i);
-        controlPanel.add(versionIndex);
+    private void initPane() {
 
-        configureDropDowns();
+        if (design != null) {
+            selectedMapping = 0;
+            selectedVersion = 0;
+
+            controlPanel = new JPanel(new GridLayout(1, 1));
+            controlPanel.setBounds(0, 0, 15, 10);
+            this.add(controlPanel);
+
+            int numMappings = design.getMappings().size();
+            int numVersions = design.getMappings().get(selectedMapping).size();
+
+            mappingIndex = new JComboBox<Integer>();
+            for (int i = 0; i < numMappings; i++)
+                mappingIndex.addItem(i);
+            controlPanel.add(mappingIndex);
+
+            versionIndex = new JComboBox<Integer>();
+            for (int i = 0; i < numVersions; i++)
+                versionIndex.addItem(i);
+            controlPanel.add(versionIndex);
+
+            configureDropDowns();
+        }
     }
 
     private void configureDropDowns() {
@@ -104,7 +118,8 @@ public class NocPanel extends JPanel {
         if (noc != null)
             drawNoc(g, noc);
 
-        drawDesign(g);
+        if (design != null)
+            drawDesign(g);
     }
 
     private void drawDesign(Graphics g) {
