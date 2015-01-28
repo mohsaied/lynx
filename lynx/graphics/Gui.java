@@ -42,7 +42,7 @@ public class Gui extends JFrame {
         // Create a split pane with the two scroll panes in it.
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, sp);
         splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(600);
+        splitPane.setDividerLocation(500);
 
         // Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(100, 50);
@@ -52,7 +52,7 @@ public class Gui extends JFrame {
 
         this.pack();
         this.setVisible(true);
-        this.setBounds(150, 200, 800, 800);
+        this.setBounds(150, 200, 800, 700);
         this.setVisible(true);
     }
     
