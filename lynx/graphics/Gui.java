@@ -1,6 +1,8 @@
 package lynx.graphics;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.PrintStream;
 
 import javax.swing.JFrame;
@@ -15,8 +17,6 @@ public class Gui extends JFrame {
 
     private static final long serialVersionUID = 5661237900482388080L;
 
-    private final int xPos = 150;
-    private final int yPos = 200;
     private final int xSize = 800;
     private final int ySize = 700;
     private final int commandDivLoc = xSize / 4;
@@ -63,7 +63,9 @@ public class Gui extends JFrame {
 
         this.pack();
         this.setVisible(true);
-        this.setBounds(xPos, yPos, xSize, ySize);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setBounds(0, 0, xSize, ySize);
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         this.setVisible(true);
     }
 

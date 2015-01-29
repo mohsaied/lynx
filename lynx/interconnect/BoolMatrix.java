@@ -9,8 +9,6 @@ package lynx.interconnect;
 public class BoolMatrix {
 
     private boolean[][] boolMatrix;
-    private long[] efficientMatrixRows;
-    private long[] efficientMatrixCols;
 
     private int numRows;
     private int numCols;
@@ -22,22 +20,6 @@ public class BoolMatrix {
         numRows = matrixValues.length;
         numCols = matrixValues[0].length;
 
-        efficientMatrixRows = new long[numRows];
-        efficientMatrixCols = new long[numCols];
-
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                if (boolMatrix[i][j])
-                    efficientMatrixRows[i] = efficientMatrixRows[i] | (1 << j);
-            }
-        }
-
-        for (int i = 0; i < numCols; i++) {
-            for (int j = 0; j < numRows; j++) {
-                if (boolMatrix[j][i])
-                    efficientMatrixCols[i] = efficientMatrixCols[i] | (1 << j);
-            }
-        }
     }
 
     public static void main(String[] args) {
@@ -56,14 +38,6 @@ public class BoolMatrix {
 
     public void setEntry(int i, int j, boolean value) {
         this.boolMatrix[i][j] = value;
-        // update efficient matrix representation
-        if (value) {
-            efficientMatrixRows[i] = efficientMatrixRows[i] | (1 << j);
-            efficientMatrixCols[j] = efficientMatrixCols[j] | (1 << i);
-        } else {
-            efficientMatrixRows[i] = efficientMatrixRows[i] & ~(1 << j);
-            efficientMatrixCols[j] = efficientMatrixCols[j] & ~(1 << i);
-        }
     }
 
     public boolean getEntry(int i, int j) {
@@ -103,17 +77,22 @@ public class BoolMatrix {
 
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
-                long row = this.efficientMatrixRows[i];
-                long col = m.efficientMatrixCols[j];
-                matrixValues[i][j] = rowXColumn(row, col);
+                boolean[] row = this.getRow(i);
+                boolean[] col = m.getColumn(j);
+                matrixValues[i][j] = rowXColumnBool(row, col);
             }
         }
         return new BoolMatrix(matrixValues);
     }
 
-    private boolean rowXColumn(long row, long col) {
-        // only works for matrices in which each row/column has a single one
-        return ((row & col) > 0);
+    private boolean rowXColumnBool(boolean[] row, boolean[] col) {
+        for (int i = 0; i < row.length; i++)
+            if (row[i])
+                if (col[i])
+                    return true;
+                else
+                    return false;
+        return false;
     }
 
     public boolean[] getRow(int i) {
