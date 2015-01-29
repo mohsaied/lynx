@@ -1,7 +1,6 @@
 package lynx.graphics;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.io.PrintStream;
 
 import javax.swing.JFrame;
@@ -16,11 +15,17 @@ public class Gui extends JFrame {
 
     private static final long serialVersionUID = 5661237900482388080L;
 
+    private final int xpos = 150;
+    private final int ypos = 200;
+    private final int xsize = 800;
+    private final int ysize = 700;
+    private final int divloc = ysize * 3 / 4;
+
     private MainPanel mainPanel;
-    
+
     public Gui(Design design) throws InterruptedException {
         super(MyEnums.NOCLYNX);
-        
+
         // JFrame.setDefaultLookAndFeelDecorated(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
@@ -42,21 +47,17 @@ public class Gui extends JFrame {
         // Create a split pane with the two scroll panes in it.
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, sp);
         splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(500);
+        splitPane.setDividerLocation(divloc);
 
-        // Provide minimum sizes for the two components in the split pane
-        Dimension minimumSize = new Dimension(100, 50);
-        mainPanel.setMinimumSize(minimumSize);
-        sp.setMinimumSize(minimumSize);
         this.getContentPane().add(splitPane, BorderLayout.CENTER);
 
         this.pack();
         this.setVisible(true);
-        this.setBounds(150, 200, 800, 700);
+        this.setBounds(xpos, ypos, xsize, ysize);
         this.setVisible(true);
     }
-    
-    public void setDesign(Design design){
+
+    public void setDesign(Design design) {
         mainPanel.setDesign(design);
     }
 }

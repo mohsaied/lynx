@@ -107,11 +107,12 @@ public class NocMapping {
                     currLatency = computeLatency(permMatrix, designMatrix, new Noc());
 
                 if (currLatency < bestTotalLatency) {
-                    System.out.println("best latency: " + bestTotalLatency + " -> " + currLatency);
+                    log.info("best latency: " + bestTotalLatency + " -> " + currLatency);
                     bestTotalLatency = currLatency;
                 }
                 if (numSols % 10000 == 0)
-                    System.out.println("log info: " + numSols + " " + numRecs + " " + numPrune + " " + bestTotalLatency);
+                    log.info("numsols: " + numSols + " - numrecs: " + numRecs + " - numprune: " + numPrune + " - bestlatency: "
+                            + bestTotalLatency);
                 if (design != null) {// && validMappings.size() < 10000) {
                     Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);

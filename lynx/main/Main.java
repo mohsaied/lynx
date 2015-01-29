@@ -1,6 +1,8 @@
 package lynx.main;
 
+import java.text.DecimalFormat;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.graphics.Gui;
@@ -12,6 +14,8 @@ import lynx.verilog.VerilogOut;
 
 public class Main {
 
+    private static final Logger log = Logger.getLogger(Main.class.getName());
+
     public final static void main(String[] args) throws Exception {
 
         // draw fcns
@@ -19,7 +23,7 @@ public class Main {
 
         @SuppressWarnings("unused")
         // MyLogger log = new MyLogger(Level.INFO);
-        MyLogger log = new MyLogger(Level.ALL);
+        MyLogger parentLog = new MyLogger(Level.ALL);
 
         // read XML design
         Design design = XmlDesign.readXMLDesign("designs/ram.xml");
@@ -32,7 +36,8 @@ public class Main {
         long startTime = System.nanoTime();
         NocMapping.findMappings(design);
         long endTime = System.nanoTime();
-        System.out.println("Elapsed Time = " + (endTime - startTime) / 1e9 + " seconds");
+        DecimalFormat secondsFormat = new DecimalFormat("#.00");
+        log.info("Elapsed Time = " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
         gui.setDesign(design);
 
