@@ -83,8 +83,9 @@ public class NocPanel extends JPanel {
         mappingIndex.setSelectedItem(selectedMapping);
 
         mappingIndex.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent event) {
-                if (event.getSource() == mappingIndex) {
+                if (event.getSource() == mappingIndex && event.getStateChange() == ItemEvent.SELECTED) {
                     selectedMapping = mappingIndex.getSelectedIndex();
 
                     int numVersions = design.getMappings().get(selectedMapping).size();
@@ -94,11 +95,14 @@ public class NocPanel extends JPanel {
                     versionIndex.setSelectedItem(0);
 
                     repaint();
+
+                    compareToBestMappingWithConsolePrint(design, selectedMapping, selectedVersion);
                 }
             }
         });
 
         versionIndex.addItemListener(new ItemListener() {
+            @Override
             public void itemStateChanged(ItemEvent event) {
                 if (event.getSource() == versionIndex) {
                     selectedVersion = versionIndex.getSelectedIndex();
@@ -107,6 +111,32 @@ public class NocPanel extends JPanel {
             }
         });
 
+    }
+
+    protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
+        // TODO compare the selected mapping to mapping (0,0) -- the best one
+        // To do this we'll loop over every connection in both and compare
+        // latencies, then also compare traffic
+
+        Mapping bestMapping = design.getMappings().get(0).get(0);
+        Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
+
+        List<Connection> connections = design.getConnections();
+
+        for (Connection con : connections) {
+            int bestLat = bestMapping.getConnectionPath(con).size();
+            int currLat = currMapping.getConnectionPath(con).size();
+
+            if (bestLat < currLat)
+                log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat + ", instead of "
+                        + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+                        + con.getToModule().getName());
+            else if (bestLat > currLat)
+                log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat + ", instead of "
+                        + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+                        + con.getToModule().getName());
+
+        }
     }
 
     public void paintComponent(Graphics g) {
