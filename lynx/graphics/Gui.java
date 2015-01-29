@@ -15,13 +15,15 @@ public class Gui extends JFrame {
 
     private static final long serialVersionUID = 5661237900482388080L;
 
-    private final int xpos = 150;
-    private final int ypos = 200;
-    private final int xsize = 800;
-    private final int ysize = 700;
-    private final int divloc = ysize * 3 / 4;
+    private final int xPos = 150;
+    private final int yPos = 200;
+    private final int xSize = 800;
+    private final int ySize = 700;
+    private final int commandDivLoc = xSize / 4;
+    private final int consoleDivLoc = ySize * 3 / 4;
 
     private MainPanel mainPanel;
+    private CommandPanel commandPanel;
 
     public Gui(Design design) throws InterruptedException {
         super(MyEnums.NOCLYNX);
@@ -41,19 +43,27 @@ public class Gui extends JFrame {
         System.setOut(ps);
         System.setErr(ps);
 
-        JScrollPane sp = new JScrollPane(ta);
-        sp.setAutoscrolls(true);
+        JScrollPane console = new JScrollPane(ta);
+        console.setAutoscrolls(true);
+
+        // create the command panel
+        commandPanel = new CommandPanel();
+
+        // split the mainpanel and commanpanel
+        JSplitPane commandSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, commandPanel, mainPanel);
+        commandSplit.setOneTouchExpandable(true);
+        commandSplit.setDividerLocation(commandDivLoc);
 
         // Create a split pane with the two scroll panes in it.
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, sp);
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(divloc);
+        JSplitPane consoleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, commandSplit, console);
+        consoleSplit.setOneTouchExpandable(true);
+        consoleSplit.setDividerLocation(consoleDivLoc);
 
-        this.getContentPane().add(splitPane, BorderLayout.CENTER);
+        this.getContentPane().add(consoleSplit, BorderLayout.CENTER);
 
         this.pack();
         this.setVisible(true);
-        this.setBounds(xpos, ypos, xsize, ysize);
+        this.setBounds(xPos, yPos, xSize, ySize);
         this.setVisible(true);
     }
 
