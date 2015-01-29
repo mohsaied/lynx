@@ -42,8 +42,6 @@ public class Main {
         // write out verilog design
         VerilogOut.writeVerilogDesign(design);
 
-        // Printing the current design
-        // System.out.println(design);
     }
 
 }

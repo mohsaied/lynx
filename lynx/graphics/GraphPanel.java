@@ -26,11 +26,10 @@ public class GraphPanel extends JPanel {
         this.design = design;
     }
 
-
     public void setDesign(Design design) {
         this.design = design;
     }
-    
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -47,14 +46,18 @@ public class GraphPanel extends JPanel {
         // populate vertices
         Map<String, Object> vertices = new HashMap<String, Object>();
         int i = 0;
+        int j = 0;
         for (DesignModule mod : design.getDesignModules().values()) {
-            Object vertex = graph.insertVertex(parent, null, mod.getName(), 100 + 250 * i++, 100, 100, 75);
+            Object vertex = graph.insertVertex(parent, null, mod.getName(), 100 + 150 * i++, 100 + 150 * j, 100, 75);
             vertices.put(mod.getName(), vertex);
-            /*
-            for(Bundle bun:mod.getBundles().values()){
-                Object bundle = graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25);
+            if (i % 3 == 0) {
+                j++;
+                i = 0;
             }
-            */
+            /*
+             * for(Bundle bun:mod.getBundles().values()){ Object bundle =
+             * graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25); }
+             */
         }
 
         for (DesignModule mod : design.getDesignModules().values()) {
