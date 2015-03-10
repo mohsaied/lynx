@@ -22,7 +22,7 @@ import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
-import lynx.interconnect.Mapping;
+import lynx.interconnect.mapping.Mapping;
 
 public class NocPanel extends JPanel {
 
@@ -114,9 +114,7 @@ public class NocPanel extends JPanel {
     }
 
     protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
-        // TODO compare the selected mapping to mapping (0,0) -- the best one
-        // To do this we'll loop over every connection in both and compare
-        // latencies, then also compare traffic
+        // TODO compare traffic
 
         Mapping bestMapping = design.getMappings().get(0).get(0);
         Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
@@ -124,8 +122,8 @@ public class NocPanel extends JPanel {
         List<Connection> connections = design.getConnections();
 
         for (Connection con : connections) {
-            int bestLat = bestMapping.getConnectionPath(con).size();
-            int currLat = currMapping.getConnectionPath(con).size();
+            int bestLat = bestMapping.getConnectionPath(con).size() - 1;
+            int currLat = currMapping.getConnectionPath(con).size() - 1;
 
             if (bestLat < currLat)
                 log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat + ", instead of "

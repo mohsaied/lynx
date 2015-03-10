@@ -1,4 +1,4 @@
-package lynx.interconnect;
+package lynx.interconnect.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,15 +8,9 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.data.Noc;
 
-/**
- * Algorithms to map a design onto an NoC
- *
- * @author Mohamed
- * 
- */
-public class NocMapping {
+public class Ullman {
 
-    private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
+    private static final Logger log = Logger.getLogger(Ullman.class.getName());
 
     // counters
     private static long numSols;
@@ -24,7 +18,7 @@ public class NocMapping {
     private static long numPrune;
     private static int bestTotalLatency;
 
-    public static void findMappings(Design design) {
+    public static void ullmanFindMappings(Design design) {
 
         log.setLevel(Level.ALL);
 

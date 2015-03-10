@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
-import lynx.interconnect.NocMapping;
+import lynx.interconnect.mapping.NocMapping;
 import lynx.log.MyLogger;
 import lynx.xml.XmlDesign;
 import lynx.verilog.VerilogOut;

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
-import lynx.interconnect.Mapping;
+import lynx.interconnect.mapping.Mapping;
 
 /**
  * A top-level design.
