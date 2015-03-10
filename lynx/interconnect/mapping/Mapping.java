@@ -84,6 +84,43 @@ public class Mapping {
         return Integer.parseInt(linkString.split("_")[1]);
     }
 
+    /**
+     * Compute the cost of the current mapping based on:
+     * 
+     * 1) Total latency above spec: Sum of the path latency that is above
+     * requested latency of all connections in number of hops
+     * 
+     * TODO: change to cycles instead of #hops
+     * 
+     * 2) Path overlap: Whenever a hop has more than one connection mapped to
+     * it, increment the cost by however many connections overlap
+     * 
+     * TODO: make the path overlap BW dependent = smarter
+     * 
+     * @return cost of this mapping
+     */
+    public int computeCost() {
+        int cost = 0;
+
+        // latency portion of the cost
+        for (Connection con : design.getConnections()) {
+            int numberOfHops = this.getConnectionPath(con).size() - 1;
+            cost += (numberOfHops - con.getLatencySpec());
+        }
+
+        // path overlap portion of cost
+        for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
+            for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+                if (this.getLinkUtilization(linkString(i, j)) != null) {
+                    int currUtil = this.getLinkUtilization(linkString(i, j)).size();
+                    cost += currUtil == 0 ? 0 : currUtil - 1;
+                }
+            }
+        }
+
+        return cost;
+    }
+
     public boolean equals(Mapping mapping2) {
 
         // two things to satisfy sim-equivalence
@@ -143,84 +180,8 @@ public class Mapping {
         return true;
     }
 
-    public boolean compare(Mapping mapping2) {
-
-        // a mapping is better than the other if
-        // (1) fewer number of hops
-        // (2) less traffic
-
-        // note: we return true if this is better than mapping2
-
-        // (1) if a mapping has fewer paths with elongated hops, they win
-        int score1 = 0;
-        int score2 = 0;
-        int totLat1 = 0;
-        int totLat2 = 0;
-        for (Connection con : design.getConnections()) {
-
-            int size1 = this.getConnectionPath(con).size();
-            int size2 = mapping2.getConnectionPath(con).size();
-            if (size1 < size2) {
-                totLat1 += (size2 - size1);
-                score1++;
-            } else if (size1 > size2) {
-                totLat2 += (size1 - size2);
-                score2++;
-            }
-        }
-
-        if (totLat1 > totLat2)
-            return true;
-        else if (totLat1 < totLat2)
-            return false;
-        else if (score1 > score2)
-            return true;
-        else if (score1 < score2)
-            return false;
-
-        // reset scores
-        score1 = 0;
-        score2 = 0;
-
-        // (2) find max traffic on each path
-        for (Connection con : design.getConnections()) {
-
-            // for each connection get the path
-            // we already know it has the same number of hops
-
-            List<Integer> path = this.getConnectionPath(con);
-            List<Integer> path2 = mapping2.getConnectionPath(con);
-
-            int maxUtil = 0;
-            int maxUtil2 = 0;
-
-            for (int i = 0; i < path.size() - 1; i++) {
-
-                String linkString = linkString(path.get(i), path.get(i + 1));
-                int currUtil = this.getLinkUtilization(linkString).size();
-                if (currUtil > maxUtil)
-                    maxUtil = currUtil;
-            }
-            for (int i = 0; i < path2.size() - 1; i++) {
-
-                String linkString2 = linkString(path2.get(i), path2.get(i + 1));
-                int currUtil2 = mapping2.getLinkUtilization(linkString2).size();
-                if (currUtil2 > maxUtil2)
-                    maxUtil2 = currUtil2;
-            }
-
-            if (maxUtil < maxUtil2)
-                score1++;
-            else if (maxUtil > maxUtil2)
-                score2++;
-        }
-
-        if (score1 > score2)
-            return true;
-        else if (score1 < score2)
-            return false;
-
-        return true;
+    public boolean compareCost(Mapping mapping2) {
+        return this.computeCost() <= mapping2.computeCost();
     }
 
     public int getModuleRouterIndex(int modIndex) {

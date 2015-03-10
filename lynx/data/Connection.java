@@ -20,6 +20,8 @@ public class Connection {
     private int fromModuleIndex;
     private int toModuleIndex;
     
+    private int latencySpec;
+    
     public Connection(Bundle fromBundle, Bundle toBundle, Design design) {
         
         this.design = design;
@@ -29,6 +31,8 @@ public class Connection {
 
         this.fromModuleIndex = design.getModuleIndex(fromModule.getName());
         this.toModuleIndex = design.getModuleIndex(toModule.getName());
+        
+        this.setLatencySpec(1); //default latency
     }
 
     public final Bundle getFromBundle() {
@@ -77,6 +81,14 @@ public class Connection {
 
     public final void setToModuleIndex(int toModuleIndex) {
         this.toModuleIndex = toModuleIndex;
+    }
+
+    public int getLatencySpec() {
+        return latencySpec;
+    }
+
+    public void setLatencySpec(int latency_spec) {
+        this.latencySpec = latency_spec;
     }
 
 }

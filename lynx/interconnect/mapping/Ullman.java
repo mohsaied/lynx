@@ -18,7 +18,7 @@ public class Ullman {
     private static long numPrune;
     private static int bestTotalLatency;
 
-    public static void ullmanFindMappings(Design design) {
+    public static void findMappings(Design design) {
 
         log.setLevel(Level.ALL);
 
@@ -272,7 +272,7 @@ public class Ullman {
         for (int i = 0; i < equivSimMappings.size(); i++) {
             for (int j = i + 1; j < equivSimMappings.size(); j++) {
 
-                if (equivSimMappings.get(j).get(0).compare(equivSimMappings.get(i).get(0))) {
+                if (equivSimMappings.get(j).get(0).compareCost(equivSimMappings.get(i).get(0))) {
 
                     ArrayList<Mapping> temp = equivSimMappings.get(j);
                     equivSimMappings.set(j, equivSimMappings.get(i));

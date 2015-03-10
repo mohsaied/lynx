@@ -12,7 +12,10 @@ import lynx.interconnect.mapping.Ullman;
 public class NocMapping {
 
     public static void findMappings(Design design) {
-        Ullman.ullmanFindMappings(design);
+
+        Ullman.findMappings(design);
+
+        SimulatedAnnealing.findMappings(design);
     }
 
 }
