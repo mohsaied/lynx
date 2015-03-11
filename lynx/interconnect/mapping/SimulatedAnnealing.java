@@ -40,7 +40,7 @@ public class SimulatedAnnealing {
         }
 
         Mapping currMapping = new Mapping(currPermMatrix, design);
-        int cost = currMapping.computeCost();
+        double cost = currMapping.computeCost();
 
         // time
         long endTime = System.nanoTime();
@@ -51,30 +51,37 @@ public class SimulatedAnnealing {
         int takenMoves = 0;
 
         // annealing params
-        int initialTemp = 100;
-        int temp = initialTemp;
+        double initialTemp = 100;
+        double temp = initialTemp;
+        double temp_fac = 0.99;
+        int temp_interval = 100;
 
         int stable_for = 0;
 
-        List<Integer> debugAnnealCost = new ArrayList<Integer>();
+        List<Double> debugAnnealCost = new ArrayList<Double>();
         debugAnnealCost.add(cost);
 
         // start anneal
-        while (stable_for < 100 && elapsedSeconds < 2) {
+        while (cost > 0 && stable_for < 10000 && elapsedSeconds < 10) {
+
+            // decrement temperature
+            if (totalMoves % temp_interval == 0)
+                temp = temp * temp_fac;
 
             // make a move
             boolean[][] newPermMatrix = annelMove(currPermMatrix, rand);
 
             // measure its cost
             currMapping = new Mapping(newPermMatrix, design);
-            int newCost = currMapping.computeCost();
-            int oldCost = cost;
+            double newCost = currMapping.computeCost();
+            double oldCost = cost;
+            boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
 
-            if (newCost < cost) {
+            if (newCost < cost || acceptMove) {
                 currPermMatrix = newPermMatrix;
                 cost = newCost;
                 takenMoves++;
-                log.info("Cost = " + cost);
+                log.info("Cost = " + cost + ", temp = " + temp);
             }
 
             debugAnnealCost.add(cost);
@@ -122,6 +129,12 @@ public class SimulatedAnnealing {
                 dstMod = i;
         }
 
+        /*
+         * log.info("attempt to move " + srcMod + " to " + dstRouter); if
+         * (dstMod != numModules) log.info("and swap " + dstMod + " to " +
+         * srcRouter);
+         */
+
         boolean[][] newPermMatrix = new boolean[numModules][numRouters];
 
         // now create the new permuted matrix
@@ -149,7 +162,7 @@ public class SimulatedAnnealing {
     }
 
     private static int getModuleRouter(int srcMod, boolean[][] currPermMatrix) {
-        for (int i = 0; i < currPermMatrix.length; i++) {
+        for (int i = 0; i < currPermMatrix[0].length; i++) {
             if (currPermMatrix[srcMod][i])
                 return i;
         }

@@ -43,7 +43,7 @@ public class PlotPanel extends JPanel {
             // create a dataset...
             XYSeries data = new XYSeries("SA Cost");
 
-            List<Integer> annealCost = design.getDebugAnnealCost();
+            List<Double> annealCost = design.getDebugAnnealCost();
 
             for (int i = 0; i < annealCost.size(); i++)
                 data.add(i, annealCost.get(i));

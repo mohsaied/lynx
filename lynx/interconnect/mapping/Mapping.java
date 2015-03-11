@@ -100,7 +100,7 @@ public class Mapping {
      * @return cost of this mapping
      */
     public int computeCost() {
-        int cost = 0;
+        int cost = 1;
 
         // latency portion of the cost
         for (Connection con : design.getConnections()) {
@@ -209,4 +209,10 @@ public class Mapping {
     public BoolMatrix getMapMatrix() {
         return mapMatrix;
     }
+
+    @Override
+    public String toString() {
+        return mapMatrix.toString();
+    }
+
 }
