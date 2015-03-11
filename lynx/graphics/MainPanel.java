@@ -13,6 +13,7 @@ public class MainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private GraphPanel graphPanel;
     private NocPanel nocPanel;
+    private PlotPanel chartPanel;
 
     public MainPanel(Design design) {
         super(new GridLayout(1, 1));
@@ -30,6 +31,11 @@ public class MainPanel extends JPanel {
         tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
 
+        // Third tab is charts
+        chartPanel = new PlotPanel(design);
+        tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
+        tabbedPane.setMnemonicAt(2, KeyEvent.VK_1);
+
         // Add the tabbed pane to this panel.
         this.add(tabbedPane);
 
@@ -41,7 +47,9 @@ public class MainPanel extends JPanel {
     public void setDesign(Design design) {
         graphPanel.setDesign(design);
         nocPanel.setDesign(design);
+        chartPanel.setDesign(design);
         graphPanel.repaint();
         nocPanel.repaint();
+        chartPanel.repaint();
     }
 }

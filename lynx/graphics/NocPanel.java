@@ -54,7 +54,7 @@ public class NocPanel extends JPanel {
 
     private void initPane() {
 
-        if (design != null) {
+        if (design != null && design.getMappings() != null) {
             selectedMapping = 0;
             selectedVersion = 0;
 
@@ -133,7 +133,6 @@ public class NocPanel extends JPanel {
                 log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat + ", instead of "
                         + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
                         + con.getToModule().getName());
-
         }
     }
 
@@ -146,7 +145,7 @@ public class NocPanel extends JPanel {
         if (noc != null)
             drawNoc(g, noc);
 
-        if (design != null)
+        if (design != null && design.getMappings() != null)
             drawDesign(g);
     }
 
