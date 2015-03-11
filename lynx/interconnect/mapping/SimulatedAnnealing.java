@@ -1,5 +1,7 @@
 package lynx.interconnect.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -48,8 +50,17 @@ public class SimulatedAnnealing {
         int totalMoves = 0;
         int takenMoves = 0;
 
+        // annealing params
+        int initialTemp = 100;
+        int temp = initialTemp;
+
+        int stable_for = 0;
+
+        List<Integer> debugAnnealCost = new ArrayList<Integer>();
+        debugAnnealCost.add(cost);
+
         // start anneal
-        while (elapsedSeconds < 2) {
+        while (stable_for < 100 && elapsedSeconds < 2) {
 
             // make a move
             boolean[][] newPermMatrix = annelMove(currPermMatrix, rand);
@@ -57,6 +68,7 @@ public class SimulatedAnnealing {
             // measure its cost
             currMapping = new Mapping(newPermMatrix, design);
             int newCost = currMapping.computeCost();
+            int oldCost = cost;
 
             if (newCost < cost) {
                 currPermMatrix = newPermMatrix;
@@ -64,6 +76,11 @@ public class SimulatedAnnealing {
                 takenMoves++;
                 log.info("Cost = " + cost);
             }
+
+            debugAnnealCost.add(cost);
+
+            // how long have we been at this cost?
+            stable_for = cost == oldCost ? stable_for + 1 : 0;
 
             // time
             endTime = System.nanoTime();
@@ -77,6 +94,8 @@ public class SimulatedAnnealing {
 
         // export solution to the design
         design.setSingleMapping(currMapping);
+        design.setDebugAnnealCost(debugAnnealCost);
+
     }
 
     private static boolean[][] annelMove(boolean[][] currPermMatrix, Random rand) {

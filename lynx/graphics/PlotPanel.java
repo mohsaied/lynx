@@ -1,6 +1,7 @@
 package lynx.graphics;
 
 import java.awt.FlowLayout;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,17 +41,17 @@ public class PlotPanel extends JPanel {
 
         if (design != null) {
             // create a dataset...
-            XYSeries data = new XYSeries("Temperature");
-            data.add(1, 50);
-            data.add(2, 100);
-            data.add(3, 150);
-            data.add(4, 200);
+            XYSeries data = new XYSeries("SA Cost");
+
+            List<Integer> annealCost = design.getDebugAnnealCost();
+
+            for (int i = 0; i < annealCost.size(); i++)
+                data.add(i, annealCost.get(i));
 
             final XYSeriesCollection dataset = new XYSeriesCollection();
             dataset.addSeries(data);
             // create a chart...
-            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "Temperature", dataset,
-                    PlotOrientation.VERTICAL, //default = vertical 
+            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL,
                     false, // legend?
                     true, // tooltips?
                     false // URLs?

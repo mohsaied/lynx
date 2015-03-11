@@ -29,6 +29,7 @@ public final class Design extends Module {
     private List<Translator> translators;
 
     private List<ArrayList<Mapping>> mappings;
+    private List<Integer> debugAnnealCost;
 
     public Design() {
         this(null);
@@ -42,6 +43,7 @@ public final class Design extends Module {
         this.noc = null;
         this.translators = new ArrayList<Translator>();
         this.mappings = null;
+        this.setDebugAnnealCost(new ArrayList<Integer>());
         log.info("Creating new design: " + name);
     }
 
@@ -263,6 +265,14 @@ public final class Design extends Module {
         equivSimMappings.add(mappingList);
 
         this.setMappings(equivSimMappings);
+    }
+
+    public List<Integer> getDebugAnnealCost() {
+        return debugAnnealCost;
+    }
+
+    public void setDebugAnnealCost(List<Integer> debugAnnealCost) {
+        this.debugAnnealCost = debugAnnealCost;
     }
 
 }
