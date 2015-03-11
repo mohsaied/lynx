@@ -1,7 +1,6 @@
 package lynx.interconnect.mapping;
 
 import lynx.data.Design;
-import lynx.interconnect.mapping.Ullman;
 
 /**
  * Algorithms to map a design onto an NoC
@@ -13,7 +12,7 @@ public class NocMapping {
 
     public static void findMappings(Design design) {
 
-        Ullman.findMappings(design);
+        //Ullman.findMappings(design);
 
         SimulatedAnnealing.findMappings(design);
     }
