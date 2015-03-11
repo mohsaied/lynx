@@ -49,8 +49,9 @@ public class PlotPanel extends JPanel {
             final XYSeriesCollection dataset = new XYSeriesCollection();
             dataset.addSeries(data);
             // create a chart...
-            JFreeChart chart = ChartFactory.createXYLineChart("Sample Line Chart", "Time", "Temperature", dataset,
-                    PlotOrientation.VERTICAL, true, // legend?
+            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "Temperature", dataset,
+                    PlotOrientation.VERTICAL, //default = vertical 
+                    false, // legend?
                     true, // tooltips?
                     false // URLs?
                     );

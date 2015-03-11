@@ -171,12 +171,10 @@ public final class Design extends Module {
     public void update() {
 
         /*
-        System.out.println("Before Sort:");
-        for (String modName : moduleIndices.keySet()) {
-            System.out.println(modName + ": " + moduleIndices.get(modName));
-        }
-        System.out.println();
-        */
+         * System.out.println("Before Sort:"); for (String modName :
+         * moduleIndices.keySet()) { System.out.println(modName + ": " +
+         * moduleIndices.get(modName)); } System.out.println();
+         */
 
         // sort moduleindices by radix
         // (a module with a higher radix should have a lower module index)
@@ -228,12 +226,10 @@ public final class Design extends Module {
         }
 
         /*
-        System.out.println("After Sort:");
-        for (String modName : moduleIndices.keySet()) {
-            System.out.println(modName + ": " + moduleIndices.get(modName));
-        }
-        System.out.println();
-        */
+         * System.out.println("After Sort:"); for (String modName :
+         * moduleIndices.keySet()) { System.out.println(modName + ": " +
+         * moduleIndices.get(modName)); } System.out.println();
+         */
 
         allConnections.clear();
 
@@ -258,6 +254,15 @@ public final class Design extends Module {
 
     public void setMappings(List<ArrayList<Mapping>> equivSimMappings) {
         mappings = equivSimMappings;
+    }
+
+    public void setSingleMapping(Mapping currMapping) {
+        List<ArrayList<Mapping>> equivSimMappings = new ArrayList<ArrayList<Mapping>>();
+        ArrayList<Mapping> mappingList = new ArrayList<Mapping>();
+        mappingList.add(currMapping);
+        equivSimMappings.add(mappingList);
+
+        this.setMappings(equivSimMappings);
     }
 
 }

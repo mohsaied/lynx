@@ -55,8 +55,8 @@ public class SimulatedAnnealing {
             boolean[][] newPermMatrix = annelMove(currPermMatrix, rand);
 
             // measure its cost
-            Mapping newMapping = new Mapping(newPermMatrix, design);
-            int newCost = newMapping.computeCost();
+            currMapping = new Mapping(newPermMatrix, design);
+            int newCost = currMapping.computeCost();
 
             if (newCost < cost) {
                 currPermMatrix = newPermMatrix;
@@ -74,6 +74,9 @@ public class SimulatedAnnealing {
         }
 
         log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
+
+        // export solution to the design
+        design.setSingleMapping(currMapping);
     }
 
     private static boolean[][] annelMove(boolean[][] currPermMatrix, Random rand) {
