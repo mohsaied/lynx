@@ -1,0 +1,17 @@
+/AbstractModelReader$SAXModelHandler.class
+/AbstractModelReader.class
+/AttributeDefinition.class
+/Base64.class
+/BasicTypeSupport.class
+/ClassModelTags.class
+/ConstructorDefinition.class
+/GenericObjectFactory.class
+/LookupDefinition.class
+/ManualMappingDefinition.class
+/MultiplexMappingDefinition.class
+/MultiplexMappingEntry.class
+/ObjectDescriptionException.class
+/ObjectFactory.class
+/ObjectFactoryLoader.class
+/PropertyDefinition.class
+/SimpleObjectFactory.class
