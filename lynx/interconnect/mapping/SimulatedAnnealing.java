@@ -15,6 +15,8 @@ public class SimulatedAnnealing {
 
     public static void findMappings(Design design) {
 
+        log.info("Figuring out the best location of modules on the NoC using simulated annealing...");
+
         // time
         long startTime = System.nanoTime();
 
@@ -77,11 +79,13 @@ public class SimulatedAnnealing {
             double oldCost = cost;
             boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
 
+            log.finest(currMapping.toString());
+
             if (newCost < cost || acceptMove) {
                 currPermMatrix = newPermMatrix;
                 cost = newCost;
                 takenMoves++;
-                log.info("Cost = " + cost + ", temp = " + temp);
+                log.fine("Cost = " + cost + ", temp = " + temp);
             }
 
             debugAnnealCost.add(cost);
@@ -100,6 +104,7 @@ public class SimulatedAnnealing {
         log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
 
         // export solution to the design
+        currMapping = new Mapping(currPermMatrix, design);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
 
@@ -129,11 +134,9 @@ public class SimulatedAnnealing {
                 dstMod = i;
         }
 
-        /*
-         * log.info("attempt to move " + srcMod + " to " + dstRouter); if
-         * (dstMod != numModules) log.info("and swap " + dstMod + " to " +
-         * srcRouter);
-         */
+        log.finer("attempt to move " + srcMod + " to " + dstRouter);
+        if (dstMod != numModules)
+            log.finer("and swap " + dstMod + " to " + srcRouter);
 
         boolean[][] newPermMatrix = new boolean[numModules][numRouters];
 

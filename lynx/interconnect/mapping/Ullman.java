@@ -2,7 +2,6 @@ package lynx.interconnect.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
@@ -20,9 +19,7 @@ public class Ullman {
 
     public static void findMappings(Design design) {
 
-        log.setLevel(Level.ALL);
-
-        log.info("Figuring out the best location of modules on the NoC...");
+        log.info("Figuring out the best location of modules on the NoC using exact Ullman...");
 
         // get adjacency matrices of design and NoC
         boolean[][] designMatrixValues = design.getAdjacencyMatrix();
