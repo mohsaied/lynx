@@ -64,7 +64,7 @@ public class SimulatedAnnealing {
         debugAnnealCost.add(cost);
 
         // start anneal
-        while (cost > 0 && stable_for < 10000 && elapsedSeconds < 10) {
+        while (cost > 0 && stable_for < 5000 && elapsedSeconds < 100) {
 
             // decrement temperature
             if (totalMoves % temp_interval == 0)

@@ -34,7 +34,7 @@ public abstract class Module {
         this.name = name;
         this.parameters = new ArrayList<Parameter>();
         this.ports = new HashMap<String, Port>();
-        log.info("Creating new Module, name: " + name + ", type: " + type);
+        log.fine("Creating new Module, name: " + name + ", type: " + type);
     }
 
     public final String getType() {

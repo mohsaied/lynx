@@ -52,7 +52,7 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
-        log.info("Creating new bundle, name = "+name);;
+        log.fine("Creating new bundle, name = "+name);;
     }
 
     public String getName() {
