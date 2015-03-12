@@ -26,7 +26,7 @@ public class Main {
         MyLogger parentLog = new MyLogger(Level.ALL);
 
         // read XML design
-        Design design = XmlDesign.readXMLDesign("designs/ram.xml");
+        Design design = XmlDesign.readXMLDesign("designs/chain_big.xml");
         design.update();
 
         // add NoC circuitry - NoC and translators
