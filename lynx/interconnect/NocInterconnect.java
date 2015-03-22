@@ -41,15 +41,15 @@ public class NocInterconnect {
 
         log.info("Adding Translators and connecting them to modules");
 
-        insertTranslators(design);
+        //insertTranslators(design);
 
         log.info("Connecting to NoC");
 
-        connectNoc(design);
+        //connectNoc(design);
 
         log.info("Inferring top-level ports, and connecting the wires to submodules");
 
-        inferTopLevelPorts(design);
+        //inferTopLevelPorts(design);
 
     }
 
@@ -70,7 +70,7 @@ public class NocInterconnect {
         // and so will assert if a module is not assigned yet
 
         for (DesignModule mod : design.getDesignModules().values()) {
-            assert mod.getRouter() != -1 : "Attempting to connect module to NoC, but module wasn't mapped to a router!";
+            //assert mod.getRouter() != -1 : "Attempting to connect module to NoC, but module wasn't mapped to a router!";
 
             // loop over bundles and connect their translators to the router
             int router = mod.getRouter();
