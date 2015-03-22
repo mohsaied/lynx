@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
-import lynx.interconnect.mapping.NocMapping;
 import lynx.log.MyLogger;
+import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
 import lynx.verilog.VerilogOut;
 
@@ -26,7 +26,7 @@ public class Main {
         MyLogger parentLog = new MyLogger(Level.ALL);
 
         // read XML design
-        Design design = XmlDesign.readXMLDesign("designs/chain_big.xml");
+        Design design = XmlDesign.readXMLDesign("designs/ram.xml");
         design.update();
 
         // add NoC circuitry - NoC and translators

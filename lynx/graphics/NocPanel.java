@@ -22,7 +22,7 @@ import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
-import lynx.interconnect.mapping.Mapping;
+import lynx.nocmapping.Mapping;
 
 public class NocPanel extends JPanel {
 

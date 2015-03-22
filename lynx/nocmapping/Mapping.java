@@ -1,4 +1,4 @@
-package lynx.interconnect.mapping;
+package lynx.nocmapping;
 
 import java.util.ArrayList;
 import java.util.HashMap;

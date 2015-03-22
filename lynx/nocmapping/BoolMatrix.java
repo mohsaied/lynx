@@ -1,4 +1,4 @@
-package lynx.interconnect.mapping;
+package lynx.nocmapping;
 
 /**
  * A binary (1/0) 2D matrix class

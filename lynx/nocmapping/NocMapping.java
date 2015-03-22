@@ -1,4 +1,4 @@
-package lynx.interconnect.mapping;
+package lynx.nocmapping;
 
 import lynx.data.Design;
 

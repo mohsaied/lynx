@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
-import lynx.interconnect.mapping.Mapping;
+import lynx.nocmapping.Mapping;
 
 /**
  * A top-level design.
@@ -28,6 +28,7 @@ public final class Design extends Module {
 
     private List<Translator> translators;
 
+    //outputs of NoC mapping
     private List<ArrayList<Mapping>> mappings;
     private List<Double> debugAnnealCost;
 
