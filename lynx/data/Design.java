@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
@@ -28,6 +29,9 @@ public final class Design extends Module {
 
     private List<Translator> translators;
 
+    // output of NoC clustering
+    private List<Set<String>> clusters;
+
     // outputs of NoC mapping
     private List<ArrayList<Mapping>> mappings;
     private List<Double> debugAnnealCost;
@@ -44,6 +48,7 @@ public final class Design extends Module {
         this.noc = null;
         this.translators = new ArrayList<Translator>();
         this.mappings = null;
+        this.clusters = null;
         this.setDebugAnnealCost(new ArrayList<Double>());
         log.info("Creating new design: " + name);
     }
@@ -262,6 +267,14 @@ public final class Design extends Module {
 
     public void setDebugAnnealCost(List<Double> debugAnnealCost) {
         this.debugAnnealCost = debugAnnealCost;
+    }
+
+    public List<Set<String>> getClusters() {
+        return clusters;
+    }
+
+    public void setClusters(List<Set<String>> clusters) {
+        this.clusters = clusters;
     }
 
 }

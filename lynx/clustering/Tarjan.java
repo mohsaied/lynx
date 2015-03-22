@@ -40,13 +40,9 @@ public class Tarjan {
     // output set of strongly connected components
     private static List<Set<String>> stronglyConnectedComponents;
 
-    public static Design clusterDesign(Design design) {
+    public static void clusterDesign(Design design) {
 
         log.info("Running Tarjan's algorithm to cluster strongly-connected components...");
-
-        // create a new design and give it the same NoC that we have
-        Design clusteredDesign = new Design(design.getName() + "_clustered");
-        clusteredDesign.setNoc(design.getNoc());
 
         // init data structures
         moduleIndices = new HashMap<String, Integer>();
@@ -76,8 +72,8 @@ public class Tarjan {
         // debug print the SCCs
         // debugPrint(stronglyConnectedComponents);
 
-        return clusteredDesign;
-
+        // return the clusters to the design
+        design.setClusters(stronglyConnectedComponents);
     }
 
     private static void strongConnect(DesignModule module) {
