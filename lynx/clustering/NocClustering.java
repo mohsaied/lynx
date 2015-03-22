@@ -10,7 +10,9 @@ import lynx.data.Design;
  */
 public class NocClustering {
 
-    public static void clusterDesign(Design design) {
-        Tarjan.clusterDesign(design);
+    public static Design clusterDesign(Design design) {
+
+        Design clusteredDesign = Tarjan.clusterDesign(design);
+        return clusteredDesign;
     }
 }

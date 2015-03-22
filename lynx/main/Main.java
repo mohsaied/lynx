@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import lynx.data.Design;
 import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
+import lynx.clustering.NocClustering;
 import lynx.log.MyLogger;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
@@ -26,11 +27,14 @@ public class Main {
         MyLogger parentLog = new MyLogger(Level.ALL);
 
         // read XML design
-        Design design = XmlDesign.readXMLDesign("designs/ram.xml");
+        Design design = XmlDesign.readXMLDesign("designs/tarjan_test.xml");
         design.update();
 
         // add NoC circuitry - NoC and translators
         NocInterconnect.addNoc(design, "designs/noc.xml");
+
+        // cluster design into SCCs
+        NocClustering.clusterDesign(design);
 
         // find possible locations on the NoC
         long startTime = System.nanoTime();
