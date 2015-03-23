@@ -56,33 +56,39 @@ public class ClusteredGraphPanel extends JPanel {
 
         // populate vertices
         Map<String, Object> vertices = new HashMap<String, Object>();
-        int i = 0;
-        int j = 0;
+        int[] iArr = new int[design.getClusters().size()];
+        int[] jArr = new int[design.getClusters().size()];
+        for (int i = 0; i < iArr.length; i++) {
+            iArr[i] = 0;
+            jArr[i] = 0;
+        }
+
         for (DesignModule mod : design.getDesignModules().values()) {
 
             // look for this module in the clusters list and set the parent
             Object currParent = graph.getDefaultParent();
+            int currClusterIndex = 0;
             for (int x = 0; x < design.getClusters().size(); x++) {
                 Set<String> clusterSet = design.getClusters().get(x);
                 for (String currModName : clusterSet) {
                     if (mod.getName().equals(currModName)) {
                         currParent = clusters.get(x);
+                        currClusterIndex = x;
                         break;
                     }
                 }
             }
 
-            //Object vertex = graph.insertVertex(currParent, null, mod.getName(), 100*i++, 75*j++, 75, 50);
-            Object vertex = graph.insertVertex(currParent, null, mod.getName(), 0, 0, 75, 50);
+            // Object vertex = graph.insertVertex(currParent, null,
+            // mod.getName(), 100*i++, 75*j++, 75, 50);
+            Object vertex = graph.insertVertex(currParent, null, mod.getName(), 10 + 100 * iArr[currClusterIndex]++,
+                    10 + 100 * jArr[currClusterIndex], 75, 50);
             vertices.put(mod.getName(), vertex);
-            if (i % 2 == 0) {
-                j++;
-                i = 0;
+
+            if (iArr[currClusterIndex] % 2 == 0) {
+                jArr[currClusterIndex]++;
+                iArr[currClusterIndex] = 0;
             }
-            /*
-             * for(Bundle bun:mod.getBundles().values()){ Object bundle =
-             * graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25); }
-             */
         }
 
         for (DesignModule mod : design.getDesignModules().values()) {
