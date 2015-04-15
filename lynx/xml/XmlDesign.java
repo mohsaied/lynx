@@ -54,7 +54,8 @@ public class XmlDesign {
 
         // Load and Parse the XML document
         // document contains the complete XML as a Tree
-        Document document = builder.parse(ClassLoader.getSystemResourceAsStream(designPath));
+        File file = new File(designPath);
+        Document document = builder.parse(file);
 
         // Iterating through the nodes and extracting the data
         NodeList nodeList = document.getDocumentElement().getChildNodes();

@@ -47,7 +47,7 @@ public class Gui extends JFrame {
         console.setAutoscrolls(true);
 
         // create the command panel
-        commandPanel = new CommandPanel();
+        commandPanel = new CommandPanel(mainPanel);
 
         // split the mainpanel and commanpanel
         JSplitPane commandSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, commandPanel, mainPanel);
@@ -69,7 +69,4 @@ public class Gui extends JFrame {
         this.setVisible(true);
     }
 
-    public void setDesign(Design design) {
-        mainPanel.setDesign(design);
-    }
 }

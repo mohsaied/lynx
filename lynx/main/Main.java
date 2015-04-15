@@ -2,26 +2,21 @@ package lynx.main;
 
 import java.util.logging.Level;
 
-import lynx.data.Design;
 import lynx.graphics.Gui;
-import lynx.interconnect.NocInterconnect;
-import lynx.clustering.NocClustering;
 import lynx.log.MyLogger;
-import lynx.nocmapping.NocMapping;
-import lynx.xml.XmlDesign;
-import lynx.verilog.VerilogOut;
 
 public class Main {
 
+    @SuppressWarnings("unused")
     public final static void main(String[] args) throws Exception {
+
+        // MyLogger log = new MyLogger(Level.INFO);
+        MyLogger parentLog = new MyLogger(Level.ALL);
 
         // draw fcns
         Gui gui = new Gui(null);
 
-        @SuppressWarnings("unused")
-        // MyLogger log = new MyLogger(Level.INFO);
-        MyLogger parentLog = new MyLogger(Level.ALL);
-
+        /*
         // read XML design
         Design design = XmlDesign.readXMLDesign("designs/tarjan_test.xml");
         design.update();
@@ -42,7 +37,8 @@ public class Main {
 
         // write out verilog design
         VerilogOut.writeVerilogDesign(design);
-
+         */
+        
     }
 
 }
