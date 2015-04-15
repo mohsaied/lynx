@@ -28,6 +28,12 @@ public class CommandPanel extends JPanel {
 
     public CommandPanel() {
         super(new GridLayout(2, 1));
+
+        init();
+    }
+
+    public void init() {
+
         try {
             logo = ImageIO.read(new File("logo/logo.png"));
         } catch (IOException e) {
@@ -58,10 +64,8 @@ public class CommandPanel extends JPanel {
                 // Handle open button action.
                 if (e.getSource() == openButton) {
                     int returnVal = fc.showOpenDialog(CommandPanel.this);
-
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
-                        // This is where a real application would open the file.
                         log.info("Opening: " + file.getName() + ".");
                     } else {
                         log.info("Open command cancelled by user.");
