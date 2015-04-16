@@ -10,11 +10,11 @@ public class Main {
     @SuppressWarnings("unused")
     public final static void main(String[] args) throws Exception {
 
-        // MyLogger log = new MyLogger(Level.INFO);
-        MyLogger parentLog = new MyLogger(Level.ALL);
-
         // draw fcns
         Gui gui = new Gui(null);
+
+        // MyLogger log = new MyLogger(Level.INFO);
+        MyLogger parentLog = new MyLogger(Level.ALL);
 
         /*
         // read XML design
