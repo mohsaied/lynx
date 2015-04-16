@@ -61,7 +61,7 @@ public class CommandPanel extends JPanel {
      * initializes everything
      */
     public CommandPanel(MainPanel mainPanel) {
-        super(new GridLayout(2, 1));
+        super(new GridLayout(3, 1));
         this.mainPanel = mainPanel;
         init();
     }
@@ -137,7 +137,7 @@ public class CommandPanel extends JPanel {
 
     private JButton createClusterButton() {
         clusterProgress = new JProgressBar();
-        clusterButton = new JButton("Cluster Design");
+        clusterButton = new JButton("Clustering");
         clusterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -160,7 +160,7 @@ public class CommandPanel extends JPanel {
 
     private JButton createMapButton() {
         mapProgress = new JProgressBar();
-        mapButton = new JButton("Map Design to NoC");
+        mapButton = new JButton("Mapping");
         mapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -187,14 +187,14 @@ public class CommandPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         // panel for logo
         logoPanel = new JPanel(new GridLayout(1, 1)) {
             private static final long serialVersionUID = -1092410231325842147L;
 
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(logo, 0, 0, this.getWidth(), logo.getHeight() * this.getWidth() / logo.getWidth(), null);
+                g.drawImage(logo, 20, 10, this.getWidth() - 40, (logo.getHeight() - 100) * this.getWidth()
+                        / (logo.getWidth() - 40), null);
             }
         };
         this.add(logoPanel);

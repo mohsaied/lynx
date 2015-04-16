@@ -1,0 +1,104 @@
+<design name="ram">
+  
+  <module type="master" name="m0" router="0">
+    <bundle name="inbun">
+        <port direction="input" width="16" name="i_x" type="data"/>
+        <port direction="input" width="1" name="i_valid_in" type="valid"/>
+        <port direction="output" width="1" name="i_ready_out" type="ready"/>
+    </bundle>   
+    <bundle name="outbun">
+        <port direction="output" width="16" name="o_y" type="data"/>
+        <port direction="output" width="1" name="o_valid_out" type="valid"/>
+        <port direction="output" width="4" name="o_dest_out" type="dst"/>
+        <port direction="input" width="1" name="o_ready_in" type="ready"/>
+    </bundle>   
+  </module>
+  
+  <module type="master" name="m1" router="1">
+    <bundle name="inbun">
+        <port direction="input" width="16" name="i_x" type="data"/>
+        <port direction="input" width="1" name="i_valid_in" type="valid"/>
+        <port direction="output" width="1" name="i_ready_out" type="ready"/>
+    </bundle>  
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m2" router="2">
+    <bundle name="inbun">
+        <port direction="input" width="16" name="i_x" type="data"/>
+        <port direction="input" width="1" name="i_valid_in" type="valid"/>
+        <port direction="output" width="1" name="i_ready_out" type="ready"/>
+    </bundle>  
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m3" router="3">
+    <bundle name="inbun">
+        <port direction="input" width="16" name="i_x" type="data"/>
+        <port direction="input" width="1" name="i_valid_in" type="valid"/>
+        <port direction="output" width="1" name="i_ready_out" type="ready"/>
+    </bundle>  
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="m4" router="4">
+    <bundle name="inbun">
+        <port direction="input" width="16" name="i_x" type="data"/>
+        <port direction="input" width="1" name="i_valid_in" type="valid"/>
+        <port direction="output" width="1" name="i_ready_out" type="ready"/>
+    </bundle>  
+	<bundle name="outbun">
+		<port direction="output" width="16" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="ram" name="ram0" router="15">
+	<bundle name="inbun">
+		<port direction="input" width="16" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+    <bundle name="outbun">
+        <port direction="output" width="16" name="o_y" type="data"/>
+        <port direction="output" width="1" name="o_valid_out" type="valid"/>
+        <port direction="output" width="4" name="o_dest_out" type="dst"/>
+        <port direction="input" width="1" name="o_ready_in" type="ready"/>
+    </bundle>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="m0.outbun" end="ram0.inbun"/>
+  <connection start="m1.outbun" end="ram0.inbun"/>
+  <connection start="m2.outbun" end="ram0.inbun"/>
+  <connection start="m3.outbun" end="ram0.inbun"/>
+  <connection start="m4.outbun" end="ram0.inbun"/>
+  
+  <connection end="m0.inbun" start="ram0.outbun"/>
+  <connection end="m1.inbun" start="ram0.outbun"/>
+  <connection end="m2.inbun" start="ram0.outbun"/>
+  <connection end="m3.inbun" start="ram0.outbun"/>
+  <connection end="m4.inbun" start="ram0.outbun"/>
+  
+  
+</design>
