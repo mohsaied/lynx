@@ -104,6 +104,7 @@ public class CommandPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Handle open button action.
                 if (e.getSource() == openButton) {
+                    fc.setCurrentDirectory(new File("D:\\Dropbox\\PhD\\Software\\noclynx\\designs"));
                     int returnVal = fc.showOpenDialog(CommandPanel.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         openedFile = fc.getSelectedFile();
