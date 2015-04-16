@@ -47,12 +47,12 @@ public class CommandPanel extends JPanel {
     private File openedFile;
 
     // text field for opened file
-    private JLabel fileNameLabel;
     private JLabel openSecLabel;
     private JLabel clusterSecLabel;
     private JLabel mapSecLabel;
 
     // progress bars for algorithms
+    private JProgressBar fileProgress;
     private JProgressBar clusterProgress;
     private JProgressBar mapProgress;
 
@@ -90,8 +90,9 @@ public class CommandPanel extends JPanel {
         openSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // then create the text field to show name of opened file
-        fileNameLabel = new JLabel("No File Opened");
-        fileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fileProgress = new JProgressBar();
+        fileProgress.setStringPainted(true);
+        fileProgress.setString("No File Opened");
 
         // now create the button itself
         openButton = new JButton("Open File") {
@@ -113,15 +114,17 @@ public class CommandPanel extends JPanel {
                         new Thread() {
                             public void run() {
                                 try {
+                                    fileProgress.setIndeterminate(true);
                                     design = XmlDesign.readXMLDesign(designPath);
                                     design.update();
                                     NocInterconnect.addNoc(design, "designs/noc.xml");
-                                    fileNameLabel.setText(openedFile.getName() + " (valid)");
+                                    fileProgress.setString(openedFile.getName() + " (valid)");
                                     log.info("Valid design opened successfully");
                                     mainPanel.clearTabs();
                                     clusterProgress.setString("");
                                     mapProgress.setString("");
                                     mainPanel.addGraphTab(design);
+                                    fileProgress.setIndeterminate(false);
 
                                     clusterProgress.setIndeterminate(true);
                                     clusterProgress.setStringPainted(true);
@@ -142,8 +145,8 @@ public class CommandPanel extends JPanel {
                                     mapProgress.setString("done.");
 
                                 } catch (Exception e1) {
-                                    fileNameLabel.setText("invalid file specified!");
-                                    log.info("Invalid file not opened");
+                                    fileProgress.setString("invalid file specified!");
+                                    log.info("Error! Most probable cause is an invalid file");
                                 }
                             }
                         }.start();
@@ -155,7 +158,7 @@ public class CommandPanel extends JPanel {
         });
         openPanel.add(openSecLabel);
         openPanel.add(openButton);
-        openPanel.add(fileNameLabel);
+        openPanel.add(fileProgress);
         this.add(openPanel);
     }
 

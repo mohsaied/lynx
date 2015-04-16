@@ -384,7 +384,7 @@ public class XmlDesign {
     private static void writeBundles(Document doc, Element modElement, DesignModule mod) {
 
         for (Bundle bun : mod.getBundles().values()) {
-            Element bunElement = doc.createElement("Bundle");
+            Element bunElement = doc.createElement("bundle");
 
             bunElement.setAttribute("name", bun.getName());
 
