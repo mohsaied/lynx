@@ -30,7 +30,9 @@ public class CommandPanel extends JPanel {
     private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
 
     // panels
-    private JPanel buttonsPanel;
+    private JPanel openPanel;
+    private JPanel clusterPanel;
+    private JPanel mapPanel;
     private JPanel logoPanel;
 
     // logo image
@@ -46,6 +48,9 @@ public class CommandPanel extends JPanel {
 
     // text field for opened file
     private JLabel fileNameLabel;
+    private JLabel openSecLabel;
+    private JLabel clusterSecLabel;
+    private JLabel mapSecLabel;
 
     // progress bars for algorithms
     private JProgressBar clusterProgress;
@@ -61,40 +66,35 @@ public class CommandPanel extends JPanel {
      * initializes everything
      */
     public CommandPanel(MainPanel mainPanel) {
-        super(new GridLayout(3, 1));
+        super(new GridLayout(4, 1));
         this.mainPanel = mainPanel;
-        init();
-    }
 
-    public void init() {
-
+        // create a panel for each group of buttons
         createLogoPanel();
 
-        // panel to put all the buttons (and progress bars) we need
-        buttonsPanel = new JPanel(new GridLayout(7, 1));
+        // first panel is for open file
+        createOpenPanel();
 
-        // create all the buttons and their progress bars too
-        openButton = createOpenButton();
-        clusterButton = createClusterButton();
-        mapButton = createMapButton();
+        // second panel is for clustering
+        createClusterPanel();
 
-        // add all buttons to panel in the right order
-        buttonsPanel.add(openButton);
-        buttonsPanel.add(fileNameLabel);
-        buttonsPanel.add(clusterButton);
-        buttonsPanel.add(clusterProgress);
-        buttonsPanel.add(mapButton);
-        buttonsPanel.add(mapProgress);
-        this.add(buttonsPanel);
+        // third panel is for mapping
+        createMapPanel();
     }
 
-    private JButton createOpenButton() {
-        // first create the text field to show name of opened file
+    private void createOpenPanel() {
+        openPanel = new JPanel(new GridLayout(4, 1));
+
+        // first create a label for this section
+        openSecLabel = new JLabel("1. Open Design");
+        openSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // then create the text field to show name of opened file
         fileNameLabel = new JLabel("No File Opened");
         fileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // now create the button itself
-        JButton openButton = new JButton("Open Design") {
+        openButton = new JButton("Open File") {
             private static final long serialVersionUID = -3169712968203420370L;
         };
         openButton.addActionListener(new ActionListener() {
@@ -110,75 +110,98 @@ public class CommandPanel extends JPanel {
                         openedFile = fc.getSelectedFile();
                         String designPath = openedFile.getPath();
                         log.info("Opening: " + designPath);
+                        new Thread() {
+                            public void run() {
+                                try {
+                                    design = XmlDesign.readXMLDesign(designPath);
+                                    design.update();
+                                    NocInterconnect.addNoc(design, "designs/noc.xml");
+                                    fileNameLabel.setText(openedFile.getName() + " (valid)");
+                                    log.info("Valid design opened successfully");
+                                    mainPanel.clearTabs();
+                                    clusterProgress.setString("");
+                                    mapProgress.setString("");
+                                    mainPanel.addGraphTab(design);
 
-                        try {
-                            design = XmlDesign.readXMLDesign(designPath);
-                            design.update();
-                            NocInterconnect.addNoc(design, "designs/noc.xml");
-                            fileNameLabel.setText(openedFile.getName() + " (valid)");
-                            log.info("Valid design opened successfully");
-                            mainPanel.clearTabs();
-                            clusterProgress.setString("");
-                            mapProgress.setString("");
-                            mainPanel.addGraphTab(design);
-                        } catch (Exception e1) {
-                            fileNameLabel.setText("invalid file specified!");
-                            log.info("Invalid file not opened");
-                        }
+                                    clusterProgress.setIndeterminate(true);
+                                    clusterProgress.setStringPainted(true);
+                                    clusterProgress.setString("working...");
+                                    log.info("Clustering " + openedFile.getName() + " started");
+                                    NocClustering.clusterDesign(design);
+                                    mainPanel.addClusterTab(design);
+                                    clusterProgress.setIndeterminate(false);
+                                    clusterProgress.setString("done.");
 
+                                    mapProgress.setIndeterminate(true);
+                                    mapProgress.setStringPainted(true);
+                                    mapProgress.setString("working...");
+                                    log.info("Mapping " + openedFile.getName() + " started");
+                                    NocMapping.findMappings(design);
+                                    mainPanel.addNoCTabs(design);
+                                    mapProgress.setIndeterminate(false);
+                                    mapProgress.setString("done.");
+
+                                } catch (Exception e1) {
+                                    fileNameLabel.setText("invalid file specified!");
+                                    log.info("Invalid file not opened");
+                                }
+                            }
+                        }.start();
                     } else {
                         log.info("Open command cancelled by user");
                     }
                 }
             }
         });
-        return openButton;
+        openPanel.add(openSecLabel);
+        openPanel.add(openButton);
+        openPanel.add(fileNameLabel);
+        this.add(openPanel);
     }
 
-    private JButton createClusterButton() {
+    private void createClusterPanel() {
+
+        clusterPanel = new JPanel(new GridLayout(4, 1));
+
+        // first create a label for this section
+        clusterSecLabel = new JLabel("2. Design Clustering");
+        clusterSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
         clusterProgress = new JProgressBar();
         clusterButton = new JButton("Clustering");
         clusterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (openedFile == null) {
-                    log.info("Clustering attempted but no design is loaded. Please open a lynx file first.");
-                } else {
-                    clusterProgress.setIndeterminate(true);
-                    clusterProgress.setStringPainted(true);
-                    clusterProgress.setString("working...");
-                    log.info("Clustering " + openedFile.getName() + " started");
-                    NocClustering.clusterDesign(design);
-                    mainPanel.addClusterTab(design);
-                    clusterProgress.setIndeterminate(false);
-                    clusterProgress.setString("done.");
-                }
+                if (!mainPanel.switchTab(MainPanel.CLUSTERTABID))
+                    log.warning("Clustering has not been run, or hasn't completed running. You must open a design first.");
             }
         });
-        return clusterButton;
+        clusterPanel.add(clusterSecLabel);
+        clusterPanel.add(clusterButton);
+        clusterPanel.add(clusterProgress);
+        this.add(clusterPanel);
     }
 
-    private JButton createMapButton() {
+    private void createMapPanel() {
+        mapPanel = new JPanel(new GridLayout(4, 1));
+
+        // first create a label for this section
+        mapSecLabel = new JLabel("3. NoC Mapping");
+        mapSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
         mapProgress = new JProgressBar();
         mapButton = new JButton("Mapping");
         mapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (openedFile == null) {
-                    log.info("Mapping attempted but no design is loaded. Please open a lynx file first.");
-                } else {
-                    mapProgress.setIndeterminate(true);
-                    mapProgress.setStringPainted(true);
-                    mapProgress.setString("working...");
-                    log.info("Mapping " + openedFile.getName() + " started");
-                    NocMapping.findMappings(design);
-                    mainPanel.addNoCTabs(design);
-                    mapProgress.setIndeterminate(false);
-                    mapProgress.setString("done.");
-                }
+                if (!mainPanel.switchTab(MainPanel.MAPTABID))
+                    log.warning("Mapping has not been run, or hasn't completed running. You must open a design first.");
             }
         });
-        return mapButton;
+        mapPanel.add(mapSecLabel);
+        mapPanel.add(mapButton);
+        mapPanel.add(mapProgress);
+        this.add(mapPanel);
     }
 
     private void createLogoPanel() {
@@ -193,8 +216,8 @@ public class CommandPanel extends JPanel {
 
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(logo, 20, 10, this.getWidth() - 40, (logo.getHeight() - 100) * this.getWidth()
-                        / (logo.getWidth() - 40), null);
+                g.drawImage(logo, 10, 10, this.getWidth() - 20, (logo.getHeight() - 20) * this.getWidth()
+                        / (logo.getWidth() - 20), null);
             }
         };
         this.add(logoPanel);

@@ -12,6 +12,10 @@ public class MainPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
+    public static final int GRAPHTABID = 0;
+    public static final int CLUSTERTABID = 1;
+    public static final int MAPTABID = 2;
+
     // tabbed panel
     JTabbedPane tabbedPane;
 
@@ -44,7 +48,6 @@ public class MainPanel extends JPanel {
         clusteredGraphPanel = new ClusteredGraphPanel(design);
         tabbedPane.addTab("Clustered Graph", null, clusteredGraphPanel, "Coarse application graph after clustering");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
-        tabbedPane.setSelectedIndex(1);
     }
 
     public void addNoCTabs(Design design) {
@@ -57,7 +60,14 @@ public class MainPanel extends JPanel {
         chartPanel = new PlotPanel(design);
         tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_1);
-        tabbedPane.setSelectedIndex(2);
+    }
+
+    public boolean switchTab(int tabID) {
+        if (tabID < tabbedPane.getTabCount()) {
+            tabbedPane.setSelectedIndex(tabID);
+            return true;
+        }
+        return false;
     }
 
     public void clearTabs() {
