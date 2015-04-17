@@ -65,7 +65,7 @@ public class Gui extends JFrame {
         this.setVisible(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds(0, 0, xSize, ySize);
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         this.setVisible(true);
     }
 

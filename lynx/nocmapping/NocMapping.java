@@ -19,7 +19,7 @@ public class NocMapping {
     public static void findMappings(Design design) {
         long startTime = System.nanoTime();
 
-        ProgramData.getInstance().writeMapRpt("Started Clustering...");
+        ProgramData.getInstance().writeToRpt("Started Mapping...");
         // Ullman.findMappings(design);
 
         SimulatedAnnealing.findMappings(design);
@@ -28,9 +28,10 @@ public class NocMapping {
         DecimalFormat secondsFormat = new DecimalFormat("#.00");
         log.info("Elapsed Time = " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
-        ProgramData.getInstance().writeMapRpt(
+        ProgramData.getInstance().writeToRpt(
                 "Finished Mapping -- took " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
-        ProgramData.getInstance().closeMapRpt();
+
+        ProgramData.getInstance().closeRpt();
     }
 
 }

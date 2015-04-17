@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.interconnect.NocInterconnect;
+import lynx.main.Main;
 import lynx.main.ProgramData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
@@ -148,12 +149,12 @@ public class CommandPanel extends JPanel {
 
                                 } catch (Exception e1) {
                                     fileProgress.setString("invalid file specified!");
-                                    log.info("Error! Most probable cause is an invalid file");
+                                    log.severe("Error! Most probable cause is an invalid file");
                                 }
                             }
                         }.start();
                     } else {
-                        log.info("Open command cancelled by user");
+                        log.warning("Open command cancelled by user");
                     }
                 }
             }
@@ -211,7 +212,7 @@ public class CommandPanel extends JPanel {
 
     private void createLogoPanel() {
         try {
-            logo = ImageIO.read(new File("logo/logo.png"));
+            logo = ImageIO.read(Main.class.getResource("/logo/logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

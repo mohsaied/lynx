@@ -18,18 +18,19 @@ public class ProgramData {
      */
     private File designFile;
 
-    private PrintWriter clusterReport;
-    private PrintWriter mapReport;
+    /**
+     * The output report
+     */
+    private PrintWriter report;
 
     /**
-     * Singleton of programdata
+     * Singleton of program data
      */
     private static ProgramData instance = null;
 
     private ProgramData() {
         this.designFile = null;
-        this.clusterReport = null;
-        this.mapReport = null;
+        this.report = null;
     }
 
     public static ProgramData getInstance() {
@@ -44,24 +45,15 @@ public class ProgramData {
 
     public void setDesignFile(File designFile) throws FileNotFoundException {
         this.designFile = designFile;
-        this.clusterReport = new PrintWriter(designFile.getPath() + ".cluster.rpt");
-        this.mapReport = new PrintWriter(designFile.getPath() + ".map.rpt");
+        this.report = new PrintWriter(designFile.getPath() + ".rpt");
     }
 
-    public void writeClusterRpt(String line) {
-        this.clusterReport.println(line);
+    public void writeToRpt(String line) {
+        this.report.println(line);
     }
 
-    public void writeMapRpt(String line) {
-        this.mapReport.println(line);
-    }
-
-    public void closeClusterRpt() {
-        this.clusterReport.close();
-    }
-
-    public void closeMapRpt() {
-        this.mapReport.close();
+    public void closeRpt() {
+        this.report.close();
     }
 
 }
