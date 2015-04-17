@@ -36,6 +36,12 @@ public class Main {
 
     }
 
+    /**
+     * The command line "automatic" flow
+     * 
+     * @param filePath
+     * 
+     */
     private static void runFlow(String filePath) throws ParserConfigurationException, SAXException, IOException,
             TransformerException {
 
@@ -46,7 +52,7 @@ public class Main {
         design.update();
 
         // add NoC circuitry - NoC and translators
-        NocInterconnect.addNoc(design, "designs/noc.xml");
+        NocInterconnect.addNoc(design, "nocs/w150_n16_v2_d16.xml");
 
         // cluster design into SCCs
         NocClustering.clusterDesign(design);
@@ -55,7 +61,7 @@ public class Main {
         NocMapping.findMappings(design);
 
         // write out XML design
-        XmlDesign.writeXMLDesign(design, "designs/out.xml");
+        // XmlDesign.writeXMLDesign(design, filePath + ".out");
 
         // write out verilog design
         // VerilogOut.writeVerilogDesign(design);

@@ -120,7 +120,7 @@ public class CommandPanel extends JPanel {
                                     design = XmlDesign.readXMLDesign(designPath);
                                     ProgramData.getInstance().setDesignFile(openedFile);
                                     design.update();
-                                    NocInterconnect.addNoc(design, "designs/noc.xml");
+                                    NocInterconnect.addNoc(design, "nocs/w150_n16_v2_d16.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");
                                     log.info("Valid design opened successfully");
                                     mainPanel.clearTabs();
