@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.interconnect.NocInterconnect;
+import lynx.main.ProgramData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
 
@@ -116,6 +117,7 @@ public class CommandPanel extends JPanel {
                                 try {
                                     fileProgress.setIndeterminate(true);
                                     design = XmlDesign.readXMLDesign(designPath);
+                                    ProgramData.getInstance().setDesignFile(openedFile);
                                     design.update();
                                     NocInterconnect.addNoc(design, "designs/noc.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");
