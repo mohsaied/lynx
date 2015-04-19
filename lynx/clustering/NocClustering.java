@@ -3,7 +3,6 @@ package lynx.clustering;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
-import lynx.data.Design;
 import lynx.main.ReportData;
 
 /**
@@ -16,12 +15,12 @@ public class NocClustering {
 
     private static final Logger log = Logger.getLogger(NocClustering.class.getName());
 
-    public static void clusterDesign(Design design) {
+    public static void clusterDesign() {
         long startTime = System.nanoTime();
 
         ReportData.getInstance().writeToRpt("Started Clustering...");
 
-        Tarjan.clusterDesign(design);
+        Tarjan.clusterDesign();
 
         long endTime = System.nanoTime();
         DecimalFormat secondsFormat = new DecimalFormat("#.00");

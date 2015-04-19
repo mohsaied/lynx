@@ -13,6 +13,7 @@ import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
+import lynx.main.DesignData;
 import lynx.main.ReportData;
 
 /**
@@ -41,9 +42,11 @@ public class Tarjan {
     // output set of strongly connected components
     private static List<Set<String>> stronglyConnectedComponents;
 
-    public static void clusterDesign(Design design) {
+    public static void clusterDesign() {
 
         log.info("Running Tarjan's algorithm to cluster strongly-connected components...");
+
+        Design design = DesignData.getInstance().getDesign();
 
         // init data structures
         moduleIndices = new HashMap<String, Integer>();

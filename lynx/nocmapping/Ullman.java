@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.data.Noc;
+import lynx.main.DesignData;
 
 public class Ullman {
 
@@ -17,25 +18,28 @@ public class Ullman {
     private static long numPrune;
     private static int bestTotalLatency;
 
-    public static void findMappings(Design design) {
+    public static void findMappings() {
 
         log.info("Figuring out the best location of modules on the NoC using exact Ullman...");
 
+        Design design = DesignData.getInstance().getDesign();
+        Noc noc = DesignData.getInstance().getNoc();
+
         // get adjacency matrices of design and NoC
         boolean[][] designMatrixValues = design.getAdjacencyMatrix();
-        int[][] nocMatrixValues = design.getNoc().getFullAdjacencyMatrix();
+        int[][] nocMatrixValues = noc.getFullAdjacencyMatrix();
         BoolMatrix designMatrix = new BoolMatrix(designMatrixValues);
         BoolMatrix nocMatrix; // is subset of nocMatrixValues (assigned later)
 
         // array holding the used columns
-        boolean[] usedColumns = new boolean[design.getNoc().getNumRouters()];
+        boolean[] usedColumns = new boolean[noc.getNumRouters()];
         for (int i = 0; i < usedColumns.length; i++)
             usedColumns[i] = false;
 
         // list of valid mappings found
         List<Mapping> validMappings = new ArrayList<Mapping>();
 
-        for (int maxLegalHops = 1; maxLegalHops <= design.getNoc().getMaxHops(); maxLegalHops++) {
+        for (int maxLegalHops = 1; maxLegalHops <= noc.getMaxHops(); maxLegalHops++) {
 
             // NoC adjacency matrix with specified #hops
             nocMatrix = createNocMatrixMaxHops(nocMatrixValues, maxLegalHops);
@@ -52,7 +56,7 @@ public class Ullman {
             bestTotalLatency = 9999;
 
             // search for valid mappings
-            ullmanRecurse(usedColumns, 0, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, design);
+            ullmanRecurse(usedColumns, 0, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings);
 
             log.info("Number of solutions found = " + validMappings.size() + "(" + numSols + ")" + ", at maxHops = "
                     + maxLegalHops + ", numRecs = " + numRecs + ", numPrune = " + numPrune);
@@ -80,7 +84,10 @@ public class Ullman {
     }
 
     private static void ullmanRecurse(boolean[] usedColumns, int currRow, BoolMatrix designMatrix, BoolMatrix nocMatrix,
-            BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings, Design design) {
+            BoolMatrix permMatrix, BoolMatrix origPermMatrix, List<Mapping> validMappings) {
+
+        Design design = DesignData.getInstance().getDesign();
+        Noc noc = DesignData.getInstance().getNoc();
 
         numRecs++;
         // System.out.println("---------\ncurrRow = " + currRow);
@@ -93,7 +100,7 @@ public class Ullman {
                 // update best_total_latency and
                 int currLatency;
                 if (design != null)
-                    currLatency = computeLatency(permMatrix, designMatrix, design.getNoc());
+                    currLatency = computeLatency(permMatrix, designMatrix, noc);
                 else
                     currLatency = computeLatency(permMatrix, designMatrix, new Noc());
 
@@ -105,7 +112,7 @@ public class Ullman {
                     log.info("numsols: " + numSols + " - numrecs: " + numRecs + " - numprune: " + numPrune + " - bestlatency: "
                             + bestTotalLatency);
                 if (design != null) {// && validMappings.size() < 10000) {
-                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
+                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData());
                     validMappings.add(permMatrixMapping);
                 }
                 numSols++;
@@ -135,7 +142,7 @@ public class Ullman {
 
                     usedColumns[i] = true;
                     ullmanRecurse(usedColumns, currRow + 1, designMatrix, nocMatrix, permMatrixCopy, origPermMatrix,
-                            validMappings, design);
+                            validMappings);
                     usedColumns[i] = false;
                 }
             }
@@ -366,7 +373,7 @@ public class Ullman {
         numPrune = 0;
         System.out.println("Starting recursion with:");
 
-        ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings, null);
+        ullmanRecurse(usedColumns, currRow, designMatrix, nocMatrix, permMatrix, origPermMatrix, validMappings);
 
         System.out.println("Number of solutions found = " + numSols);
         System.out.println("Number of recursions = " + numRecs);

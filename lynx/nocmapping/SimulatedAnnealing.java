@@ -6,6 +6,8 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
+import lynx.data.Noc;
+import lynx.main.DesignData;
 import lynx.main.ReportData;
 
 public class SimulatedAnnealing {
@@ -14,7 +16,10 @@ public class SimulatedAnnealing {
 
     private final static int SEED = 1;
 
-    public static void findMappings(Design design) {
+    public static void findMappings() {
+
+        Design design = DesignData.getInstance().getDesign();
+        Noc noc = DesignData.getInstance().getNoc();
 
         log.info("Figuring out the best location of modules on the NoC using simulated annealing...");
 
@@ -24,7 +29,7 @@ public class SimulatedAnnealing {
         // random seed
         Random rand = new Random(SEED);
 
-        int nocNumRouters = design.getNoc().getNumRouters();
+        int nocNumRouters = noc.getNumRouters();
         int numModules = design.getNumModules();
 
         assert numModules <= nocNumRouters : "Number of modules in design cannot (currently) exceed the number of routers in NoC";
@@ -42,7 +47,7 @@ public class SimulatedAnnealing {
             currPermMatrix[i][i] = true;
         }
 
-        Mapping currMapping = new Mapping(currPermMatrix, design);
+        Mapping currMapping = new Mapping(currPermMatrix);
         double cost = currMapping.computeCost();
 
         // time
@@ -75,7 +80,7 @@ public class SimulatedAnnealing {
             boolean[][] newPermMatrix = annelMove(currPermMatrix, rand);
 
             // measure its cost
-            currMapping = new Mapping(newPermMatrix, design);
+            currMapping = new Mapping(newPermMatrix);
             double newCost = currMapping.computeCost();
             double oldCost = cost;
             boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
@@ -108,7 +113,7 @@ public class SimulatedAnnealing {
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
         // export solution to the design
-        currMapping = new Mapping(currPermMatrix, design);
+        currMapping = new Mapping(currPermMatrix);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
 

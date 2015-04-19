@@ -18,7 +18,6 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import lynx.clustering.NocClustering;
-import lynx.data.Design;
 import lynx.interconnect.NocInterconnect;
 import lynx.main.Main;
 import lynx.main.ReportData;
@@ -57,9 +56,6 @@ public class CommandPanel extends JPanel {
     private JProgressBar fileProgress;
     private JProgressBar clusterProgress;
     private JProgressBar mapProgress;
-
-    // loaded design
-    private Design design;
 
     private MainPanel mainPanel;
 
@@ -117,24 +113,23 @@ public class CommandPanel extends JPanel {
                             public void run() {
                                 try {
                                     fileProgress.setIndeterminate(true);
-                                    design = XmlDesign.readXMLDesign(designPath);
+                                    XmlDesign.readXMLDesign(designPath);
                                     ReportData.getInstance().setDesignFile(openedFile);
-                                    design.update();
-                                    NocInterconnect.addNoc(design, "nocs/w150_n16_v2_d16.xml");
+                                    NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");
                                     log.info("Valid design opened successfully");
                                     mainPanel.clearTabs();
                                     clusterProgress.setString("");
                                     mapProgress.setString("");
-                                    mainPanel.addGraphTab(design);
+                                    mainPanel.addGraphTab();
                                     fileProgress.setIndeterminate(false);
 
                                     clusterProgress.setIndeterminate(true);
                                     clusterProgress.setStringPainted(true);
                                     clusterProgress.setString("working...");
                                     log.info("Clustering " + openedFile.getName() + " started");
-                                    NocClustering.clusterDesign(design);
-                                    mainPanel.addClusterTab(design);
+                                    NocClustering.clusterDesign();
+                                    mainPanel.addClusterTab();
                                     clusterProgress.setIndeterminate(false);
                                     clusterProgress.setString("done.");
 
@@ -142,8 +137,8 @@ public class CommandPanel extends JPanel {
                                     mapProgress.setStringPainted(true);
                                     mapProgress.setString("working...");
                                     log.info("Mapping " + openedFile.getName() + " started");
-                                    NocMapping.findMappings(design);
-                                    mainPanel.addNoCTabs(design);
+                                    NocMapping.findMappings();
+                                    mainPanel.addNoCTabs();
                                     mapProgress.setIndeterminate(false);
                                     mapProgress.setString("done.");
 

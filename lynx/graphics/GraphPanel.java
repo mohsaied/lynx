@@ -15,6 +15,7 @@ import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
+import lynx.main.DesignData;
 
 public class GraphPanel extends JPanel {
 
@@ -22,9 +23,9 @@ public class GraphPanel extends JPanel {
 
     Design design;
 
-    public GraphPanel(Design design) {
+    public GraphPanel() {
         super(new GridLayout(1, 1));
-        this.design = design;
+        this.design = DesignData.getInstance().getDesign();
     }
 
     public void setDesign(Design design) {

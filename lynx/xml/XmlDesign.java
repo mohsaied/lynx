@@ -22,6 +22,7 @@ import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.main.DesignData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,7 +45,7 @@ public class XmlDesign {
      * @throws IOException
      * @throws SAXException
      */
-    public static Design readXMLDesign(String designPath) throws ParserConfigurationException, SAXException, IOException {
+    public static void readXMLDesign(String designPath) throws ParserConfigurationException, SAXException, IOException {
 
         // Get the DOM Builder Factory
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -103,7 +104,7 @@ public class XmlDesign {
             }
         }
 
-        return design;
+        DesignData.getInstance().setDesign(design);
     }
 
     private static void parseConnection(Node node, Design design) {

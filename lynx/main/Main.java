@@ -10,7 +10,6 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import lynx.clustering.NocClustering;
-import lynx.data.Design;
 import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
@@ -48,17 +47,16 @@ public class Main {
         ReportData.getInstance().setDesignFile(new File(filePath));
 
         // read XML design
-        Design design = XmlDesign.readXMLDesign(filePath);
-        design.update();
+        XmlDesign.readXMLDesign(filePath);
 
         // add NoC circuitry - NoC and translators
-        NocInterconnect.addNoc(design, "nocs/w150_n16_v2_d16.xml");
+        NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
 
         // cluster design into SCCs
-        NocClustering.clusterDesign(design);
+        NocClustering.clusterDesign();
 
         // find possible locations on the NoC
-        NocMapping.findMappings(design);
+        NocMapping.findMappings();
 
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");

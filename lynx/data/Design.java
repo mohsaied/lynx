@@ -25,8 +25,6 @@ public final class Design extends Module {
 
     private List<Connection> allConnections;
 
-    private Noc noc;
-
     private List<Translator> translators;
 
     // output of NoC clustering
@@ -45,7 +43,6 @@ public final class Design extends Module {
         this.modules = new HashMap<String, DesignModule>();
         this.moduleIndices = new HashMap<String, Integer>();
         this.allConnections = new ArrayList<Connection>();
-        this.noc = null;
         this.translators = new ArrayList<Translator>();
         this.mappings = null;
         this.clusters = null;
@@ -71,8 +68,6 @@ public final class Design extends Module {
         List<Module> allModules = new ArrayList<Module>();
 
         allModules.addAll(modules.values());
-        if (noc != null)
-            allModules.add(noc);
         if (!translators.isEmpty())
             allModules.addAll(translators);
 
@@ -81,14 +76,6 @@ public final class Design extends Module {
 
     public final Module getModuleByName(String modName) {
         return this.modules.get(modName);
-    }
-
-    public Noc getNoc() {
-        return noc;
-    }
-
-    public void setNoc(Noc noc) {
-        this.noc = noc;
     }
 
     public List<Translator> getTranslators() {

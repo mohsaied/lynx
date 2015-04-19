@@ -18,6 +18,7 @@ import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
+import lynx.main.DesignData;
 
 public class ClusteredGraphPanel extends JPanel {
 
@@ -25,9 +26,9 @@ public class ClusteredGraphPanel extends JPanel {
 
     Design design;
 
-    public ClusteredGraphPanel(Design design) {
+    public ClusteredGraphPanel() {
         super(new GridLayout(1, 1));
-        this.design = design;
+        this.design = DesignData.getInstance().getDesign();
     }
 
     public void setDesign(Design design) {

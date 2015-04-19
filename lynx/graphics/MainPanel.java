@@ -36,28 +36,28 @@ public class MainPanel extends JPanel {
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
-    public void addGraphTab(Design design) {
+    public void addGraphTab() {
         // graph of given application
-        graphPanel = new GraphPanel(design);
+        graphPanel = new GraphPanel();
         tabbedPane.addTab("Graph", null, graphPanel, "Visualize the provided connectivity graph");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
     }
 
-    public void addClusterTab(Design design) {
+    public void addClusterTab() {
         // graph after clustering
-        clusteredGraphPanel = new ClusteredGraphPanel(design);
+        clusteredGraphPanel = new ClusteredGraphPanel();
         tabbedPane.addTab("Clustered Graph", null, clusteredGraphPanel, "Coarse application graph after clustering");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
     }
 
-    public void addNoCTabs(Design design) {
+    public void addNoCTabs() {
         // NoC
-        nocPanel = new NocPanel(design);
+        nocPanel = new NocPanel();
         tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_1);
 
         // charts
-        chartPanel = new PlotPanel(design);
+        chartPanel = new PlotPanel();
         tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_1);
     }

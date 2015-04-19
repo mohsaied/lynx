@@ -15,6 +15,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import lynx.data.Design;
+import lynx.main.DesignData;
 
 public class PlotPanel extends JPanel {
 
@@ -24,10 +25,10 @@ public class PlotPanel extends JPanel {
 
     private Design design;
 
-    public PlotPanel(Design design) {
+    public PlotPanel() {
         super(new FlowLayout());
         log.setLevel(Level.ALL);
-        this.design = design;
+        this.design = DesignData.getInstance().getDesign();
 
         initPane();
     }
@@ -51,8 +52,7 @@ public class PlotPanel extends JPanel {
             final XYSeriesCollection dataset = new XYSeriesCollection();
             dataset.addSeries(data);
             // create a chart...
-            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL,
-                    false, // legend?
+            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL, false, // legend?
                     true, // tooltips?
                     false // URLs?
                     );

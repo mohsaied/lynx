@@ -15,6 +15,7 @@ import lynx.data.Module;
 import lynx.data.Noc;
 import lynx.data.Packetizer;
 import lynx.data.Port;
+import lynx.main.DesignData;
 
 /**
  * Utility class that adds NoC components and connects them to the design
@@ -27,18 +28,15 @@ public class NocInterconnect {
 
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
 
-    public static void addNoc(Design design) throws ParserConfigurationException, SAXException, IOException {
-        addNoc(design, null);
+    public static void addNoc() throws ParserConfigurationException, SAXException, IOException {
+        addNoc(null);
     }
 
-    public static void addNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException, IOException {
-
-        // want to make sure that it's only called once
-        assert design.getNoc() == null : "NoC is already defined, will not overwrite!";
+    public static void addNoc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
 
         log.info("Adding NoC (fabric interface)");
 
-        insertNoc(design, nocPath);
+        insertNoc(nocPath);
 
         log.info("Adding Translators and connecting them to modules");
 
@@ -52,6 +50,17 @@ public class NocInterconnect {
 
         // inferTopLevelPorts(design);
 
+    }
+
+    private static void insertNoc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
+
+        Noc noc;
+        if (nocPath == null)
+            noc = new Noc();
+        else
+            noc = new Noc(nocPath);
+
+        DesignData.getInstance().setNoc(noc);
     }
 
     private static void inferTopLevelPorts(Design design) {
@@ -84,17 +93,6 @@ public class NocInterconnect {
 
     }
 
-    private static void insertNoc(Design design, String nocPath) throws ParserConfigurationException, SAXException, IOException {
-
-        Noc noc;
-        if (nocPath == null)
-            noc = new Noc();
-        else
-            noc = new Noc(nocPath);
-
-        design.setNoc(noc);
-    }
-
     private static void insertTranslators(Design design) {
 
         // loop over all modules and insert translators
@@ -115,12 +113,12 @@ public class NocInterconnect {
     }
 
     private static void insertPacketizer(Bundle bun, DesignModule mod, Design design) {
-        Packetizer packetizer = new Packetizer(design.getNoc(), mod, bun);
+        Packetizer packetizer = new Packetizer(DesignData.getInstance().getNoc(), mod, bun);
         design.addTranslator(packetizer);
     }
 
     private static void insertDepacketizer(Bundle bun, DesignModule mod, Design design) {
-        Depacketizer depacketizer = new Depacketizer(design.getNoc(), mod, bun);
+        Depacketizer depacketizer = new Depacketizer(DesignData.getInstance().getNoc(), mod, bun);
         design.addTranslator(depacketizer);
     }
 

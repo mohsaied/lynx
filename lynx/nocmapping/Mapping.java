@@ -7,6 +7,8 @@ import java.util.Map;
 
 import lynx.data.Connection;
 import lynx.data.Design;
+import lynx.data.Noc;
+import lynx.main.DesignData;
 
 /**
  * A mapping of a design onto an NoC
@@ -18,6 +20,7 @@ public class Mapping {
 
     private BoolMatrix mapMatrix;
     Design design;
+    Noc noc;
 
     // path for each connection
     // connection --> path
@@ -27,9 +30,10 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
-    public Mapping(boolean[][] mapMatrixValues, Design design) {
+    public Mapping(boolean[][] mapMatrixValues) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
-        this.design = design;
+        this.design = DesignData.getInstance().getDesign();
+        this.noc = DesignData.getInstance().getNoc();
         findConnectionPaths();
         findLinkUtilization();
     }
@@ -40,7 +44,7 @@ public class Mapping {
         for (Connection con : allConnections) {
             int fromRouter = getModuleRouterIndex(con.getFromModuleIndex());
             int toRouter = getModuleRouterIndex(con.getToModuleIndex());
-            List<Integer> path = design.getNoc().getPath(fromRouter, toRouter);
+            List<Integer> path = noc.getPath(fromRouter, toRouter);
             connectionPaths.put(con, path);
         }
     }
@@ -48,11 +52,11 @@ public class Mapping {
     private void findLinkUtilization() {
 
         linkUtilization = new HashMap<String, List<Connection>>();
-        double[][] nocLinks = design.getNoc().getAdjacencyMatrix();
+        double[][] nocLinks = noc.getAdjacencyMatrix();
 
         // initialize empty utilizations
-        for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
-            for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+            for (int j = 0; j < noc.getNumRouters(); j++) {
                 if (nocLinks[i][j] == 1.0) {
                     List<Connection> emptyCons = new ArrayList<Connection>();
                     linkUtilization.put(linkString(i, j), emptyCons);
@@ -109,8 +113,8 @@ public class Mapping {
         }
 
         // path overlap portion of cost
-        for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
-            for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+            for (int j = 0; j < noc.getNumRouters(); j++) {
                 if (this.getLinkUtilization(linkString(i, j)) != null) {
                     int currUtil = this.getLinkUtilization(linkString(i, j)).size();
                     cost += currUtil == 0 ? 0 : currUtil - 1;

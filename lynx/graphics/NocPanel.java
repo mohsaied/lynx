@@ -22,6 +22,7 @@ import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
+import lynx.main.DesignData;
 import lynx.nocmapping.Mapping;
 
 public class NocPanel extends JPanel {
@@ -31,6 +32,7 @@ public class NocPanel extends JPanel {
     private static final Logger log = Logger.getLogger(NocPanel.class.getName());
 
     private Design design;
+    private Noc noc;
     private int selectedMapping;
     private int selectedVersion;
 
@@ -38,10 +40,11 @@ public class NocPanel extends JPanel {
     JComboBox<Integer> mappingIndex;
     JComboBox<Integer> versionIndex;
 
-    public NocPanel(Design design) {
+    public NocPanel() {
         super(new FlowLayout());
         log.setLevel(Level.ALL);
-        this.design = design;
+        this.design = DesignData.getInstance().getDesign();
+        this.noc = DesignData.getInstance().getNoc();
 
         initPane();
 
@@ -139,9 +142,6 @@ public class NocPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Noc noc = null;
-        if (design != null)
-            noc = design.getNoc();
         if (noc != null)
             drawNoc(g, noc);
 
@@ -166,11 +166,11 @@ public class NocPanel extends JPanel {
     private void drawConnections(Graphics g, Mapping currMapping) {
 
         Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
-        double[][] nocLinks = design.getNoc().getAdjacencyMatrix();
+        double[][] nocLinks = noc.getAdjacencyMatrix();
 
         // initialize used link indices (none are used at the start)
-        for (int i = 0; i < design.getNoc().getNumRouters(); i++) {
-            for (int j = 0; j < design.getNoc().getNumRouters(); j++) {
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+            for (int j = 0; j < noc.getNumRouters(); j++) {
                 if (nocLinks[i][j] == 1.0) {
                     List<Integer> emptyList = new ArrayList<Integer>();
                     linkIndices.put(Mapping.linkString(i, j), emptyList);
@@ -202,10 +202,10 @@ public class NocPanel extends JPanel {
             for (int i = 0; i < path.size() - 1; i++) {
                 int fromRouter = path.get(i);
                 int toRouter = path.get(i + 1);
-                int fromX = 100 + (fromRouter % design.getNoc().getNumRoutersPerDimension()) * 100;
-                int fromY = 100 + (fromRouter / design.getNoc().getNumRoutersPerDimension()) * 100;
-                int toX = 100 + (toRouter % design.getNoc().getNumRoutersPerDimension()) * 100;
-                int toY = 100 + (toRouter / design.getNoc().getNumRoutersPerDimension()) * 100;
+                int fromX = 100 + (fromRouter % noc.getNumRoutersPerDimension()) * 100;
+                int fromY = 100 + (fromRouter / noc.getNumRoutersPerDimension()) * 100;
+                int toX = 100 + (toRouter % noc.getNumRoutersPerDimension()) * 100;
+                int toY = 100 + (toRouter / noc.getNumRoutersPerDimension()) * 100;
                 if (drawIndex % 2 == 0)
                     g.setColor(Color.RED);
                 else
@@ -218,8 +218,8 @@ public class NocPanel extends JPanel {
     }
 
     private void drawMod(Graphics g, DesignModule mod, int router) {
-        int i = router % design.getNoc().getNumRoutersPerDimension();
-        int j = router / design.getNoc().getNumRoutersPerDimension();
+        int i = router % noc.getNumRoutersPerDimension();
+        int j = router / noc.getNumRoutersPerDimension();
         int x = 115 + i * 100;
         int y = 115 + j * 100;
         g.setColor(Color.ORANGE);
