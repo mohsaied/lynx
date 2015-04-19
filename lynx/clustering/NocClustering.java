@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
-import lynx.main.ProgramData;
+import lynx.main.ReportData;
 
 /**
  * Algorithms to cluster an application into coarse-grained blocks
@@ -19,7 +19,7 @@ public class NocClustering {
     public static void clusterDesign(Design design) {
         long startTime = System.nanoTime();
 
-        ProgramData.getInstance().writeToRpt("Started Clustering...");
+        ReportData.getInstance().writeToRpt("Started Clustering...");
 
         Tarjan.clusterDesign(design);
 
@@ -27,7 +27,7 @@ public class NocClustering {
         DecimalFormat secondsFormat = new DecimalFormat("#.00");
         log.info("Elapsed Time = " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
-        ProgramData.getInstance().writeToRpt(
+        ReportData.getInstance().writeToRpt(
                 "Finished Clustering -- took " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
     }

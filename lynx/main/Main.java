@@ -45,7 +45,7 @@ public class Main {
     private static void runFlow(String filePath) throws ParserConfigurationException, SAXException, IOException,
             TransformerException {
 
-        ProgramData.getInstance().setDesignFile(new File(filePath));
+        ReportData.getInstance().setDesignFile(new File(filePath));
 
         // read XML design
         Design design = XmlDesign.readXMLDesign(filePath);

@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
-import lynx.main.ProgramData;
+import lynx.main.ReportData;
 
 /**
  * Algorithms to map a design onto an NoC
@@ -19,7 +19,7 @@ public class NocMapping {
     public static void findMappings(Design design) {
         long startTime = System.nanoTime();
 
-        ProgramData.getInstance().writeToRpt("Started Mapping...");
+        ReportData.getInstance().writeToRpt("Started Mapping...");
         // Ullman.findMappings(design);
 
         SimulatedAnnealing.findMappings(design);
@@ -28,10 +28,10 @@ public class NocMapping {
         DecimalFormat secondsFormat = new DecimalFormat("#.00");
         log.info("Elapsed Time = " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
-        ProgramData.getInstance().writeToRpt(
+        ReportData.getInstance().writeToRpt(
                 "Finished Mapping -- took " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
-        ProgramData.getInstance().closeRpt();
+        ReportData.getInstance().closeRpt();
     }
 
 }

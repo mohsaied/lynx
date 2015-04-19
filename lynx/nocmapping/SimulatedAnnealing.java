@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
-import lynx.main.ProgramData;
+import lynx.main.ReportData;
 
 public class SimulatedAnnealing {
 
@@ -105,7 +105,7 @@ public class SimulatedAnnealing {
         log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
 
         log.info("Final mapping cost = " + cost);
-        ProgramData.getInstance().writeToRpt("map_cost = " + cost);
+        ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
         // export solution to the design
         currMapping = new Mapping(currPermMatrix, design);

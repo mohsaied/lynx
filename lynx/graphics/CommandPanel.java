@@ -21,7 +21,7 @@ import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.interconnect.NocInterconnect;
 import lynx.main.Main;
-import lynx.main.ProgramData;
+import lynx.main.ReportData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
 
@@ -118,7 +118,7 @@ public class CommandPanel extends JPanel {
                                 try {
                                     fileProgress.setIndeterminate(true);
                                     design = XmlDesign.readXMLDesign(designPath);
-                                    ProgramData.getInstance().setDesignFile(openedFile);
+                                    ReportData.getInstance().setDesignFile(openedFile);
                                     design.update();
                                     NocInterconnect.addNoc(design, "nocs/w150_n16_v2_d16.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");

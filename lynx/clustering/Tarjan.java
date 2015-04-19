@@ -13,7 +13,7 @@ import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
-import lynx.main.ProgramData;
+import lynx.main.ReportData;
 
 /**
  * 
@@ -77,7 +77,7 @@ public class Tarjan {
         design.setClusters(stronglyConnectedComponents);
 
         log.info("Number of clusters = " + stronglyConnectedComponents.size());
-        ProgramData.getInstance().writeToRpt("num_clusters = " + stronglyConnectedComponents.size());
+        ReportData.getInstance().writeToRpt("num_clusters = " + stronglyConnectedComponents.size());
     }
 
     private static void strongConnect(DesignModule module) {

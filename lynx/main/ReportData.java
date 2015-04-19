@@ -5,13 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 /**
- * This class holds any global data that has to be available for all subroutines
- * For e.g.: design path
+ * This Singleton class holds reporting information for the program For e.g.:
+ * design path
  * 
  * @author Mohamed
  *
  */
-public class ProgramData {
+public class ReportData {
 
     /**
      * the currently opened design file
@@ -26,16 +26,16 @@ public class ProgramData {
     /**
      * Singleton of program data
      */
-    private static ProgramData instance = null;
+    private static ReportData instance = null;
 
-    private ProgramData() {
+    private ReportData() {
         this.designFile = null;
         this.report = null;
     }
 
-    public static ProgramData getInstance() {
+    public static ReportData getInstance() {
         if (instance == null)
-            instance = new ProgramData();
+            instance = new ReportData();
         return instance;
     }
 
