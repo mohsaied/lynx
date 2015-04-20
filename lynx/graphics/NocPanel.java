@@ -22,7 +22,6 @@ import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
-import lynx.main.DesignData;
 import lynx.nocmapping.Mapping;
 
 public class NocPanel extends JPanel {
@@ -40,14 +39,13 @@ public class NocPanel extends JPanel {
     JComboBox<Integer> mappingIndex;
     JComboBox<Integer> versionIndex;
 
-    public NocPanel() {
+    public NocPanel(Design design, Noc noc) {
         super(new FlowLayout());
         log.setLevel(Level.ALL);
-        this.design = DesignData.getInstance().getDesign();
-        this.noc = DesignData.getInstance().getNoc();
+        this.design = design;
+        this.noc = noc;
 
         initPane();
-
     }
 
     public void setDesign(Design design) {

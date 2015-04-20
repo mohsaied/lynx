@@ -185,18 +185,20 @@ public final class Bundle {
         bun.readyPort = rPor;
         mod.addPort(rPor);
 
-        Port dstPor = dstPort.clone();
-        bun.dstPort = dstPort == null ? null : dstPor;
-        mod.addPort(dstPor);
+        if (dstPort != null) {
+            Port dsPor = dstPort.clone();
+            bun.dstPort = dsPor;
+            mod.addPort(dsPor);
+        }
 
         // copy the variables
         bun.width = width;
         bun.direction = direction;
-        translator = null;
+        bun.translator = null;
 
         // initialize the connections, but the other bundles may not be made yet
         // so I cannot start adding them now
-        this.connections = new ArrayList<Bundle>();
+        bun.connections = new ArrayList<Bundle>();
         return bun;
     }
 

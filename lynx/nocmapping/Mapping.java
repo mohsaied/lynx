@@ -30,9 +30,9 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
-    public Mapping(boolean[][] mapMatrixValues) {
+    public Mapping(boolean[][] mapMatrixValues, Design design) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
-        this.design = DesignData.getInstance().getDesign();
+        this.design = design;
         this.noc = DesignData.getInstance().getNoc();
         findConnectionPaths();
         findLinkUtilization();

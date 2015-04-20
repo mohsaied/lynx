@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.data.Noc;
-import lynx.main.DesignData;
 import lynx.main.ReportData;
 
 public class SimulatedAnnealing {
@@ -16,10 +15,7 @@ public class SimulatedAnnealing {
 
     private final static int SEED = 1;
 
-    public static void findMappings() {
-
-        Design design = DesignData.getInstance().getDesign();
-        Noc noc = DesignData.getInstance().getNoc();
+    public static void findMappings(Design design, Noc noc) {
 
         log.info("Figuring out the best location of modules on the NoC using simulated annealing...");
 
@@ -47,7 +43,7 @@ public class SimulatedAnnealing {
             currPermMatrix[i][i] = true;
         }
 
-        Mapping currMapping = new Mapping(currPermMatrix);
+        Mapping currMapping = new Mapping(currPermMatrix, design);
         double cost = currMapping.computeCost();
 
         // time
@@ -80,7 +76,7 @@ public class SimulatedAnnealing {
             boolean[][] newPermMatrix = annealMove(currPermMatrix, rand);
 
             // measure its cost
-            currMapping = new Mapping(newPermMatrix);
+            currMapping = new Mapping(newPermMatrix, design);
             double newCost = currMapping.computeCost();
             double oldCost = cost;
             boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
@@ -113,7 +109,7 @@ public class SimulatedAnnealing {
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
         // export solution to the design
-        currMapping = new Mapping(currPermMatrix);
+        currMapping = new Mapping(currPermMatrix, design);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
 

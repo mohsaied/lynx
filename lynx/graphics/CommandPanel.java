@@ -18,7 +18,10 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
 import lynx.clustering.NocClustering;
+import lynx.data.Design;
+import lynx.data.Noc;
 import lynx.interconnect.NocInterconnect;
+import lynx.main.DesignData;
 import lynx.main.Main;
 import lynx.main.ReportData;
 import lynx.nocmapping.NocMapping;
@@ -124,28 +127,31 @@ public class CommandPanel extends JPanel {
                                     mainPanel.addGraphTab();
                                     fileProgress.setIndeterminate(false);
 
-                                    clusterProgress.setIndeterminate(true);
-                                    clusterProgress.setStringPainted(true);
-                                    clusterProgress.setString("working...");
-                                    log.info("Clustering " + openedFile.getName() + " started");
-                                    NocClustering.clusterDesign();
-                                    mainPanel.addClusterTab();
-                                    clusterProgress.setIndeterminate(false);
-                                    clusterProgress.setString("done.");
-
-                                    mapProgress.setIndeterminate(true);
-                                    mapProgress.setStringPainted(true);
-                                    mapProgress.setString("working...");
-                                    log.info("Mapping " + openedFile.getName() + " started");
-                                    NocMapping.findMappings();
-                                    mainPanel.addNoCTabs();
-                                    mapProgress.setIndeterminate(false);
-                                    mapProgress.setString("done.");
-
                                 } catch (Exception e1) {
-                                    fileProgress.setString("invalid file specified!");
+                                    fileProgress.setString("error!");
                                     log.severe("Error! Most probable cause is an invalid file");
                                 }
+
+                                clusterProgress.setIndeterminate(true);
+                                clusterProgress.setStringPainted(true);
+                                clusterProgress.setString("working...");
+                                log.info("Clustering " + openedFile.getName() + " started");
+                                NocClustering.clusterDesign();
+                                mainPanel.addClusterTab();
+                                clusterProgress.setIndeterminate(false);
+                                clusterProgress.setString("done.");
+
+                                mapProgress.setIndeterminate(true);
+                                mapProgress.setStringPainted(true);
+                                mapProgress.setString("working...");
+                                log.info("Mapping " + openedFile.getName() + " started");
+                                Design design = DesignData.getInstance().getClusteredDesign();
+                                Noc noc = DesignData.getInstance().getNoc();
+                                NocMapping.findMappings(design, noc);
+                                mainPanel.addNoCTabs(design, noc);
+                                mapProgress.setIndeterminate(false);
+                                mapProgress.setString("done.");
+
                             }
                         }.start();
                     } else {

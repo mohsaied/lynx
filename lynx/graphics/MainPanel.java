@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import lynx.data.Design;
+import lynx.data.Noc;
 
 public class MainPanel extends JPanel {
 
@@ -50,14 +51,14 @@ public class MainPanel extends JPanel {
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
     }
 
-    public void addNoCTabs() {
+    public void addNoCTabs(Design design, Noc noc) {
         // NoC
-        nocPanel = new NocPanel();
+        nocPanel = new NocPanel(design, noc);
         tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_1);
 
         // charts
-        chartPanel = new PlotPanel();
+        chartPanel = new PlotPanel(design);
         tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_1);
     }

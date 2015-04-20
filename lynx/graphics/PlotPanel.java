@@ -15,7 +15,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import lynx.data.Design;
-import lynx.main.DesignData;
 
 public class PlotPanel extends JPanel {
 
@@ -25,10 +24,10 @@ public class PlotPanel extends JPanel {
 
     private Design design;
 
-    public PlotPanel() {
+    public PlotPanel(Design design) {
         super(new FlowLayout());
         log.setLevel(Level.ALL);
-        this.design = DesignData.getInstance().getDesign();
+        this.design = design;
 
         initPane();
     }

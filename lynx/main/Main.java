@@ -10,6 +10,8 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import lynx.clustering.NocClustering;
+import lynx.data.Design;
+import lynx.data.Noc;
 import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
@@ -56,7 +58,9 @@ public class Main {
         NocClustering.clusterDesign();
 
         // find possible locations on the NoC
-        NocMapping.findMappings();
+        Design clusteredDesign = DesignData.getInstance().getClusteredDesign();
+        Noc noc = DesignData.getInstance().getNoc();
+        NocMapping.findMappings(clusteredDesign, noc);
 
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");

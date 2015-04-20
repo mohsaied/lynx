@@ -3,6 +3,8 @@ package lynx.nocmapping;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
+import lynx.data.Design;
+import lynx.data.Noc;
 import lynx.main.ReportData;
 
 /**
@@ -15,13 +17,14 @@ public class NocMapping {
 
     private static final Logger log = Logger.getLogger(NocMapping.class.getName());
 
-    public static void findMappings() {
+    public static void findMappings(Design design, Noc noc) {
         long startTime = System.nanoTime();
 
         ReportData.getInstance().writeToRpt("Started Mapping...");
-        // Ullman.findMappings();
 
-        SimulatedAnnealing.findMappings();
+        // Ullman.findMappings(design, noc);
+
+        SimulatedAnnealing.findMappings(design, noc);
 
         long endTime = System.nanoTime();
         DecimalFormat secondsFormat = new DecimalFormat("#.00");

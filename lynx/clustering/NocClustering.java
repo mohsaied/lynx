@@ -1,6 +1,7 @@
 package lynx.clustering;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -20,6 +21,19 @@ import lynx.main.ReportData;
  * 
  */
 public class NocClustering {
+
+    /**
+     * Struct to cache the values of a connection during cluster formation
+     */
+    static class ClusterConnection {
+        int srcCluster;
+        DesignModule srcModule;
+        Bundle srcBundle;
+
+        int dstCluster;
+        DesignModule dstModule;
+        Bundle dstBundle;
+    }
 
     private static final Logger log = Logger.getLogger(NocClustering.class.getName());
 
@@ -52,6 +66,7 @@ public class NocClustering {
         Design clusteredDesign = new Design(design.getName() + "_clustered");
 
         int index = 0;
+        ArrayList<ClusterConnection> connections = new ArrayList<ClusterConnection>();
 
         // loop over the SCCs and create a module for each one
         for (Set<String> scc : stronglyConnectedComponents) {
@@ -83,18 +98,96 @@ public class NocClustering {
                     if (connectsOutsideCluster(bun, scc)) {
                         Bundle newBun = bun.clone(cluster, scc);
                         cluster.addBundle(newBun);
+
+                        // hash the connections in this bundle
+                        // then add it back to clusters after formation
+                        // format is "cluster_index.module_name.bundle_name"
+                        for (Bundle con : bun.getConnections()) {
+                            ClusterConnection currentClusterConnection = formatConnectionString(index, bun, con,
+                                    stronglyConnectedComponents);
+                            if (currentClusterConnection != null)
+                                connections.add(currentClusterConnection);
+                        }
                     }
                 }
             }
+
+            // add cluster to clusteredDesign
+            clusteredDesign.addModule(cluster);
+
+            // next cluster index is incremented
+            index++;
         }
 
-        // go over the new bundles and make the right connections
-        
+        // go over hashed connections and connect the clusters to each other
+        for (ClusterConnection con : connections) {
+            // find the new clustered bundle
+            DesignModule srcMod = (DesignModule) clusteredDesign.getModuleByName("cluster_" + con.srcCluster);
+            Bundle srcBun = srcMod.getBundleByName(con.srcModule.getName() + "^" + con.srcBundle.getName());
 
+            DesignModule dstMod = (DesignModule) clusteredDesign.getModuleByName("cluster_" + con.dstCluster);
+            Bundle dstBun = dstMod.getBundleByName(con.dstModule.getName() + "^" + con.dstBundle.getName());
+
+            // make the connection
+            srcBun.addConnection(dstBun);
+        }
+
+        // finally, run an update to populate the data structures
         clusteredDesign.update();
 
         // set the clustered design
         DesignData.getInstance().setClusteredDesign(clusteredDesign);
+    }
+
+    /**
+     * Takes the current bundle info and finds the bundle info for the
+     * connections of that bundle. If both modules are in the same cluster a
+     * null object is returned
+     * 
+     * @param srcClusterIndex
+     * @param srcBundle
+     * @param dstBundle
+     * @param stronglyConnectedComponents
+     * @return
+     */
+    private static ClusterConnection formatConnectionString(int srcClusterIndex, Bundle srcBundle, Bundle dstBundle,
+            List<Set<String>> stronglyConnectedComponents) {
+
+        ClusterConnection currClusterConnection = new ClusterConnection();
+
+        // src info
+        currClusterConnection.srcCluster = srcClusterIndex;
+        currClusterConnection.srcModule = srcBundle.getParentModule();
+        currClusterConnection.srcBundle = srcBundle;
+
+        // third find the cluster index
+        int clusterIndex = 0;
+        int dstClusterIndex = -1;
+        // look for module
+        for (Set<String> scc : stronglyConnectedComponents) {
+
+            for (String destModName : scc) {
+                if (destModName.equals(dstBundle.getParentModule().getName())) {
+                    // found the module in this cluster
+                    dstClusterIndex = clusterIndex;
+                }
+            }
+
+            clusterIndex++;
+        }
+
+        assert dstClusterIndex != -1 : "Didn't find module " + dstBundle.getParentModule().getName()
+                + " in any cluster, something must be wrong!";
+
+        // dst info
+        currClusterConnection.dstCluster = dstClusterIndex;
+        currClusterConnection.dstModule = dstBundle.getParentModule();
+        currClusterConnection.dstBundle = dstBundle;
+
+        if (dstClusterIndex != srcClusterIndex)
+            return currClusterConnection;
+        else
+            return null;
     }
 
     private static boolean connectsOutsideCluster(Bundle bun, Set<String> scc) {

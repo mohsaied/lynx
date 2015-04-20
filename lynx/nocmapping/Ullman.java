@@ -18,12 +18,10 @@ public class Ullman {
     private static long numPrune;
     private static int bestTotalLatency;
 
-    public static void findMappings() {
+    public static void findMappings(Design design, Noc noc) {
 
         log.info("Figuring out the best location of modules on the NoC using exact Ullman...");
 
-        Design design = DesignData.getInstance().getDesign();
-        Noc noc = DesignData.getInstance().getNoc();
 
         // get adjacency matrices of design and NoC
         boolean[][] designMatrixValues = design.getAdjacencyMatrix();
@@ -112,7 +110,7 @@ public class Ullman {
                     log.info("numsols: " + numSols + " - numrecs: " + numRecs + " - numprune: " + numPrune + " - bestlatency: "
                             + bestTotalLatency);
                 if (design != null) {// && validMappings.size() < 10000) {
-                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData());
+                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
                     validMappings.add(permMatrixMapping);
                 }
                 numSols++;

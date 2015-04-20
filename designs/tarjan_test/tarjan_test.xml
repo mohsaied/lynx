@@ -1,4 +1,4 @@
-<design name="quadratic">
+<design name="tarjan">
 
     <module type="a" name="a0">
         <bundle name="outbun1">
