@@ -177,12 +177,6 @@ public class Port {
         this.globalPortName = globalPortName;
     }
 
-    @Override
-    public String toString() {
-        String s = "port: " + direction + " " + name + "(" + width + ")";
-        return s;
-    }
-
     public final String getConnectingWireName() {
 
         // first check if this is a conduit, we'll need to connect it to the
@@ -206,5 +200,19 @@ public class Port {
             }
         }
         return "";
+    }
+
+    @Override
+    public Port clone() {
+        Port por = new Port(name, direction, width, arrayWidth, type, parentModule, isBundled, globalPortName);
+        for (Port wire : wires)
+            por.addWire(wire);
+        return por;
+    }
+
+    @Override
+    public String toString() {
+        String s = "port: " + direction + " " + name + "(" + width + ")";
+        return s;
     }
 }

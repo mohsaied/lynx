@@ -42,6 +42,11 @@ public final class Parameter {
     }
 
     @Override
+    public Parameter clone() {
+        return new Parameter(this.name, this.value);
+    }
+
+    @Override
     public String toString() {
         return "parameter: " + name + " = " + value;
     }

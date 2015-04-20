@@ -42,7 +42,7 @@ public class Tarjan {
     // output set of strongly connected components
     private static List<Set<String>> stronglyConnectedComponents;
 
-    public static void clusterDesign() {
+    public static List<Set<String>> clusterDesign() {
 
         log.info("Running Tarjan's algorithm to cluster strongly-connected components...");
 
@@ -81,6 +81,8 @@ public class Tarjan {
 
         log.info("Number of clusters = " + stronglyConnectedComponents.size());
         ReportData.getInstance().writeToRpt("num_clusters = " + stronglyConnectedComponents.size());
+
+        return stronglyConnectedComponents;
     }
 
     private static void strongConnect(DesignModule module) {

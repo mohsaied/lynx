@@ -77,7 +77,7 @@ public class SimulatedAnnealing {
                 temp = temp * temp_fac;
 
             // make a move
-            boolean[][] newPermMatrix = annelMove(currPermMatrix, rand);
+            boolean[][] newPermMatrix = annealMove(currPermMatrix, rand);
 
             // measure its cost
             currMapping = new Mapping(newPermMatrix);
@@ -119,7 +119,7 @@ public class SimulatedAnnealing {
 
     }
 
-    private static boolean[][] annelMove(boolean[][] currPermMatrix, Random rand) {
+    private static boolean[][] annealMove(boolean[][] currPermMatrix, Random rand) {
         int numModules = currPermMatrix.length;
         int numRouters = currPermMatrix[0].length;
 

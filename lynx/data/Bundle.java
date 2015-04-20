@@ -2,6 +2,7 @@ package lynx.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
@@ -16,7 +17,7 @@ import lynx.data.MyEnums.Direction;
 public final class Bundle {
 
     private static final Logger log = Logger.getLogger(Bundle.class.getName());
-    
+
     private String name;
 
     private Port dataPort;
@@ -52,7 +53,7 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
-        log.fine("Creating new bundle, name = "+name);;
+        log.fine("Creating new bundle, name = " + name);
     }
 
     public String getName() {
@@ -164,9 +165,39 @@ public final class Bundle {
         // translator creation)
         // so this method should connect the other end of the translator to the
         // NoC router specified
-        
-        translator.connectToRouter(router);
 
+        translator.connectToRouter(router);
+    }
+
+    public Bundle clone(DesignModule mod, Set<String> scc) {
+        Bundle bun = new Bundle(parentModule.getName() + "^" + name, mod);
+
+        // add the ports in this bundle to the new one
+        Port dPor = dataPort.clone();
+        bun.dataPort = dPor;
+        mod.addPort(dPor);
+
+        Port vPor = validPort.clone();
+        bun.validPort = vPor;
+        mod.addPort(vPor);
+
+        Port rPor = readyPort.clone();
+        bun.readyPort = rPor;
+        mod.addPort(rPor);
+
+        Port dstPor = dstPort.clone();
+        bun.dstPort = dstPort == null ? null : dstPor;
+        mod.addPort(dstPor);
+
+        // copy the variables
+        bun.width = width;
+        bun.direction = direction;
+        translator = null;
+
+        // initialize the connections, but the other bundles may not be made yet
+        // so I cannot start adding them now
+        this.connections = new ArrayList<Bundle>();
+        return bun;
     }
 
 }
