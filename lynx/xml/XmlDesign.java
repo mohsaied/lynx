@@ -23,6 +23,7 @@ import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.main.DesignData;
+import lynx.main.ReportData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -105,6 +106,9 @@ public class XmlDesign {
         }
 
         DesignData.getInstance().setDesign(design);
+
+        ReportData.getInstance().writeToRpt("num_modules = " + design.getDesignModules().size());
+        ReportData.getInstance().writeToRpt("num_connections = " + design.getConnections().size());
     }
 
     private static void parseConnection(Node node, Design design) {

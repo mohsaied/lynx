@@ -116,8 +116,8 @@ public class CommandPanel extends JPanel {
                             public void run() {
                                 try {
                                     fileProgress.setIndeterminate(true);
-                                    XmlDesign.readXMLDesign(designPath);
                                     ReportData.getInstance().setDesignFile(openedFile);
+                                    XmlDesign.readXMLDesign(designPath);
                                     NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");
                                     log.info("Valid design opened successfully");
@@ -128,6 +128,7 @@ public class CommandPanel extends JPanel {
                                     fileProgress.setIndeterminate(false);
 
                                 } catch (Exception e1) {
+                                    e1.printStackTrace();
                                     fileProgress.setString("error!");
                                     log.severe("Error! Most probable cause is an invalid file");
                                 }

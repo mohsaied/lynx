@@ -21,20 +21,25 @@ import lynx.xml.XmlDesign;
 public class Main {
 
     @SuppressWarnings("unused")
-    public final static void main(String[] args) throws Exception {
+    public final static void main(String[] args) {
 
-        if (args.length == 0) {
-            // bring up the GUI
-            Gui gui = new Gui(null);
-        } else if (args[0].equals("-c")) {
-            // command line requested -- second argument is the designpath
-            String filePath = args[1];
-            runFlow(filePath);
+        try {
+            if (args.length == 0) {
+                // bring up the GUI
+                Gui gui = new Gui(null);
+                MyLogger parentLog = new MyLogger(Level.ALL);
+            } else if (args[0].equals("-c")) {
+                // command line requested -- second argument is the designpath
+                MyLogger parentLog = new MyLogger(Level.ALL);
+                String filePath = args[1];
+                runFlow(filePath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ReportData.getInstance().writeToRpt("SCHMETTERLING");
+            ReportData.getInstance().writeToRpt(e.getMessage());
+            ReportData.getInstance().closeRpt();            
         }
-
-        // MyLogger log = new MyLogger(Level.INFO);
-        MyLogger parentLog = new MyLogger(Level.ALL);
-
     }
 
     /**
