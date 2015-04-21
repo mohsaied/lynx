@@ -51,6 +51,7 @@ public class NocClustering {
 
         ReportData.getInstance().writeToRpt(
                 "Finished Clustering -- took " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
+        ReportData.getInstance().writeToRpt("cluster_time = " + secondsFormat.format((endTime - startTime) / 1e9));
 
     }
 

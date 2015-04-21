@@ -143,7 +143,9 @@ metric_names = [
     "num_connections",
     "num_modules",
     "num_clusters",
+    "cluster_time",
     "map_cost",
+    "map_time",
     "max_link_util",
     "noc_bw_util",
 ]

@@ -38,7 +38,7 @@ public class Main {
             e.printStackTrace();
             ReportData.getInstance().writeToRpt("SCHMETTERLING");
             ReportData.getInstance().writeToRpt(e.getMessage());
-            ReportData.getInstance().closeRpt();            
+            ReportData.getInstance().closeRpt();
         }
     }
 

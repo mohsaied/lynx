@@ -33,6 +33,8 @@ public class NocMapping {
         ReportData.getInstance().writeToRpt(
                 "Finished Mapping -- took " + secondsFormat.format((endTime - startTime) / 1e9) + " seconds");
 
+        ReportData.getInstance().writeToRpt("map_time = " + secondsFormat.format((endTime - startTime) / 1e9));
+
         ReportData.getInstance().closeRpt();
     }
 
