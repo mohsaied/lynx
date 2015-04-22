@@ -70,4 +70,13 @@ public class DesignModule extends Module {
 
         return mods;
     }
+
+    public int getNumberOfConnections() {
+        int numConnections = 0;
+        for (Bundle bun : bundles.values()) {
+            numConnections += bun.getConnections().size();
+        }
+        return numConnections;
+    }
+
 }

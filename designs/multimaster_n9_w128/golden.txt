@@ -2,4 +2,4 @@
 num_connections = 18
 num_modules = 10
 num_clusters = 10
-map_cost = 11.0
+map_cost = 21.0

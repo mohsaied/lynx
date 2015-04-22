@@ -65,8 +65,23 @@ public class Tarjan {
             onStack.put(modName, false);
         }
 
+        // sort designmodules by lowest connection radix first
+        Map<String, DesignModule> modules = design.getDesignModules();
+        List<String> designModuleNames = new ArrayList<String>(modules.keySet());
+        for (int i = 0; i < designModuleNames.size(); i++) {
+            for (int j = i + 1; j < designModuleNames.size(); j++) {
+                String mod1 = designModuleNames.get(i);
+                String mod2 = designModuleNames.get(j);
+                // if we have more connections in the bundles in mod1
+                if (modules.get(mod1).getNumberOfConnections() > modules.get(mod2).getNumberOfConnections()) {
+                    designModuleNames.set(i, mod2);
+                    designModuleNames.set(j, mod1);
+                }
+            }
+        }
+
         // go over the original design and look for strongly-connected parts
-        for (String modName : design.getDesignModules().keySet()) {
+        for (String modName : designModuleNames) {
             // call strongconnect on this node if we haven't already
             if (moduleIndices.get(modName) == -1) {
                 strongConnect((DesignModule) design.getModuleByName(modName));
@@ -122,7 +137,7 @@ public class Tarjan {
                         // already on stack, therefore in the current strongly
                         // connected component (SCC)
                         // update lowlink
-                        int childLowlink = moduleLowlink.get(childModName);
+                        int childLowlink = moduleIndices.get(childModName);
                         if (childLowlink < moduleLowlink.get(modName)) {
                             moduleLowlink.put(modName, childLowlink);
                         }
@@ -153,8 +168,34 @@ public class Tarjan {
                     break;
             }
 
+            // dismantle any SCC which is not a single cycle
+            // we'll know that if all modules do not have the same lowlink
+            boolean dismantle = false;
+            for (String mod : currScc) {
+                if (moduleLowlink.get(mod) != moduleLowlink.get(modName)) {
+                    dismantle = true;
+                    String logMsg = "Will not cluster modules: ";
+                    for (String modLog : currScc)
+                        logMsg += modLog + " (" + moduleIndices.get(modLog) + "," + moduleLowlink.get(modLog) + ") ";
+                    log.info(logMsg);
+                    break;
+                }
+            }
+
             // output current SCC
-            stronglyConnectedComponents.add(currScc);
+            if (!dismantle) {
+                String logMsg = "Will cluster modules: ";
+                for (String modLog : currScc)
+                    logMsg += modLog + " (" + moduleIndices.get(modLog) + "," + moduleLowlink.get(modLog) + ") ";
+                log.info(logMsg);
+                stronglyConnectedComponents.add(currScc);
+            } else {
+                for (String mod : currScc) {
+                    Set<String> newScc = new HashSet<String>();
+                    newScc.add(mod);
+                    stronglyConnectedComponents.add(newScc);
+                }
+            }
 
         }
     }
