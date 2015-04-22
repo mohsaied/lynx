@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import lynx.data.MyEnums.BundleStatus;
 import lynx.data.MyEnums.Direction;
 
 /**
@@ -34,6 +35,8 @@ public final class Bundle {
 
     private List<Bundle> connections;
 
+    private BundleStatus bundleStatus;
+
     public Bundle() {
         this(null);
     }
@@ -53,6 +56,7 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
+        setBundleStatus(BundleStatus.UNCONNECTED);
         log.fine("Creating new bundle, name = " + name);
     }
 
@@ -167,6 +171,14 @@ public final class Bundle {
         // NoC router specified
 
         translator.connectToRouter(router);
+    }
+
+    public BundleStatus getBundleStatus() {
+        return bundleStatus;
+    }
+
+    public void setBundleStatus(BundleStatus bundleStatus) {
+        this.bundleStatus = bundleStatus;
     }
 
     public Bundle clone(DesignModule mod, Set<String> scc) {

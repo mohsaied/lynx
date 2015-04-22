@@ -81,5 +81,33 @@ public class MyEnums {
             }
         }
     }
+    
+    public enum BundleStatus {
+        UNCONNECTED("unconnected"), 
+        NOC("noc"), 
+        OTHER("other");
+
+        private final String name;
+
+        private BundleStatus(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+        
+        public String toShortString() {
+            switch (name) {
+            case "input":
+                return "in";
+            case "output":
+                return "out";
+            default:
+                return "un";
+            }
+        }
+    }
 
 }

@@ -168,6 +168,12 @@ public class Tarjan {
                     break;
             }
 
+            // skip dismantling if this cluster already contains a single module
+            if (currScc.size() == 1) {
+                stronglyConnectedComponents.add(currScc);
+                return;
+            }
+
             // dismantle any SCC which is not a single cycle
             // we'll know that if all modules do not have the same lowlink
             boolean dismantle = false;
@@ -196,7 +202,6 @@ public class Tarjan {
                     stronglyConnectedComponents.add(newScc);
                 }
             }
-
         }
     }
 
