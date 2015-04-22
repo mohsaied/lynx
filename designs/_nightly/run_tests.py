@@ -152,6 +152,7 @@ test_names = [
     
     "cycle_n3_w128",
     "cycle_master_n3_w128",
+    "cycle_cycle_cycle_w128",
     
     "tarjan",
     "invalid",

@@ -1,0 +1,5 @@
+
+num_connections = 6
+num_modules = 4
+num_clusters = 3
+map_cost = 1.0
