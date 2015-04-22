@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<h2> LYNX summary v2</h2>
+<table>
+<tr>
+
+<th>Test Name</th>
+<th>num_connections</th>
+<th>num_modules</th>
+<th>num_clusters</th>
+<th>cluster_time</th>
+<th>map_cost</th>
+<th>map_time</th>
+<th>max_link_util</th>
+<th>noc_bw_util</th>
+</tr>
+<th>chain_n4_w128</th>
+<td bgcolor="#00FF00">3</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>chain_n16_w128</th>
+<td bgcolor="#00FF00">15</td>
+<td bgcolor="#00FF00">16</td>
+<td bgcolor="#00FF00">16</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">5.66</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>chain_n20_w128</th>
+<td bgcolor="#FF0000" colspan="8">CRASH</td>
+</tr>
+<th>broadcast_n3_w128</th>
+<td bgcolor="#00FF00">3</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.03</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>broadcast_n9_w128</th>
+<td bgcolor="#00FF00">9</td>
+<td bgcolor="#00FF00">10</td>
+<td bgcolor="#00FF00">10</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">11.0</td>
+<td bgcolor="#00FF00">5.56</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>broadcast_n16_w128</th>
+<td bgcolor="#FF0000" colspan="8">CRASH</td>
+</tr>
+<th>converge_n3_w128</th>
+<td bgcolor="#00FF00">3</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.06</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>converge_n9_w128</th>
+<td bgcolor="#00FF00">9</td>
+<td bgcolor="#00FF00">10</td>
+<td bgcolor="#00FF00">10</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">11.0</td>
+<td bgcolor="#00FF00">5.62</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>converge_n18_w128</th>
+<td bgcolor="#FF0000" colspan="8">CRASH</td>
+</tr>
+<th>multimaster_n3_w128</th>
+<td bgcolor="#00FF00">6</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#FFFF00">1</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>multimaster_n9_w128</th>
+<td bgcolor="#00FF00">18</td>
+<td bgcolor="#00FF00">10</td>
+<td bgcolor="#FFFF00">1</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#FFFF00">1.0</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>multimaster_n17_w128</th>
+<td bgcolor="#00FF00">34</td>
+<td bgcolor="#00FF00">18</td>
+<td bgcolor="#FFFF00">1</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#FFFF00">1.0</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>reconverge_n2_w128</th>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.03</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>reconverge_n4_w128</th>
+<td bgcolor="#00FF00">8</td>
+<td bgcolor="#00FF00">6</td>
+<td bgcolor="#00FF00">6</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">6.0</td>
+<td bgcolor="#00FF00">2.88</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>reconverge_n6_w128</th>
+<td bgcolor="#00FF00">12</td>
+<td bgcolor="#00FF00">8</td>
+<td bgcolor="#00FF00">8</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">12.0</td>
+<td bgcolor="#00FF00">3.59</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>cycle_n3_w128</th>
+<td bgcolor="#00FF00">3</td>
+<td bgcolor="#00FF00">3</td>
+<td bgcolor="#00FF00">1</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">1.0</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>tarjan</th>
+<td bgcolor="#00FF00">13</td>
+<td bgcolor="#00FF00">8</td>
+<td bgcolor="#00FF00">4</td>
+<td bgcolor="#00FF00">.00</td>
+<td bgcolor="#00FF00">4.0</td>
+<td bgcolor="#00FF00">1.61</td>
+<td bgcolor="#C0C0C0">-</td>
+<td bgcolor="#C0C0C0">-</td>
+</tr>
+<th>invalid</th>
+<td bgcolor="#FF0000" colspan="8">CRASH</td>
+</tr>
+</table>
+</body>
+</html>
+

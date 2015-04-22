@@ -40,25 +40,32 @@ public class PlotPanel extends JPanel {
     private void initPane() {
 
         if (design != null) {
-            // create a dataset...
-            XYSeries data = new XYSeries("SA Cost");
 
-            List<Double> annealCost = design.getDebugAnnealCost();
-
-            for (int i = 0; i < annealCost.size(); i++)
-                data.add(i, annealCost.get(i));
-
-            final XYSeriesCollection dataset = new XYSeriesCollection();
-            dataset.addSeries(data);
-            // create a chart...
-            JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL, false, // legend?
-                    true, // tooltips?
-                    false // URLs?
-                    );
-
-            // create and display a frame...
-            ChartPanel panel = new ChartPanel(chart);
-            this.add(panel);
+            //create anneal cost chart
+            addChart(design.getDebugAnnealCost());
+            
+            //create anneal cost chart
+            addChart(design.getDebugAnnealTemp());
         }
+    }
+
+    private void addChart(List<Double> dataSet) {
+     // create a dataset...
+        XYSeries data = new XYSeries("SA Cost");
+
+        for (int i = 0; i < dataSet.size(); i++)
+            data.add(i, dataSet.get(i));
+
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(data);
+        // create a chart...
+        JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL, false, // legend?
+                true, // tooltips?
+                false // URLs?
+                );
+
+        // create and display a frame...
+        ChartPanel panel = new ChartPanel(chart);
+        this.add(panel);
     }
 }

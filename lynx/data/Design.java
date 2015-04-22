@@ -33,6 +33,7 @@ public final class Design extends Module {
     // outputs of NoC mapping
     private List<ArrayList<Mapping>> mappings;
     private List<Double> debugAnnealCost;
+    private List<Double> debugAnnealTemp;
 
     public Design() {
         this(null);
@@ -254,6 +255,14 @@ public final class Design extends Module {
 
     public void setDebugAnnealCost(List<Double> debugAnnealCost) {
         this.debugAnnealCost = debugAnnealCost;
+    }
+
+    public List<Double> getDebugAnnealTemp() {
+        return debugAnnealTemp;
+    }
+
+    public void setDebugAnnealTemp(List<Double> debugAnnealTemp) {
+        this.debugAnnealTemp = debugAnnealTemp;
     }
 
     public List<Set<String>> getClusters() {

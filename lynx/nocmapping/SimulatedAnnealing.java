@@ -57,20 +57,23 @@ public class SimulatedAnnealing {
         // annealing params
         double initialTemp = 100;
         double temp = initialTemp;
-        double temp_fac = 0.99;
-        int temp_interval = 100;
+        double tempFac = 0.99;
+        int tempInterval = 100;
 
         int stable_for = 0;
 
         List<Double> debugAnnealCost = new ArrayList<Double>();
+        List<Double> debugAnnealTemp = new ArrayList<Double>();
         debugAnnealCost.add(cost);
 
         // start anneal
-        while (cost > 0 && stable_for < 5000 && elapsedSeconds < 100) {
+        while (cost > 1 && stable_for < 5000 && elapsedSeconds < 100) {
 
             // decrement temperature
-            if (totalMoves % temp_interval == 0)
-                temp = temp * temp_fac;
+            if (totalMoves % tempInterval == 0) {
+                temp = temp * tempFac;
+                tempInterval = setTempInterval(temp);
+            }
 
             // make a move
             boolean[][] newPermMatrix = annealMove(currPermMatrix, rand);
@@ -91,6 +94,7 @@ public class SimulatedAnnealing {
             }
 
             debugAnnealCost.add(cost);
+            debugAnnealTemp.add(temp);
 
             // how long have we been at this cost?
             stable_for = cost == oldCost ? stable_for + 1 : 0;
@@ -112,7 +116,33 @@ public class SimulatedAnnealing {
         currMapping = new Mapping(currPermMatrix, design);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
+        design.setDebugAnnealTemp(debugAnnealTemp);
 
+    }
+
+    private static int setTempInterval(double temp) {
+        if(temp < 100 && temp >= 90)
+            return 100;
+        if(temp < 90 && temp >= 80)
+            return 100;
+        if(temp < 80 && temp >= 70)
+            return 100;
+        if(temp < 70 && temp >= 60)
+            return 100;
+        if(temp < 60 && temp >= 50)
+            return 100;
+        if(temp < 50 && temp >= 40)
+            return 100;
+        if(temp < 40 && temp >= 30)
+            return 100;
+        if(temp < 30 && temp >= 20)
+            return 200;
+        if(temp < 20 && temp >= 10)
+            return 200;
+        if(temp < 10 && temp >= 0)
+            return 200;
+        else
+            return 0;
     }
 
     private static boolean[][] annealMove(boolean[][] currPermMatrix, Random rand) {
