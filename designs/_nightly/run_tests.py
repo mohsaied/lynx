@@ -110,7 +110,7 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values)
                 if golden == '-' or metric == golden:
                     print >>web, "<td bgcolor=\"#00FF00\">"+metric+"</td>"
                 else:
-                    print >>web, "<td bgcolor=\"#FFFF00\">"+metric+"</td>"
+                    print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+golden+")"+"</td>"
                     
     print >>web, "</tr>"
     web.close()
@@ -151,6 +151,7 @@ test_names = [
     "reconverge_n6_w128",
     
     "cycle_n3_w128",
+    "cycle_master_n3_w128",
     
     "tarjan",
     "invalid",
