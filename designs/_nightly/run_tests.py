@@ -73,6 +73,8 @@ th, td {\n\
 </head>\n\
 <body>\n\
 <h2> LYNX summary v"+str(version)+"</h2>\n\
+<A href="+str(version-1)+".html>previous</A> - <A href="+str(version+1)+".html>next</A>  \n\
+<br><br><br>\n\
 <table>\n\
 <tr>\n"
 
@@ -121,7 +123,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #version number of the program
 #increment version number with each set of major changes
-version = 3
+version = 4
 
 tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
 reports_dir = "archive/"+str(version)+"/"
