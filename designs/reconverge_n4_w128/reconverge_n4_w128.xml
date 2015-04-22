@@ -1,0 +1,91 @@
+<design name="reconverge">
+  
+  <module type="master" name="src">
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="inter1">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="inter2">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="inter3">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="inter4">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="ram" name="dst">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="src.outbun" end="inter1.inbun"/>
+  <connection start="src.outbun" end="inter2.inbun"/>
+  <connection start="src.outbun" end="inter3.inbun"/>
+  <connection start="src.outbun" end="inter4.inbun"/>
+  
+  <connection start="inter1.outbun" end="dst.inbun"/>
+  <connection start="inter2.outbun" end="dst.inbun"/>
+  <connection start="inter3.outbun" end="dst.inbun"/>
+  <connection start="inter4.outbun" end="dst.inbun"/>
+  
+  
+</design>

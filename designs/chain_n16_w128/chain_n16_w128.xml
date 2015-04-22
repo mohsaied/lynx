@@ -1,0 +1,237 @@
+<design name="chain">
+  
+  <module type="dummy" name="x1">
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x2">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x3">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x4">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x5">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x6">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x7">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x8">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x9">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x10">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x11">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x12">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x13">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x14">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x15">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x128">
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="x1.outbun" end="x2.inbun"/>
+  <connection start="x2.outbun" end="x3.inbun"/>
+  <connection start="x3.outbun" end="x4.inbun"/> 
+  <connection start="x4.outbun" end="x5.inbun"/> 
+  <connection start="x5.outbun" end="x6.inbun"/> 
+  <connection start="x6.outbun" end="x7.inbun"/> 
+  <connection start="x7.outbun" end="x8.inbun"/> 
+  <connection start="x8.outbun" end="x9.inbun"/> 
+  <connection start="x9.outbun" end="x10.inbun"/> 
+  <connection start="x10.outbun" end="x11.inbun"/> 
+  <connection start="x11.outbun" end="x12.inbun"/> 
+  <connection start="x12.outbun" end="x13.inbun"/> 
+  <connection start="x13.outbun" end="x14.inbun"/> 
+  <connection start="x14.outbun" end="x15.inbun"/> 
+  <connection start="x15.outbun" end="x128.inbun"/> 
+  -->
+</design>

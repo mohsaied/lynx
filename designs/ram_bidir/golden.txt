@@ -1,3 +1,0 @@
-
-num_clusters = 6
-map_cost = 6

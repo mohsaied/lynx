@@ -128,15 +128,30 @@ reports_dir = "archive/"+str(version)+"/"
 web_dir= "web/"
 
 test_names = [
-    "chain",
-    "chain_big",
-    "invalid",
-    "quadratic",
-    "ram",
-    "ram_big",
-    "ram_bidir",
-    "ram_chain",
+    "chain_n4_w128",
+    "chain_n16_w128",
+    "chain_n20_w128",
+    
+    "broadcast_n3_w128",
+    "broadcast_n9_w128",
+    "broadcast_n16_w128",
+    
+    "converge_n3_w128",
+    "converge_n9_w128",
+    "converge_n18_w128",
+    
+    "multimaster_n3_w128",
+    "multimaster_n9_w128",
+    "multimaster_n17_w128",
+    
+    "reconverge_n2_w128",
+    "reconverge_n4_w128",
+    "reconverge_n6_w128",
+    
+    "cycle_n3_w128",
+    
     "tarjan",
+    "invalid",
 ]
 
 metric_names = [
@@ -173,6 +188,7 @@ for test_name in test_names:
     if not os.path.isdir("archive/"+str(version)):
         os.mkdir("archive/"+str(version))
     shutil.copy2(curr_test_path+".rpt", "archive/"+str(version)+"/")
+    os.remove(curr_test_path+".rpt")
     
     #------------------------------------------------------------------
     #parse report
