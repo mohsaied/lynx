@@ -24,6 +24,7 @@ public class Noc extends Module {
 
     private static final String nocName = "fabric_interface";
     private static final String nocInstName = "fi_inst";
+
     private static final String xmlWidth = "width";
     private static final String xmlNumrouters = "num_routers";
     private static final String xmlNumVcs = "num_vcs";
@@ -47,13 +48,17 @@ public class Noc extends Module {
     private int nocVcAddressWidth;
     private int nocNumRoutersPerDimension;
 
+    private ArrayList<ArrayList<NocBundle>> nocInBundles;
+    private ArrayList<ArrayList<NocBundle>> nocOutBundles;
+
     public Noc() {
         super(nocName, nocInstName);
 
-        configureNoC(defaultNocWidth, defaultNocNumRouters, defaultNocNumVcs, defaultNocVcDepth);
+        configureNoC(defaultNocWidth, defaultNocNumRouters, defaultNocNumVcs, defaultNocVcDepth, defaultNocTdmFactor);
         calculateDerivedParameters();
         addNocParameters();
         addNocPorts();
+        addNocBundles();
     }
 
     public Noc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
@@ -63,6 +68,7 @@ public class Noc extends Module {
         calculateDerivedParameters();
         addNocParameters();
         addNocPorts();
+        addNocBundles();
     }
 
     public void configureNoC(String nocPath) throws ParserConfigurationException, SAXException, IOException {
@@ -94,11 +100,38 @@ public class Noc extends Module {
             nocTdmFactor = defaultNocTdmFactor;
     }
 
-    private void configureNoC(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth) {
+    private void configureNoC(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth, int nocTdmFactor) {
         this.nocWidth = nocWidth;
         this.nocNumRouters = nocNumRouters;
         this.nocNumVcs = nocNumVcs;
         this.nocVcDepth = nocVcDepth;
+        this.nocTdmFactor = nocTdmFactor;
+    }
+
+    private void addNocBundles() {
+        // add a bundles for each NoC router
+        for (int i = 0; i < nocNumRouters; i++) {
+            // number of bundles per router is equivalent to the tdm factor
+            // each bundle has the NoC's width
+            // input
+            for (int j = 0; j < nocTdmFactor; j++) {
+                NocBundle nocbun = new NocBundle(i, Direction.INPUT, getWidth());
+                nocInBundles.get(i).add(nocbun);
+            }
+            // output
+            for (int j = 0; j < nocTdmFactor; j++) {
+                NocBundle nocbun = new NocBundle(i, Direction.OUTPUT, getWidth());
+                nocOutBundles.get(i).add(nocbun);
+            }
+        }
+    }
+
+    public ArrayList<NocBundle> getNocInBundles(int router) {
+        return nocInBundles.get(router);
+    }
+
+    public ArrayList<NocBundle> getNocOutBundles(int router) {
+        return nocOutBundles.get(router);
     }
 
     public Port getPort(PortType type, Direction direction, int router) {
