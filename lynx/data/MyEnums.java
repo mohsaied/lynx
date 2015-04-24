@@ -1,13 +1,11 @@
 package lynx.data;
 
 public class MyEnums {
-    
+
     public static final String NOCLYNX = "NOCLYNX";
 
     public enum Direction {
-        INPUT("input"), 
-        OUTPUT("output"), 
-        UNKNOWN("unknown");
+        INPUT("input"), OUTPUT("output"), UNKNOWN("unknown");
 
         private final String name;
 
@@ -19,7 +17,7 @@ public class MyEnums {
         public String toString() {
             return name;
         }
-        
+
         public String toShortString() {
             switch (name) {
             case "input":
@@ -33,15 +31,8 @@ public class MyEnums {
     }
 
     public enum PortType {
-        DATA("data"), 
-        VALID("valid"), 
-        READY("ready"),  
-        DST("dst"),
-        CLK("clk"), 
-        CLKINT("clkint"),
-        RST("rst"), 
-        TOP("top"),
-        UNKNOWN("unknown");
+        DATA("data"), VALID("valid"), READY("ready"), DST("dst"), CLK("clk"), CLKINT("clkint"), RST("rst"), TOP("top"), UNKNOWN(
+                "unknown");
 
         private final String name;
 
@@ -56,8 +47,7 @@ public class MyEnums {
     }
 
     public enum TranslatorType {
-        PACKETIZER("packetizer"), 
-        DEPACKETIZER("depacketizer");
+        PACKETIZER("packetizer"), DEPACKETIZER("depacketizer");
 
         private final String name;
 
@@ -81,11 +71,9 @@ public class MyEnums {
             }
         }
     }
-    
+
     public enum BundleStatus {
-        UNCONNECTED("unconnected"), 
-        NOC("noc"), 
-        OTHER("other");
+        UNCONNECTED("unconnected"), NOC("noc"), OTHER("other");
 
         private final String name;
 
@@ -97,17 +85,5 @@ public class MyEnums {
         public String toString() {
             return name;
         }
-        
-        public String toShortString() {
-            switch (name) {
-            case "input":
-                return "in";
-            case "output":
-                return "out";
-            default:
-                return "un";
-            }
-        }
     }
-
 }

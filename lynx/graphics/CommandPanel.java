@@ -87,13 +87,13 @@ public class CommandPanel extends JPanel {
         openPanel = new JPanel(new GridLayout(4, 1));
 
         // first create a label for this section
-        openSecLabel = new JLabel("1. Open Design");
+        openSecLabel = new JLabel("1. Open Design"); 
         openSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // then create the text field to show name of opened file
         fileProgress = new JProgressBar();
-        fileProgress.setStringPainted(true);
         fileProgress.setString("No File Opened");
+        fileProgress.setStringPainted(true);
 
         // now create the button itself
         openButton = new JButton("Open File") {
@@ -115,12 +115,14 @@ public class CommandPanel extends JPanel {
                         new Thread() {
                             public void run() {
                                 try {
+                                    fileProgress.setString("Opening file...");
+                                    fileProgress.setStringPainted(true);
                                     fileProgress.setIndeterminate(true);
                                     ReportData.getInstance().setDesignFile(openedFile);
                                     XmlDesign.readXMLDesign(designPath);
                                     NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
                                     fileProgress.setString(openedFile.getName() + " (valid)");
-                                    log.info("Valid design opened successfully");
+                                    log.info("Valid design " + openedFile.getName() + "opened successfully");
                                     mainPanel.clearTabs();
                                     clusterProgress.setString("");
                                     mapProgress.setString("");

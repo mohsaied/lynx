@@ -19,8 +19,7 @@ public class XmlNoc {
 
     private static final Logger log = Logger.getLogger(XmlNoc.class.getName());
 
-    public static Map<String, Integer> readXMLNoC(String nocPath) throws ParserConfigurationException, SAXException,
-            IOException {
+    public static Map<String, Integer> readXMLNoC(String nocPath) throws ParserConfigurationException, SAXException, IOException {
 
         log.info("Parsing NoC description file " + nocPath);
 
@@ -50,8 +49,8 @@ public class XmlNoc {
             }
         }
 
-        log.info("Found NoC with width=" + varMap.get("width") + ", num_routers=" + varMap.get("num_routers")
-                + ", num_vcs=" + varMap.get("num_vcs") + ", vc_depth=" + varMap.get("vc_depth"));
+        log.info("Found NoC with width=" + varMap.get("width") + ", num_routers=" + varMap.get("num_routers") + ", num_vcs="
+                + varMap.get("num_vcs") + ", vc_depth=" + varMap.get("vc_depth") + ", tdm_factor=" + varMap.get("tdm_factor"));
 
         return varMap;
     }

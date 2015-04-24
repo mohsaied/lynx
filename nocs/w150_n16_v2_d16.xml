@@ -15,4 +15,7 @@ must be the square of a number because topology is regular mesh-->
 <!-- Depth of each virtual channel, currently limited to powers of 2 -->
 <parameter name="vc_depth" value="16"/>
 
+<!-- TDM factor in fabric port -->
+<parameter name="tdm_factor" value="4"/>
+
 </noc>

@@ -28,16 +28,19 @@ public class Noc extends Module {
     private static final String xmlNumrouters = "num_routers";
     private static final String xmlNumVcs = "num_vcs";
     private static final String xmlVcDepth = "vc_depth";
+    private static final String xmlTdmFactor = "tdm_factor";
 
     private static final int defaultNocWidth = 150;
     private static final int defaultNocNumRouters = 16;
     private static final int defaultNocNumVcs = 2;
     private static final int defaultNocVcDepth = 16;
+    private static final int defaultNocTdmFactor = 4;
 
     private int nocWidth;
     private int nocNumRouters;
     private int nocNumVcs;
     private int nocVcDepth;
+    private int nocTdmFactor;
 
     private int nocInterfaceWidth;
     private int nocAddressWidth;
@@ -84,6 +87,11 @@ public class Noc extends Module {
             nocVcDepth = varMap.get(xmlVcDepth);
         else
             nocVcDepth = defaultNocVcDepth;
+
+        if (varMap.containsKey(xmlTdmFactor))
+            nocTdmFactor = varMap.get(xmlTdmFactor);
+        else
+            nocTdmFactor = defaultNocTdmFactor;
     }
 
     private void configureNoC(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth) {
@@ -113,6 +121,10 @@ public class Noc extends Module {
         return this.nocVcDepth;
     }
 
+    public int getTdmFactor() {
+        return this.nocTdmFactor;
+    }
+
     public int getInterfaceWidth() {
         return this.nocInterfaceWidth;
     }
@@ -131,7 +143,7 @@ public class Noc extends Module {
 
     private void calculateDerivedParameters() {
         // derived parameters
-        nocInterfaceWidth = 4 * nocWidth;
+        nocInterfaceWidth = nocTdmFactor * nocWidth;
         nocAddressWidth = clog2(nocNumRouters);
         nocVcAddressWidth = clog2(nocNumVcs);
         this.nocNumRoutersPerDimension = (int) Math.sqrt(nocNumRouters);
@@ -209,8 +221,7 @@ public class Noc extends Module {
     }
 
     public int getNumberOfHops(int i, int j) {
-        //return Math.floor((Math.abs(i - j) / noc.getNumRoutersPerDimension())) + Math.abs(i - j) % noc.getNumRoutersPerDimension();
-        return getPath(i,j).size()-1;
+        return getPath(i, j).size() - 1;
     }
 
     public final int getRouterDegree(int routerIndex) {
@@ -243,8 +254,8 @@ public class Noc extends Module {
         int fromCol = getNocCol(fromRouter);
         int toRow = getNocRow(toRouter);
         int toCol = getNocCol(toRouter);
-        
-        //System.out.println("from "+fromRouter+"("+fromCol+","+fromRow+")"+" to "+toRouter+"("+toCol+","+toRow+")");
+
+        // System.out.println("from "+fromRouter+"("+fromCol+","+fromRow+")"+" to "+toRouter+"("+toCol+","+toRow+")");
 
         // find the path that constitutes this XY route
         int currRouter = fromRouter;
@@ -253,7 +264,7 @@ public class Noc extends Module {
         // X direction first
         while (currCol != toCol) {
 
-            //System.out.println("col " + currCol + " router " + currRouter);
+            // System.out.println("col " + currCol + " router " + currRouter);
 
             if (currCol < toCol)
                 currRouter = currRouter + 1;
@@ -269,7 +280,7 @@ public class Noc extends Module {
         // Y direction second
         while (currRow != toRow) {
 
-            //System.out.println("row " + currRow + " router " + currRouter);
+            // System.out.println("row " + currRow + " router " + currRouter);
 
             if (currRow < toRow)
                 currRouter = currRouter + nocNumRoutersPerDimension;
