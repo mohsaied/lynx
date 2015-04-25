@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lynx.data.Bundle;
 import lynx.data.Connection;
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.Noc;
+import lynx.data.NocBundle;
+import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
 
 /**
@@ -30,12 +34,71 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
+    // the mapping from bundle to nocbundle
+    Map<Bundle, List<NocBundle>> bundleMap;
+
     public Mapping(boolean[][] mapMatrixValues, Design design) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
         findConnectionPaths();
         findLinkUtilization();
+        connectBundles();
+    }
+
+    /**
+     * Loop over all modules and bundles and connect them to NocBundles
+     */
+    private void connectBundles() {
+
+        bundleMap = new HashMap<Bundle, List<NocBundle>>();
+        noc.clearNocBundleStatus();
+
+        // loop over all modules
+        for (DesignModule mod : design.getDesignModules().values()) {
+            int modIndex = design.getModuleIndex(mod.getName());
+            int router = getModuleRouterIndex(modIndex);
+            ArrayList<NocBundle> nocInBundles = noc.getNocInBundles(router);
+            ArrayList<NocBundle> nocOutBundles = noc.getNocOutBundles(router);
+            // loop over all bundles in this module
+            for (Bundle bun : mod.getBundles().values()) {
+
+                int bunWidth = bun.getWidth();
+                assert bunWidth <= noc.getInterfaceWidth() : "Cannot (currently) handle bundles that are larger than NoC interface width of "
+                        + noc.getInterfaceWidth();
+
+                // how many noc bundles do I need?
+                int numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
+
+                Direction bunDir = bun.getDirection();
+
+                assert bunDir != Direction.UNKNOWN : "Bundle has no direction, what should I do?!";
+
+                // mark the nocbundles as used if they are available
+                // mark the bundle as connected to NoC
+                // add to bundlemap
+
+                // list of nocbundles for this bundle
+                List<NocBundle> nocBundles = new ArrayList<NocBundle>();
+                for (NocBundle nocbun : bunDir == Direction.INPUT ? nocOutBundles : nocInBundles) {
+                    if (!nocbun.isConnected()) {
+                        nocbun.setConnected(true);
+                        nocBundles.add(nocbun);
+                        numNocBundlesRequired--;
+                        if (numNocBundlesRequired == 0)
+                            break;
+                    }
+                }
+
+                // attribute this bundle to the nocbundles found for it in
+                // the bundlemap
+                if (numNocBundlesRequired == 0) {
+                    bundleMap.put(bun, nocBundles);
+                } else
+                    assert false : "Too many bundles in module " + mod.getName() + " currently unsupported";
+
+            }
+        }
     }
 
     private void findConnectionPaths() {
@@ -217,6 +280,26 @@ public class Mapping {
     @Override
     public String toString() {
         return mapMatrix.toString();
+    }
+
+    public int getNumNoCBundlesIn() {
+        int num = 0;
+        // loop over bundle map and find how many input nocbundles are used
+        for (List<NocBundle> nocbunList : bundleMap.values()) {
+            if (nocbunList.get(0).getDirection() == Direction.INPUT)
+                num += nocbunList.size();
+        }
+        return num;
+    }
+
+    public int getNumNoCBundlesOut() {
+        int num = 0;
+        // loop over bundle map and find how many input nocbundles are used
+        for (List<NocBundle> nocbunList : bundleMap.values()) {
+            if (nocbunList.get(0).getDirection() == Direction.OUTPUT)
+                num += nocbunList.size();
+        }
+        return num;
     }
 
 }

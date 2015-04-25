@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.Direction;
+import lynx.main.ReportData;
 import lynx.nocmapping.Mapping;
 
 /**
@@ -63,6 +64,10 @@ public final class Design extends Module {
 
     public final int getNumModules() {
         return modules.size();
+    }
+
+    public final int getNumDesignModules() {
+        return moduleIndices.size();
     }
 
     public final List<Module> getAllModules() {
@@ -238,6 +243,13 @@ public final class Design extends Module {
 
     public void setMappings(List<ArrayList<Mapping>> equivSimMappings) {
         mappings = equivSimMappings;
+
+        // find first mapping
+        Mapping bestMapping = equivSimMappings.get(0).get(0);
+        int numNocInBundlesUsed = bestMapping.getNumNoCBundlesIn();
+        int numNocOutBundlesUsed = bestMapping.getNumNoCBundlesOut();
+        ReportData.getInstance().writeToRpt("noc_in_bundles = " + numNocInBundlesUsed);
+        ReportData.getInstance().writeToRpt("noc_out_bundles = " + numNocOutBundlesUsed);
     }
 
     public void setSingleMapping(Mapping currMapping) {

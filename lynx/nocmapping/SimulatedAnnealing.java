@@ -26,7 +26,7 @@ public class SimulatedAnnealing {
         Random rand = new Random(SEED);
 
         int nocNumRouters = noc.getNumRouters();
-        int numModules = design.getNumModules();
+        int numModules = design.getNumDesignModules();
 
         assert numModules <= nocNumRouters : "Number of modules in design cannot (currently) exceed the number of routers in NoC";
 

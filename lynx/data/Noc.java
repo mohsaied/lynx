@@ -109,20 +109,32 @@ public class Noc extends Module {
     }
 
     private void addNocBundles() {
+
+        nocInBundles = new ArrayList<ArrayList<NocBundle>>();
+        nocOutBundles = new ArrayList<ArrayList<NocBundle>>();
+
         // add a bundles for each NoC router
         for (int i = 0; i < nocNumRouters; i++) {
+
+            // init arraylist
+            ArrayList<NocBundle> nocbunInList = new ArrayList<NocBundle>();
+            ArrayList<NocBundle> nocbunOutList = new ArrayList<NocBundle>();
+
             // number of bundles per router is equivalent to the tdm factor
             // each bundle has the NoC's width
             // input
             for (int j = 0; j < nocTdmFactor; j++) {
                 NocBundle nocbun = new NocBundle(i, Direction.INPUT, getWidth());
-                nocInBundles.get(i).add(nocbun);
+                nocbunInList.add(nocbun);
             }
             // output
             for (int j = 0; j < nocTdmFactor; j++) {
                 NocBundle nocbun = new NocBundle(i, Direction.OUTPUT, getWidth());
-                nocOutBundles.get(i).add(nocbun);
+                nocbunOutList.add(nocbun);
             }
+
+            nocInBundles.add(nocbunInList);
+            nocOutBundles.add(nocbunOutList);
         }
     }
 
@@ -334,5 +346,18 @@ public class Noc extends Module {
 
     private int getNocRow(int router) {
         return router / nocNumRoutersPerDimension;
+    }
+
+    public void clearNocBundleStatus() {
+        for (ArrayList<NocBundle> nocbunList : nocInBundles) {
+            for (NocBundle nocbun : nocbunList) {
+                nocbun.setConnected(false);
+            }
+        }
+        for (ArrayList<NocBundle> nocbunList : nocOutBundles) {
+            for (NocBundle nocbun : nocbunList) {
+                nocbun.setConnected(false);
+            }
+        }
     }
 }

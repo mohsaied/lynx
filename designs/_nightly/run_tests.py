@@ -165,6 +165,8 @@ metric_names = [
     "cluster_time",
     "map_cost",
     "map_time",
+    "noc_in_bundles",
+    "noc_out_bundles",
     "max_link_util",
     "noc_bw_util",
 ]
@@ -204,6 +206,8 @@ for test_name in test_names:
     crash = check_for_crash(report_path)
     
     #list of returned metrics
+    metric_values=["-"]*len(metric_names)
+    golden_values=["-"]*len(metric_names)
     if not crash:
         metric_values = find_metrics(report_path, metric_names)
         golden_values = find_golden(golden_path, metric_names)
