@@ -9,6 +9,7 @@ import lynx.data.Bundle;
 import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
+import lynx.data.MyEnums.BundleStatus;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
@@ -42,8 +43,6 @@ public class Mapping {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
-        findConnectionPaths();
-        findLinkUtilization();
         try {
             connectBundles();
         } catch (Exception e) {
@@ -52,6 +51,8 @@ public class Mapping {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
+        findConnectionPaths();
+        findLinkUtilization();
     }
 
     /**
@@ -121,9 +122,22 @@ public class Mapping {
         connectionPaths = new HashMap<Connection, List<Integer>>();
         List<Connection> allConnections = design.getConnections();
         for (Connection con : allConnections) {
-            int fromRouter = getModuleRouterIndex(con.getFromModuleIndex());
-            int toRouter = getModuleRouterIndex(con.getToModuleIndex());
-            List<Integer> path = noc.getPath(fromRouter, toRouter);
+
+            // don't use module granularity here -- use bundle granularity to
+            // account for bundles that are spread over 2 modules
+            // int fromRouter = getModuleRouterIndex(con.getFromModuleIndex());
+            // int toRouter = getModuleRouterIndex(con.getToModuleIndex());
+
+            List<Integer> path = new ArrayList<Integer>();
+
+            if (con.getFromBundle().getBundleStatus() == BundleStatus.NOC) {
+                int fromRouter = bundleMap.get(con.getFromBundle()).get(0).getRouter();
+                int toRouter = bundleMap.get(con.getToBundle()).get(0).getRouter();
+
+                path = noc.getPath(fromRouter, toRouter);
+            }
+            // otherwise an empty list is returned
+
             connectionPaths.put(con, path);
         }
     }

@@ -13,26 +13,29 @@ public class Connection {
 
     @SuppressWarnings("unused")
     private Design design;
-    
+
     private DesignModule fromModule;
     private DesignModule toModule;
-    
+
     private int fromModuleIndex;
     private int toModuleIndex;
-    
+
     private int latencySpec;
-    
+
     public Connection(Bundle fromBundle, Bundle toBundle, Design design) {
-        
+
         this.design = design;
-        
+
+        this.fromBundle = fromBundle;
+        this.toBundle = toBundle;
+
         this.fromModule = fromBundle.getParentModule();
         this.toModule = toBundle.getParentModule();
 
         this.fromModuleIndex = design.getModuleIndex(fromModule.getName());
         this.toModuleIndex = design.getModuleIndex(toModule.getName());
-        
-        this.setLatencySpec(1); //default latency
+
+        this.setLatencySpec(1); // default latency
     }
 
     public final Bundle getFromBundle() {
