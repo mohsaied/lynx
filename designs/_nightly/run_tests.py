@@ -123,7 +123,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #version number of the program
 #increment version number with each set of major changes
-version = 5
+version = 7
 
 tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
 reports_dir = "archive/"+str(version)+"/"
@@ -132,19 +132,19 @@ web_dir= "web/"
 test_names = [
     "chain_n4_w128",
     "chain_n16_w128",
-    "chain_n20_w128",
+    #"chain_n20_w128",
     
     "broadcast_n3_w128",
     "broadcast_n9_w128",
-    "broadcast_n16_w128",
+    #"broadcast_n16_w128",
     
     "converge_n3_w128",
     "converge_n9_w128",
-    "converge_n18_w128",
+    #"converge_n18_w128",
     
     "multimaster_n3_w128",
     "multimaster_n9_w128",
-    "multimaster_n17_w128",
+    #"multimaster_n17_w128",
     
     "reconverge_n2_w128",
     "reconverge_n4_w128",
@@ -153,6 +153,10 @@ test_names = [
     "cycle_n3_w128",
     "cycle_master_n3_w128",
     "cycle_cycle_cycle_w128",
+    
+    "wide_port",
+    "many_bundles",
+    "many_modules",
     
     "tarjan",
     "invalid",

@@ -13,6 +13,7 @@ import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
+import lynx.main.ReportData;
 
 /**
  * A mapping of a design onto an NoC
@@ -43,13 +44,22 @@ public class Mapping {
         this.noc = DesignData.getInstance().getNoc();
         findConnectionPaths();
         findLinkUtilization();
-        connectBundles();
+        try {
+            connectBundles();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ReportData.getInstance().writeToRpt("SCHMETTERLING");
+            ReportData.getInstance().writeToRpt(e.getMessage());
+            ReportData.getInstance().closeRpt();
+        }
     }
 
     /**
      * Loop over all modules and bundles and connect them to NocBundles
+     * 
+     * @throws Exception
      */
-    private void connectBundles() {
+    private void connectBundles() throws Exception {
 
         bundleMap = new HashMap<Bundle, List<NocBundle>>();
         noc.clearNocBundleStatus();
@@ -66,6 +76,8 @@ public class Mapping {
                 int bunWidth = bun.getWidth();
                 assert bunWidth <= noc.getInterfaceWidth() : "Cannot (currently) handle bundles that are larger than NoC interface width of "
                         + noc.getInterfaceWidth();
+                if (bunWidth > noc.getInterfaceWidth())
+                    throw new Exception();
 
                 // how many noc bundles do I need?
                 int numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
@@ -73,6 +85,8 @@ public class Mapping {
                 Direction bunDir = bun.getDirection();
 
                 assert bunDir != Direction.UNKNOWN : "Bundle has no direction, what should I do?!";
+                if (bunDir == Direction.UNKNOWN)
+                    throw new Exception();
 
                 // mark the nocbundles as used if they are available
                 // mark the bundle as connected to NoC
@@ -94,8 +108,10 @@ public class Mapping {
                 // the bundlemap
                 if (numNocBundlesRequired == 0) {
                     bundleMap.put(bun, nocBundles);
-                } else
+                } else {
                     assert false : "Too many bundles in module " + mod.getName() + " currently unsupported";
+                    throw new Exception();
+                }
 
             }
         }
@@ -277,11 +293,6 @@ public class Mapping {
         return mapMatrix;
     }
 
-    @Override
-    public String toString() {
-        return mapMatrix.toString();
-    }
-
     public int getNumNoCBundlesIn() {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used
@@ -300,6 +311,11 @@ public class Mapping {
                 num += nocbunList.size();
         }
         return num;
+    }
+
+    @Override
+    public String toString() {
+        return mapMatrix.toString();
     }
 
 }

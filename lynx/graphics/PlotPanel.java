@@ -42,16 +42,16 @@ public class PlotPanel extends JPanel {
         if (design != null) {
 
             //create anneal cost chart
-            addChart(design.getDebugAnnealCost());
+            addChart(design.getDebugAnnealCost(),"SA Cost");
             
             //create anneal cost chart
-            addChart(design.getDebugAnnealTemp());
+            addChart(design.getDebugAnnealTemp(),"SA Temp");
         }
     }
 
-    private void addChart(List<Double> dataSet) {
+    private void addChart(List<Double> dataSet, String name) {
      // create a dataset...
-        XYSeries data = new XYSeries("SA Cost");
+        XYSeries data = new XYSeries(name);
 
         for (int i = 0; i < dataSet.size(); i++)
             data.add(i, dataSet.get(i));
@@ -59,7 +59,7 @@ public class PlotPanel extends JPanel {
         final XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(data);
         // create a chart...
-        JFreeChart chart = ChartFactory.createXYLineChart("", "Time", "SA Cost", dataset, PlotOrientation.VERTICAL, false, // legend?
+        JFreeChart chart = ChartFactory.createXYLineChart("", "Time", name, dataset, PlotOrientation.VERTICAL, false, // legend?
                 true, // tooltips?
                 false // URLs?
                 );

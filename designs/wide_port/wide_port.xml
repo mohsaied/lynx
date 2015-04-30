@@ -1,0 +1,29 @@
+<design name="wide_port">
+
+    <module type="a" name="a0">
+        <bundle name="outbun">
+            <port direction="output" width="640" name="o_y" type="data" />
+            <port direction="output" width="1" name="o_valid_out" type="valid" />
+            <port direction="output" width="4" name="o_dest_out" type="dst" />
+            <port direction="input" width="1" name="o_ready_in" type="ready" />
+        </bundle>
+    </module>
+    
+    <module type="b" name="b0">
+        <bundle name="inbun">
+            <port direction="input" width="640" name="i_x" type="data" />
+            <port direction="input" width="1" name="i_valid_in" type="valid" />
+            <port direction="output" width="1" name="i_ready_out" type="ready" />
+        </bundle>
+    </module>
+    
+
+	<!-- Must parse modules before connections, can remove that restriction 
+		later -->
+
+	<!-- Connections -->
+
+    <connection start="a0.outbun" end="b0.inbun" />
+
+
+</design>
