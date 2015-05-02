@@ -2,14 +2,15 @@ package lynx.nocmapping;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lynx.data.Bundle;
 import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
-import lynx.data.MyEnums.BundleStatus;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
@@ -55,6 +56,15 @@ public class Mapping {
         findLinkUtilization();
     }
 
+    public Mapping(Map<Bundle, List<NocBundle>> bundleMap, Design design) {
+        this.bundleMap = bundleMap;
+        this.design = design;
+        this.noc = DesignData.getInstance().getNoc();
+        // create mapMatrix
+        findConnectionPaths();
+        findLinkUtilization();
+    }
+
     /**
      * Loop over all modules and bundles and connect them to NocBundles
      * 
@@ -96,8 +106,8 @@ public class Mapping {
                 // list of nocbundles for this bundle
                 List<NocBundle> nocBundles = new ArrayList<NocBundle>();
                 for (NocBundle nocbun : bunDir == Direction.INPUT ? nocOutBundles : nocInBundles) {
-                    if (!nocbun.isConnected()) {
-                        nocbun.setConnected(true);
+                    if (!nocbun.isUsed()) {
+                        nocbun.setUsed(true);
                         nocBundles.add(nocbun);
                         numNocBundlesRequired--;
                         if (numNocBundlesRequired == 0)
@@ -130,12 +140,14 @@ public class Mapping {
 
             List<Integer> path = new ArrayList<Integer>();
 
-            if (con.getFromBundle().getBundleStatus() == BundleStatus.NOC) {
-                int fromRouter = bundleMap.get(con.getFromBundle()).get(0).getRouter();
-                int toRouter = bundleMap.get(con.getToBundle()).get(0).getRouter();
+            // TODO only find path for connections mapped onto the NoC by
+            // checking BundleStatus
+            // if (con.getFromBundle().getBundleStatus() == BundleStatus.NOC) {
+            int fromRouter = bundleMap.get(con.getFromBundle()).get(0).getRouter();
+            int toRouter = bundleMap.get(con.getToBundle()).get(0).getRouter();
 
-                path = noc.getPath(fromRouter, toRouter);
-            }
+            path = noc.getPath(fromRouter, toRouter);
+            // }
             // otherwise an empty list is returned
 
             connectionPaths.put(con, path);
@@ -198,6 +210,25 @@ public class Mapping {
      */
     public int computeCost() {
         int cost = 1;
+
+        // off-noc portion of cost: add 5 penalty for each bundle off-noc
+        // TODO this is arbitrary right now
+        for (List<NocBundle> list : bundleMap.values()) {
+            if (list.size() == 0)
+                cost += 5;
+        }
+
+        // add penalty for any bundles that are split over more than one router
+        // TODO this is arbitrary right now
+        for (List<NocBundle> nocbunList : bundleMap.values()) {
+            Set<Integer> routers = new HashSet<Integer>();
+            for (NocBundle nocbun : nocbunList) {
+                int currRouter = nocbun.getRouter();
+                routers.add(currRouter);
+            }
+            if (routers.size() > 1)
+                cost += 5 * (routers.size() - 1);
+        }
 
         // latency portion of the cost
         for (Connection con : design.getConnections()) {

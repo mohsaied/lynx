@@ -285,4 +285,38 @@ public final class Design extends Module {
         this.clusters = clusters;
     }
 
+    public int getNumInBundles() {
+        int numBuns = 0;
+        for (DesignModule mod : getDesignModules().values()) {
+            for (Bundle bun : mod.getBundles().values()) {
+                if (bun.getDirection() == Direction.INPUT)
+                    numBuns++;
+            }
+        }
+        return numBuns;
+    }
+
+    public int getNumOutBundles() {
+        int numBuns = 0;
+        for (DesignModule mod : getDesignModules().values()) {
+            for (Bundle bun : mod.getBundles().values()) {
+                if (bun.getDirection() == Direction.OUTPUT)
+                    numBuns++;
+            }
+        }
+        return numBuns;
+    }
+
+    public List<Bundle> getAllBundles() {
+        List<Bundle> bundleList = new ArrayList<Bundle>();
+
+        for (DesignModule mod : getDesignModules().values()) {
+            for (Bundle bun : mod.getBundles().values()) {
+                bundleList.add(bun);
+            }
+        }
+
+        return bundleList;
+    }
+
 }

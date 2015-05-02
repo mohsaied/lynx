@@ -86,4 +86,19 @@ public class MyEnums {
             return name;
         }
     }
+
+    public enum ConnectionType {
+        P2P("p2p"), ARBITRATION("arbitration"), BROADCAST("broadcast"), UNKNOWN("unknown");
+
+        private final String name;
+
+        private ConnectionType(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 }

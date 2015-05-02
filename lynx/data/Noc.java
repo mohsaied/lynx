@@ -351,13 +351,21 @@ public class Noc extends Module {
     public void clearNocBundleStatus() {
         for (ArrayList<NocBundle> nocbunList : nocInBundles) {
             for (NocBundle nocbun : nocbunList) {
-                nocbun.setConnected(false);
+                nocbun.setUsed(false);
             }
         }
         for (ArrayList<NocBundle> nocbunList : nocOutBundles) {
             for (NocBundle nocbun : nocbunList) {
-                nocbun.setConnected(false);
+                nocbun.setUsed(false);
             }
         }
+    }
+
+    public int getNumNocInBundles() {
+        return nocInBundles.size();
+    }
+
+    public int getNumNocOutBundles() {
+        return nocOutBundles.size();
     }
 }

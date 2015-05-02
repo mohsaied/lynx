@@ -9,9 +9,9 @@ import lynx.data.Design;
 import lynx.data.Noc;
 import lynx.main.ReportData;
 
-public class SimulatedAnnealing {
+public class SimulatedAnnealingModule {
 
-    private static final Logger log = Logger.getLogger(SimulatedAnnealing.class.getName());
+    private static final Logger log = Logger.getLogger(SimulatedAnnealingModule.class.getName());
 
     private final static int SEED = 1;
 
