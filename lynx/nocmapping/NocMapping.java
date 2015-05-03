@@ -24,7 +24,9 @@ public class NocMapping {
 
         // Ullman.findMappings(design, noc);
 
-        SimulatedAnnealingModule.findMappings(design, noc);
+        //SimulatedAnnealingModule.findMappings(design, noc);
+
+        SimulatedAnnealingBundle.findMappings(design, noc);
 
         long endTime = System.nanoTime();
         DecimalFormat secondsFormat = new DecimalFormat("#.00");

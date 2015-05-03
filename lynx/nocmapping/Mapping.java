@@ -16,6 +16,7 @@ import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
 import lynx.main.ReportData;
+import lynx.nocmapping.SimulatedAnnealingBundle.AnnealStruct;
 
 /**
  * A mapping of a design onto an NoC
@@ -29,6 +30,9 @@ public class Mapping {
     Design design;
     Noc noc;
 
+    // anneal struct holding the bundlemap etc
+    AnnealStruct annealStruct;
+
     // path for each connection
     // connection --> path
     Map<Connection, List<Integer>> connectionPaths;
@@ -37,13 +41,11 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
-    // the mapping from bundle to nocbundle
-    Map<Bundle, List<NocBundle>> bundleMap;
-
     public Mapping(boolean[][] mapMatrixValues, Design design) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
+        annealStruct = new AnnealStruct();
         try {
             connectBundles();
         } catch (Exception e) {
@@ -56,11 +58,19 @@ public class Mapping {
         findLinkUtilization();
     }
 
-    public Mapping(Map<Bundle, List<NocBundle>> bundleMap, Design design) {
-        this.bundleMap = bundleMap;
+    public Mapping(AnnealStruct annealStruct, Design design) {
+        this.annealStruct = annealStruct;
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
         // create mapMatrix
+        boolean[][] mapMatrixValues = new boolean[design.getNumDesignModules()][noc.getNumRouters()];
+        for (int i = 0; i < design.getNumDesignModules(); i++) {
+            for (int j = 0; j < noc.getNumRouters(); j++) {
+                mapMatrixValues[i][j] = false;
+                // TODO find which router each module is mapped to
+            }
+        }
+        this.mapMatrix = new BoolMatrix(mapMatrixValues);
         findConnectionPaths();
         findLinkUtilization();
     }
@@ -72,7 +82,6 @@ public class Mapping {
      */
     private void connectBundles() throws Exception {
 
-        bundleMap = new HashMap<Bundle, List<NocBundle>>();
         noc.clearNocBundleStatus();
 
         // loop over all modules
@@ -118,12 +127,29 @@ public class Mapping {
                 // attribute this bundle to the nocbundles found for it in
                 // the bundlemap
                 if (numNocBundlesRequired == 0) {
-                    bundleMap.put(bun, nocBundles);
+                    annealStruct.bundleMap.put(bun, nocBundles);
                 } else {
                     assert false : "Too many bundles in module " + mod.getName() + " currently unsupported";
                     throw new Exception();
                 }
 
+            }
+        }
+
+        // all nocbundles are unused
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+            for (NocBundle nocbun : noc.getNocInBundles(i)) {
+                annealStruct.usedNocBundle.put(nocbun, false);
+            }
+            for (NocBundle nocbun : noc.getNocOutBundles(i)) {
+                annealStruct.usedNocBundle.put(nocbun, false);
+            }
+        }
+
+        // set used noc bundle
+        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
+            for (NocBundle nocbun : nocbunList) {
+                annealStruct.usedNocBundle.put(nocbun, true);
             }
         }
     }
@@ -142,12 +168,13 @@ public class Mapping {
 
             // TODO only find path for connections mapped onto the NoC by
             // checking BundleStatus
-            // if (con.getFromBundle().getBundleStatus() == BundleStatus.NOC) {
-            int fromRouter = bundleMap.get(con.getFromBundle()).get(0).getRouter();
-            int toRouter = bundleMap.get(con.getToBundle()).get(0).getRouter();
+            if (annealStruct.bundleMap.get(con.getFromBundle()).size() != 0
+                    || annealStruct.bundleMap.get(con.getToBundle()).size() != 0) {
+                int fromRouter = annealStruct.bundleMap.get(con.getFromBundle()).get(0).getRouter();
+                int toRouter = annealStruct.bundleMap.get(con.getToBundle()).get(0).getRouter();
 
-            path = noc.getPath(fromRouter, toRouter);
-            // }
+                path = noc.getPath(fromRouter, toRouter);
+            }
             // otherwise an empty list is returned
 
             connectionPaths.put(con, path);
@@ -213,14 +240,14 @@ public class Mapping {
 
         // off-noc portion of cost: add 5 penalty for each bundle off-noc
         // TODO this is arbitrary right now
-        for (List<NocBundle> list : bundleMap.values()) {
+        for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
                 cost += 5;
         }
 
         // add penalty for any bundles that are split over more than one router
         // TODO this is arbitrary right now
-        for (List<NocBundle> nocbunList : bundleMap.values()) {
+        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
             Set<Integer> routers = new HashSet<Integer>();
             for (NocBundle nocbun : nocbunList) {
                 int currRouter = nocbun.getRouter();
@@ -341,7 +368,7 @@ public class Mapping {
     public int getNumNoCBundlesIn() {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used
-        for (List<NocBundle> nocbunList : bundleMap.values()) {
+        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
             if (nocbunList.get(0).getDirection() == Direction.INPUT)
                 num += nocbunList.size();
         }
@@ -351,7 +378,7 @@ public class Mapping {
     public int getNumNoCBundlesOut() {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used
-        for (List<NocBundle> nocbunList : bundleMap.values()) {
+        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
             if (nocbunList.get(0).getDirection() == Direction.OUTPUT)
                 num += nocbunList.size();
         }
