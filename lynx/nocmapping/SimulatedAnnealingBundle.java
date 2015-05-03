@@ -46,7 +46,7 @@ public class SimulatedAnnealingBundle {
 
             // make a copy of the bundles at each router
             bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
-            for (HashSet<Bundle> bunList : bundlesAtRouter) {
+            for (HashSet<Bundle> bunList : original.bundlesAtRouter) {
                 HashSet<Bundle> newBunSet = new HashSet<Bundle>();
                 for (Bundle bun : bunList) {
                     newBunSet.add(bun);
@@ -192,6 +192,19 @@ public class SimulatedAnnealingBundle {
         log.info("Final mapping cost = " + cost);
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
+        for (Bundle bun : annealStruct.bundleMap.keySet()) {
+            String s = bun.getFullName() + " --> ";
+            List<NocBundle> nocbunList = annealStruct.bundleMap.get(bun);
+            if (nocbunList.size() == 0) {
+                s += "off-noc";
+            } else {
+                for (NocBundle nocbun : nocbunList) {
+                    s += nocbun.getRouter() + ",";
+                }
+            }
+            log.info(s);
+        }
+
         // export solution to the design
         currMapping = new Mapping(annealStruct, design);
         design.setSingleMapping(currMapping);
@@ -244,6 +257,7 @@ public class SimulatedAnnealingBundle {
         // select a router at random (+1 for off-noc)
         int numRouters = noc.getNumRouters() + 1;
         int selectedRouter = rand.nextInt(numRouters);
+
         // if this isn't really a move, choose another router
         if (newAnnealStruct.bundlesAtRouter.get(selectedRouter).contains(selectedBundle)) {
             selectedRouter = rand.nextInt(numRouters);
@@ -272,7 +286,7 @@ public class SimulatedAnnealingBundle {
         }
 
         // that means we're mapping to a target on-noc
-        if (selectedRouter != numRouters) {
+        if (selectedRouter != noc.getNumRouters()) {
 
             // map to selected router if possible without removing other bundles
             // get the nocbundles at the selected router

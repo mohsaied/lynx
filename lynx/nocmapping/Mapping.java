@@ -169,7 +169,7 @@ public class Mapping {
             // TODO only find path for connections mapped onto the NoC by
             // checking BundleStatus
             if (annealStruct.bundleMap.get(con.getFromBundle()).size() != 0
-                    || annealStruct.bundleMap.get(con.getToBundle()).size() != 0) {
+                    && annealStruct.bundleMap.get(con.getToBundle()).size() != 0) {
                 int fromRouter = annealStruct.bundleMap.get(con.getFromBundle()).get(0).getRouter();
                 int toRouter = annealStruct.bundleMap.get(con.getToBundle()).get(0).getRouter();
 
@@ -369,7 +369,7 @@ public class Mapping {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used
         for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
-            if (nocbunList.get(0).getDirection() == Direction.INPUT)
+            if (nocbunList.size() != 0 && nocbunList.get(0).getDirection() == Direction.INPUT)
                 num += nocbunList.size();
         }
         return num;
@@ -379,7 +379,7 @@ public class Mapping {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used
         for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
-            if (nocbunList.get(0).getDirection() == Direction.OUTPUT)
+            if (nocbunList.size() != 0 && nocbunList.get(0).getDirection() == Direction.OUTPUT)
                 num += nocbunList.size();
         }
         return num;
