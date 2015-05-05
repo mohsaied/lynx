@@ -137,7 +137,14 @@ public class NocClustering {
         clusteredDesign.update();
 
         // set the clustered design
-        DesignData.getInstance().setClusteredDesign(clusteredDesign);
+        // TODO currently just check if the # of clusters are equal to the
+        // number of design modules, we assume that no clustering happened and
+        // we duplicate design into clustered design to avoid long undescriptive
+        // names - might want to put a safer check here
+        if (design.getNumDesignModules() == clusteredDesign.getNumDesignModules())
+            DesignData.getInstance().setClusteredDesign(design);
+        else
+            DesignData.getInstance().setClusteredDesign(clusteredDesign);
     }
 
     /**

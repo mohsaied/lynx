@@ -236,7 +236,7 @@ public class Mapping {
      * @return cost of this mapping
      */
     public int computeCost() {
-        int cost = 1;
+        int cost = 100;
 
         // off-noc portion of cost: add 5 penalty for each bundle off-noc
         // TODO this is arbitrary right now
@@ -247,14 +247,17 @@ public class Mapping {
 
         // add penalty for any bundles that are split over more than one router
         // TODO this is arbitrary right now
-        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
+        for (DesignModule mod : design.getDesignModules().values()) {
             Set<Integer> routers = new HashSet<Integer>();
-            for (NocBundle nocbun : nocbunList) {
-                int currRouter = nocbun.getRouter();
-                routers.add(currRouter);
+            for (int i = 0; i <= noc.getNumRouters(); i++) {
+                Set<Bundle> currRouterBundles = annealStruct.bundlesAtRouter.get(i);
+                for (Bundle bun : mod.getBundles().values()) {
+                    if (currRouterBundles.contains(bun))
+                        routers.add(i);
+                }
             }
             if (routers.size() > 1)
-                cost += 5 * (routers.size() - 1);
+                cost += 0 * (routers.size() - 1);
         }
 
         // latency portion of the cost

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import lynx.data.Bundle;
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
@@ -139,7 +140,7 @@ public class SimulatedAnnealingBundle {
         debugAnnealCost.add(cost);
 
         // start anneal
-        while (cost > 1 && stable_for < 5000 && elapsedSeconds < 100) {
+        while (stable_for < 5000 && elapsedSeconds < 100) {
 
             // decrement temperature
             if (totalMoves % tempInterval == 0) {
@@ -192,15 +193,23 @@ public class SimulatedAnnealingBundle {
         log.info("Final mapping cost = " + cost);
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
-        for (Bundle bun : annealStruct.bundleMap.keySet()) {
-            String s = bun.getFullName() + " --> ";
-            List<NocBundle> nocbunList = annealStruct.bundleMap.get(bun);
-            if (nocbunList.size() == 0) {
-                s += "off-noc";
-            } else {
-                for (NocBundle nocbun : nocbunList) {
-                    s += nocbun.getRouter() + ",";
+        // debug print
+        for (DesignModule mod : design.getDesignModules().values()) {
+            String s = mod.getName() + ": ";
+            for (Bundle bun : mod.getBundles().values()) {
+
+                s += bun.getName() + " --> ";
+                List<NocBundle> nocbunList = annealStruct.bundleMap.get(bun);
+
+                if (nocbunList.size() == 0) {
+                    s += "off-noc";
+                } else {
+                    for (NocBundle nocbun : nocbunList) {
+                        s += nocbun.getRouter() + ",";
+                    }
                 }
+                s += " / ";
+
             }
             log.info(s);
         }
@@ -213,41 +222,22 @@ public class SimulatedAnnealingBundle {
 
     }
 
-    private static int setTempInterval(double temp) {
-        if (temp < 100 && temp >= 90)
-            return 100;
-        if (temp < 90 && temp >= 80)
-            return 100;
-        if (temp < 80 && temp >= 70)
-            return 100;
-        if (temp < 70 && temp >= 60)
-            return 100;
-        if (temp < 60 && temp >= 50)
-            return 100;
-        if (temp < 50 && temp >= 40)
-            return 100;
-        if (temp < 40 && temp >= 30)
-            return 100;
-        if (temp < 30 && temp >= 20)
-            return 200;
-        if (temp < 20 && temp >= 10)
-            return 200;
-        if (temp < 10 && temp >= 0)
-            return 200;
-        else
-            return 0;
-    }
-
+    /**
+     * 1- pick a bundle at random 2- map it to a random nocBundle (or off NoC)
+     * -- each location with equal (?) probability 3- legalize, so that if the
+     * new location is already used, the user is moved or put off-noc
+     * 
+     * @param annealStruct
+     * @param bundleList
+     * @param noc
+     * @param rand
+     * @return
+     * @throws Exception
+     */
     private static AnnealStruct annealMove(AnnealStruct annealStruct, List<Bundle> bundleList, Noc noc, Random rand)
             throws Exception {
 
         AnnealStruct newAnnealStruct = new AnnealStruct(annealStruct);
-
-        // 1- pick a bundle at random
-        // 2- map it to a random nocBundle (or off NoC) -- each location with
-        // equal (?) probability
-        // 3- legalize, so that if the new location is already used, the user is
-        // moved or put off-noc
 
         // select a bundle at random
         int numBundles = newAnnealStruct.bundleMap.size();
@@ -259,7 +249,7 @@ public class SimulatedAnnealingBundle {
         int selectedRouter = rand.nextInt(numRouters);
 
         // if this isn't really a move, choose another router
-        if (newAnnealStruct.bundlesAtRouter.get(selectedRouter).contains(selectedBundle)) {
+        while (newAnnealStruct.bundlesAtRouter.get(selectedRouter).contains(selectedBundle)) {
             selectedRouter = rand.nextInt(numRouters);
         }
 
@@ -325,11 +315,13 @@ public class SimulatedAnnealingBundle {
                 for (NocBundle nocbun : nocBundles) {
                     newAnnealStruct.usedNocBundle.put(nocbun, true);
                 }
+                newAnnealStruct.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
             }
             // if we haven't found a valid mapping, then we have to remove some
             // mappings (number = numNocBundlesRequired) from the selected
             // router
             else {
+                List<Bundle> markedForRemoval = new ArrayList<Bundle>();
                 // choose a bundle to rip out from this router
                 for (Bundle bun : newAnnealStruct.bundlesAtRouter.get(selectedRouter)) {
 
@@ -337,8 +329,9 @@ public class SimulatedAnnealingBundle {
                     if (bun.getDirection() != selectedBundleDirection)
                         continue;
 
-                    // remove this bundle from bundlesAtRouter
-                    newAnnealStruct.bundlesAtRouter.get(selectedRouter).remove(bun);
+                    // mark this bundle for removal from bundlesAtRouter
+                    markedForRemoval.add(bun);
+
                     // mark its nocbundles as unused
                     for (NocBundle nocbun : newAnnealStruct.bundleMap.get(bun)) {
                         newAnnealStruct.usedNocBundle.put(nocbun, false);
@@ -350,28 +343,70 @@ public class SimulatedAnnealingBundle {
                     if (numNocBundlesRequired <= 0)
                         break;
                 }
-            }
 
-            // now that we have space on that router, map our bundle to it
-
-            numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
-            targetNocbuns = selectedBundleDirection == Direction.INPUT ? noc.getNocOutBundles(selectedRouter) : noc
-                    .getNocInBundles(selectedRouter);
-            // do we have enough nocbuns available in there?
-            nocBundles = new ArrayList<NocBundle>();
-            for (NocBundle nocbun : targetNocbuns) {
-                if (!newAnnealStruct.usedNocBundle.get(nocbun)) {
-                    nocBundles.add(nocbun);
-                    numNocBundlesRequired--;
-                    if (numNocBundlesRequired == 0)
-                        break;
+                for (Bundle bun : markedForRemoval) {
+                    // remove this bundle from bundlesAtRouter
+                    newAnnealStruct.bundlesAtRouter.get(selectedRouter).remove(bun);
                 }
+
+                // now that we have space on that router, map our bundle to it
+
+                numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
+                targetNocbuns = selectedBundleDirection == Direction.INPUT ? noc.getNocOutBundles(selectedRouter) : noc
+                        .getNocInBundles(selectedRouter);
+                // do we have enough nocbuns available in there?
+                nocBundles = new ArrayList<NocBundle>();
+                for (NocBundle nocbun : targetNocbuns) {
+                    if (!newAnnealStruct.usedNocBundle.get(nocbun)) {
+                        nocBundles.add(nocbun);
+                        numNocBundlesRequired--;
+                        if (numNocBundlesRequired == 0)
+                            break;
+                    }
+                }
+
+                // have we found a valid mapping?
+                if (numNocBundlesRequired == 0) {
+                    newAnnealStruct.bundleMap.put(selectedBundle, nocBundles);
+                    for (NocBundle nocbun : nocBundles) {
+                        newAnnealStruct.usedNocBundle.put(nocbun, true);
+                    }
+                    newAnnealStruct.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
+                }
+
+                assert numNocBundlesRequired == 0 : "Something's wrong! Could not assign " + numNocBundlesRequired
+                        + " nocbundles, at router " + selectedRouter + " for bun: " + selectedBundle.getFullName();
+                if (numNocBundlesRequired != 0)
+                    throw new Exception();
             }
-            assert numNocBundlesRequired == 0 : "Something's wrong!";
-            if (numNocBundlesRequired != 0)
-                throw new Exception();
         }
 
         return newAnnealStruct;
     }
+
+    private static int setTempInterval(double temp) {
+        if (temp < 100 && temp >= 90)
+            return 10;
+        if (temp < 90 && temp >= 80)
+            return 10;
+        if (temp < 80 && temp >= 70)
+            return 10;
+        if (temp < 70 && temp >= 60)
+            return 10;
+        if (temp < 60 && temp >= 50)
+            return 10;
+        if (temp < 50 && temp >= 40)
+            return 10;
+        if (temp < 40 && temp >= 30)
+            return 100;
+        if (temp < 30 && temp >= 20)
+            return 200;
+        if (temp < 20 && temp >= 10)
+            return 350;
+        if (temp < 10 && temp >= 0)
+            return 500;
+        else
+            return 0;
+    }
+
 }
