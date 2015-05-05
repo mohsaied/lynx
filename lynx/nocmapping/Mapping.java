@@ -16,7 +16,6 @@ import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
 import lynx.main.ReportData;
-import lynx.nocmapping.SimulatedAnnealingBundle.AnnealStruct;
 
 /**
  * A mapping of a design onto an NoC
@@ -31,7 +30,7 @@ public class Mapping {
     Noc noc;
 
     // anneal struct holding the bundlemap etc
-    AnnealStruct annealStruct;
+    AnnealBundleStruct annealStruct;
 
     // path for each connection
     // connection --> path
@@ -45,7 +44,7 @@ public class Mapping {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
-        annealStruct = new AnnealStruct();
+        annealStruct = new AnnealBundleStruct();
         try {
             connectBundles();
         } catch (Exception e) {
@@ -58,7 +57,7 @@ public class Mapping {
         findLinkUtilization();
     }
 
-    public Mapping(AnnealStruct annealStruct, Design design) {
+    public Mapping(AnnealBundleStruct annealStruct, Design design) {
         this.annealStruct = annealStruct;
         this.design = design;
         this.noc = DesignData.getInstance().getNoc();
@@ -242,7 +241,7 @@ public class Mapping {
         // TODO this is arbitrary right now
         for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
-                cost += 5;
+                cost += 10;
         }
 
         // add penalty for any bundles that are split over more than one router
@@ -257,7 +256,7 @@ public class Mapping {
                 }
             }
             if (routers.size() > 1)
-                cost += 0 * (routers.size() - 1);
+                cost += 5 * (routers.size() - 1);
         }
 
         // latency portion of the cost

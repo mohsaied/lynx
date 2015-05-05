@@ -1,67 +1,18 @@
 package lynx.nocmapping;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.DesignModule;
-import lynx.data.MyEnums.Direction;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.main.ReportData;
 
 public class SimulatedAnnealingBundle {
-
-    static class AnnealStruct {
-        public Map<Bundle, List<NocBundle>> bundleMap;
-        public Map<NocBundle, Boolean> usedNocBundle;
-        public ArrayList<HashSet<Bundle>> bundlesAtRouter;
-
-        // pass created maps to this struct
-        public AnnealStruct(Map<Bundle, List<NocBundle>> bundleMap, Map<NocBundle, Boolean> usedNocBundle,
-                ArrayList<HashSet<Bundle>> bundlesAtRouter) {
-            this.bundleMap = bundleMap;
-            this.usedNocBundle = usedNocBundle;
-            this.bundlesAtRouter = bundlesAtRouter;
-        }
-
-        // copy constructor initializes the struct with copies of maps contents
-        public AnnealStruct(AnnealStruct original) {
-            // make a copy of the bundleMap
-            bundleMap = new HashMap<Bundle, List<NocBundle>>();
-            for (Bundle bun : original.bundleMap.keySet()) {
-                bundleMap.put(bun, original.bundleMap.get(bun));
-            }
-
-            // make a copy of the used nocBundle map
-            usedNocBundle = new HashMap<NocBundle, Boolean>();
-            for (NocBundle nocbun : original.usedNocBundle.keySet()) {
-                usedNocBundle.put(nocbun, original.usedNocBundle.get(nocbun));
-            }
-
-            // make a copy of the bundles at each router
-            bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
-            for (HashSet<Bundle> bunList : original.bundlesAtRouter) {
-                HashSet<Bundle> newBunSet = new HashSet<Bundle>();
-                for (Bundle bun : bunList) {
-                    newBunSet.add(bun);
-                }
-                bundlesAtRouter.add(newBunSet);
-            }
-        }
-
-        public AnnealStruct() {
-            bundleMap = new HashMap<Bundle, List<NocBundle>>();
-            usedNocBundle = new HashMap<NocBundle, Boolean>();
-            bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
-        }
-    }
 
     private static final Logger log = Logger.getLogger(SimulatedAnnealingBundle.class.getName());
 
@@ -77,45 +28,10 @@ public class SimulatedAnnealingBundle {
         // random seed
         Random rand = new Random(SEED);
 
-        // mapping from bundle -> nocbundles
-        Map<Bundle, List<NocBundle>> bundleMap = new HashMap<Bundle, List<NocBundle>>();
-
-        // map of used nocbundles
-        Map<NocBundle, Boolean> usedNocBundle = new HashMap<NocBundle, Boolean>();
-
-        List<Bundle> bundleList = design.getAllBundles();
-
-        // initial solution: just put everything off-noc: empty mapping
-        for (Bundle bun : bundleList) {
-            bundleMap.put(bun, new ArrayList<NocBundle>());
-        }
-
-        // and all nocbundles are unused
-        for (int i = 0; i < noc.getNumRouters(); i++) {
-            for (NocBundle nocbun : noc.getNocInBundles(i)) {
-                usedNocBundle.put(nocbun, false);
-            }
-            for (NocBundle nocbun : noc.getNocOutBundles(i)) {
-                usedNocBundle.put(nocbun, false);
-            }
-        }
-
-        // all routers have zero bundles on them except the last one
-        ArrayList<HashSet<Bundle>> bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
-        for (int i = 0; i < noc.getNumRouters(); i++) {
-            HashSet<Bundle> bunSet = new HashSet<Bundle>();
-            bundlesAtRouter.add(bunSet);
-        }
-        // put all bundles in the last router (off-noc)
-        HashSet<Bundle> bunSet = new HashSet<Bundle>();
-        for (Bundle bun : bundleList) {
-            bunSet.add(bun);
-        }
-        bundlesAtRouter.add(bunSet);
-
-        AnnealStruct annealStruct = new AnnealStruct(bundleMap, usedNocBundle, bundlesAtRouter);
-
+        // initial solution -- all off noc
+        AnnealBundleStruct annealStruct = new AnnealBundleStruct(design, noc);
         Mapping currMapping = new Mapping(annealStruct, design);
+        List<Bundle> bundleList = design.getAllBundles();
 
         double cost = currMapping.computeCost();
 
@@ -131,8 +47,7 @@ public class SimulatedAnnealingBundle {
         double initialTemp = 100;
         double temp = initialTemp;
         double tempFac = 0.99;
-        int tempInterval = 100;
-
+        int tempInterval = 10;
         int stable_for = 0;
 
         List<Double> debugAnnealCost = new ArrayList<Double>();
@@ -149,7 +64,7 @@ public class SimulatedAnnealingBundle {
             }
 
             // make a move
-            AnnealStruct newAnnealStruct = null;
+            AnnealBundleStruct newAnnealStruct = null;
             try {
                 newAnnealStruct = annealMove(annealStruct, bundleList, noc, rand);
             } catch (Exception e) {
@@ -193,33 +108,13 @@ public class SimulatedAnnealingBundle {
         log.info("Final mapping cost = " + cost);
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
-        // debug print
-        for (DesignModule mod : design.getDesignModules().values()) {
-            String s = mod.getName() + ": ";
-            for (Bundle bun : mod.getBundles().values()) {
-
-                s += bun.getName() + " --> ";
-                List<NocBundle> nocbunList = annealStruct.bundleMap.get(bun);
-
-                if (nocbunList.size() == 0) {
-                    s += "off-noc";
-                } else {
-                    for (NocBundle nocbun : nocbunList) {
-                        s += nocbun.getRouter() + ",";
-                    }
-                }
-                s += " / ";
-
-            }
-            log.info(s);
-        }
+        debugPrintMapping(design, annealStruct);
 
         // export solution to the design
         currMapping = new Mapping(annealStruct, design);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
         design.setDebugAnnealTemp(debugAnnealTemp);
-
     }
 
     /**
@@ -234,10 +129,10 @@ public class SimulatedAnnealingBundle {
      * @return
      * @throws Exception
      */
-    private static AnnealStruct annealMove(AnnealStruct annealStruct, List<Bundle> bundleList, Noc noc, Random rand)
+    private static AnnealBundleStruct annealMove(AnnealBundleStruct annealStruct, List<Bundle> bundleList, Noc noc, Random rand)
             throws Exception {
 
-        AnnealStruct newAnnealStruct = new AnnealStruct(annealStruct);
+        AnnealBundleStruct newAnnealStruct = new AnnealBundleStruct(annealStruct);
 
         // select a bundle at random
         int numBundles = newAnnealStruct.bundleMap.size();
@@ -257,129 +152,12 @@ public class SimulatedAnnealingBundle {
         // if it is full then we'll have to move whatever is mapped to that
         // router to another router (or if full, then off-noc)
 
-        // remove whatever mapping this bundle currently has
-        // first get the used nocbundles
-        List<NocBundle> nocbunList = newAnnealStruct.bundleMap.get(selectedBundle);
-        // set these nocBundles as unused
-        for (NocBundle nocbun : nocbunList) {
-            newAnnealStruct.usedNocBundle.put(nocbun, false);
-        }
-        // insert empty list to indicate unconnectedness
-        List<NocBundle> emptyNocBundleList = new ArrayList<NocBundle>();
-        newAnnealStruct.bundleMap.put(selectedBundle, emptyNocBundleList);
-        // remove bundle from the router or off-noc mapping
-        if (nocbunList.size() > 0) {
-            int oldRouterIndex = nocbunList.get(0).getRouter();
-            newAnnealStruct.bundlesAtRouter.get(oldRouterIndex).remove(selectedBundle);
-        } else {
-            newAnnealStruct.bundlesAtRouter.get(noc.getNumRouters()).remove(selectedBundle);
-        }
+        // remove whatever mapping this bundle currently has and put it off-noc
+        newAnnealStruct.disconnectBundle(selectedBundle);
 
-        // that means we're mapping to a target on-noc
-        if (selectedRouter != noc.getNumRouters()) {
-
-            // map to selected router if possible without removing other bundles
-            // get the nocbundles at the selected router
-            // how many target nocbuns do we need?
-            int bunWidth = selectedBundle.getWidth();
-            assert bunWidth <= noc.getInterfaceWidth() : "Cannot (currently) handle bundles that are larger than NoC interface width of "
-                    + noc.getInterfaceWidth();
-            if (bunWidth > noc.getInterfaceWidth())
-                throw new Exception();
-
-            // add selected Bundle to the current list of bundles at this router
-            newAnnealStruct.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
-
-            // how many noc bundles do I need?
-            int numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
-
-            // get the target nocbuns at the selected router
-            Direction selectedBundleDirection = selectedBundle.getDirection();
-            List<NocBundle> targetNocbuns = selectedBundleDirection == Direction.INPUT ? noc.getNocOutBundles(selectedRouter)
-                    : noc.getNocInBundles(selectedRouter);
-
-            // do we have enough nocbuns available in there?
-            List<NocBundle> nocBundles = new ArrayList<NocBundle>();
-            for (NocBundle nocbun : targetNocbuns) {
-                if (!newAnnealStruct.usedNocBundle.get(nocbun)) {
-                    nocBundles.add(nocbun);
-                    numNocBundlesRequired--;
-                    if (numNocBundlesRequired == 0)
-                        break;
-                }
-            }
-
-            // have we found a valid mapping?
-            if (numNocBundlesRequired == 0) {
-                newAnnealStruct.bundleMap.put(selectedBundle, nocBundles);
-                for (NocBundle nocbun : nocBundles) {
-                    newAnnealStruct.usedNocBundle.put(nocbun, true);
-                }
-                newAnnealStruct.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
-            }
-            // if we haven't found a valid mapping, then we have to remove some
-            // mappings (number = numNocBundlesRequired) from the selected
-            // router
-            else {
-                List<Bundle> markedForRemoval = new ArrayList<Bundle>();
-                // choose a bundle to rip out from this router
-                for (Bundle bun : newAnnealStruct.bundlesAtRouter.get(selectedRouter)) {
-
-                    // don't rip out a bundle of the opposite direction
-                    if (bun.getDirection() != selectedBundleDirection)
-                        continue;
-
-                    // mark this bundle for removal from bundlesAtRouter
-                    markedForRemoval.add(bun);
-
-                    // mark its nocbundles as unused
-                    for (NocBundle nocbun : newAnnealStruct.bundleMap.get(bun)) {
-                        newAnnealStruct.usedNocBundle.put(nocbun, false);
-                        numNocBundlesRequired--;
-                    }
-                    List<NocBundle> emptyNocBundleList1 = new ArrayList<NocBundle>();
-                    newAnnealStruct.bundleMap.put(bun, emptyNocBundleList1);
-                    // if we have removed enough -> exit
-                    if (numNocBundlesRequired <= 0)
-                        break;
-                }
-
-                for (Bundle bun : markedForRemoval) {
-                    // remove this bundle from bundlesAtRouter
-                    newAnnealStruct.bundlesAtRouter.get(selectedRouter).remove(bun);
-                }
-
-                // now that we have space on that router, map our bundle to it
-
-                numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
-                targetNocbuns = selectedBundleDirection == Direction.INPUT ? noc.getNocOutBundles(selectedRouter) : noc
-                        .getNocInBundles(selectedRouter);
-                // do we have enough nocbuns available in there?
-                nocBundles = new ArrayList<NocBundle>();
-                for (NocBundle nocbun : targetNocbuns) {
-                    if (!newAnnealStruct.usedNocBundle.get(nocbun)) {
-                        nocBundles.add(nocbun);
-                        numNocBundlesRequired--;
-                        if (numNocBundlesRequired == 0)
-                            break;
-                    }
-                }
-
-                // have we found a valid mapping?
-                if (numNocBundlesRequired == 0) {
-                    newAnnealStruct.bundleMap.put(selectedBundle, nocBundles);
-                    for (NocBundle nocbun : nocBundles) {
-                        newAnnealStruct.usedNocBundle.put(nocbun, true);
-                    }
-                    newAnnealStruct.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
-                }
-
-                assert numNocBundlesRequired == 0 : "Something's wrong! Could not assign " + numNocBundlesRequired
-                        + " nocbundles, at router " + selectedRouter + " for bun: " + selectedBundle.getFullName();
-                if (numNocBundlesRequired != 0)
-                    throw new Exception();
-            }
-        }
+        // attempt to connect selectedBundle to selectedRouter -- remove
+        // existing bundles where necessary
+        newAnnealStruct.connectBundle(selectedBundle, selectedRouter, noc);
 
         return newAnnealStruct;
     }
@@ -407,6 +185,35 @@ public class SimulatedAnnealingBundle {
             return 500;
         else
             return 0;
+    }
+
+    /**
+     * printout the mapping to the logger
+     * 
+     * @param design
+     * @param annealStruct
+     */
+    private static void debugPrintMapping(Design design, AnnealBundleStruct annealStruct) {
+
+        for (DesignModule mod : design.getDesignModules().values()) {
+            String s = mod.getName() + ": ";
+            for (Bundle bun : mod.getBundles().values()) {
+
+                s += bun.getName() + " --> ";
+                List<NocBundle> nocbunList = annealStruct.bundleMap.get(bun);
+
+                if (nocbunList.size() == 0) {
+                    s += "off-noc";
+                } else {
+                    for (NocBundle nocbun : nocbunList) {
+                        s += nocbun.getRouter() + ",";
+                    }
+                }
+                s += " / ";
+
+            }
+            log.info(s);
+        }
     }
 
 }
