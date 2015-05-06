@@ -140,12 +140,11 @@ public class AnnealBundleStruct {
                 requiredBundles = attemptMapping(selectedBundle, selectedRouter, noc);
 
                 assert requiredBundles == 0 : "Something's wrong! Could not assign " + requiredBundles
-                        + " nocbundles, at router " + selectedRouter + " for bun: " + selectedBundle.getFullName();
+                        + " nocbundles, at router " + selectedRouter + " for bundle: " + selectedBundle.getFullName();
                 if (requiredBundles != 0)
                     throw new Exception();
             }
         }
-
     }
 
     private void ripOutSomeBundles(Bundle selectedBundle, int selectedRouter, int requiredBundles) {
@@ -193,10 +192,21 @@ public class AnnealBundleStruct {
         this.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
 
         // how many noc bundles do I need?
-        int numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
+        // input noc bundles are equal to flit(noc) width
+        // output noc bundles are equal to fabric width/numVCs - more or less
+        // TODO put that calculation in the Noc object because it doesn't belong
+        // here
+        // TODO also need a more general formula than that
+        Direction selectedBundleDirection = selectedBundle.getDirection();
+        int nocBundleWidth = 0;
+        if (selectedBundleDirection == Direction.INPUT)
+            nocBundleWidth = noc.getInterfaceWidth() / noc.getNumVcs();
+        else
+            nocBundleWidth = noc.getWidth();
+
+        int numNocBundlesRequired = bunWidth / nocBundleWidth + (bunWidth % nocBundleWidth == 0 ? 0 : 1);
 
         // get the target nocbuns at the selected router
-        Direction selectedBundleDirection = selectedBundle.getDirection();
         List<NocBundle> targetNocbuns = selectedBundleDirection == Direction.INPUT ? noc.getNocOutBundles(selectedRouter) : noc
                 .getNocInBundles(selectedRouter);
 

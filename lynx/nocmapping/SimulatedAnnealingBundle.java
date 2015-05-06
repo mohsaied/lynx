@@ -187,8 +187,10 @@ public class SimulatedAnnealingBundle {
             return 200;
         if (temp < 20 && temp >= 10)
             return 350;
-        if (temp < 10 && temp >= 0)
+        if (temp < 10 && temp >= 5)
             return 500;
+        if (temp < 5 && temp >= 0)
+            return 1000;
         else
             return 0;
     }

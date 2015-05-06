@@ -241,7 +241,7 @@ public class Mapping {
         // TODO this is arbitrary right now
         for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
-                cost += 10;
+                cost += 30;
         }
 
         // add penalty for any bundles that are split over more than one router
@@ -256,7 +256,7 @@ public class Mapping {
                 }
             }
             if (routers.size() > 1)
-                cost += 5 * (routers.size() - 1);
+                cost += 10 * (routers.size() - 1);
         }
 
         // latency portion of the cost
@@ -270,7 +270,7 @@ public class Mapping {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 if (this.getLinkUtilization(linkString(i, j)) != null) {
                     int currUtil = this.getLinkUtilization(linkString(i, j)).size();
-                    cost += currUtil == 0 ? 0 : (currUtil - 1) * 2;
+                    cost += currUtil == 0 ? 0 : (currUtil - 1);
                 }
             }
         }
