@@ -162,6 +162,12 @@ public class SimulatedAnnealingBundle {
         return newAnnealStruct;
     }
 
+    /**
+     * nonlinear cooling schedule
+     * 
+     * @param temp
+     * @return
+     */
     private static int setTempInterval(double temp) {
         if (temp < 100 && temp >= 90)
             return 10;

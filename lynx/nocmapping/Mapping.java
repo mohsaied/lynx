@@ -270,7 +270,7 @@ public class Mapping {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 if (this.getLinkUtilization(linkString(i, j)) != null) {
                     int currUtil = this.getLinkUtilization(linkString(i, j)).size();
-                    cost += currUtil == 0 ? 0 : currUtil - 1;
+                    cost += currUtil == 0 ? 0 : (currUtil - 1) * 2;
                 }
             }
         }
@@ -385,6 +385,10 @@ public class Mapping {
                 num += nocbunList.size();
         }
         return num;
+    }
+
+    public ArrayList<HashSet<Bundle>> getBundlesAtRouters() {
+        return annealStruct.bundlesAtRouter;
     }
 
     @Override

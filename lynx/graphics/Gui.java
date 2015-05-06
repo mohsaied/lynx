@@ -18,7 +18,7 @@ public class Gui extends JFrame {
     private static final long serialVersionUID = 5661237900482388080L;
 
     private final int xSize = 1000;
-    private final int ySize = 800;
+    private final int ySize = 900;
     private final int commandDivLoc = xSize / 4;
     private final int consoleDivLoc = ySize * 3 / 4;
 

@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -20,8 +21,8 @@ import javax.swing.JPanel;
 
 import lynx.data.Connection;
 import lynx.data.Design;
-import lynx.data.DesignModule;
 import lynx.data.Noc;
+import lynx.data.Bundle;
 import lynx.nocmapping.Mapping;
 
 public class NocPanel extends JPanel {
@@ -29,6 +30,12 @@ public class NocPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = Logger.getLogger(NocPanel.class.getName());
+
+    private static final int routerSpacing = 150;
+    private static final int bunSize = 140;
+
+    private static final int xOffset = 100;
+    private static final int yOffset = 50;
 
     private Design design;
     private Noc noc;
@@ -151,14 +158,46 @@ public class NocPanel extends JPanel {
 
         Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 
-        for (DesignModule mod : design.getDesignModules().values()) {
-            int modIndex = design.getModuleIndex(mod.getName());
-            drawMod(g, mod, currMapping.getModuleRouterIndex(modIndex));
+        int i = 0;
+        for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
+            drawBundles(g, bunSet, i++);
         }
 
         // draw the connections
         drawConnections(g, currMapping);
+    }
 
+    private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
+
+        int i = router % noc.getNumRoutersPerDimension();
+        int j = router / noc.getNumRoutersPerDimension();
+        int x = xOffset + 15 + i * routerSpacing;
+        int y = yOffset + 15 + j * routerSpacing;
+
+        int maxPosibleModules = noc.getTdmFactor()
+                + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
+
+        boolean switchColor = true;
+        for (Bundle bun : bunSet) {
+            if (switchColor) {
+                g.setColor(Color.CYAN);
+            } else {
+                g.setColor(Color.ORANGE);
+            }
+            switchColor = !switchColor;
+            g.fillRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
+            g.drawRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
+            g.setColor(Color.BLACK);
+
+            String name = bun.getFullName();
+            if (name.length() > 15) {
+                name = name.substring(0, 8);
+                name += "..";
+            }
+            g.drawString(name, x + 5, y + bunSize / 2 / maxPosibleModules);
+
+            y += bunSize / maxPosibleModules;
+        }
     }
 
     private void drawConnections(Graphics g, Mapping currMapping) {
@@ -200,10 +239,10 @@ public class NocPanel extends JPanel {
             for (int i = 0; i < path.size() - 1; i++) {
                 int fromRouter = path.get(i);
                 int toRouter = path.get(i + 1);
-                int fromX = 100 + (fromRouter % noc.getNumRoutersPerDimension()) * 100;
-                int fromY = 100 + (fromRouter / noc.getNumRoutersPerDimension()) * 100;
-                int toX = 100 + (toRouter % noc.getNumRoutersPerDimension()) * 100;
-                int toY = 100 + (toRouter / noc.getNumRoutersPerDimension()) * 100;
+                int fromX = xOffset + (fromRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
+                int fromY = yOffset + (fromRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
+                int toX = xOffset + (toRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
+                int toY = yOffset + (toRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
                 if (drawIndex % 2 == 0)
                     g.setColor(Color.RED);
                 else
@@ -215,35 +254,18 @@ public class NocPanel extends JPanel {
         }
     }
 
-    private void drawMod(Graphics g, DesignModule mod, int router) {
-        int i = router % noc.getNumRoutersPerDimension();
-        int j = router / noc.getNumRoutersPerDimension();
-        int x = 115 + i * 100;
-        int y = 115 + j * 100;
-        g.setColor(Color.ORANGE);
-        g.fillRect(x, y, 70, 70);
-        g.setColor(Color.BLACK);
-
-        String name = mod.getName();
-        if (name.length() > 10) {
-            name = name.substring(0, 8);
-            name += "..";
-        }
-        g.drawString(name, x + 5, y + 35);
-    }
-
     private void drawNoc(Graphics g, Noc noc) {
 
         int numRoutersPerDimension = noc.getNumRoutersPerDimension();
-        int ymin = 110;
-        int ymax = 100 + 10 + 100 * (numRoutersPerDimension - 1);
-        int xmin = 110;
-        int xmax = 100 + 10 + 100 * (numRoutersPerDimension - 1);
+        int ymin = yOffset;
+        int ymax = yOffset + routerSpacing * (numRoutersPerDimension - 1);
+        int xmin = xOffset;
+        int xmax = xOffset + routerSpacing * (numRoutersPerDimension - 1);
         int rIndex = 0;
         for (int j = 0; j < numRoutersPerDimension; j++) {
             for (int i = 0; i < numRoutersPerDimension; i++) {
-                int x = 100 + i * 100;
-                int y = 100 + j * 100;
+                int x = xOffset + i * routerSpacing;
+                int y = yOffset + j * routerSpacing;
                 g.setColor(Color.BLACK);
                 g.fillOval(x, y, 20, 20);
                 if (j == 0) {

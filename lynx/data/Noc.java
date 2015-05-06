@@ -128,7 +128,7 @@ public class Noc extends Module {
                 nocbunInList.add(nocbun);
             }
             // output
-            for (int j = 0; j < nocTdmFactor; j++) {
+            for (int j = 0; j < (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor); j++) {
                 NocBundle nocbun = new NocBundle(i, Direction.OUTPUT, getWidth());
                 nocbunOutList.add(nocbun);
             }
