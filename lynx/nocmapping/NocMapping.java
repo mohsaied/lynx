@@ -24,7 +24,7 @@ public class NocMapping {
 
         // Ullman.findMappings(design, noc);
 
-        //SimulatedAnnealingModule.findMappings(design, noc);
+        // SimulatedAnnealingModule.findMappings(design, noc);
 
         SimulatedAnnealingBundle.findMappings(design, noc);
 

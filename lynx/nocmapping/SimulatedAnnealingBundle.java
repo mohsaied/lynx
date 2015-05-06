@@ -54,53 +54,57 @@ public class SimulatedAnnealingBundle {
         List<Double> debugAnnealTemp = new ArrayList<Double>();
         debugAnnealCost.add(cost);
 
-        // start anneal
-        while (stable_for < 5000 && elapsedSeconds < 100) {
+        // early exit if we have no bundles
+        if (bundleList.size() != 0) {
 
-            // decrement temperature
-            if (totalMoves % tempInterval == 0) {
-                temp = temp * tempFac;
-                tempInterval = setTempInterval(temp);
+            // start anneal
+            while (stable_for < 5000 && elapsedSeconds < 100) {
+
+                // decrement temperature
+                if (totalMoves % tempInterval == 0) {
+                    temp = temp * tempFac;
+                    tempInterval = setTempInterval(temp);
+                }
+
+                // make a move
+                AnnealBundleStruct newAnnealStruct = null;
+                try {
+                    newAnnealStruct = annealMove(annealStruct, bundleList, noc, rand);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ReportData.getInstance().writeToRpt("SCHMETTERLING");
+                    ReportData.getInstance().writeToRpt(e.getMessage());
+                    ReportData.getInstance().closeRpt();
+                }
+
+                // measure its cost
+                currMapping = new Mapping(newAnnealStruct, design);
+                double newCost = currMapping.computeCost();
+                double oldCost = cost;
+                boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
+
+                log.finest(currMapping.toString());
+
+                if (newCost < cost || acceptMove) {
+                    annealStruct = newAnnealStruct;
+                    cost = newCost;
+                    takenMoves++;
+                    log.fine("Cost = " + cost + ", temp = " + temp);
+                }
+
+                debugAnnealCost.add(cost);
+                debugAnnealTemp.add(temp);
+
+                // how long have we been at this cost?
+                stable_for = cost == oldCost ? stable_for + 1 : 0;
+
+                // time
+                endTime = System.nanoTime();
+                elapsedSeconds = (endTime - startTime) / 1e9;
+
+                // stats
+                totalMoves++;
             }
-
-            // make a move
-            AnnealBundleStruct newAnnealStruct = null;
-            try {
-                newAnnealStruct = annealMove(annealStruct, bundleList, noc, rand);
-            } catch (Exception e) {
-                e.printStackTrace();
-                ReportData.getInstance().writeToRpt("SCHMETTERLING");
-                ReportData.getInstance().writeToRpt(e.getMessage());
-                ReportData.getInstance().closeRpt();
-            }
-
-            // measure its cost
-            currMapping = new Mapping(newAnnealStruct, design);
-            double newCost = currMapping.computeCost();
-            double oldCost = cost;
-            boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
-
-            log.finest(currMapping.toString());
-
-            if (newCost < cost || acceptMove) {
-                annealStruct = newAnnealStruct;
-                cost = newCost;
-                takenMoves++;
-                log.fine("Cost = " + cost + ", temp = " + temp);
-            }
-
-            debugAnnealCost.add(cost);
-            debugAnnealTemp.add(temp);
-
-            // how long have we been at this cost?
-            stable_for = cost == oldCost ? stable_for + 1 : 0;
-
-            // time
-            endTime = System.nanoTime();
-            elapsedSeconds = (endTime - startTime) / 1e9;
-
-            // stats
-            totalMoves++;
         }
 
         log.info("Total number of moves = " + takenMoves + "/" + totalMoves);

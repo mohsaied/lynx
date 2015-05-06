@@ -81,74 +81,20 @@ public class Mapping {
      */
     private void connectBundles() throws Exception {
 
-        noc.clearNocBundleStatus();
+        annealStruct = new AnnealBundleStruct(design, noc);
 
         // loop over all modules
         for (DesignModule mod : design.getDesignModules().values()) {
-            int modIndex = design.getModuleIndex(mod.getName());
-            int router = getModuleRouterIndex(modIndex);
-            ArrayList<NocBundle> nocInBundles = noc.getNocInBundles(router);
-            ArrayList<NocBundle> nocOutBundles = noc.getNocOutBundles(router);
-            // loop over all bundles in this module
+
             for (Bundle bun : mod.getBundles().values()) {
 
-                int bunWidth = bun.getWidth();
-                assert bunWidth <= noc.getInterfaceWidth() : "Cannot (currently) handle bundles that are larger than NoC interface width of "
-                        + noc.getInterfaceWidth();
-                if (bunWidth > noc.getInterfaceWidth())
+                int selectedRouter = getModuleRouterIndex(design.getModuleIndex(mod.getName()));
+
+                int requiredNocBundles = annealStruct.attemptMapping(bun, selectedRouter, noc);
+
+                assert requiredNocBundles == 0 : "Too many bundles in module " + mod.getName() + " currently unsupported";
+                if (requiredNocBundles != 0)
                     throw new Exception();
-
-                // how many noc bundles do I need?
-                int numNocBundlesRequired = bunWidth / noc.getWidth() + 1;
-
-                Direction bunDir = bun.getDirection();
-
-                assert bunDir != Direction.UNKNOWN : "Bundle has no direction, what should I do?!";
-                if (bunDir == Direction.UNKNOWN)
-                    throw new Exception();
-
-                // mark the nocbundles as used if they are available
-                // mark the bundle as connected to NoC
-                // add to bundlemap
-
-                // list of nocbundles for this bundle
-                List<NocBundle> nocBundles = new ArrayList<NocBundle>();
-                for (NocBundle nocbun : bunDir == Direction.INPUT ? nocOutBundles : nocInBundles) {
-                    if (!nocbun.isUsed()) {
-                        nocbun.setUsed(true);
-                        nocBundles.add(nocbun);
-                        numNocBundlesRequired--;
-                        if (numNocBundlesRequired == 0)
-                            break;
-                    }
-                }
-
-                // attribute this bundle to the nocbundles found for it in
-                // the bundlemap
-                if (numNocBundlesRequired == 0) {
-                    annealStruct.bundleMap.put(bun, nocBundles);
-                } else {
-                    assert false : "Too many bundles in module " + mod.getName() + " currently unsupported";
-                    throw new Exception();
-                }
-
-            }
-        }
-
-        // all nocbundles are unused
-        for (int i = 0; i < noc.getNumRouters(); i++) {
-            for (NocBundle nocbun : noc.getNocInBundles(i)) {
-                annealStruct.usedNocBundle.put(nocbun, false);
-            }
-            for (NocBundle nocbun : noc.getNocOutBundles(i)) {
-                annealStruct.usedNocBundle.put(nocbun, false);
-            }
-        }
-
-        // set used noc bundle
-        for (List<NocBundle> nocbunList : annealStruct.bundleMap.values()) {
-            for (NocBundle nocbun : nocbunList) {
-                annealStruct.usedNocBundle.put(nocbun, true);
             }
         }
     }

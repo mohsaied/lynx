@@ -177,7 +177,7 @@ public class AnnealBundleStruct {
         }
     }
 
-    private int attemptMapping(Bundle selectedBundle, int selectedRouter, Noc noc) throws Exception {
+    public int attemptMapping(Bundle selectedBundle, int selectedRouter, Noc noc) throws Exception {
 
         // map to selected router if possible without removing other bundles
         // get the nocbundles at the selected router

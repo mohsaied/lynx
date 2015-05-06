@@ -33,8 +33,7 @@ public class NocPanel extends JPanel {
 
     private static final int routerSpacing = 150;
     private static final int bunSize = 140;
-
-    private static final int xOffset = 100;
+    private static final int xOffset = 80;
     private static final int yOffset = 50;
 
     private Design design;
