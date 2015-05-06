@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import com.mxgraph.layout.mxOrganicLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 
@@ -25,6 +25,7 @@ public class GraphPanel extends JPanel {
 
     public GraphPanel() {
         super(new GridLayout(1, 1));
+        this.setSize(700, 700);
         this.design = DesignData.getInstance().getDesign();
     }
 
@@ -50,7 +51,7 @@ public class GraphPanel extends JPanel {
         int i = 0;
         int j = 0;
         for (DesignModule mod : design.getDesignModules().values()) {
-            Object vertex = graph.insertVertex(parent, null, mod.getName(), 100 + 150 * i++, 100 + 150 * j, 100, 75);
+            Object vertex = graph.insertVertex(parent, null, mod.getName(), 100+150 * i++, 100+150 * j, 100, 75);
             vertices.put(mod.getName(), vertex);
             if (i % 3 == 0) {
                 j++;
@@ -77,7 +78,9 @@ public class GraphPanel extends JPanel {
         graph.getModel().endUpdate();
 
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        new mxOrganicLayout(graph).execute(graph.getDefaultParent());
+        mxFastOrganicLayout lo = new mxFastOrganicLayout(graph);
+        lo.setUseBoundingBox(true);
+        lo.execute(graph.getDefaultParent());
         this.add(graphComponent);
     }
 }
