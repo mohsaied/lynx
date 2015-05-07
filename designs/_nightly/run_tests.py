@@ -168,11 +168,12 @@ metric_names = [
     "num_clusters",
     "cluster_time",
     "map_cost",
+    "quench",
     "map_time",
     "noc_in_bundles",
     "noc_out_bundles",
-    "max_link_util",
-    "noc_bw_util",
+    #"max_link_util",
+    #"noc_bw_util",
 ]
 
 #initialize web file

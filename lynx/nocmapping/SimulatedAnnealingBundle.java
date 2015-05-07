@@ -3,6 +3,7 @@ package lynx.nocmapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
@@ -105,12 +106,73 @@ public class SimulatedAnnealingBundle {
                 // stats
                 totalMoves++;
             }
+
+            log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
+            log.info("mapping cost = " + cost);
+            ReportData.getInstance().writeToRpt("map_cost = " + cost);
+
+            takenMoves = 0;
+            totalMoves = 0;
+
+            // reset stable_for
+            stable_for = 0;
+
+            // find list of modules that have all their bundles on one router
+            List<DesignModule> moduleList = findModulesWithGroupedBundles(design, noc, annealStruct);
+            log.info("Found " + moduleList.size() + " thirsty modules");
+
+            if (moduleList.size() > 0) {
+
+                log.info("Starting quench with " + moduleList.size() + " modules");
+
+                // start module quench
+                while (stable_for < 10000 && elapsedSeconds < 110) {
+
+                    // make a move
+                    AnnealBundleStruct newAnnealStruct = null;
+                    try {
+                        newAnnealStruct = annealModuleMove(annealStruct, moduleList, noc, rand);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ReportData.getInstance().writeToRpt("SCHMETTERLING");
+                        ReportData.getInstance().writeToRpt(e.getMessage());
+                        ReportData.getInstance().closeRpt();
+                    }
+
+                    // measure its cost
+                    currMapping = new Mapping(newAnnealStruct, design);
+                    double newCost = currMapping.computeCost();
+                    double oldCost = cost;
+
+                    log.finest(currMapping.toString());
+
+                    if (newCost < cost) {
+                        annealStruct = newAnnealStruct;
+                        cost = newCost;
+                        takenMoves++;
+                        log.fine("Cost = " + cost + ", temp = " + temp);
+                    }
+
+                    debugAnnealCost.add(cost);
+                    debugAnnealTemp.add(temp);
+
+                    // how long have we been at this cost?
+                    stable_for = cost == oldCost ? stable_for + 1 : 0;
+
+                    // time
+                    endTime = System.nanoTime();
+                    elapsedSeconds = (endTime - startTime) / 1e9;
+
+                    // stats
+                    totalMoves++;
+                }
+            }
         }
 
-        log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
+        log.info("Quench number of moves = " + takenMoves + "/" + totalMoves);
 
         log.info("Final mapping cost = " + cost);
-        ReportData.getInstance().writeToRpt("map_cost = " + cost);
+        ReportData.getInstance().writeToRpt("quench = " + cost);
 
         debugPrintMapping(design, annealStruct);
 
@@ -164,6 +226,86 @@ public class SimulatedAnnealingBundle {
         newAnnealStruct.connectBundle(selectedBundle, selectedRouter, noc);
 
         return newAnnealStruct;
+    }
+
+    private static AnnealBundleStruct annealModuleMove(AnnealBundleStruct annealStruct, List<DesignModule> moduleList, Noc noc,
+            Random rand) throws Exception {
+
+        AnnealBundleStruct newAnnealStruct = new AnnealBundleStruct(annealStruct);
+
+        // select a bundle at random
+        int numModules = moduleList.size();
+        int selectedModuleIndex = rand.nextInt(numModules);
+        DesignModule selectedModule = moduleList.get(selectedModuleIndex);
+
+        // which router are we currently at?
+        int oldRouter = annealStruct.getRouterForGroupedModule(selectedModule, noc);
+
+        // select a router at random (+1 for off-noc)
+        int numRouters = noc.getNumRouters() + 1;
+        int selectedRouter = rand.nextInt(numRouters);
+
+        // if this isn't really a move, choose another router
+        while (selectedRouter == oldRouter) {
+            selectedRouter = rand.nextInt(numRouters);
+        }
+
+        // try to map that bundle onto that router
+        // if it is full then we'll have to move whatever is mapped to that
+        // router to another router (or if full, then off-noc)
+
+        // remove whatever mapping this bundle currently has and put it off-noc
+        for (Bundle bun : selectedModule.getBundles().values())
+            newAnnealStruct.disconnectBundle(bun);
+
+        // attempt to connect selectedBundle to selectedRouter -- remove
+        // existing bundles where necessary
+        for (Bundle bun : selectedModule.getBundles().values())
+            newAnnealStruct.connectBundle(bun, selectedRouter, noc);
+
+        return newAnnealStruct;
+    }
+
+    /**
+     * returns a set of modules that have all bundles mapped on the same router
+     * 
+     * @param design
+     * @param noc
+     * @param annealStruct
+     * @return
+     */
+    private static List<DesignModule> findModulesWithGroupedBundles(Design design, Noc noc, AnnealBundleStruct annealStruct) {
+        List<DesignModule> modList = new ArrayList<DesignModule>();
+
+        for (DesignModule mod : design.getDesignModules().values()) {
+            int router = -1;
+            boolean sameRouter = true;
+            for (Bundle bun : mod.getBundles().values()) {
+                Set<Integer> routers = annealStruct.getRoutersForBundle(bun);
+                if (routers.size() == 0) {
+                    if (router == -1 || router == noc.getNumRouters()) {
+                        router = noc.getNumRouters();
+                    } else {
+                        sameRouter = false;
+                        break;
+                    }
+                } else if (routers.size() == 1) {
+                    if (router == -1 || router == (int) routers.toArray()[0]) {
+                        router = (int) routers.toArray()[0];
+                    } else {
+                        sameRouter = false;
+                        break;
+                    }
+                } else {
+                    sameRouter = false;
+                    break;
+                }
+            }
+            if (sameRouter)
+                modList.add(mod);
+        }
+
+        return modList;
     }
 
     /**

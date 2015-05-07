@@ -90,6 +90,8 @@ public class Mapping {
 
                 int selectedRouter = getModuleRouterIndex(design.getModuleIndex(mod.getName()));
 
+                annealStruct.disconnectBundle(bun);
+
                 int requiredNocBundles = annealStruct.attemptMapping(bun, selectedRouter, noc);
 
                 assert requiredNocBundles == 0 : "Too many bundles in module " + mod.getName() + " currently unsupported";
@@ -187,7 +189,7 @@ public class Mapping {
         // TODO this is arbitrary right now
         for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
-                cost += 30;
+                cost += 100;
         }
 
         // add penalty for any bundles that are split over more than one router
@@ -202,7 +204,14 @@ public class Mapping {
                 }
             }
             if (routers.size() > 1)
-                cost += 10 * (routers.size() - 1);
+                cost += 20 * (routers.size() - 1);
+        }
+
+        // area of off-noc connections
+        for (Connection con : design.getConnections()) {
+            if (annealStruct.bundleMap.get(con.getFromBundle()).size() == 0
+                    || annealStruct.bundleMap.get(con.getFromBundle()).size() == 0)
+                cost += 4;
         }
 
         // latency portion of the cost

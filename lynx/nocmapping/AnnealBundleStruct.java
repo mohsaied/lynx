@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lynx.data.Bundle;
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
@@ -231,5 +233,25 @@ public class AnnealBundleStruct {
         }
 
         return numNocBundlesRequired;
+    }
+
+    public Set<Integer> getRoutersForBundle(Bundle bun) {
+        Set<Integer> routers = new HashSet<Integer>();
+        for (NocBundle nocbun : bundleMap.get(bun)) {
+            routers.add(nocbun.getRouter());
+        }
+        return routers;
+    }
+
+    public int getRouterForGroupedModule(DesignModule mod, Noc noc) {
+        for (Bundle bun : mod.getBundles().values()) {
+            Set<Integer> routersForBundle = getRoutersForBundle(bun);
+            if (routersForBundle.size() == 0)
+                return noc.getNumRouters();
+            else
+                return (int) getRoutersForBundle(bun).toArray()[0];
+        }
+        assert false : "wth?";
+        return -1;
     }
 }
