@@ -167,12 +167,13 @@ public class SimulatedAnnealingBundle {
                     totalMoves++;
                 }
             }
+
+            log.info("Quench number of moves = " + takenMoves + "/" + totalMoves);
+
+            log.info("Final mapping cost = " + cost);
+            ReportData.getInstance().writeToRpt("quench = " + cost);
+
         }
-
-        log.info("Quench number of moves = " + takenMoves + "/" + totalMoves);
-
-        log.info("Final mapping cost = " + cost);
-        ReportData.getInstance().writeToRpt("quench = " + cost);
 
         debugPrintMapping(design, annealStruct);
 
