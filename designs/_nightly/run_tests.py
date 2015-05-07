@@ -95,7 +95,7 @@ def close_web(web_dir, version):
 </html>\n"
     web.close()
 
-def update_web(web_dir, version, test_name, crash, metric_values, golden_values):
+def update_web(web_dir, version, test_name, crash, metric_values, golden_values, previous_values):
     web = open(web_dir+str(version)+".html",'a')
     print >>web, "<th>"+test_name+"</th>"
     if crash:
@@ -103,14 +103,27 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values)
     else:
         for i in range(0,len(metric_values)):
             metric = metric_values[i]
+            metric_fl = 0
+            if metric != '-':
+                metric_fl = float(metric)
             golden = golden_values[i]
+            previous = previous_values[i]
+            prev_fl = 0
+            if previous != '-':
+                prev_fl = float(previous)
             if metric == '-':
-                print >>web, "<td bgcolor=\"#C0C0C0\">"+metric+"</td>"
+                print >>web, "<td>"+metric+"</td>"
             else:
-                if golden == '-' or metric == golden:
-                    print >>web, "<td bgcolor=\"#00FF00\">"+metric+"</td>"
+                if previous == '-' or metric == previous or metric == '-':
+                    print >>web, "<td bgcolor=\"#EEE0E5\">"+metric+"</td>"
                 else:
-                    print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+golden+")"+"</td>"
+                    if metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
+                        print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
+                    elif metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
+                        print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
+                    else:
+                        print >>web, "<td bgcolor=\"#EEE0E5\">"+metric+" ("+previous+")"+"</td>"
+                        
                     
     print >>web, "</tr>"
     web.close()
@@ -121,12 +134,17 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values)
     
 java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\\Software\\noclynx\\jfreechart\\jcommon-1.0.23\\jcommon-1.0.23.jar;D:\\Dropbox\\PhD\\Software\\noclynx\\jfreechart\\jfreechart-1.0.19\\lib\\jfreechart-1.0.19.jar;D:\\Dropbox\\PhD\\Software\\noclynx\\jgraphx\\jgraphx.jar\" lynx.main.Main -c "
 
+#if run is set to true, we run through the latest code base
+#if it is set to false, then we simply compare two results directories
+run = False
+
 #version number of the program
 #increment version number with each set of major changes
-version = 8
+version = 9
 
 tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
 reports_dir = "archive/"+str(version)+"/"
+prev_reports_dir = "archive/"+str(version-1)+"/"
 web_dir= "web/"
 
 test_names = [
@@ -188,24 +206,26 @@ for test_name in test_names:
     curr_test_path = tests_dir+test_name+"\\"+test_name+".xml"
     golden_path = tests_dir+test_name+"\\golden.txt"
 
-    #------------------------------------------------------------------
-    #run test
-    #------------------------------------------------------------------
-    os.system(java_cmd_win+curr_test_path)
-    
-    #------------------------------------------------------------------
-    #copy report
-    #------------------------------------------------------------------
-    if not os.path.isdir("archive/"+str(version)):
-        os.mkdir("archive/"+str(version))
-    shutil.copy2(curr_test_path+".rpt", "archive/"+str(version)+"/")
-    os.remove(curr_test_path+".rpt")
+    if run:
+        #------------------------------------------------------------------
+        #run test
+        #------------------------------------------------------------------
+        os.system(java_cmd_win+curr_test_path)
+        
+        #------------------------------------------------------------------
+        #copy report
+        #------------------------------------------------------------------
+        if not os.path.isdir("archive/"+str(version)):
+            os.mkdir("archive/"+str(version))
+        shutil.copy2(curr_test_path+".rpt", "archive/"+str(version)+"/")
+        os.remove(curr_test_path+".rpt")
     
     #------------------------------------------------------------------
     #parse report
     #------------------------------------------------------------------
     #path to current report file
     report_path = reports_dir+test_name+".xml.rpt"
+    prev_report_path = prev_reports_dir+test_name+".xml.rpt"
     
     #first check for crash or non-existent report file
     crash = check_for_crash(report_path)
@@ -213,14 +233,16 @@ for test_name in test_names:
     #list of returned metrics
     metric_values=["-"]*len(metric_names)
     golden_values=["-"]*len(metric_names)
+    previous_values=["-"]*len(metric_names)
     if not crash:
         metric_values = find_metrics(report_path, metric_names)
         golden_values = find_golden(golden_path, metric_names)
+        previous_values = find_metrics(prev_report_path, metric_names)
     
     #------------------------------------------------------------------
     #update test page
     #------------------------------------------------------------------
-    update_web(web_dir, version, test_name, crash, metric_values, golden_values)
+    update_web(web_dir, version, test_name, crash, metric_values, golden_values, previous_values)
     
     
 close_web(web_dir, version)
