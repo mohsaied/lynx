@@ -24,14 +24,15 @@ def find_metrics(report_path, metric_names):
     #init return vector to -1's 
     metric_values = ["-"]*len(metric_names)
 
-    #parse the file
-    rpt = open(report_path,'r')
-    for line in rpt:
-        for i in range(0,len(metric_names)):
-            if metric_names[i] in line:
-                part_list = line.split()
-                metric_values[i] = part_list[2]
-    rpt.close()
+    if os.path.isfile(report_path):
+        #parse the file
+        rpt = open(report_path,'r')
+        for line in rpt:
+            for i in range(0,len(metric_names)):
+                if metric_names[i] in line:
+                    part_list = line.split()
+                    metric_values[i] = part_list[2]
+        rpt.close()
     
     return metric_values
 
@@ -115,15 +116,14 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values,
                 print >>web, "<td>"+metric+"</td>"
             else:
                 if previous == '-' or metric == previous or metric == '-':
-                    print >>web, "<td bgcolor=\"#EEE0E5\">"+metric+"</td>"
+                    print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                 else:
                     if metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
                     elif metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
                     else:
-                        print >>web, "<td bgcolor=\"#EEE0E5\">"+metric+" ("+previous+")"+"</td>"
-                        
+                        print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                     
     print >>web, "</tr>"
     web.close()
@@ -136,7 +136,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
-run = False
+run = True
 
 #version number of the program
 #increment version number with each set of major changes
@@ -150,19 +150,19 @@ web_dir= "web/"
 test_names = [
     "chain_n4_w128",
     "chain_n16_w128",
-    #"chain_n20_w128",
+    "chain_n20_w128",
     
     "broadcast_n3_w128",
     "broadcast_n9_w128",
-    #"broadcast_n16_w128",
+    "broadcast_n16_w128",
     
     "converge_n3_w128",
     "converge_n9_w128",
-    #"converge_n18_w128",
+    "converge_n18_w128",
     
     "multimaster_n3_w128",
     "multimaster_n9_w128",
-    #"multimaster_n17_w128",
+    "multimaster_n17_w128",
     
     "reconverge_n2_w128",
     "reconverge_n4_w128",

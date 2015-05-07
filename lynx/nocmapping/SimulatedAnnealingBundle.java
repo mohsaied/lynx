@@ -146,7 +146,7 @@ public class SimulatedAnnealingBundle {
 
                     log.finest(currMapping.toString());
 
-                    if (newCost < cost) {
+                    if (newCost <= cost) {
                         annealStruct = newAnnealStruct;
                         cost = newCost;
                         takenMoves++;
