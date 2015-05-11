@@ -208,6 +208,9 @@ public class Mapping {
         }
 
         // area of off-noc connections
+        // have an area penalty per connection
+        // TODO make this smarter by looking at connectiongroups -- what
+        // requires arbitration and what is a simple connection?
         for (Connection con : design.getConnections()) {
             if (annealStruct.bundleMap.get(con.getFromBundle()).size() == 0
                     || annealStruct.bundleMap.get(con.getFromBundle()).size() == 0)

@@ -50,6 +50,7 @@ public class SimulatedAnnealingBundle {
         double tempFac = 0.99;
         int tempInterval = 10;
         int stable_for = 0;
+        double mapOnlyCost = cost;
 
         List<Double> debugAnnealCost = new ArrayList<Double>();
         List<Double> debugAnnealTemp = new ArrayList<Double>();
@@ -109,7 +110,7 @@ public class SimulatedAnnealingBundle {
 
             log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
             log.info("mapping cost = " + cost);
-            ReportData.getInstance().writeToRpt("map_cost = " + cost);
+            mapOnlyCost = cost;
 
             takenMoves = 0;
             totalMoves = 0;
@@ -126,7 +127,7 @@ public class SimulatedAnnealingBundle {
                 log.info("Starting quench with " + moduleList.size() + " modules");
 
                 // start module quench
-                while (stable_for < 10000 && elapsedSeconds < 110) {
+                while (stable_for < 5000 && elapsedSeconds < 110) {
 
                     // make a move
                     AnnealBundleStruct newAnnealStruct = null;
@@ -171,7 +172,10 @@ public class SimulatedAnnealingBundle {
             log.info("Quench number of moves = " + takenMoves + "/" + totalMoves);
 
             log.info("Final mapping cost = " + cost);
-            ReportData.getInstance().writeToRpt("quench = " + cost);
+            log.info("Quench reduction = " + (mapOnlyCost - cost));
+            
+            ReportData.getInstance().writeToRpt("map_cost = " + cost);
+            ReportData.getInstance().writeToRpt("quench = " + (mapOnlyCost - cost));
 
         }
 

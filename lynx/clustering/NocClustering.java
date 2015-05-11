@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
+import lynx.data.Clustering;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Parameter;
@@ -66,6 +67,8 @@ public class NocClustering {
 
         Design clusteredDesign = new Design(design.getName() + "_clustered");
 
+        Clustering clustering = new Clustering();
+
         int index = 0;
         ArrayList<ClusterConnection> connections = new ArrayList<ClusterConnection>();
 
@@ -74,6 +77,9 @@ public class NocClustering {
 
             // create a new module for each scc
             DesignModule cluster = new DesignModule("cluster", "cluster_" + index, index);
+
+            // create a list of modules in this cluster
+            List<DesignModule> mods = new ArrayList<DesignModule>();
 
             // loop over all modules in this cluster
             for (String modName : scc) {
@@ -111,7 +117,13 @@ public class NocClustering {
                         }
                     }
                 }
+
+                // add this module to the list of modules in this cluster
+                mods.add(mod);
             }
+
+            // now add cluster + its list of modules to our Clustering object
+            clustering.addCluster(cluster, mods, design);
 
             // add cluster to clusteredDesign
             clusteredDesign.addModule(cluster);

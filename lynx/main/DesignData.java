@@ -1,6 +1,7 @@
 package lynx.main;
 
 import lynx.data.Design;
+import lynx.data.Clustering;
 import lynx.data.Noc;
 import lynx.nocmapping.Mapping;
 
@@ -22,6 +23,8 @@ public class DesignData {
      */
     Noc noc;
 
+    Clustering clustering;
+    
     /**
      * Design post-clustering
      */

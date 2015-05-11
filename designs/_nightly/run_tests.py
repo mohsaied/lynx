@@ -116,12 +116,17 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values,
                 print >>web, "<td>"+metric+"</td>"
             else:
                 if previous == '-' or metric == previous or metric == '-':
-                    print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
+                    if metric_fl == 0 and i == 5:
+                        print >>web, "<td bgcolor=\"#D3D3D3\">"+metric+"</td>"
+                    else:
+                        print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                 else:
                     if metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
                     elif metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
+                    elif metric_fl == 0 and i == 5:
+                        print >>web, "<td bgcolor=\"#D3D3D3\">"+metric+"</td>"
                     else:
                         print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                     
@@ -136,11 +141,11 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
-run = True
+run = False
 
 #version number of the program
 #increment version number with each set of major changes
-version = 9
+version = 11
 
 tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
 reports_dir = "archive/"+str(version)+"/"
