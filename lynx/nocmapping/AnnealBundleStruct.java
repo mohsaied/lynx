@@ -190,9 +190,6 @@ public class AnnealBundleStruct {
         if (bunWidth > noc.getInterfaceWidth())
             throw new Exception();
 
-        // add selected Bundle to the current list of bundles at this router
-        this.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
-
         // how many noc bundles do I need?
         // input noc bundles are equal to flit(noc) width
         // output noc bundles are equal to fabric width/numVCs - more or less

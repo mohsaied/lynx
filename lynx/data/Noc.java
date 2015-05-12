@@ -124,12 +124,12 @@ public class Noc extends Module {
             // each bundle has the NoC's width
             // input
             for (int j = 0; j < nocTdmFactor; j++) {
-                NocBundle nocbun = new NocBundle(i, Direction.INPUT, getWidth());
+                NocBundle nocbun = new NocBundle(i, j, Direction.INPUT, getWidth());
                 nocbunInList.add(nocbun);
             }
             // output
             for (int j = 0; j < (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor); j++) {
-                NocBundle nocbun = new NocBundle(i, Direction.OUTPUT, getWidth());
+                NocBundle nocbun = new NocBundle(i, j, Direction.OUTPUT, getWidth());
                 nocbunOutList.add(nocbun);
             }
 

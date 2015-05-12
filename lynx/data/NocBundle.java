@@ -7,20 +7,26 @@ public class NocBundle {
     private boolean used;
 
     private int router;
+    private int index;
 
     private Direction direction;
 
     private int width;
 
-    public NocBundle(int router, Direction direction, int width) {
+    public NocBundle(int router, int index, Direction direction, int width) {
         this.used = false;
         this.router = router;
+        this.index = index;
         this.direction = direction;
         this.width = width;
     }
 
     public int getRouter() {
         return router;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public Direction getDirection() {
