@@ -59,7 +59,6 @@ public class VerilogOut {
             }
             writer.println();
         }
-
     }
 
     private static void writeWire(Port por, PrintWriter writer) {

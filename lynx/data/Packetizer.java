@@ -12,8 +12,8 @@ import lynx.data.MyEnums.TranslatorType;
  */
 public final class Packetizer extends Translator {
 
-    public Packetizer(Noc parentNoc, DesignModule parentModule, Bundle parentBundle) {
-        super(parentNoc, parentModule, parentBundle, TranslatorType.PACKETIZER);
+    public Packetizer(Noc parentNoc, Bundle parentBundle) {
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER);
 
         addParametersAndPorts();
 
@@ -36,7 +36,8 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
-        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getInterfaceWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getInterfaceWidth(),
+                this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
@@ -76,7 +77,6 @@ public final class Packetizer extends Translator {
 
     @Override
     public final void connectToRouter(int router) {
-
         // data
         Port pktDataOut = getPort(PortType.DATA, Direction.OUTPUT);
         Port nocDataIn = parentNoc.getPort(PortType.DATA, Direction.INPUT, router);

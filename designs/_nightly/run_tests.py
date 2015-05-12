@@ -116,12 +116,16 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values,
                 print >>web, "<td>"+metric+"</td>"
             else:
                 if previous == '-' or metric == previous or metric == '-':
-                    if metric_fl == 0 and i == 5:
+                    if metric_fl == 0 and i == 5: #special case for zero quench
                         print >>web, "<td bgcolor=\"#D3D3D3\">"+metric+"</td>"
                     else:
                         print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                 else:
-                    if metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
+                    if i==5 and metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
+                        print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
+                    elif i==5 and metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
+                        print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
+                    elif metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
                     elif metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
@@ -141,7 +145,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
-run = False
+run = True
 
 #version number of the program
 #increment version number with each set of major changes

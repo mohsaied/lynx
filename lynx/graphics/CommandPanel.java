@@ -37,6 +37,7 @@ public class CommandPanel extends JPanel {
     private JPanel openPanel;
     private JPanel clusterPanel;
     private JPanel mapPanel;
+    private JPanel fileOutPanel;
     private JPanel logoPanel;
 
     // logo image
@@ -46,6 +47,7 @@ public class CommandPanel extends JPanel {
     private JButton openButton;
     private JButton clusterButton;
     private JButton mapButton;
+    private JButton fileOutButton;
 
     // opened file
     private File openedFile;
@@ -54,11 +56,13 @@ public class CommandPanel extends JPanel {
     private JLabel openSecLabel;
     private JLabel clusterSecLabel;
     private JLabel mapSecLabel;
+    private JLabel fileOutSecLabel;
 
     // progress bars for algorithms
     private JProgressBar fileProgress;
     private JProgressBar clusterProgress;
     private JProgressBar mapProgress;
+    private JProgressBar fileOutProgress;
 
     private MainPanel mainPanel;
 
@@ -67,7 +71,7 @@ public class CommandPanel extends JPanel {
      * initializes everything
      */
     public CommandPanel(MainPanel mainPanel) {
-        super(new GridLayout(4, 1));
+        super(new GridLayout(5, 1));
         this.mainPanel = mainPanel;
 
         // create a panel for each group of buttons
@@ -81,6 +85,9 @@ public class CommandPanel extends JPanel {
 
         // third panel is for mapping
         createMapPanel();
+
+        // fourth panel is for file generation
+        createFilePanel();
     }
 
     private void createOpenPanel() {
@@ -128,7 +135,6 @@ public class CommandPanel extends JPanel {
                                     mapProgress.setString("");
                                     mainPanel.addGraphTab();
                                     fileProgress.setIndeterminate(false);
-
                                 } catch (Exception e1) {
                                     e1.printStackTrace();
                                     fileProgress.setString("error!");
@@ -155,6 +161,13 @@ public class CommandPanel extends JPanel {
                                 mapProgress.setIndeterminate(false);
                                 mapProgress.setString("done.");
 
+                                fileOutProgress.setIndeterminate(true);
+                                fileOutProgress.setStringPainted(true);
+                                fileOutProgress.setString("working...");
+                                log.info("Generating output files");
+                                NocInterconnect.connectDesignToNoc(design, noc);
+                                fileOutProgress.setIndeterminate(false);
+                                fileOutProgress.setString("done.");
                             }
                         }.start();
                     } else {
@@ -212,6 +225,27 @@ public class CommandPanel extends JPanel {
         mapPanel.add(mapButton);
         mapPanel.add(mapProgress);
         this.add(mapPanel);
+    }
+
+    private void createFilePanel() {
+        fileOutPanel = new JPanel(new GridLayout(4, 1));
+
+        // first create a label for this section
+        fileOutSecLabel = new JLabel("4. Output Generation");
+        fileOutSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        fileOutProgress = new JProgressBar();
+        fileOutButton = new JButton("Generate Verilog");
+        fileOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                log.info("Output XML and Verilog files have been generated in project directory");
+            }
+        });
+        fileOutPanel.add(fileOutSecLabel);
+        fileOutPanel.add(fileOutButton);
+        fileOutPanel.add(fileOutProgress);
+        this.add(fileOutPanel);
     }
 
     private void createLogoPanel() {

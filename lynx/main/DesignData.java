@@ -23,8 +23,11 @@ public class DesignData {
      */
     Noc noc;
 
+    /**
+     * clustering information
+     */
     Clustering clustering;
-    
+
     /**
      * Design post-clustering
      */

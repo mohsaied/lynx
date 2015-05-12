@@ -25,12 +25,6 @@ public class Clustering {
      */
     Map<DesignModule, List<Connection>> clusterConnectionMap;
 
-    /**
-     * Construct the clustering from the list of SCCs and the original design
-     * 
-     * @param design
-     * @param sccs
-     */
     public Clustering() {
         // init lists
         clusterModuleMap = new HashMap<DesignModule, List<DesignModule>>();
@@ -49,5 +43,13 @@ public class Clustering {
                 consInCluster.add(con);
             }
         }
+    }
+
+    public Map<DesignModule, List<DesignModule>> getClusterModuleMap() {
+        return clusterModuleMap;
+    }
+
+    public Map<DesignModule, List<Connection>> getClusterConnectionMap() {
+        return clusterConnectionMap;
     }
 }

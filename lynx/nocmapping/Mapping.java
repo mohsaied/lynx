@@ -325,6 +325,10 @@ public class Mapping {
         return mapMatrix;
     }
 
+    public Map<Bundle, List<NocBundle>> getBundleMap() {
+        return annealStruct.bundleMap;
+    }
+
     public int getNumNoCBundlesIn() {
         int num = 0;
         // loop over bundle map and find how many input nocbundles are used

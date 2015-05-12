@@ -319,4 +319,14 @@ public final class Design extends Module {
         return bundleList;
     }
 
+    @Override
+    public Design clone() {
+
+        Design cloneDesign = new Design(this.getName());
+        
+        
+
+        return cloneDesign;
+    }
+
 }

@@ -57,7 +57,7 @@ public class NocClustering {
     }
 
     /**
-     * Create a new 'Design' object after clustering
+     * Create a new 'Design' and 'Clustering' object after clustering
      * 
      * @param stronglyConnectedComponents
      */
