@@ -22,6 +22,7 @@ import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.data.Wire;
 import lynx.main.DesignData;
 import lynx.main.ReportData;
 
@@ -337,10 +338,10 @@ public class XmlDesign {
 
         // top level
         for (Port por : design.getPorts().values()) {
-            for (Port wire : por.getWires()) {
+            for (Wire wire : por.getWires()) {
                 Element wireElement = doc.createElement("top_wire");
                 wireElement.setAttribute("top", por.getName());
-                wireElement.setAttribute("sub", wire.getFullNameDot());
+                wireElement.setAttribute("sub", wire.getDstPort().getFullNameDot());
                 rootElement.appendChild(wireElement);
             }
         }
@@ -349,10 +350,10 @@ public class XmlDesign {
         for (Module mod : design.getAllModules()) {
             for (Port por : mod.getPorts().values()) {
                 if (por.getDirection() == Direction.OUTPUT) {
-                    for (Port wire : por.getWires()) {
+                    for (Wire wire : por.getWires()) {
                         Element wireElement = doc.createElement("wire");
                         wireElement.setAttribute("start", por.getFullNameDot());
-                        wireElement.setAttribute("end", wire.getFullNameDot());
+                        wireElement.setAttribute("end", wire.getDstPort().getFullNameDot());
                         rootElement.appendChild(wireElement);
                     }
                 }

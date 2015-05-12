@@ -24,7 +24,7 @@ public class Port {
     private PortType type;
 
     private Module parentModule;
-    private List<Port> wires;
+    private List<Wire> wires;
 
     private boolean isBundled;
     private boolean isGlobal;
@@ -66,7 +66,7 @@ public class Port {
         this.arrayWidth = arrayWidth;
         this.type = type;
         this.parentModule = parentModule;
-        this.wires = new ArrayList<Port>();
+        this.wires = new ArrayList<Wire>();
         this.isBundled = isBundled;
         this.isGlobal = globalPortName != null;
         this.setGlobalPortName(globalPortName);
@@ -141,7 +141,7 @@ public class Port {
         this.parentModule = parentModule;
     }
 
-    public final List<Port> getWires() {
+    public final List<Wire> getWires() {
         return wires;
     }
 
@@ -150,7 +150,13 @@ public class Port {
                 + wire.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
         assert wire.getWidth() == this.getWidth() : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
                 + " of different widths " + wire.getWidth() + " and " + this.getWidth();
-        this.wires.add(wire);
+        this.wires.add(new Wire(this, wire));
+    }
+
+    public final void addWire(Port wire, int srcPortStart, int srcPortEnd, int dstPortStart, int dstPortEnd) {
+        assert ((wire.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
+                + wire.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
+        this.wires.add(new Wire(wire, srcPortStart, srcPortEnd, dstPortStart, dstPortEnd));
     }
 
     public boolean isBundled() {
@@ -190,7 +196,7 @@ public class Port {
                 return this.getFullNameDash() + "_wire";
             } else if (direction == Direction.INPUT) {
                 if (wires.size() == 1) {
-                    return wires.get(0).getFullNameDash() + "_wire";
+                    return wires.get(0).getDstPort().getFullNameDash() + "_wire";
                 } else {
                     assert wires.size() <= 1 : "Input port " + this.getFullNameDash() + " cannot have multiple (" + wires.size()
                             + ") drivers";
@@ -205,8 +211,7 @@ public class Port {
     @Override
     public Port clone() {
         Port por = new Port(name, direction, width, arrayWidth, type, parentModule, isBundled, globalPortName);
-        for (Port wire : wires)
-            por.addWire(wire);
+        // TODO find a way to clone wires as well
         return por;
     }
 
