@@ -1,4 +1,4 @@
-package lynx.verilog;
+package lynx.hdlgen;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -43,7 +43,6 @@ public class VerilogOut {
     }
 
     private static void writePostamble(PrintWriter writer) {
-        writer.println();
         writer.println("endmodule");
     }
 

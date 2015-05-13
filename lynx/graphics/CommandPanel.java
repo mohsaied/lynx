@@ -26,7 +26,7 @@ import lynx.main.Main;
 import lynx.main.ReportData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
-import lynx.verilog.VerilogOut;
+import lynx.hdlgen.VerilogOut;
 
 public class CommandPanel extends JPanel {
 
