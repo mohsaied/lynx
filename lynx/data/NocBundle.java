@@ -25,6 +25,12 @@ public class NocBundle {
         return router;
     }
 
+    /**
+     * The index indicates where on the noc Port this noc bundle resides For
+     * example: index 0 means it resides on flit 0, or bits 0..width-1
+     * 
+     * @return the int index which ranges from 0 to numNocBundlesAtThisRouter-1
+     */
     public int getIndex() {
         return index;
     }

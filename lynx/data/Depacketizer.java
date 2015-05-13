@@ -1,17 +1,21 @@
 package lynx.data;
 
+import java.util.List;
+
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
 
 public final class Depacketizer extends Translator {
 
-    public Depacketizer(Noc parentNoc, Bundle parentBundle) {
+    public Depacketizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
         super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.DEPACKETIZER);
 
         addParametersAndPorts();
 
         connectToBundle();
+
+        connectToRouter(nocbuns);
     }
 
     @Override
@@ -60,13 +64,34 @@ public final class Depacketizer extends Translator {
     }
 
     @Override
-    public final void connectToRouter(int router) {
+    public final void connectToRouter(List<NocBundle> nocbuns) {
+
+        assert nocbuns.size() != 0 : "Attempting to connect to a router, but no NocBundles are specified";
+
+        // all nocbundles should be connected to the same router so getting the
+        // router of the first one suffices
+        int router = nocbuns.get(0).getRouter();
+
+        // and where do they start and end? //max is tdm
+        int startIndex = this.parentNoc.getTdmFactor();
+        int endIndex = 0;
+        // find start and end points
+        for (NocBundle nocbun : nocbuns) {
+            if (nocbun.getIndex() < startIndex)
+                startIndex = nocbun.getIndex();
+            if (nocbun.getIndex() > endIndex)
+                endIndex = nocbun.getIndex();
+        }
+
+        // find start and end widths on the Noc Ports
+        int startWidthNocPort = nocbuns.get(0).getWidth() * startIndex;
+        int endWidthNocPort = nocbuns.get(0).getWidth() * (endIndex + 1) - 1;
 
         // data
         Port pktDataIn = getPort(PortType.DATA, Direction.INPUT);
         Port nocDataOut = parentNoc.getPort(PortType.DATA, Direction.OUTPUT, router);
-        pktDataIn.addWire(nocDataOut);
-        nocDataOut.addWire(pktDataIn);
+        pktDataIn.addWire(nocDataOut, 0, pktDataIn.getWidth() - 1, startWidthNocPort, endWidthNocPort);
+        nocDataOut.addWire(pktDataIn, startWidthNocPort, endWidthNocPort, 0, pktDataIn.getWidth() - 1);
 
         // valid
         Port pktValidIn = getPort(PortType.VALID, Direction.INPUT);

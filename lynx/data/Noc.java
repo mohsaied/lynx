@@ -360,12 +360,4 @@ public class Noc extends Module {
             }
         }
     }
-
-    public int getNumNocInBundles() {
-        return nocInBundles.size();
-    }
-
-    public int getNumNocOutBundles() {
-        return nocOutBundles.size();
-    }
 }

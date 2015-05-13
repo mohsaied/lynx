@@ -107,12 +107,10 @@ public class NocInterconnect {
             if (nocbuns.size() != 0) {
                 switch (bun.getDirection()) {
                 case OUTPUT:
-                    insertPacketizer(bun, design);
-                    //bun.connectToRouter(nocbuns);
+                    insertPacketizer(design, bun, nocbuns);
                     break;
                 case INPUT:
-                    insertDepacketizer(bun, design);
-                    //bun.connectToRouter(nocbuns);
+                    insertDepacketizer(design, bun, nocbuns);
                     break;
                 default:
                     assert false : "Bundle direction was never set.";
@@ -133,13 +131,13 @@ public class NocInterconnect {
         }
     }
 
-    private static void insertPacketizer(Bundle bun, Design design) {
-        Packetizer packetizer = new Packetizer(DesignData.getInstance().getNoc(), bun);
+    private static void insertPacketizer(Design design, Bundle bun, List<NocBundle> nocbuns) {
+        Packetizer packetizer = new Packetizer(DesignData.getInstance().getNoc(), bun, nocbuns);
         design.addTranslator(packetizer);
     }
 
-    private static void insertDepacketizer(Bundle bun, Design design) {
-        Depacketizer depacketizer = new Depacketizer(DesignData.getInstance().getNoc(), bun);
+    private static void insertDepacketizer(Design design, Bundle bun, List<NocBundle> nocbuns) {
+        Depacketizer depacketizer = new Depacketizer(DesignData.getInstance().getNoc(), bun, nocbuns);
         design.addTranslator(depacketizer);
     }
 

@@ -1,5 +1,7 @@
 package lynx.data;
 
+import java.util.List;
+
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
@@ -55,6 +57,6 @@ public abstract class Translator extends Module {
 
     protected abstract void addParametersAndPorts();
 
-    public abstract void connectToRouter(int router);
+    public abstract void connectToRouter(List<NocBundle> nocbuns);
 
 }

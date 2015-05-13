@@ -164,15 +164,6 @@ public final class Bundle {
         this.connections.add(connection);
     }
 
-    public void connectToRouter(int router) {
-        // this bundle should already be connected to a translator (upon
-        // translator creation)
-        // so this method should connect the other end of the translator to the
-        // NoC router specified
-
-        translator.connectToRouter(router);
-    }
-
     public BundleStatus getBundleStatus() {
         return bundleStatus;
     }

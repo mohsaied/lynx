@@ -145,18 +145,18 @@ public class Port {
         return wires;
     }
 
-    public final void addWire(Port wire) {
-        assert ((wire.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
-                + wire.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
-        assert wire.getWidth() == this.getWidth() : "Attempting to connect " + wire.getFullNameDot() + " and " + getFullNameDot()
-                + " of different widths " + wire.getWidth() + " and " + this.getWidth();
-        this.wires.add(new Wire(this, wire));
+    public final void addWire(Port dstPort) {
+        assert ((dstPort.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
+                + dstPort.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
+        assert dstPort.getWidth() == this.getWidth() : "Attempting to connect " + dstPort.getFullNameDot() + " and "
+                + getFullNameDot() + " of different widths " + dstPort.getWidth() + " and " + this.getWidth();
+        this.wires.add(new Wire(this, dstPort));
     }
 
-    public final void addWire(Port wire, int srcPortStart, int srcPortEnd, int dstPortStart, int dstPortEnd) {
-        assert ((wire.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
-                + wire.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
-        this.wires.add(new Wire(wire, srcPortStart, srcPortEnd, dstPortStart, dstPortEnd));
+    public final void addWire(Port dstPort, int srcPortStart, int srcPortEnd, int dstPortStart, int dstPortEnd) {
+        assert ((dstPort.getDirection() != this.getDirection()) || (this.parentModule instanceof Design)) : "Attempting to connect "
+                + dstPort.getFullNameDot() + " and " + getFullNameDot() + " of same direction " + this.getDirection();
+        this.wires.add(new Wire(dstPort, srcPortStart, srcPortEnd, dstPortStart, dstPortEnd));
     }
 
     public boolean isBundled() {
