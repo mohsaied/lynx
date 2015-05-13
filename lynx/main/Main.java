@@ -23,7 +23,7 @@ public class Main {
 
     @SuppressWarnings("unused")
     public final static void main(String[] args) {
-
+ /*
         try {
             runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
         } catch (Exception e) {
@@ -32,8 +32,7 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
-        return;
-        /*
+       */
         try {
             if (args.length == 0) {
                 // bring up the GUI
@@ -51,7 +50,7 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
-        */
+        
     }
 
     /**
