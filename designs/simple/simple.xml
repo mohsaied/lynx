@@ -1,0 +1,37 @@
+<design name="simple">
+  
+  <module type="src" name="src1">
+  
+    <parameter name="DUMMY" value="16"/>
+    
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	
+    <bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dst" name="dst1">
+	
+    <parameter name="DUMMY" value="20"/>
+    
+    <port direction="input" width="1" name="clk" type="clk" global="clk"/>
+    
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="src1.outbun" end="dst1.inbun"/>
+  
+</design>

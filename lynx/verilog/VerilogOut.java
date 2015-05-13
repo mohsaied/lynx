@@ -37,7 +37,14 @@ public class VerilogOut {
 
         writeModules(design, writer);
 
+        writePostamble(writer);
+
         ReportData.getInstance().closeVerilogFile();
+    }
+
+    private static void writePostamble(PrintWriter writer) {
+        writer.println();
+        writer.println("endmodule");
     }
 
     private static void writeWires(Design design, PrintWriter writer) {

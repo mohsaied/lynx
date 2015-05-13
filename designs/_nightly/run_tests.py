@@ -145,7 +145,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
-run = False
+run = True
 
 #version number of the program
 #increment version number with each set of major changes
