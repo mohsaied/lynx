@@ -26,6 +26,7 @@ import lynx.main.Main;
 import lynx.main.ReportData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
+import lynx.verilog.VerilogOut;
 
 public class CommandPanel extends JPanel {
 
@@ -166,6 +167,13 @@ public class CommandPanel extends JPanel {
                                 fileOutProgress.setString("working...");
                                 log.info("Generating output files");
                                 NocInterconnect.connectDesignToNoc(design, noc);
+                                try {
+                                    VerilogOut.writeVerilogDesign(design);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    fileOutProgress.setString("error!");
+                                    log.severe("Error! Something wrong with verilog generation");
+                                }
                                 fileOutProgress.setIndeterminate(false);
                                 fileOutProgress.setString("done.");
                             }

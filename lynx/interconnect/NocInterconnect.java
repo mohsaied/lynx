@@ -75,13 +75,9 @@ public class NocInterconnect {
 
         insertTranslators(design, mapping);
 
-        log.info("Connecting to NoC");
-
-        // connectNoc(design);
-
         log.info("Inferring top-level ports");
 
-        // inferTopLevelPorts(design);
+        inferTopLevelPorts(design);
 
     }
 

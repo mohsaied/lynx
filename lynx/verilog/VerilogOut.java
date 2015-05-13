@@ -9,6 +9,7 @@ import lynx.data.Design;
 import lynx.data.Module;
 import lynx.data.Port;
 import lynx.data.MyEnums.Direction;
+import lynx.main.ReportData;
 
 /**
  * Functions to write design to Verilog
@@ -24,7 +25,7 @@ public class VerilogOut {
 
         log.info("Writing out design to " + design.getType() + ".v");
 
-        PrintWriter writer = new PrintWriter("designs/" + design.getType() + ".v", "UTF-8");
+        PrintWriter writer = ReportData.getInstance().getVerilogFile();
 
         writePreamble(design, writer);
 
@@ -34,7 +35,7 @@ public class VerilogOut {
 
         writeModules(design, writer);
 
-        writer.close();
+        ReportData.getInstance().closeVerilogFile();
     }
 
     private static void writeWires(Design design, PrintWriter writer) {

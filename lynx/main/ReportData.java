@@ -24,6 +24,11 @@ public class ReportData {
     private PrintWriter report;
 
     /**
+     * Output verilog file
+     */
+    private PrintWriter verilogFile;
+
+    /**
      * Singleton of program data
      */
     private static ReportData instance = null;
@@ -31,6 +36,7 @@ public class ReportData {
     private ReportData() {
         this.designFile = null;
         this.report = null;
+        this.verilogFile = null;
     }
 
     public static ReportData getInstance() {
@@ -54,6 +60,16 @@ public class ReportData {
 
     public void closeRpt() {
         this.report.close();
+    }
+
+    public PrintWriter getVerilogFile() throws FileNotFoundException {
+        if (verilogFile == null)
+            verilogFile = new PrintWriter(designFile.getPath() + ".v.out");
+        return verilogFile;
+    }
+
+    public void closeVerilogFile() {
+        verilogFile.close();
     }
 
 }
