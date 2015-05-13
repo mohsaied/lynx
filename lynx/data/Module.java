@@ -1,6 +1,7 @@
 package lynx.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,18 @@ public abstract class Module {
 
     public void addPort(Port port) {
         this.ports.put(port.getName(), port);
+    }
+
+    public List<Port> getUsedPortList() {
+        // want to filter out unconnected ports -- we don't need them
+        Collection<Port> unfilteredPorList = getPorts().values();
+
+        List<Port> porList = new ArrayList<Port>();
+        for (Port por : unfilteredPorList) {
+            if (por.getWires().size() != 0)
+                porList.add(por);
+        }
+        return porList;
     }
 
     @Override

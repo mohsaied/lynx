@@ -145,7 +145,7 @@ java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
-run = True
+run = False
 
 #version number of the program
 #increment version number with each set of major changes
@@ -214,6 +214,9 @@ for test_name in test_names:
     
     curr_test_path = tests_dir+test_name+"\\"+test_name+".xml"
     golden_path = tests_dir+test_name+"\\golden.txt"
+    
+    #vfile = tests_dir+test_name+"\\"+test_name+".v"
+    #os.system('rm '+vfile)
 
     if run:
         #------------------------------------------------------------------

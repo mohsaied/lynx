@@ -64,7 +64,7 @@ public class ReportData {
 
     public PrintWriter getVerilogFile() throws FileNotFoundException {
         if (verilogFile == null)
-            verilogFile = new PrintWriter(designFile.getPath() + ".v.out");
+            verilogFile = new PrintWriter(designFile.getPath().substring(0, designFile.getPath().length() - 4) + ".v");
         return verilogFile;
     }
 

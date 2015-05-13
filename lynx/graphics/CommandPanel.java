@@ -168,7 +168,7 @@ public class CommandPanel extends JPanel {
                                 log.info("Generating output files");
                                 NocInterconnect.connectDesignToNoc(design, noc);
                                 try {
-                                    VerilogOut.writeVerilogDesign(design);
+                                    VerilogOut.writeVerilogTestBench(design);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     fileOutProgress.setString("error!");

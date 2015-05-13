@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import lynx.data.MyEnums.Direction;
 import lynx.main.ReportData;
 import lynx.nocmapping.Mapping;
+import lynx.main.DesignData;
 
 /**
  * A top-level design.
@@ -74,8 +75,12 @@ public final class Design extends Module {
         List<Module> allModules = new ArrayList<Module>();
 
         allModules.addAll(modules.values());
+
         if (!translators.isEmpty())
             allModules.addAll(translators);
+
+        Noc noc = DesignData.getInstance().getNoc();
+        allModules.add(noc);
 
         return allModules;
     }
@@ -323,8 +328,6 @@ public final class Design extends Module {
     public Design clone() {
 
         Design cloneDesign = new Design(this.getName());
-        
-        
 
         return cloneDesign;
     }

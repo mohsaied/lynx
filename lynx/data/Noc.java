@@ -23,7 +23,7 @@ import lynx.xml.XmlNoc;
 public class Noc extends Module {
 
     private static final String nocName = "fabric_interface";
-    private static final String nocInstName = "fi_inst";
+    private static final String nocInstName = "noc";
 
     private static final String xmlWidth = "width";
     private static final String xmlNumrouters = "num_routers";

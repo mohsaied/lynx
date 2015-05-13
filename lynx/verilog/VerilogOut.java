@@ -3,6 +3,7 @@ package lynx.verilog;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
@@ -21,7 +22,7 @@ public class VerilogOut {
 
     private static final Logger log = Logger.getLogger(VerilogOut.class.getName());
 
-    public static void writeVerilogDesign(Design design) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void writeVerilogTestBench(Design design) throws FileNotFoundException, UnsupportedEncodingException {
 
         log.info("Writing out design to " + design.getType() + ".v");
 
@@ -53,7 +54,7 @@ public class VerilogOut {
 
         for (Module mod : design.getAllModules()) {
             writer.println("//wires for the outputs in Module " + mod.getName());
-            for (Port por : mod.getPorts().values()) {
+            for (Port por : mod.getUsedPortList()) {
                 if (por.getDirection() == Direction.OUTPUT) {
                     writeWire(por, writer);
                 }
@@ -73,8 +74,15 @@ public class VerilogOut {
 
             writer.println(mod.getType() + " " + mod.getName() + " (");
 
-            for (Port por : mod.getPorts().values()) {
-                writer.println("\t." + por.getName() + "(" + por.getConnectingWireName() + "),");
+            List<Port> porList = mod.getUsedPortList();
+            int numPorts = porList.size();
+
+            for (Port por : porList) {
+                writer.print("\t." + por.getName() + "(" + por.getConnectingWireName() + ")");
+                if (numPorts-- == 1)
+                    writer.println("");
+                else
+                    writer.println(",");
             }
 
             writer.println(");");
@@ -83,7 +91,7 @@ public class VerilogOut {
     }
 
     private static void writeInterface(Design design, PrintWriter writer) {
-        writer.println("module " + design.getType());
+        writer.println("module tb_" + design.getType());
         writer.println("(");
 
         int numPorts = design.getPorts().size();
