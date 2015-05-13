@@ -196,8 +196,11 @@ public class Port {
                 return this.getFullNameDash() + "_wire";
             } else if (direction == Direction.INPUT) {
                 if (wires.size() == 1) {
-                    return wires.get(0).getDstPort().getFullNameDash() + "_wire";
+                    return getConnectingWireName(wires.get(0));
                 } else {
+                    // TODO we CAN actually have multiple wires feeding this
+                    // port if each of them only feeds part of the port and not
+                    // the whole thing
                     assert wires.size() <= 1 : "Input port " + this.getFullNameDash() + " cannot have multiple (" + wires.size()
                             + ") drivers";
                     if (!(this.parentModule instanceof Noc))
@@ -206,6 +209,10 @@ public class Port {
             }
         }
         return "";
+    }
+
+    public String getConnectingWireName(Wire wire) {
+        return wire.getDstPort().getFullNameDash() + "_wire";
     }
 
     @Override
@@ -219,5 +226,16 @@ public class Port {
     public String toString() {
         String s = "port: " + direction + " " + name + "(" + width + ")";
         return s;
+    }
+
+    public Wire getFeedingWire() {
+        assert direction == Direction.INPUT : "Cannot get feeding port for an output port!";
+        if (wires.size() == 1) {
+            return wires.get(0);
+        } else {
+            assert wires.size() <= 1 : "Input port " + this.getFullNameDash() + " cannot have multiple (" + wires.size()
+                    + ") drivers";
+        }
+        return null;
     }
 }

@@ -16,6 +16,7 @@ import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
 import lynx.nocmapping.NocMapping;
+import lynx.verilog.VerilogOut;
 import lynx.xml.XmlDesign;
 
 public class Main {
@@ -23,6 +24,16 @@ public class Main {
     @SuppressWarnings("unused")
     public final static void main(String[] args) {
 
+        try {
+            runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ReportData.getInstance().writeToRpt("SCHMETTERLING");
+            ReportData.getInstance().writeToRpt(e.getMessage());
+            ReportData.getInstance().closeRpt();
+        }
+        return;
+        /*
         try {
             if (args.length == 0) {
                 // bring up the GUI
@@ -40,6 +51,7 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
+        */
     }
 
     /**
@@ -70,8 +82,11 @@ public class Main {
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");
 
-        // write out verilog design
-        // VerilogOut.writeVerilogDesign(design);
+        // connect modules and insert translators
+        NocInterconnect.connectDesignToNoc(clusteredDesign, noc);
+
+        // output verilog testbench
+        VerilogOut.writeVerilogTestBench(clusteredDesign);
 
     }
 

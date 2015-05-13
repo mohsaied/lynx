@@ -17,7 +17,7 @@ public final class Packetizer extends Translator {
     public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
         super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER);
 
-        addParametersAndPorts();
+        addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
@@ -25,7 +25,13 @@ public final class Packetizer extends Translator {
     }
 
     @Override
-    protected final void addParametersAndPorts() {
+    protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
+
+        // find the Noc-facing width -- sum up width of nocbuns
+        int nocFacingWidth = 0;
+        for (NocBundle nocbun : nocbuns) {
+            nocFacingWidth += nocbun.getWidth();
+        }
 
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
@@ -40,8 +46,7 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
-        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getInterfaceWidth(),
-                this));
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, nocFacingWidth, this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }

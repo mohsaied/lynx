@@ -22,7 +22,7 @@ import lynx.xml.XmlNoc;
  */
 public class Noc extends Module {
 
-    private static final String nocName = "fabric_interface";
+    private static final String nocName = "noc_wrapper";
     private static final String nocInstName = "noc";
 
     private static final String xmlWidth = "width";
@@ -123,19 +123,35 @@ public class Noc extends Module {
             // number of bundles per router is equivalent to the tdm factor
             // each bundle has the NoC's width
             // input
-            for (int j = 0; j < nocTdmFactor; j++) {
-                NocBundle nocbun = new NocBundle(i, j, Direction.INPUT, getWidth());
+            for (int j = 0; j < getNumNocBundlesInPerPort(); j++) {
+                NocBundle nocbun = new NocBundle(i, j, Direction.INPUT, getNocBundleInWidth());
                 nocbunInList.add(nocbun);
             }
             // output
-            for (int j = 0; j < (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor); j++) {
-                NocBundle nocbun = new NocBundle(i, j, Direction.OUTPUT, getWidth());
+            for (int j = 0; j < getNumNocBundlesOutPerPort(); j++) {
+                NocBundle nocbun = new NocBundle(i, j, Direction.OUTPUT, getNocBundleOutWidth());
                 nocbunOutList.add(nocbun);
             }
 
             nocInBundles.add(nocbunInList);
             nocOutBundles.add(nocbunOutList);
         }
+    }
+
+    private int getNocBundleOutWidth() {
+        return getInterfaceWidth() / getNumNocBundlesOutPerPort();
+    }
+
+    private int getNocBundleInWidth() {
+        return getInterfaceWidth() / getNumNocBundlesInPerPort();
+    }
+
+    private int getNumNocBundlesInPerPort() {
+        return nocTdmFactor;
+    }
+
+    private int getNumNocBundlesOutPerPort() {
+        return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
     }
 
     public ArrayList<NocBundle> getNocInBundles(int router) {
@@ -360,4 +376,5 @@ public class Noc extends Module {
             }
         }
     }
+
 }

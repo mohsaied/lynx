@@ -11,7 +11,7 @@ public final class Depacketizer extends Translator {
     public Depacketizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
         super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.DEPACKETIZER);
 
-        addParametersAndPorts();
+        addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
@@ -19,7 +19,14 @@ public final class Depacketizer extends Translator {
     }
 
     @Override
-    protected final void addParametersAndPorts() {
+    protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
+
+        // find the Noc-facing width -- sum up width of nocbuns
+        int nocFacingWidth = 0;
+        for (NocBundle nocbun : nocbuns) {
+            nocFacingWidth += nocbun.getWidth();
+        }
+
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
@@ -27,7 +34,7 @@ public final class Depacketizer extends Translator {
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
 
         // ports
-        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentNoc.getInterfaceWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, nocFacingWidth, this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 

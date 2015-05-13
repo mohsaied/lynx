@@ -55,7 +55,7 @@ public abstract class Translator extends Module {
 
     protected abstract void connectToBundle();
 
-    protected abstract void addParametersAndPorts();
+    protected abstract void addParametersAndPorts(List<NocBundle> nocbuns);
 
     public abstract void connectToRouter(List<NocBundle> nocbuns);
 

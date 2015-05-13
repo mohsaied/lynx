@@ -10,6 +10,7 @@ import lynx.data.Design;
 import lynx.data.Module;
 import lynx.data.Port;
 import lynx.data.MyEnums.Direction;
+import lynx.data.Wire;
 import lynx.main.ReportData;
 
 /**
@@ -78,7 +79,7 @@ public class VerilogOut {
             int numPorts = porList.size();
 
             for (Port por : porList) {
-                writer.print("\t." + por.getName() + "(" + por.getConnectingWireName() + ")");
+                writer.print("\t." + por.getName() + "(" + figureOutPortConnection(por) + ")");
                 if (numPorts-- == 1)
                     writer.println("");
                 else
@@ -88,6 +89,67 @@ public class VerilogOut {
             writer.println(");");
             writer.println();
         }
+    }
+
+    private static String figureOutPortConnection(Port por) {
+        String connectionString = "ERROR";
+        if (por.getDirection() == Direction.OUTPUT) {
+            connectionString = por.getConnectingWireName();
+        } else if (por.getDirection() == Direction.INPUT) {
+            // first case: both this port and the wire feeding it are same size
+            if (por.getWires().size() == 1 && por.getWidth() == por.getWires().get(0).getDstPort().getWidth()) {
+                connectionString = por.getConnectingWireName();
+                // second case: this port is small, port feeding it is larger
+            } else if (por.getWires().size() == 1 && por.getWidth() < por.getWires().get(0).getDstPort().getWidth()) {
+                Wire connectingWire = por.getFeedingWire();
+                String partSelect = "[" + connectingWire.getDstPortEnd() + ":" + connectingWire.getDstPortStart() + "]";
+                connectionString = por.getConnectingWireName() + partSelect;
+                // third case: this port is large, and one-or-more smaller ports
+                // feed it, possibly needing padding
+            } else if (por.getWidth() > por.getWires().get(0).getDstPort().getWidth()) {
+                List<Wire> wires = por.getWires();
+                connectionString = "{";
+                int currBit = por.getWidth() - 1;
+                while (!wires.isEmpty()) {
+                    // where does the biggest wire start at?
+                    int maxEnd = -1;
+                    int maxStart = -1;
+                    Wire currWire = null;
+                    for (Wire wire : wires) {
+                        if (wire.getDstPortEnd() > maxEnd) {
+                            maxEnd = wire.getDstPortEnd();
+                            maxStart = wire.getDstPortStart();
+                            currWire = wire;
+                        }
+                    }
+
+                    // is the maxEnd at our current bit? if not enter padding
+                    if (currBit != maxEnd) {
+                        int padSize = currBit - maxEnd;
+                        connectionString += "{" + padSize + "{1'b0}},";
+                    }
+
+                    // output the current wire and remove from list
+                    connectionString += por.getConnectingWireName(currWire);
+                    wires.remove(currWire);
+
+                    if (maxStart != 0)
+                        connectionString += ",";
+
+                    currBit = maxStart;
+                }
+
+                // final padding
+                if (currBit != 0) {
+                    int padSize = currBit + 1;
+                    connectionString += "{" + padSize + "{1'b0}}";
+                }
+
+                connectionString += "}";
+            }
+        }
+
+        return connectionString;
     }
 
     private static void writeInterface(Design design, PrintWriter writer) {
