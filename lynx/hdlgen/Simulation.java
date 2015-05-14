@@ -14,7 +14,7 @@ public class Simulation {
         log.info("Simulation directory creation started");
 
         VerilogOut.writeVerilogTestBench(design);
-        NocConfigOut.writeNocConfig(noc);
+        NocConfigAndWrapperOut.writeNocConfigAndWrapper(noc);
         QuickScriptOut.writeQuickScript(design);
     }
 }

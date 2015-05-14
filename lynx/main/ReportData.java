@@ -23,6 +23,7 @@ public class ReportData {
     private PrintWriter report;
     private PrintWriter verilogFile;
     private PrintWriter nocConfigFile;
+    private PrintWriter nocWrapperFile;
     private PrintWriter quickScriptFile;
 
     private File simDir;
@@ -54,6 +55,7 @@ public class ReportData {
 
         // create directories for simulation and synthesis flows
         this.simDir = new File(designFile.getParent() + "\\sim");
+        simDir.mkdir();
     }
 
     public void writeToRpt(String line) {
@@ -66,8 +68,7 @@ public class ReportData {
 
     public PrintWriter getVerilogFile() throws FileNotFoundException {
         if (verilogFile == null) {
-            simDir.mkdir();
-            verilogFile = new PrintWriter(simDir + "\\tb_" + fileName + ".v");
+            verilogFile = new PrintWriter(simDir + "\\tb_" + fileName + ".sv");
         }
         return verilogFile;
     }
@@ -78,7 +79,6 @@ public class ReportData {
 
     public PrintWriter getNocConfigFile() throws FileNotFoundException {
         if (nocConfigFile == null) {
-            simDir.mkdir();
             nocConfigFile = new PrintWriter(simDir + "\\noc_config");
         }
         return nocConfigFile;
@@ -88,9 +88,19 @@ public class ReportData {
         nocConfigFile.close();
     }
 
+    public PrintWriter getNocWrapperFile() throws FileNotFoundException {
+        if (nocWrapperFile == null) {
+            nocWrapperFile = new PrintWriter(simDir + "\\noc_wrapper.sv");
+        }
+        return nocWrapperFile;
+    }
+
+    public void closeNocWrapperFile() {
+        nocWrapperFile.close();
+    }
+
     public PrintWriter getQuickScriptFile() throws FileNotFoundException {
         if (quickScriptFile == null) {
-            simDir.mkdir();
             quickScriptFile = new PrintWriter(simDir + "\\quick_script");
         }
         return quickScriptFile;

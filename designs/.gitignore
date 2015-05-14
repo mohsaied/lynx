@@ -1,5 +1,6 @@
 *.out
 *.v
 *.rpt
+sim
 
 _nightly/archive
