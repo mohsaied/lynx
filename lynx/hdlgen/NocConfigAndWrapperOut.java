@@ -44,7 +44,14 @@ public class NocConfigAndWrapperOut {
         writer.println("    parameter N            = " + n + ",");
         writer.println("    parameter NUM_VC       = " + numVc + ",");
         writer.println("    parameter DEPTH_PER_VC = " + depthPerVc + ",");
-        writer.println("    parameter VERBOSE      = 1");
+        writer.println("    parameter VERBOSE      = 1,");
+        writer.println("    parameter VC_ADDRESS_WIDTH = $clog2(NUM_VC),");
+        writer.print("    parameter [VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1] = '{");
+        for (int i = 0; i < n; i++)
+            if (i == n - 1)
+                writer.println("0}");
+            else
+                writer.print("0,");
         writer.println(")");
         writer.println("(");
         writer.println("    //clocks and reset");
@@ -95,7 +102,8 @@ public class NocConfigAndWrapperOut {
         writer.println("    .N(N),");
         writer.println("    .NUM_VC(NUM_VC),");
         writer.println("    .DEPTH_PER_VC(DEPTH_PER_VC),");
-        writer.println("    .VERBOSE(VERBOSE)");
+        writer.println("    .VERBOSE(VERBOSE),");
+        writer.println("    .ASSIGNED_VC(ASSIGNED_VC)");
         writer.println(")");
         writer.println("fi_inst");
         writer.println("(");

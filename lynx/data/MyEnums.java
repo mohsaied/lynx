@@ -62,14 +62,12 @@ public class MyEnums {
         }
 
         public String toShortString() {
-            switch (name.substring(0, name.length() - 3)) {
-            case "packetizer":
+            if (name.contains("packetizer"))
                 return "pkt";
-            case "depacketizer":
-                return "dpkt";
-            default:
+            else if (name.contains("depacketizer"))
+                return "depkt";
+            else
                 return "error";
-            }
         }
     }
 

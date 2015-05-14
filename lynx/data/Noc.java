@@ -224,7 +224,13 @@ public class Noc extends Module {
         this.addParameter(new Parameter("DEPTH_PER_VC", nocVcDepth));
         this.addParameter(new Parameter("VERBOSE", "1"));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", "$clog2(NUM_VC)"));
-        this.addParameter(new Parameter("[VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1]", "'{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}"));
+        String vcs = "'{";
+        for (int i = 0; i < nocNumRouters; i++)
+            if (i == nocNumRouters - 1)
+                vcs += "0}";
+            else
+                vcs += "0,";
+        this.addParameter(new Parameter("ASSIGNED_VC", vcs));
     }
 
     private void addNocPorts() {

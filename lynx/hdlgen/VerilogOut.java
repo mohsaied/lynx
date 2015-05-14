@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.data.Module;
+import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.MyEnums.Direction;
 import lynx.data.Wire;
@@ -79,8 +80,25 @@ public class VerilogOut {
     private static void writeModules(Design design, PrintWriter writer) {
         for (Module mod : design.getAllModules()) {
 
-            writer.println(mod.getType() + " " + mod.getName() + " (");
+            writer.print(mod.getType());
 
+            if (mod.getParameters().size() != 0) {
+                writer.println();
+                writer.println("#(");
+                for (int i = 0; i < mod.getParameters().size(); i++) {
+                    Parameter par = mod.getParameters().get(i);
+                    if (i == mod.getParameters().size() - 1)
+                        writer.println("    ." + par.getName() + "(" + par.getValue() + ")");
+                    else
+                        writer.println("    ." + par.getName() + "(" + par.getValue() + "),");
+                }
+                writer.println(")");
+                writer.println(mod.getName());
+            } else {
+                writer.println(" " + mod.getName());
+            }
+
+            writer.println("(");
             List<Port> porList = mod.getUsedPortList();
             int numPorts = porList.size();
 
