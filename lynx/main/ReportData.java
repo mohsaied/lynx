@@ -18,19 +18,15 @@ public class ReportData {
      */
     private File designFile;
 
-    /**
-     * The output report
-     */
+    private String fileName;
+
     private PrintWriter report;
-
-    /**
-     * Output verilog file
-     */
     private PrintWriter verilogFile;
+    private PrintWriter nocConfigFile;
+    private PrintWriter quickScriptFile;
 
-    /**
-     * Singleton of program data
-     */
+    private File simDir;
+
     private static ReportData instance = null;
 
     private ReportData() {
@@ -52,6 +48,12 @@ public class ReportData {
     public void setDesignFile(File designFile) throws FileNotFoundException {
         this.designFile = designFile;
         this.report = new PrintWriter(designFile.getPath() + ".rpt");
+
+        // file name
+        this.fileName = designFile.getName().substring(0, designFile.getName().length() - 4);
+
+        // create directories for simulation and synthesis flows
+        this.simDir = new File(designFile.getParent() + "\\sim");
     }
 
     public void writeToRpt(String line) {
@@ -63,13 +65,39 @@ public class ReportData {
     }
 
     public PrintWriter getVerilogFile() throws FileNotFoundException {
-        if (verilogFile == null)
-            verilogFile = new PrintWriter(designFile.getPath().substring(0, designFile.getPath().length() - 4) + ".v");
+        if (verilogFile == null) {
+            simDir.mkdir();
+            verilogFile = new PrintWriter(simDir + "\\tb_" + fileName + ".v");
+        }
         return verilogFile;
     }
 
     public void closeVerilogFile() {
         verilogFile.close();
+    }
+
+    public PrintWriter getNocConfigFile() throws FileNotFoundException {
+        if (nocConfigFile == null) {
+            simDir.mkdir();
+            nocConfigFile = new PrintWriter(simDir + "\\noc_config");
+        }
+        return nocConfigFile;
+    }
+
+    public void closeNocConfigFile() {
+        nocConfigFile.close();
+    }
+
+    public PrintWriter getQuickScriptFile() throws FileNotFoundException {
+        if (quickScriptFile == null) {
+            simDir.mkdir();
+            quickScriptFile = new PrintWriter(simDir + "\\quick_script");
+        }
+        return quickScriptFile;
+    }
+
+    public void closeQuickScriptFile() {
+        quickScriptFile.close();
     }
 
 }

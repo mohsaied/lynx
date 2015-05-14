@@ -26,7 +26,7 @@ import lynx.main.Main;
 import lynx.main.ReportData;
 import lynx.nocmapping.NocMapping;
 import lynx.xml.XmlDesign;
-import lynx.hdlgen.VerilogOut;
+import lynx.hdlgen.Simulation;
 
 public class CommandPanel extends JPanel {
 
@@ -168,7 +168,7 @@ public class CommandPanel extends JPanel {
                                 log.info("Generating output files");
                                 NocInterconnect.connectDesignToNoc(design, noc);
                                 try {
-                                    VerilogOut.writeVerilogTestBench(design);
+                                    Simulation.generateSimDir(design, noc);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     fileOutProgress.setString("error!");
