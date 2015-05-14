@@ -15,13 +15,43 @@ import lynx.data.MyEnums.TranslatorType;
 public final class Packetizer extends Translator {
 
     public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER);
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, getPacketizerType(parentNoc, nocbuns));
 
         addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
+    }
+
+    private static TranslatorType getPacketizerType(Noc parentNoc, List<NocBundle> nocbuns) {
+        // get total nocbuns width
+        int width = 0;
+        for (NocBundle nocbun : nocbuns) {
+            width += nocbun.getWidth();
+        }
+        int nocWidth = parentNoc.getWidth();
+
+        int numFlitsForThisTranslator = width / nocWidth;
+
+        TranslatorType type = null;
+        switch (numFlitsForThisTranslator) {
+        case 4:
+            type = TranslatorType.PACKETIZER_4;
+            break;
+        case 3:
+            type = TranslatorType.PACKETIZER_3;
+            break;
+        case 2:
+            type = TranslatorType.PACKETIZER_2;
+            break;
+        case 1:
+            type = TranslatorType.PACKETIZER_1;
+            break;
+        default:
+            assert false : "Unsupported packetizer requested";
+        }
+        return type;
     }
 
     @Override

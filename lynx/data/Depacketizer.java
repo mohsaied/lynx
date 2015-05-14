@@ -9,13 +9,37 @@ import lynx.data.MyEnums.TranslatorType;
 public final class Depacketizer extends Translator {
 
     public Depacketizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.DEPACKETIZER);
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, getDepacketizerType(parentNoc, nocbuns));
 
         addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
+    }
+
+    private static TranslatorType getDepacketizerType(Noc parentNoc, List<NocBundle> nocbuns) {
+        // get total nocbuns width
+        int width = 0;
+        for (NocBundle nocbun : nocbuns) {
+            width += nocbun.getWidth();
+        }
+        int nocWidth = parentNoc.getWidth();
+
+        int numFlitsForThisTranslator = width / nocWidth;
+
+        TranslatorType type = null;
+        switch (numFlitsForThisTranslator) {
+        case 4:
+            type = TranslatorType.DEPACKETIZER_4;
+            break;
+        case 2:
+            type = TranslatorType.DEPACKETIZER_2;
+            break;
+        default:
+            assert false : "Unsupported depacketizer requested";
+        }
+        return type;
     }
 
     @Override

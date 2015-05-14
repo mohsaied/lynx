@@ -51,6 +51,9 @@ public class QuickScriptOut {
         writer.println("vlog  $HNOCSIM_DIR/fabric_port/fabric_port_in/*.sv");
         writer.println("vlog  $HNOCSIM_DIR/fabric_port/fabric_port_out/*.sv");
         writer.println();
+        writer.println("#compile the standard translators");
+        writer.println("vlog  $HNOCSIM_DIR/fabric_port/translators/standard/*.sv");
+        writer.println();
         writer.println("#compile the fabric interface which instantiates fabric ports and an rtl interface");
         writer.println("vlog $HNOCSIM_DIR/booksim/fabric_interface.sv");
         writer.println();

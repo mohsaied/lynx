@@ -45,7 +45,7 @@ public abstract class Translator extends Module {
         return parentBundle;
     }
 
-    public TranslatorType TranslatorType() {
+    public TranslatorType getTranslatorType() {
         return type;
     }
 

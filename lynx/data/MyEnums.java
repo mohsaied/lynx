@@ -47,7 +47,8 @@ public class MyEnums {
     }
 
     public enum TranslatorType {
-        PACKETIZER("packetizer"), DEPACKETIZER("depacketizer");
+        PACKETIZER_1("packetizer_1"), PACKETIZER_2("packetizer_2"), PACKETIZER_3("packetizer_3"), PACKETIZER_4("packetizer_4"), DEPACKETIZER_2(
+                "depacketizer_2"), DEPACKETIZER_4("depacketizer_4");
 
         private final String name;
 
@@ -61,7 +62,7 @@ public class MyEnums {
         }
 
         public String toShortString() {
-            switch (name) {
+            switch (name.substring(0, name.length() - 3)) {
             case "packetizer":
                 return "pkt";
             case "depacketizer":
