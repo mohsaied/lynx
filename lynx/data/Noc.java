@@ -235,8 +235,10 @@ public class Noc extends Module {
 
     private void addNocPorts() {
         // ports
-        this.addPort(new Port("clk", Direction.INPUT, PortType.CLK, this, "noc_clk"));
-        this.addPort(new Port("rst", Direction.INPUT, PortType.RST, this, "noc_rst"));
+        this.addPort(new Port("clk_noc", Direction.INPUT, PortType.CLK, this, "noc_clk"));
+        this.addPort(new Port("rst", Direction.INPUT, PortType.RST, this, "rst"));
+        this.addPort(new Port("clk_rtl", Direction.INPUT, getNumRouters(), PortType.CLKRTL, this, "clk_rtl"));
+        this.addPort(new Port("clk_int", Direction.INPUT, getNumRouters(), PortType.CLKINT, this, "clk_int"));
 
         for (int i = 0; i < nocNumRouters; i++) {
             this.addPort(new Port(buildNocPortName(PortType.CLK, Direction.INPUT, i), Direction.INPUT, 1, this));
@@ -381,6 +383,15 @@ public class Noc extends Module {
                 nocbun.setUsed(false);
             }
         }
+    }
+
+    public String getModuleGlobalClockName(int router) {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.CLKRTL)
+                return por.getName() + "[" + router + "]";
+        }
+        assert false : "Can't find clkrtl for router " + router;
+        return null;
     }
 
 }

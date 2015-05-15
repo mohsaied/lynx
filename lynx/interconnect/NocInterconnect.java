@@ -120,7 +120,7 @@ public class NocInterconnect {
         // export
         for (Module mod : design.getAllModules()) {
             for (Port por : mod.getPorts().values()) {
-                if (por.getGlobalPortName() != null) {
+                if (por.isGlobal() && !por.isGlobalOnNoc()) {
                     design.addPort(por);
                 }
             }

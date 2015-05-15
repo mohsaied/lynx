@@ -32,7 +32,7 @@ public class VerilogOut {
 
         writePreamble(design, writer);
 
-        writeInterface(design, writer);
+        writeSimInterface(design, writer);
 
         writeWires(design, writer);
 
@@ -48,14 +48,6 @@ public class VerilogOut {
     }
 
     private static void writeWires(Design design, PrintWriter writer) {
-        // loop over top-level wires and will probably need to create wires
-        // and assign statements for the outputs to avoid reg/wire problems
-
-        /*
-         * writer.println("//wires for the top-level"); for (Port por :
-         * design.getPorts().values()) { if (por.getDirection() ==
-         * Direction.OUTPUT) { writeWire(por, writer); } } writer.println();
-         */
 
         // loop over all ports in the design, create a wire for each output port
         // it may be feeding multiple input ports -- that's why
@@ -103,7 +95,10 @@ public class VerilogOut {
             int numPorts = porList.size();
 
             for (Port por : porList) {
-                writer.print("\t." + por.getName() + "(" + figureOutPortConnection(por) + ")");
+                if (!por.isGlobal())
+                    writer.print("\t." + por.getName() + "(" + figureOutPortConnection(por) + ")");
+                else
+                    writer.print("\t." + por.getName() + "(" + por.getGlobalPortName() + ")");
                 if (numPorts-- == 1)
                     writer.println("");
                 else
@@ -176,8 +171,9 @@ public class VerilogOut {
         return connectionString;
     }
 
-    private static void writeInterface(Design design, PrintWriter writer) {
-        writer.println("module testbench");
+    @SuppressWarnings("unused")
+    private static void writeDesignInterface(Design design, PrintWriter writer) {
+        writer.println("module " + design.getName());
         writer.println("(");
 
         int numPorts = design.getPorts().size();
@@ -193,6 +189,26 @@ public class VerilogOut {
         }
 
         writer.println(");");
+        writer.println();
+    }
+
+    private static void writeSimInterface(Design design, PrintWriter writer) {
+        writer.println("`timescale 1ns/1ps");
+        writer.println("module testbench();");
+        writer.println();
+
+        // TODO all global ports seem to be exported to top-level during
+        // parsing, but will probably have to get rid of that since clustering
+        // and mapping change some of the ports significantly
+
+        for (Port intPort : design.getPorts().values()) {
+            String widthPart = getWidthPart(intPort);
+            String arrayWidthPart = getArrayWidthPart(intPort);
+            if (!intPort.isGlobalOnNoc()) {
+                writer.println("logic " + widthPart + intPort.getName() + arrayWidthPart + ";");
+            }
+        }
+
         writer.println();
     }
 

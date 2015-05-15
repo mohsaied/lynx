@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 
 /**
  * A user-entered Module
@@ -77,6 +78,15 @@ public class DesignModule extends Module {
             numConnections += bun.getConnections().size();
         }
         return numConnections;
+    }
+
+    public Port getClock() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.CLK)
+                return por;
+        }
+        assert false : "module " + getName() + " has no clock?";
+        return null;
     }
 
 }

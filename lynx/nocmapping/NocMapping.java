@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.Noc;
 import lynx.main.DesignData;
 import lynx.main.ReportData;
@@ -29,9 +30,12 @@ public class NocMapping {
 
         SimulatedAnnealingBundle.findMappings(design, noc);
 
-        //set mapping in singleton
+        // set mapping in singleton
         Mapping mapping = design.getMappings().get(0).get(0);
         DesignData.getInstance().setNocMapping(mapping);
+
+        // connect the proper clocks
+        configureModuleClocks(design, noc, mapping);
 
         long endTime = System.nanoTime();
         DecimalFormat secondsFormat = new DecimalFormat("#.00");
@@ -45,6 +49,16 @@ public class NocMapping {
         ReportData.getInstance().closeRpt();
 
         return mapping;
+    }
+
+    private static void configureModuleClocks(Design design, Noc noc, Mapping mapping) {
+        for (DesignModule mod : design.getDesignModules().values()) {
+            int router = mapping.getApproxRouterForModule(mod);
+            if (router < noc.getNumRouters()) {
+                mod.getClock().setGlobalOnNoc(true);
+                mod.getClock().setGlobalPortName(noc.getModuleGlobalClockName(router));
+            }
+        }
     }
 
 }

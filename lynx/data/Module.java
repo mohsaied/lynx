@@ -80,7 +80,7 @@ public abstract class Module {
 
         List<Port> porList = new ArrayList<Port>();
         for (Port por : unfilteredPorList) {
-            if (por.getWires().size() != 0)
+            if (por.getWires().size() != 0 || por.getGlobalPortName() != null)
                 porList.add(por);
         }
         return porList;

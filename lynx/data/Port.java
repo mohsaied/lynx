@@ -29,6 +29,7 @@ public class Port {
     private boolean isBundled;
     private boolean isGlobal;
     private String globalPortName;
+    private boolean globalOnNoc;
 
     public Port() {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false, null);
@@ -44,6 +45,10 @@ public class Port {
 
     public Port(String name, Direction direction, PortType type, Module parentModule, String globalPortName) {
         this(name, direction, 1, 1, type, parentModule, false, globalPortName);
+    }
+
+    public Port(String name, Direction direction, int width, PortType type, Module parentModule, String globalPortName) {
+        this(name, direction, width, 1, type, parentModule, false, globalPortName);
     }
 
     public Port(String name, Direction direction, int width, Module parentModule) {
@@ -70,6 +75,7 @@ public class Port {
         this.isBundled = isBundled;
         this.isGlobal = globalPortName != null;
         this.setGlobalPortName(globalPortName);
+        this.setGlobalOnNoc(false);
         assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
     }
 
@@ -224,7 +230,8 @@ public class Port {
 
     @Override
     public String toString() {
-        String s = "port: " + direction + " " + name + "(" + width + ")";
+        String s = "module" + parentModule.getName() + ", port: " + direction + " " + name + "(" + width + "), onNoc = "
+                + isGlobalOnNoc();
         return s;
     }
 
@@ -237,5 +244,13 @@ public class Port {
                     + ") drivers";
         }
         return null;
+    }
+
+    public boolean isGlobalOnNoc() {
+        return globalOnNoc;
+    }
+
+    public void setGlobalOnNoc(boolean globalOnNoc) {
+        this.globalOnNoc = globalOnNoc;
     }
 }

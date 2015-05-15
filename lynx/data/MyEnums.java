@@ -31,8 +31,8 @@ public class MyEnums {
     }
 
     public enum PortType {
-        DATA("data"), VALID("valid"), READY("ready"), DST("dst"), CLK("clk"), CLKINT("clkint"), RST("rst"), TOP("top"), UNKNOWN(
-                "unknown");
+        DATA("data"), VALID("valid"), READY("ready"), DST("dst"), CLK("clk"), CLKINT("clkint"), CLKRTL("clkrtl"), RST("rst"), TOP(
+                "top"), UNKNOWN("unknown");
 
         private final String name;
 

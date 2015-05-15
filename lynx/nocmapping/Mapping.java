@@ -358,4 +358,14 @@ public class Mapping {
         return mapMatrix.toString();
     }
 
+    public int getApproxRouterForModule(DesignModule mod) {
+        // pick a random bundle from the module, and find it's router
+        int router = this.noc.getNumRouters();
+        for (Bundle bun : mod.getBundles().values()) {
+            router = this.annealStruct.bundleMap.get(bun).get(0).getRouter();
+            if (router != this.noc.getNumRouters())
+                break;
+        }
+        return router;
+    }
 }
