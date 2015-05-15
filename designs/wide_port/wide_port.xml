@@ -1,6 +1,8 @@
 <design name="wide_port">
 
     <module type="a" name="a0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun">
             <port direction="output" width="640" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -10,6 +12,8 @@
     </module>
     
     <module type="b" name="b0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="inbun">
             <port direction="input" width="640" name="i_x" type="data" />
             <port direction="input" width="1" name="i_valid_in" type="valid" />

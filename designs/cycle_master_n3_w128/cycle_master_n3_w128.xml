@@ -1,6 +1,8 @@
 <design name="cycle">
   
   <module type="master" name="m1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -15,6 +17,8 @@
   </module>
   
   <module type="master" name="c1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -29,6 +33,8 @@
   </module>
   
   <module type="master" name="c2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -43,6 +49,8 @@
   </module>
   
   <module type="master" name="c3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>

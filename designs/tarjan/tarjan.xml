@@ -1,6 +1,8 @@
 <design name="tarjan">
 
     <module type="a" name="a0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -15,6 +17,8 @@
     </module>
     
     <module type="b" name="b0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -34,6 +38,8 @@
     </module>
     
     <module type="c" name="c0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -58,6 +64,8 @@
     </module>
     
     <module type="d" name="d0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -84,6 +92,8 @@
     </module>
     
     <module type="e" name="e0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -109,6 +119,8 @@
     </module>
     
     <module type="f" name="f0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -134,6 +146,8 @@
     </module>
     
     <module type="g" name="g0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />
@@ -153,6 +167,8 @@
     </module>
     
     <module type="h" name="h0">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
         <bundle name="outbun1">
             <port direction="output" width="16" name="o_y" type="data" />
             <port direction="output" width="1" name="o_valid_out" type="valid" />

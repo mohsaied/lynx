@@ -1,6 +1,8 @@
 <design name="broadcast">
   
   <module type="src" name="src1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="outbun">
 		<port direction="output" width="128" name="o_y" type="data"/>
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
@@ -10,6 +12,8 @@
   </module>
   
   <module type="dst" name="dst1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -18,6 +22,8 @@
   </module>
   
   <module type="dst" name="dst2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -26,6 +32,8 @@
   </module>
   
   <module type="dst" name="dst3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -34,6 +42,8 @@
   </module>
   
   <module type="dst" name="dst4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -42,6 +52,8 @@
   </module>
   
   <module type="dst" name="dst5">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -50,6 +62,8 @@
   </module>
   
   <module type="dst" name="dst6">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -58,6 +72,8 @@
   </module>
   
   <module type="dst" name="dst7">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -66,6 +82,8 @@
   </module>
   
   <module type="dst" name="dst8">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -74,6 +92,8 @@
   </module>
   
   <module type="dst" name="dst9">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -82,6 +102,8 @@
   </module>
   
   <module type="dst" name="dst10">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -90,6 +112,8 @@
   </module>
   
   <module type="dst" name="dst11">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -98,6 +122,8 @@
   </module>
   
   <module type="dst" name="dst12">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -106,6 +132,8 @@
   </module>
   
   <module type="dst" name="dst13">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -114,6 +142,8 @@
   </module>
   
   <module type="dst" name="dst14">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -122,6 +152,8 @@
   </module>
   
   <module type="dst" name="dst15">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -130,6 +162,8 @@
   </module>
   
   <module type="dst" name="dst128">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>

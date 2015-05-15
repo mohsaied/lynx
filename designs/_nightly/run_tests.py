@@ -215,8 +215,8 @@ for test_name in test_names:
     curr_test_path = tests_dir+test_name+"\\"+test_name+".xml"
     golden_path = tests_dir+test_name+"\\golden.txt"
     
-    #vfile = tests_dir+test_name+"\\"+test_name+".v"
-    #os.system('rm '+vfile)
+    vfile = tests_dir+test_name+"\\"+test_name+".v"
+    os.system('rm '+vfile)
 
     if run:
         #------------------------------------------------------------------

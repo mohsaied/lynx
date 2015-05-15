@@ -1,30 +1,25 @@
 package lynx.main;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import org.xml.sax.SAXException;
 
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.data.Noc;
-import lynx.graphics.Gui;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
 import lynx.nocmapping.NocMapping;
-import lynx.verilog.VerilogOut;
+import lynx.graphics.Gui;
+import lynx.hdlgen.Simulation;
 import lynx.xml.XmlDesign;
 
 public class Main {
 
     @SuppressWarnings("unused")
     public final static void main(String[] args) {
- /*
+/*
         try {
+            MyLogger parentLog = new MyLogger(Level.ALL);
             runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
         } catch (Exception e) {
             e.printStackTrace();
@@ -32,7 +27,7 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
-       */
+*/
         try {
             if (args.length == 0) {
                 // bring up the GUI
@@ -50,7 +45,7 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
-        
+
     }
 
     /**
@@ -59,8 +54,7 @@ public class Main {
      * @param filePath
      * 
      */
-    private static void runFlow(String filePath) throws ParserConfigurationException, SAXException, IOException,
-            TransformerException {
+    private static void runFlow(String filePath) throws Exception {
 
         ReportData.getInstance().setDesignFile(new File(filePath));
 
@@ -84,8 +78,8 @@ public class Main {
         // connect modules and insert translators
         NocInterconnect.connectDesignToNoc(clusteredDesign, noc);
 
-        // output verilog testbench
-        VerilogOut.writeVerilogTestBench(clusteredDesign);
+        // output simulation directory
+        Simulation.generateSimDir(clusteredDesign, noc);
 
     }
 
