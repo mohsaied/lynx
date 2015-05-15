@@ -13,7 +13,7 @@ public class Simulation {
 
         log.info("Simulation directory creation started");
 
-        VerilogOut.writeVerilogTestBench(design);
+        VerilogOut.writeVerilogTestBench(design, noc);
         NocConfigAndWrapperOut.writeNocConfigAndWrapper(noc);
         QuickScriptOut.writeQuickScript(design);
     }

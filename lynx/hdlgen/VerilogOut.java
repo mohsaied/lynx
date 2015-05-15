@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.data.Module;
+import lynx.data.Noc;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.MyEnums.Direction;
@@ -24,7 +25,7 @@ public class VerilogOut {
 
     private static final Logger log = Logger.getLogger(VerilogOut.class.getName());
 
-    public static void writeVerilogTestBench(Design design) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void writeVerilogTestBench(Design design, Noc noc) throws FileNotFoundException, UnsupportedEncodingException {
 
         log.info("Writing out design to " + design.getType() + ".v");
 
@@ -34,6 +35,8 @@ public class VerilogOut {
 
         writeSimInterface(design, writer);
 
+        writeClockingAndReset(noc, writer);
+
         writeWires(design, writer);
 
         writeModules(design, writer);
@@ -41,6 +44,30 @@ public class VerilogOut {
         writePostamble(writer);
 
         ReportData.getInstance().closeVerilogFile();
+    }
+
+    private static void writeClockingAndReset(Noc noc, PrintWriter writer) {
+        writer.println("//clocking");
+        writer.println("initial " + noc.getNocClock().getName() + "  = 1'b1;");
+        writer.print("initial " + noc.getIntClock().getName() + " = " + noc.getIntClock().getWidth() + "'b");
+        for (int i = 0; i < noc.getIntClock().getWidth(); i++)
+            writer.print("1");
+        writer.println(";");
+        writer.print("initial " + noc.getRtlClock().getName() + " = " + noc.getRtlClock().getWidth() + "'b");
+        for (int i = 0; i < noc.getRtlClock().getWidth(); i++)
+            writer.print("1");
+        writer.println(";");
+        writer.println("always #1    " + noc.getNocClock().getName() + " = ~" + noc.getNocClock().getName() + ";");
+        writer.println("always #1.25 " + noc.getIntClock().getName() + " = ~" + noc.getIntClock().getName() + "; ");
+        writer.println("always #5    " + noc.getRtlClock().getName() + " = ~" + noc.getRtlClock().getName() + "; ");
+        writer.println();
+        writer.println("//reset ");
+        writer.println("initial begin");
+        writer.println("    " + noc.getNocRst().getName() + " = 1'b1;");
+        writer.println("    #25;");
+        writer.println("    " + noc.getNocRst().getName() + "=1'b0;");
+        writer.println("end");
+        writer.println();
     }
 
     private static void writePostamble(PrintWriter writer) {

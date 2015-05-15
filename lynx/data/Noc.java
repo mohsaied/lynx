@@ -235,7 +235,7 @@ public class Noc extends Module {
 
     private void addNocPorts() {
         // ports
-        this.addPort(new Port("clk_noc", Direction.INPUT, PortType.CLK, this, "noc_clk"));
+        this.addPort(new Port("clk_noc", Direction.INPUT, PortType.CLK, this, "clk_noc"));
         this.addPort(new Port("rst", Direction.INPUT, PortType.RST, this, "rst"));
         this.addPort(new Port("clk_rtl", Direction.INPUT, getNumRouters(), PortType.CLKRTL, this, "clk_rtl"));
         this.addPort(new Port("clk_int", Direction.INPUT, getNumRouters(), PortType.CLKINT, this, "clk_int"));
@@ -391,6 +391,43 @@ public class Noc extends Module {
                 return por.getName() + "[" + router + "]";
         }
         assert false : "Can't find clkrtl for router " + router;
+        return null;
+    }
+
+    public Port getNocClock() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.CLK)
+                return por;
+        }
+        assert false : "Can't find clknoc in noc!";
+        return null;
+    }
+
+    public Port getIntClock() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.CLKINT)
+                return por;
+        }
+        assert false : "Can't find clkint in noc!";
+        return null;
+    }
+
+    public Port getRtlClock() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.CLKRTL)
+                return por;
+        }
+        assert false : "Can't find clkrtl in noc!";
+        return null;
+    }
+
+
+    public Port getNocRst() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.RST)
+                return por;
+        }
+        assert false : "Can't find rst in noc!";
         return null;
     }
 
