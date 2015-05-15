@@ -328,6 +328,10 @@
   <connection start="x12.outbun" end="x13.inbun"/> 
   <connection start="x13.outbun" end="x14.inbun"/> 
   <connection start="x14.outbun" end="x15.inbun"/> 
-  <connection start="x15.outbun" end="x128.inbun"/> 
+  <connection start="x15.outbun" end="x16.inbun"/> 
+  <connection start="x16.outbun" end="x17.inbun"/> 
+  <connection start="x17.outbun" end="x18.inbun"/> 
+  <connection start="x18.outbun" end="x19.inbun"/> 
+  <connection start="x19.outbun" end="x128.inbun"/> 
   -->
 </design>

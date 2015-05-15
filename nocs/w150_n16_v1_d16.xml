@@ -1,0 +1,21 @@
+<!-- NoC parameter values -->
+
+<noc>
+
+<!-- Width of NoC links. AKA flit_width, channel_width -->
+<parameter name="width" value="150"/>
+
+<!-- Number of routers in a mesh NoC, 
+must be the square of a number because topology is regular mesh-->
+<parameter name="num_routers" value="16"/>
+
+<!-- Number of virtual channels. Minimum is 1 -->
+<parameter name="num_vcs" value="1"/>
+
+<!-- Depth of each virtual channel, currently limited to powers of 2 -->
+<parameter name="vc_depth" value="16"/>
+
+<!-- TDM factor in fabric port -->
+<parameter name="tdm_factor" value="4"/>
+
+</noc>
