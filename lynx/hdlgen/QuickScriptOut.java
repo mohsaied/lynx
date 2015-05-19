@@ -21,6 +21,8 @@ public class QuickScriptOut {
     public static void writeQuickScript(Design design) throws FileNotFoundException, UnsupportedEncodingException {
 
         PrintWriter writer = ReportData.getInstance().getQuickScriptFile();
+        String simDir = ReportData.getInstance().getSimDirString();
+        String vlogDir = ReportData.getInstance().getVlogDirString();
 
         log.info("Generating simulation quick_script");
 
@@ -29,7 +31,8 @@ public class QuickScriptOut {
         writer.println("export PATH=$PATH:/home/mohamed/altera/14.0/modelsim_ase/bin");
         writer.println();
         writer.println("HNOCSIM_DIR='/home/mohamed/Dropbox/PhD/Software/simulator/hnocsim'");
-        writer.println("DESIGN_DIR=$HNOCSIM_DIR/designs/onchip_ram");
+        writer.println("DESIGN_DIR='" + simDir + "'");
+        writer.println("VERILOG_COMMON_DIR='" + vlogDir + "'");
         writer.println();
         writer.println("#remake booksim");
         writer.println("cd $HNOCSIM_DIR/booksim");
@@ -51,8 +54,9 @@ public class QuickScriptOut {
         writer.println("vlog  $HNOCSIM_DIR/fabric_port/fabric_port_in/*.sv");
         writer.println("vlog  $HNOCSIM_DIR/fabric_port/fabric_port_out/*.sv");
         writer.println();
-        writer.println("#compile the standard translators");
-        writer.println("vlog  $HNOCSIM_DIR/fabric_port/translators/standard/*.sv");
+        writer.println("#compile the translators and tpg/oras");
+        writer.println("vlog  $VERILOG_COMMON_DIR/translators/standard/*.sv");
+        writer.println("vlog  $VERILOG_COMMON_DIR/tpgs_oras/*.sv");
         writer.println();
         writer.println("#compile the fabric interface which instantiates fabric ports and an rtl interface");
         writer.println("vlog $HNOCSIM_DIR/booksim/fabric_interface.sv");

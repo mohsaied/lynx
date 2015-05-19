@@ -65,7 +65,7 @@ public class VerilogOut {
         writer.println("initial begin");
         writer.println("    " + noc.getNocRst().getName() + " = 1'b1;");
         writer.println("    #25;");
-        writer.println("    " + noc.getNocRst().getName() + "=1'b0;");
+        writer.println("    " + noc.getNocRst().getName() + " = 1'b0;");
         writer.println("end");
         writer.println();
     }

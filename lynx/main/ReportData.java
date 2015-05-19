@@ -13,6 +13,8 @@ import java.io.PrintWriter;
  */
 public class ReportData {
 
+    private final String vlogCommonPath = "/home/mohamed/Dropbox/PhD/Software/noclynx/verilog_common";
+
     /**
      * the currently opened design file
      */
@@ -110,4 +112,30 @@ public class ReportData {
         quickScriptFile.close();
     }
 
+    public String getSimDirString() {
+        return toLinuxPathFormat(simDir.getAbsolutePath());
+    }
+
+    private String toLinuxPathFormat(String absolutePath) {
+        String linuxPath = "/home/mohamed";
+        String split[] = absolutePath.split(":");
+        if (split.length != 2)
+            linuxPath = absolutePath;
+        else {
+            String relativePart = split[1];
+            String relativePartWithCorrectSlash = "";
+            for (int i = 0; i < relativePart.length(); i++) {
+                if (relativePart.charAt(i) == '\\')
+                    relativePartWithCorrectSlash += "/";
+                else
+                    relativePartWithCorrectSlash += relativePart.charAt(i);
+            }
+            linuxPath += relativePartWithCorrectSlash;
+        }
+        return linuxPath;
+    }
+
+    public String getVlogDirString() {
+        return vlogCommonPath;
+    }
 }

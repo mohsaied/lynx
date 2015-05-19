@@ -149,7 +149,7 @@ run = True
 
 #version number of the program
 #increment version number with each set of major changes
-version = 12
+version = 13
 
 tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
 reports_dir = "archive/"+str(version)+"/"
