@@ -83,7 +83,7 @@ public class DesignData {
     }
 
     public final void setClusteredDesign(Design clusteredDesign) {
-        this.simulationDesign = clusteredDesign;
+        this.clusteredDesign = clusteredDesign;
     }
 
     public final Design getSimulationDesign() {

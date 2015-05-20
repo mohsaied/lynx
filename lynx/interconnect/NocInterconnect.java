@@ -163,8 +163,8 @@ public class NocInterconnect {
         via.addParameter(new Parameter("NODE", mapping.getApproxRouterForModule(mod)));
 
         // fixed ports
-        via.addPort(new Port("clk", Direction.INPUT, via, "clk"));
-        via.addPort(new Port("rst", Direction.INPUT, via, "rst"));
+        via.addPort(new Port("clk", Direction.INPUT, PortType.CLK, via, "clk"));
+        via.addPort(new Port("rst", Direction.INPUT, PortType.RST, via, "rst"));
 
         // numbun-dependant parameters and ports
         int num = 0;
@@ -224,8 +224,8 @@ public class NocInterconnect {
         src.addParameter(new Parameter("DEST", mapping.getRouter(bun.getConnections().get(0))));
 
         // add clk/rst ports
-        src.addPort(new Port("clk", Direction.INPUT, src, "clk"));
-        src.addPort(new Port("rst", Direction.INPUT, src, "rst"));
+        src.addPort(new Port("clk", Direction.INPUT, PortType.CLK, src, "clk"));
+        src.addPort(new Port("rst", Direction.INPUT, PortType.RST, src, "rst"));
 
         // create bundle ports
         Port dataPort = new Port("data_out", Direction.OUTPUT, bun.getWidth(), src);
@@ -259,8 +259,8 @@ public class NocInterconnect {
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
 
         // add clk/rst ports
-        sink.addPort(new Port("clk", Direction.INPUT, sink, "clk"));
-        sink.addPort(new Port("rst", Direction.INPUT, sink, "rst"));
+        sink.addPort(new Port("clk", Direction.INPUT, PortType.CLK, sink, "clk"));
+        sink.addPort(new Port("rst", Direction.INPUT, PortType.RST, sink, "rst"));
 
         // create bundle ports
         Port dataPort = new Port("data_in", Direction.INPUT, bun.getWidth(), sink);
