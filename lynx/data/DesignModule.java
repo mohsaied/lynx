@@ -48,6 +48,11 @@ public class DesignModule extends Module {
 
     public void addBundle(Bundle bun) {
         bundles.put(bun.getName(), bun);
+        this.addPort(bun.getDataPort());
+        this.addPort(bun.getReadyPort());
+        this.addPort(bun.getValidPort());
+        if (bun.getDstPort() != null)
+            this.addPort(bun.getDstPort());
     }
 
     public int getRouter() {
@@ -89,4 +94,13 @@ public class DesignModule extends Module {
         return null;
     }
 
+    public List<Bundle> getBundles(Direction dir) {
+        List<Bundle> bunList = new ArrayList<Bundle>();
+
+        for (Bundle bun : bundles.values()) {
+            if (bun.getDirection() == dir)
+                bunList.add(bun);
+        }
+        return bunList;
+    }
 }
