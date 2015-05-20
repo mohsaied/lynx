@@ -115,8 +115,8 @@ public final class Depacketizer extends Translator {
         }
 
         // find start and end widths on the Noc Ports
-        int startWidthNocPort = nocbuns.get(0).getWidth() * startIndex;
-        int endWidthNocPort = nocbuns.get(0).getWidth() * (endIndex + 1) - 1;
+        int startWidthNocPort = nocbuns.get(0).getNoc().getInterfaceWidth() - nocbuns.get(0).getWidth() * (endIndex + 1);
+        int endWidthNocPort = nocbuns.get(0).getNoc().getInterfaceWidth() - nocbuns.get(0).getWidth() * startIndex - 1;
 
         // data
         Port pktDataIn = getPort(PortType.DATA, Direction.INPUT);

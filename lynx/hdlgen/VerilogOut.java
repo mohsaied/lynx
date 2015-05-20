@@ -162,9 +162,9 @@ public class VerilogOut {
                     int maxStart = -1;
                     Wire currWire = null;
                     for (Wire wire : wires) {
-                        if (wire.getDstPortEnd() > maxEnd) {
-                            maxEnd = wire.getDstPortEnd();
-                            maxStart = wire.getDstPortStart();
+                        if (wire.getSrcPortEnd() > maxEnd) {
+                            maxEnd = wire.getSrcPortEnd();
+                            maxStart = wire.getSrcPortStart();
                             currWire = wire;
                         }
                     }
@@ -187,7 +187,7 @@ public class VerilogOut {
 
                 // final padding
                 if (currBit != 0) {
-                    int padSize = currBit + 1;
+                    int padSize = currBit;
                     connectionString += "{" + padSize + "{1'b0}}";
                 }
 

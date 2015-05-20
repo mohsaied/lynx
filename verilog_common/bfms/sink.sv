@@ -43,7 +43,7 @@ assign ready_out = ready_reg;
 //synopsys translate off
 int curr_time;
 integer fmain;
-initial fmain = $fopen("reports/output.txt");
+initial fmain = $fopen("lynx_trace.txt");
 //synopsys translate on
 
 //recieve data

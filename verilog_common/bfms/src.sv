@@ -41,7 +41,7 @@ assign valid_out = valid_reg;
 //synopsys translate off
 int curr_time;
 integer fmain;
-initial fmain = $fopen("reports/output.txt");
+initial fmain = $fopen("lynx_trace.txt");
 //synopsys translate on
 
 //send data whenever possible
@@ -75,6 +75,14 @@ begin
         end
 	end
 end
+
+//time bomb to end simulation after 100 pieces of data
+//synopsys translate off
+always @ (posedge clk)
+if(data_counter == 100)
+    $finish(0);
+//synopsys translate on
+
 
 //synopsys translate off
 final $fclose(fmain);

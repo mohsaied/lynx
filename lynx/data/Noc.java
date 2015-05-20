@@ -134,12 +134,12 @@ public class Noc extends Module {
             // each bundle has the NoC's width
             // input
             for (int j = 0; j < getNumNocBundlesInPerPort(); j++) {
-                NocBundle nocbun = new NocBundle(i, j, Direction.INPUT, getNocBundleInWidth());
+                NocBundle nocbun = new NocBundle(this, i, j, Direction.INPUT, getNocBundleInWidth());
                 nocbunInList.add(nocbun);
             }
             // output
             for (int j = 0; j < getNumNocBundlesOutPerPort(); j++) {
-                NocBundle nocbun = new NocBundle(i, j, Direction.OUTPUT, getNocBundleOutWidth());
+                NocBundle nocbun = new NocBundle(this, i, j, Direction.OUTPUT, getNocBundleOutWidth());
                 nocbunOutList.add(nocbun);
             }
 
@@ -379,19 +379,6 @@ public class Noc extends Module {
 
     private int getNocRow(int router) {
         return router / nocNumRoutersPerDimension;
-    }
-
-    public void clearNocBundleStatus() {
-        for (ArrayList<NocBundle> nocbunList : nocInBundles) {
-            for (NocBundle nocbun : nocbunList) {
-                nocbun.setUsed(false);
-            }
-        }
-        for (ArrayList<NocBundle> nocbunList : nocOutBundles) {
-            for (NocBundle nocbun : nocbunList) {
-                nocbun.setUsed(false);
-            }
-        }
     }
 
     public String getModuleGlobalClockName(int router) {

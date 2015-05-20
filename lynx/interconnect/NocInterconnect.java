@@ -115,7 +115,7 @@ public class NocInterconnect {
     /**
      * Replace designmodules with src/sink/vias
      * 
-     * @param simulationDesign
+     * @param originalDesign
      * @param simulationDesign
      * @param mapping
      * @return

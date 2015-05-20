@@ -4,7 +4,7 @@ import lynx.data.MyEnums.Direction;
 
 public class NocBundle {
 
-    private boolean used;
+    private Noc noc;
 
     private int router;
     private int index;
@@ -13,8 +13,8 @@ public class NocBundle {
 
     private int width;
 
-    public NocBundle(int router, int index, Direction direction, int width) {
-        this.used = false;
+    public NocBundle(Noc noc, int router, int index, Direction direction, int width) {
+        this.noc = noc;
         this.router = router;
         this.index = index;
         this.direction = direction;
@@ -35,6 +35,10 @@ public class NocBundle {
         return index;
     }
 
+    public Noc getNoc() {
+        return this.noc;
+    }
+
     public Direction getDirection() {
         return direction;
     }
@@ -43,11 +47,4 @@ public class NocBundle {
         return width;
     }
 
-    public boolean isUsed() {
-        return used;
-    }
-
-    public void setUsed(boolean status) {
-        this.used = status;
-    }
 }
