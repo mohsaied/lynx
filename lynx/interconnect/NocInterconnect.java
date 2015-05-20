@@ -109,7 +109,7 @@ public class NocInterconnect {
         insertSimulationTranslators(newNoc, simulationDesign, mapping, designToSimBundleMap);
 
         log.info("Inferring top-level ports");
-        inferTopLevelPorts(design);
+        inferTopLevelPorts(simulationDesign);
     }
 
     /**
@@ -257,7 +257,6 @@ public class NocInterconnect {
         // add parameters
         sink.addParameter(new Parameter("WIDTH", bun.getWidth()));
         sink.addParameter(new Parameter("N", noc.getNumRouters()));
-        sink.addParameter(new Parameter("ID", CURRSRCID++));
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
 
         // add clk/rst ports

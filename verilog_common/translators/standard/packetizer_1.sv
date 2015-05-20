@@ -15,15 +15,15 @@ module packetizer_1
 )
 (
 	//input port
-	input [WIDTH_IN-1:0]      i_data_in,
-	input                     i_valid_in,
-	input [ADDRESS_WIDTH-1:0] i_dest_in,
-	output                    i_ready_out,
+	input [WIDTH_IN-1:0]      data_in,
+	input                     valid_in,
+	input [ADDRESS_WIDTH-1:0] dst_in,
+	output                    ready_out,
 
 	//output port
-	output [WIDTH_OUT-1:0] o_data_out,
-	output                 o_valid_out,
-	input                  o_ready_in
+	output [WIDTH_OUT-1:0] data_out,
+	output                 valid_out,
+	input                  ready_in
 );
 
 //ideal flit widths
@@ -42,17 +42,17 @@ wire [FLIT_1_WIDTH_ACT-1:0] flit_1_data;
 // Implementation
 //-------------------------------------------------------------------------
 
-assign o_valid_out = i_valid_in;
-assign i_ready_out = o_ready_in;
+assign valid_out = valid_in;
+assign ready_out = ready_in;
 
-assign flit_1_data = FLIT_1_VALID ? i_data_in[WIDTH_IN-1 -: FLIT_1_WIDTH_ACT] : 0;
+assign flit_1_data = FLIT_1_VALID ? data_in[WIDTH_IN-1 -: FLIT_1_WIDTH_ACT] : 0;
 
-assign o_data_out = {
-	(i_valid_in & FLIT_1_VALID),
+assign data_out = {
+	(valid_in & FLIT_1_VALID),
 	1'b1,
 	1'b1,
 	ASSIGNED_VC,
-	i_dest_in,
+	dst_in,
 	flit_1_data,
 	{FLIT_1_PADDING{1'b0}}
 };

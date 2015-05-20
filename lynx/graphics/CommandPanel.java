@@ -168,7 +168,8 @@ public class CommandPanel extends JPanel {
                                 log.info("Generating output files");
                                 NocInterconnect.connectDesignToNoc(design, noc);
                                 try {
-                                    Simulation.generateSimDir(design, noc);
+                                    Design simulationDesign = DesignData.getInstance().getSimulationDesign();
+                                    Simulation.generateSimDir(simulationDesign, noc);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     fileOutProgress.setString("error!");

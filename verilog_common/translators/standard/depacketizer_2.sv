@@ -12,13 +12,13 @@ module depacketizer_2
 	parameter ADDRESS_WIDTH = 4
 )
 (
-	input [WIDTH_PKT-1:0] i_packet_in,
-	input                 i_valid_in,
-	output                i_ready_out,
+	input [WIDTH_PKT-1:0] data_in,
+	input                 valid_in,
+	output                ready_out,
 	
-	output [WIDTH_DATA-1:0] o_data_out,
-	output                  o_valid_out,
-	input                   o_ready_in
+	output [WIDTH_DATA-1:0] data_out,
+	output                  valid_out,
+	input                   ready_in
 );
 
 localparam WIDTH_FLIT = WIDTH_PKT/2;
@@ -35,17 +35,17 @@ wire [WIDTH_DATA_IDL-1:0] full_data;
 // Implementation
 //------------------------------------------------------------------------
 
-assign i_ready_out = o_ready_in;
-assign o_valid_out = i_valid_in;
+assign ready_out = ready_in;
+assign valid_out = valid_in;
 
 
 //here we need to strip all the control bits and concat data back together
 assign full_data = {
-		i_packet_in[DATA_POS_HEAD : WIDTH_FLIT],
-		i_packet_in[DATA_POS_TAIL : 0]
+		data_in[DATA_POS_HEAD : WIDTH_FLIT],
+		data_in[DATA_POS_TAIL : 0]
 };
 
-assign o_data_out = full_data[WIDTH_DATA_IDL-1 -: WIDTH_DATA];
+assign data_out = full_data[WIDTH_DATA_IDL-1 -: WIDTH_DATA];
 
 
 endmodule

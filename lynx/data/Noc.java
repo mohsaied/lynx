@@ -233,7 +233,6 @@ public class Noc extends Module {
         this.addParameter(new Parameter("NUM_VC", nocNumVcs));
         this.addParameter(new Parameter("DEPTH_PER_VC", nocVcDepth));
         this.addParameter(new Parameter("VERBOSE", "1"));
-        this.addParameter(new Parameter("VC_ADDRESS_WIDTH", "$clog2(NUM_VC)"));
         String vcs = "'{";
         for (int i = 0; i < nocNumRouters; i++)
             if (i == nocNumRouters - 1)
