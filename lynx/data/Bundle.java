@@ -68,6 +68,10 @@ public final class Bundle {
         return parentModule.getName() + "." + name;
     }
 
+    public String getFullNameDash() {
+        return parentModule.getName() + "_" + name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

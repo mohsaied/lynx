@@ -97,6 +97,7 @@ public class NocInterconnect {
         Mapping mapping = DesignData.getInstance().getNocMapping();
 
         Design simulationDesign = new Design(design.getName(), newNoc);
+        DesignData.getInstance().setSimulationDesign(simulationDesign);
 
         log.info("Adding srcs/sinks/vias instead or designmodules");
         Map<Bundle, Bundle> designToSimBundleMap = populateSimulationDesign(design, simulationDesign, mapping);
@@ -190,6 +191,7 @@ public class NocInterconnect {
         num = 0;
         for (Bundle bun : mod.getBundles(Direction.OUTPUT)) {
             via.addParameter(new Parameter("o" + num + "_width", bun.getWidth()));
+            via.addParameter(new Parameter("o" + num + "_ID", CURRSRCID++));
             via.addParameter(new Parameter("o" + num + "_DEST", mapping.getRouter(bun.getConnections().get(0))));
 
             // create bundle ports
@@ -214,7 +216,7 @@ public class NocInterconnect {
     }
 
     private static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {
-        DesignModule src = new DesignModule("src", "src_" + bun.getFullName());
+        DesignModule src = new DesignModule("src", "src_" + bun.getFullNameDash());
 
         // add parameters
         src.addParameter(new Parameter("WIDTH", bun.getWidth()));
@@ -250,7 +252,7 @@ public class NocInterconnect {
     }
 
     private static DesignModule createSinkModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {
-        DesignModule sink = new DesignModule("sink", "sink_" + bun.getFullName());
+        DesignModule sink = new DesignModule("sink", "sink_" + bun.getFullNameDash());
 
         // add parameters
         sink.addParameter(new Parameter("WIDTH", bun.getWidth()));
