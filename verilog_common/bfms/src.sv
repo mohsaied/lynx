@@ -4,14 +4,14 @@
  * date     : 19-MAY-2015
  */
 
-module tpg_basic
+module src
 #(
 	parameter WIDTH = 32,                    //data width
     parameter N     = 16,                    //number of nodes
 	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
-    parameter [7:0] ID = 0,                  //unique id associated with each tpg
-	parameter [N_ADDR_WIDTH-1:0] NODE = 15,  //router index that this tpg is connected to
-	parameter [N_ADDR_WIDTH-1:0] DEST = 15   //router index that this tpg sends to
+    parameter [7:0] ID = 0,                  //unique id associated with each src
+	parameter [N_ADDR_WIDTH-1:0] NODE = 15,  //router index that this src is connected to
+	parameter [N_ADDR_WIDTH-1:0] DEST = 15   //router index that this src sends to
 )
 (
 	input clk,
@@ -63,7 +63,7 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,ID,data_counter);
+            $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,NODE,ID,data_counter);
             //synopsys translate on
         end        
         else

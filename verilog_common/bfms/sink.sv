@@ -4,7 +4,7 @@
  * date     : 19-MAY-2015
  */
 
-module ora_basic
+module sink
 #(
 	parameter WIDTH = 32,                    //data width
     parameter N     = 16,                    //number of nodes
@@ -46,7 +46,7 @@ integer fmain;
 initial fmain = $fopen("reports/output.txt");
 //synopsys translate on
 
-//send data whenever possible
+//recieve data
 always @ (posedge clk)
 begin
 	if (rst)
@@ -65,7 +65,7 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,src_in,dst_in,id_in,data_counter);
+            $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,src_in,dst_in,NODE,id_in,data_counter);
             //synopsys translate on
         end        
 	end
