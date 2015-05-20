@@ -103,6 +103,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,NODE,o0_dest_reg,o0_ID,o0_data_counter);
+            $display("SEND; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,NODE,o0_dest_reg,o0_ID,o0_data_counter);
             //synopsys translate on
             
             o0_buffered_data_consumed = 1;
@@ -147,6 +148,7 @@ begin
                 //synopsys translate off
                 curr_time = $time;
                 $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,i0_src_in,i0_dst_in,NODE,i0_id_in,i0_data_counter);
+                $display("RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,i0_src_in,i0_dst_in,NODE,i0_id_in,i0_data_counter);
                 //synopsys translate on
                 
                 i0_input_buffered = 1;

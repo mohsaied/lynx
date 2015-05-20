@@ -186,6 +186,10 @@ public class NocConfigAndWrapperOut {
         writer.println();
         writer.println("// Simulation");
         writer.println("sim_type = fes2;");
+        writer.println("stats_out = /home/mohamed/Dropbox/PhD/Software/simulator/hnocsim/booksim/stats.txt;");
+        writer.println("pair_stats = 1;");
+        writer.println("watch_file = /home/mohamed/Dropbox/PhD/Software/simulator/hnocsim/booksim/watch_in.txt;");
+        writer.println("watch_out = /home/mohamed/Dropbox/PhD/Software/simulator/hnocsim/booksim/watch_out.txt;");
 
         ReportData.getInstance().closeNocConfigFile();
     }

@@ -27,7 +27,7 @@ module packetizer_1
 );
 
 //ideal flit widths
-localparam FLIT_1_WIDTH_IDL = WIDTH_OUT/2 - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH;
+localparam FLIT_1_WIDTH_IDL = WIDTH_OUT - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH;
 
 //actual flit widths
 localparam FLIT_1_VALID     = 1;

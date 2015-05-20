@@ -64,6 +64,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,NODE,ID,data_counter);
+            $display("SEND; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,NODE,ID,data_counter);
             //synopsys translate on
         end        
         else

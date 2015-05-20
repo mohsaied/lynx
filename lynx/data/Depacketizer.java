@@ -54,7 +54,7 @@ public final class Depacketizer extends Translator {
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
-        this.addParameter(new Parameter("WIDTH_PKT", parentNoc.getInterfaceWidth()));
+        this.addParameter(new Parameter("WIDTH_PKT", nocFacingWidth));
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
 
         // ports

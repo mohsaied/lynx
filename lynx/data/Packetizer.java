@@ -67,7 +67,7 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
         this.addParameter(new Parameter("WIDTH_IN", parentBundle.getWidth()));
-        this.addParameter(new Parameter("WIDTH_OUT", parentNoc.getInterfaceWidth()));
+        this.addParameter(new Parameter("WIDTH_OUT", nocFacingWidth));
         this.addParameter(new Parameter("ASSIGNED_VC", "0"));
 
         // ports

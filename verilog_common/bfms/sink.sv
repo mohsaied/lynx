@@ -66,6 +66,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,src_in,dst_in,NODE,id_in,data_counter);
+            $display("RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,src_in,dst_in,NODE,id_in,data_counter);
             //synopsys translate on
         end        
 	end
