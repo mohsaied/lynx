@@ -61,6 +61,16 @@ public class Noc extends Module {
         addNocBundles();
     }
 
+    public Noc(int nocWidth, int nocNumRouters, int nocNumVcs, int nocVcDepth, int nocTdmFactor) {
+        super(nocName, nocInstName);
+
+        configureNoC(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth, nocTdmFactor);
+        calculateDerivedParameters();
+        addNocParameters();
+        addNocPorts();
+        addNocBundles();
+    }
+
     public Noc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
         super(nocName, nocInstName);
 
@@ -421,7 +431,6 @@ public class Noc extends Module {
         return null;
     }
 
-
     public Port getNocRst() {
         for (Port por : getPorts().values()) {
             if (por.getType() == PortType.RST)
@@ -429,6 +438,10 @@ public class Noc extends Module {
         }
         assert false : "Can't find rst in noc!";
         return null;
+    }
+
+    public Noc clone() {
+        return new Noc(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth, nocTdmFactor);
     }
 
 }

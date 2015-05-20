@@ -39,6 +39,11 @@ public class DesignData {
     Mapping nocMapping;
 
     /**
+     * A design instance with src/sink/via instead of actual modules
+     */
+    Design simulationDesign;
+
+    /**
      * Singleton of design data
      */
     private static DesignData instance = null;
@@ -78,7 +83,15 @@ public class DesignData {
     }
 
     public final void setClusteredDesign(Design clusteredDesign) {
-        this.clusteredDesign = clusteredDesign;
+        this.simulationDesign = clusteredDesign;
+    }
+
+    public final Design getSimulationDesign() {
+        return simulationDesign;
+    }
+
+    public final void setSimulationDesign(Design simulationDesign) {
+        this.simulationDesign = simulationDesign;
     }
 
     public final Mapping getNocMapping() {

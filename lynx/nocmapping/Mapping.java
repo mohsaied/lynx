@@ -370,4 +370,11 @@ public class Mapping {
         }
         return router;
     }
+
+    public int getRouter(Bundle bun) {
+        // if we aren't mapped to any nocbundles
+        if (annealStruct.bundleMap.get(bun).size() == 0)
+            return noc.getNumRouters();
+        return annealStruct.bundleMap.get(bun).get(0).getRouter();
+    }
 }

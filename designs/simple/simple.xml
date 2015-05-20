@@ -1,6 +1,6 @@
 <design name="simple">
   
-  <module type="src" name="src1">
+  <module type="tpg" name="tpg1">
   
     <parameter name="DUMMY" value="16"/>
     
@@ -15,7 +15,7 @@
 	</bundle>
   </module>
   
-  <module type="dst" name="dst1">
+  <module type="ora" name="ora1">
 	
     <parameter name="DUMMY" value="20"/>
     

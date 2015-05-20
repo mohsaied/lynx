@@ -22,6 +22,8 @@ public final class Design extends Module {
 
     private static final Logger log = Logger.getLogger(Design.class.getName());
 
+    private Noc noc;
+
     private Map<String, DesignModule> modules;
     private Map<String, Integer> moduleIndices;
 
@@ -49,8 +51,22 @@ public final class Design extends Module {
         this.translators = new ArrayList<Translator>();
         this.mappings = null;
         this.clusters = null;
+        this.noc = null;
         this.setDebugAnnealCost(new ArrayList<Double>());
         log.info("Creating new design: " + name);
+    }
+
+    public Design(String Name, Noc noc) {
+        this(Name);
+        this.noc = noc;
+    }
+
+    public Noc getNoc() {
+        return noc;
+    }
+
+    public void setNoc(Noc noc) {
+        this.noc = noc;
     }
 
     public final Map<String, DesignModule> getDesignModules() {
@@ -79,8 +95,10 @@ public final class Design extends Module {
         if (!translators.isEmpty())
             allModules.addAll(translators);
 
-        Noc noc = DesignData.getInstance().getNoc();
-        allModules.add(noc);
+        if (noc == null)
+            allModules.add(DesignData.getInstance().getNoc());
+        else
+            allModules.add(noc);
 
         return allModules;
     }
