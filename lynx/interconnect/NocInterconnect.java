@@ -34,8 +34,7 @@ import lynx.nocmapping.Mapping;
 public class NocInterconnect {
 
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
-    private static int CURRSRCID = 0;
-    private static int CURRSINKID = 0;
+    private static int CURRID = 0;
 
     /**
      * Add default NoC to design
@@ -159,7 +158,7 @@ public class NocInterconnect {
 
         // fixed parameters
         via.addParameter(new Parameter("N", noc.getNumRouters()));
-        via.addParameter(new Parameter("ID", CURRSRCID++));
+        via.addParameter(new Parameter("ID", CURRID++));
         via.addParameter(new Parameter("NODE", mapping.getApproxRouterForModule(mod)));
 
         // fixed ports
@@ -170,7 +169,7 @@ public class NocInterconnect {
         int num = 0;
         for (Bundle bun : mod.getBundles(Direction.INPUT)) {
             via.addParameter(new Parameter("i" + num + "_width", bun.getWidth()));
-            via.addParameter(new Parameter("i" + num + "_ID", CURRSINKID++));
+            via.addParameter(new Parameter("i" + num + "_ID", CURRID++));
 
             // create bundle ports
             Port dataPort = new Port("data_in", Direction.INPUT, bun.getWidth(), via);
@@ -191,7 +190,7 @@ public class NocInterconnect {
         num = 0;
         for (Bundle bun : mod.getBundles(Direction.OUTPUT)) {
             via.addParameter(new Parameter("o" + num + "_width", bun.getWidth()));
-            via.addParameter(new Parameter("o" + num + "_ID", CURRSRCID++));
+            via.addParameter(new Parameter("o" + num + "_ID", CURRID++));
             via.addParameter(new Parameter("o" + num + "_DEST", mapping.getRouter(bun.getConnections().get(0))));
 
             // create bundle ports
@@ -221,7 +220,7 @@ public class NocInterconnect {
         // add parameters
         src.addParameter(new Parameter("WIDTH", bun.getWidth()));
         src.addParameter(new Parameter("N", noc.getNumRouters()));
-        src.addParameter(new Parameter("ID", CURRSRCID++));
+        src.addParameter(new Parameter("ID", CURRID++));
         src.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
         src.addParameter(new Parameter("DEST", mapping.getRouter(bun.getConnections().get(0))));
 
@@ -257,7 +256,7 @@ public class NocInterconnect {
         // add parameters
         sink.addParameter(new Parameter("WIDTH", bun.getWidth()));
         sink.addParameter(new Parameter("N", noc.getNumRouters()));
-        sink.addParameter(new Parameter("ID", CURRSINKID++));
+        sink.addParameter(new Parameter("ID", CURRID++));
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
 
         // add clk/rst ports

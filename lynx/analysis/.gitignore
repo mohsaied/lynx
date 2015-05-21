@@ -1,2 +1,5 @@
 /PerfAnalysis.class
 /PerfAnalysis$SimEntry.class
+/PerfAnalysis$LatencyStruct.class
+/PerfAnalysis$LatencyStruct$SimEntry.class
+/SimEntry.class

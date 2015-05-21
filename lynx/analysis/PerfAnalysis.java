@@ -14,57 +14,32 @@ public class PerfAnalysis {
 
     private static final Logger log = Logger.getLogger(PerfAnalysis.class.getName());
 
-    private static final int CURRMOD_POS = 0;
-    private static final int TIME_POS = 1;
-    private static final int SRCROUTER_POS = 2;
-    private static final int DSTROUTER_POS = 3;
-    private static final int CURRROUTER_POS = 4;
-    private static final int DATA_POS = 5;
-    private static final int SRCMOD_POS = 6;
+    protected static final int CURRMOD_POS = 0;
+    protected static final int TIME_POS = 1;
+    protected static final int SRCROUTER_POS = 2;
+    protected static final int DSTROUTER_POS = 3;
+    protected static final int CURRROUTER_POS = 4;
+    protected static final int DATA_POS = 5;
+    protected static final int SRCMOD_POS = 6;
+
+    protected static final int CLK_PERIOD = 10000;
 
     /**
-     * Struct to hold the data parsed from the trace file
+     * Struct to hold the latencies of transfers
      * 
      * @author Mohamed
      *
      */
-    public static class SimEntry {
+    private static class LatencyStruct {
 
-        int currMod;
-        int time;
-        int endTime;
-        int srcRouter;
-        int dstRouter;
-        int currRouter;
-        int data;
-        int srcMod;
+        int avgLatency = 1;
+        int minLatency = 1;
+        int maxLatency = 1;
 
-        String line;
-
-        public SimEntry(String line) {
-
-            this.line = line;
-            currMod = findFieldValue(line, CURRMOD_POS);
-            time = findFieldValue(line, TIME_POS);
-            srcRouter = findFieldValue(line, SRCROUTER_POS);
-            dstRouter = findFieldValue(line, DSTROUTER_POS);
-            currRouter = findFieldValue(line, CURRROUTER_POS);
-            data = findFieldValue(line, DATA_POS);
-            // sinks have the sourcemod id as well
-            if (findModType(line) == SimModType.SINK) {
-                srcMod = findFieldValue(line, SRCMOD_POS);
-            } else if (findModType(line) == SimModType.SRC) {
-                srcMod = currMod;
-            }
-            endTime = 0;
-        }
-
-        public String getHash() {
-            return "" + srcMod + "_" + data;
-        }
-
-        public void updateTime(int time) {
-            this.endTime = time;
+        private LatencyStruct(int avgLatency, int minLatency, int maxLatency) {
+            this.avgLatency = avgLatency;
+            this.minLatency = minLatency;
+            this.maxLatency = maxLatency;
         }
     }
 
@@ -85,7 +60,7 @@ public class PerfAnalysis {
         }
 
         // create a map that keeps track of all sent flits
-        Map<String, SimEntry> entryMap = new HashMap<String, SimEntry>();
+        Map<String, SimEntry> srcEntryMap = new HashMap<String, SimEntry>();
 
         // go over the file line by line
         BufferedReader br = new BufferedReader(new FileReader(simRepFile));
@@ -98,30 +73,90 @@ public class PerfAnalysis {
             SimEntry simEntry = new SimEntry(line);
             String hash = simEntry.getHash();
             if (findModType(line) == SimModType.SRC) {
-                entryMap.put(hash, simEntry);
+                srcEntryMap.put(hash, simEntry);
             } else if (findModType(line) == SimModType.SINK) {
-                SimEntry origSimEntry = entryMap.get(hash);
-                origSimEntry.updateTime(simEntry.time);
+                SimEntry origSimEntry = srcEntryMap.get(hash);
+                origSimEntry.update(simEntry);
             }
         }
 
-        // go over the entryMap and print all latencies
-        for (SimEntry simEntry : entryMap.values()) {
-            log.info(simEntry.getHash() + ": startTime=" + simEntry.time + ", endTime=" + simEntry.endTime);
-        }
+        int srcMod = 1;
+        int dstMod = 0;
+
+        LatencyStruct latencies = findLatency(srcMod, dstMod, srcEntryMap);
+        log.info("Connection(" + srcMod + "->" + dstMod + "): avg latency=" + latencies.avgLatency + ", min/max latency="
+                + latencies.minLatency + "/" + latencies.maxLatency);
+
+        double throughput = findSrcThroughput(srcMod, srcEntryMap);
+        log.info("Module(" + srcMod + "): throughput(cycles between operations)=" + throughput);
 
         br.close();
-
     }
 
-    private static int findFieldValue(String line, int fieldPos) {
-        String partList[] = line.split(";");
-        String field = partList[fieldPos];
-        int value = Integer.parseInt(field.split("=")[1].trim());
-        return value;
+    /**
+     * For a module, find it's output throughput in number of operations per
+     * cycle. This is measured by finding the number of cycles between
+     * successive operations, the target is one, and the higher the worse (in
+     * some cases)
+     * 
+     * @param srcMod
+     * @param entryMap
+     * @return
+     */
+    private static double findSrcThroughput(int mod, Map<String, SimEntry> srcEntryMap) {
+        double sumThroughput = 0.0;
+        int num = 0;
+        int prevSendTime = -1;
+        SimEntry simEntry = srcEntryMap.get(SimEntry.hash(mod, ++num));
+        while (simEntry != null) {
+            int currSendTime = simEntry.time;
+            if (prevSendTime != -1) {
+                double currThroughput = (currSendTime - prevSendTime) / CLK_PERIOD;
+                sumThroughput += currThroughput;
+            }
+            prevSendTime = currSendTime;
+            simEntry = srcEntryMap.get(SimEntry.hash(mod, ++num));
+        }
+        return sumThroughput / (num - 2);
     }
 
-    private static SimModType findModType(String line) {
+    /**
+     * Find the latency for a specific connection between a specified src/dst
+     * 
+     * @param srcMod
+     * @param dstMod
+     * @param entryMap
+     * @return
+     */
+    private static LatencyStruct findLatency(int srcMod, int dstMod, Map<String, SimEntry> srcEntryMap) {
+
+        int sumLatency = 0;
+        int minLatency = 999999999;
+        int maxLatency = -1;
+        int num = 0;
+
+        for (SimEntry simEntry : srcEntryMap.values()) {
+            if (simEntry.complete) {
+                int currSrcMod = simEntry.srcMod;
+                int currDstMod = simEntry.dstMod;
+
+                if (currSrcMod == srcMod && currDstMod == dstMod) {
+                    num++;
+                    int latency = simEntry.getLatency();
+                    if (latency > maxLatency)
+                        maxLatency = latency;
+                    if (latency < minLatency)
+                        minLatency = latency;
+                    sumLatency += latency;
+                }
+            }
+        }
+
+        int avgLatency = sumLatency / num;
+        return new LatencyStruct(avgLatency, minLatency, maxLatency);
+    }
+
+    protected static SimModType findModType(String line) {
         String partList[] = line.split(";");
         String typeField = partList[CURRMOD_POS];
         String type = typeField.split("=")[0].trim();
