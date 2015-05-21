@@ -9,6 +9,7 @@ module sink
 	parameter WIDTH = 32,                    //data width
     parameter N     = 16,                    //number of nodes
 	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
+    parameter [7:0] ID = 0,                  //unique id associated with each sink
     parameter [N_ADDR_WIDTH-1:0] NODE = 15   //router index that this tpg is connected to
 )
 (
@@ -43,7 +44,7 @@ assign ready_out = ready_reg;
 //synopsys translate off
 int curr_time;
 integer fmain;
-initial fmain = $fopen("lynx_trace.txt");
+initial fmain = $fopen("reports/lynx_trace.txt");
 //synopsys translate on
 
 //recieve data
@@ -65,8 +66,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,src_in,dst_in,NODE,id_in,data_counter);
-            $display("RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,src_in,dst_in,NODE,id_in,data_counter);
+            $fdisplay(fmain,"SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",ID,curr_time,src_in,dst_in,NODE,data_counter,id_in);
+            $display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",ID,curr_time,src_in,dst_in,NODE,data_counter,id_in);
             //synopsys translate on
         end        
 	end

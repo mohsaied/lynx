@@ -29,6 +29,8 @@ public class ReportData {
     private PrintWriter quickScriptFile;
 
     private File simDir;
+    private File simRepDir;
+    private File simRepFile;
 
     private static ReportData instance = null;
 
@@ -55,9 +57,13 @@ public class ReportData {
         // file name
         this.fileName = designFile.getName().substring(0, designFile.getName().length() - 4);
 
-        // create directories for simulation and synthesis flows
+        // create directories for simulation (and its reports) and synthesis
+        // flows
         this.simDir = new File(designFile.getParent() + "\\sim");
+        this.simRepDir = new File(simDir.getAbsolutePath() + "\\reports");
+        this.simRepFile = new File(simRepDir.getAbsolutePath() + "\\lynx_trace.txt");
         simDir.mkdir();
+        simRepDir.mkdir();
     }
 
     public void writeToRpt(String line) {
@@ -141,5 +147,9 @@ public class ReportData {
 
     public String getVlogDirString() {
         return vlogCommonPath;
+    }
+
+    public File getSimRepFile() {
+        return simRepFile;
     }
 }

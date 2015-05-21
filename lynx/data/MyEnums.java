@@ -71,6 +71,21 @@ public class MyEnums {
         }
     }
 
+    public enum SimModType {
+        SRC("SRC"), SINK("SINK");
+
+        private final String name;
+
+        private SimModType(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     public enum BundleStatus {
         UNCONNECTED("unconnected"), NOC("noc"), OTHER("other");
 

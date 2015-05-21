@@ -10,7 +10,8 @@ module via_1_1
 	parameter o0_WIDTH = 32,                  //data width for o0
     parameter N = 16,                         //number of nodes
 	parameter N_ADDR_WIDTH = $clog2(N),       //router address width
-    parameter [7:0] o0_ID = 0,                //unique id associated with each tpg
+    parameter [7:0] o0_ID = 0,                //unique id associated with each src
+    parameter [7:0] i0_ID = 0,                //unique id associated with each sink
 	parameter [N_ADDR_WIDTH-1:0] NODE = 15,   //router index that this tpg is connected to
 	parameter [N_ADDR_WIDTH-1:0] o0_DEST = 15 //router index that this tpg sends to
 )
@@ -79,7 +80,7 @@ end
 //synopsys translate off
 int curr_time;
 integer fmain;
-initial fmain = $fopen("lynx_trace.txt");
+initial fmain = $fopen("reports/lynx_trace.txt");
 //synopsys translate on
 
 //TPG o0
@@ -102,8 +103,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,NODE,o0_dest_reg,o0_ID,o0_data_counter);
-            $display("SEND; time=%d; from=%d; to=%d; id=%d; data=%d;",curr_time,NODE,o0_dest_reg,o0_ID,o0_data_counter);
+            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; id=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,o0_data_counter);
+            $display("SRC=%d; time=%d; from=%d; to=%d; id=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,o0_data_counter);
             //synopsys translate on
             
             o0_buffered_data_consumed = 1;
@@ -147,8 +148,8 @@ begin
                 
                 //synopsys translate off
                 curr_time = $time;
-                $fdisplay(fmain,"RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,i0_src_in,i0_dst_in,NODE,i0_id_in,i0_data_counter);
-                $display("RECV; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,i0_src_in,i0_dst_in,NODE,i0_id_in,i0_data_counter);
+                $fdisplay(fmain,"SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,NODE,i0_data_counter,i0_id_in);
+                $display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,NODE,i0_data_counter,i0_id_in);
                 //synopsys translate on
                 
                 i0_input_buffered = 1;

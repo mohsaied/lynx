@@ -41,7 +41,7 @@ assign valid_out = valid_reg;
 //synopsys translate off
 int curr_time;
 integer fmain;
-initial fmain = $fopen("lynx_trace.txt");
+initial fmain = $fopen("reports/lynx_trace.txt");
 //synopsys translate on
 
 //send data whenever possible
@@ -63,8 +63,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SEND; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,NODE,ID,data_counter);
-            $display("SEND; time=%d; from=%d; to=%d; curr=%d; id=%d; data=%d;",curr_time,NODE,dest_reg,NODE,ID,data_counter);
+            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
+            $display("SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
             //synopsys translate on
         end        
         else

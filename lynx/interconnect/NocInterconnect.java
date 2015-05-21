@@ -14,7 +14,6 @@ import lynx.data.Depacketizer;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Bundle;
-import lynx.data.DesignModule;
 import lynx.data.Module;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
@@ -32,11 +31,11 @@ import lynx.nocmapping.Mapping;
  * @author Mohamed
  *
  */
-@SuppressWarnings("unused")
 public class NocInterconnect {
 
     private static final Logger log = Logger.getLogger(NocInterconnect.class.getName());
     private static int CURRSRCID = 0;
+    private static int CURRSINKID = 0;
 
     /**
      * Add default NoC to design
@@ -171,6 +170,7 @@ public class NocInterconnect {
         int num = 0;
         for (Bundle bun : mod.getBundles(Direction.INPUT)) {
             via.addParameter(new Parameter("i" + num + "_width", bun.getWidth()));
+            via.addParameter(new Parameter("i" + num + "_ID", CURRSINKID++));
 
             // create bundle ports
             Port dataPort = new Port("data_in", Direction.INPUT, bun.getWidth(), via);
@@ -257,6 +257,7 @@ public class NocInterconnect {
         // add parameters
         sink.addParameter(new Parameter("WIDTH", bun.getWidth()));
         sink.addParameter(new Parameter("N", noc.getNumRouters()));
+        sink.addParameter(new Parameter("ID", CURRSINKID++));
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
 
         // add clk/rst ports
