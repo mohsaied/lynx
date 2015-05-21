@@ -59,4 +59,8 @@ class SimEntry {
         int value = Integer.parseInt(field.split("=")[1].trim());
         return value;
     }
+
+    public String getSinkHash() {
+        return "" + currMod + "_" + data;
+    }
 }
