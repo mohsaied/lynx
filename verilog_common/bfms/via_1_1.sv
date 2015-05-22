@@ -18,6 +18,7 @@ module via_1_1
 (
 	input clk,
 	input rst,
+	output done,
     
     input [i0_WIDTH-1:0] i0_data_in,
     input                i0_valid_in,
@@ -103,8 +104,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; id=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,o0_data_counter);
-            $display("SRC=%d; time=%d; from=%d; to=%d; id=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,o0_data_counter);
+            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
+            $display("SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
             //synopsys translate on
             
             o0_buffered_data_consumed = 1;
@@ -158,6 +159,9 @@ begin
 	end
 end
 
+
+//time bomb to end simulation after 100 pieces of data
+assign done = (i0_data_counter > 100) && (o0_data_counter > 100);
 
 //synopsys translate off
 final $fclose(fmain);

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import lynx.data.MyEnums.*;
+import lynx.data.MyEnums.Direction;
+import lynx.data.MyEnums.PortType;
 
 /**
  * The input/output ports of a Verilog module.
@@ -37,6 +38,10 @@ public class Port {
 
     public Port(String name, Direction direction, Module parentModule) {
         this(name, direction, 1, 1, PortType.UNKNOWN, parentModule, false, null);
+    }
+
+    public Port(String name, Direction direction, int width, PortType type, Module parentModule) {
+        this(name, direction, width, 1, type, parentModule, false, null);
     }
 
     public Port(String name, Direction direction, Module parentModule, String globalPortName) {

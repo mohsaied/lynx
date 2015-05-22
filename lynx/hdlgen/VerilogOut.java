@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import lynx.data.Design;
 import lynx.data.Module;
+import lynx.data.MyEnums.PortType;
 import lynx.data.Noc;
 import lynx.data.Parameter;
 import lynx.data.Port;
@@ -182,16 +183,31 @@ public class VerilogOut {
                     if (maxStart != 0)
                         connectionString += ",";
 
-                    currBit = maxStart;
+                    currBit = maxStart - 1;
                 }
 
                 // final padding
                 if (currBit != 0) {
-                    int padSize = currBit;
+                    int padSize = currBit + 1;
                     connectionString += "{" + padSize + "{1'b0}}";
                 }
 
                 connectionString += "}";
+                // fourth case: this is a valid port in an noc port which has
+                // multiple bundles going to it -- we'll OR all the valids to
+                // accept data from any of the inputs that are sharing this port
+            } else if (por.getType() == PortType.VALID && por.getWires().size() > 1) {
+                connectionString = "";
+                for (Wire wire : por.getWires()) {
+                    connectionString += por.getConnectingWireName(wire) + "|";
+                }
+                connectionString = connectionString.substring(0, connectionString.length() - 1);
+            } else if (por.getType() == PortType.DONE && por.getWires().size() > 1) {
+                connectionString = "";
+                for (Wire wire : por.getWires()) {
+                    connectionString += por.getConnectingWireName(wire) + "&";
+                }
+                connectionString = connectionString.substring(0, connectionString.length() - 1);
             }
         }
 

@@ -99,6 +99,7 @@ public class NocInterconnect {
 
         log.info("Adding srcs/sinks/vias instead or designmodules");
         Map<Bundle, Bundle> designToSimBundleMap = populateSimulationDesign(design, simulationDesign, mapping);
+        createAndConnectHaltModule(simulationDesign);
 
         log.info("Configuring module clocks");
         configureModuleClocks(simulationDesign, newNoc, mapping, designToSimBundleMap);
@@ -151,6 +152,22 @@ public class NocInterconnect {
         return bbMap;
     }
 
+    private static void createAndConnectHaltModule(Design design) {
+        DesignModule halt = new DesignModule("halt_sim", "halter");
+        Port haltPort = new Port("done", Direction.INPUT, 1, PortType.DONE, halt);
+        halt.addPort(haltPort);
+
+        // loop over all designmodules (which are srcs/sinks and vias) and
+        // connect their done signal to the halter
+        for (DesignModule mod : design.getDesignModules().values()) {
+            Port por = mod.getPortByName("done");
+            haltPort.addWire(por);
+            por.addWire(haltPort);
+        }
+
+        design.setHaltModule(halt);
+    }
+
     private static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, Map<Bundle, Bundle> bbMap) {
         int numSrc = mod.getBundles(Direction.OUTPUT).size();
         int numSink = mod.getBundles(Direction.INPUT).size();
@@ -158,26 +175,26 @@ public class NocInterconnect {
 
         // fixed parameters
         via.addParameter(new Parameter("N", noc.getNumRouters()));
-        via.addParameter(new Parameter("ID", CURRID++));
         via.addParameter(new Parameter("NODE", mapping.getApproxRouterForModule(mod)));
 
         // fixed ports
         via.addPort(new Port("clk", Direction.INPUT, PortType.CLK, via, "clk"));
         via.addPort(new Port("rst", Direction.INPUT, PortType.RST, via, "rst"));
+        via.addPort(new Port("done", Direction.OUTPUT, 1, PortType.DONE, via));
 
         // numbun-dependant parameters and ports
         int num = 0;
         for (Bundle bun : mod.getBundles(Direction.INPUT)) {
-            via.addParameter(new Parameter("i" + num + "_width", bun.getWidth()));
+            via.addParameter(new Parameter("i" + num + "_WIDTH", bun.getWidth()));
             via.addParameter(new Parameter("i" + num + "_ID", CURRID++));
 
             // create bundle ports
-            Port dataPort = new Port("data_in", Direction.INPUT, bun.getWidth(), via);
-            Port validPort = new Port("valid_in", Direction.INPUT, via);
-            Port readyPort = new Port("ready_out", Direction.OUTPUT, via);
+            Port dataPort = new Port("i" + num + "_data_in", Direction.INPUT, bun.getWidth(), via);
+            Port validPort = new Port("i" + num + "_valid_in", Direction.INPUT, via);
+            Port readyPort = new Port("i" + num + "_ready_out", Direction.OUTPUT, via);
 
             // create bundle and add ports to it
-            Bundle newBun = new Bundle("inbun_" + num, via);
+            Bundle newBun = new Bundle("i" + num + "_inbun_" + num, via);
             newBun.addDataPort(dataPort);
             newBun.setValidPort(validPort);
             newBun.setReadyPort(readyPort);
@@ -189,18 +206,18 @@ public class NocInterconnect {
         }
         num = 0;
         for (Bundle bun : mod.getBundles(Direction.OUTPUT)) {
-            via.addParameter(new Parameter("o" + num + "_width", bun.getWidth()));
+            via.addParameter(new Parameter("o" + num + "_WIDTH", bun.getWidth()));
             via.addParameter(new Parameter("o" + num + "_ID", CURRID++));
             via.addParameter(new Parameter("o" + num + "_DEST", mapping.getRouter(bun.getConnections().get(0))));
 
             // create bundle ports
-            Port dataPort = new Port("data_out", Direction.OUTPUT, bun.getWidth(), via);
-            Port destPort = new Port("dest_out", Direction.OUTPUT, noc.getAddressWidth(), via);
-            Port validPort = new Port("valid_out", Direction.OUTPUT, via);
-            Port readyPort = new Port("ready_in", Direction.INPUT, via);
+            Port dataPort = new Port("o" + num + "_data_out", Direction.OUTPUT, bun.getWidth(), via);
+            Port destPort = new Port("o" + num + "_dest_out", Direction.OUTPUT, noc.getAddressWidth(), via);
+            Port validPort = new Port("o" + num + "_valid_out", Direction.OUTPUT, via);
+            Port readyPort = new Port("o" + num + "_ready_in", Direction.INPUT, via);
 
             // create bundle and add ports to it
-            Bundle newBun = new Bundle("outbun_" + num, via);
+            Bundle newBun = new Bundle("o" + num + "_outbun_" + num, via);
             newBun.addDataPort(dataPort);
             newBun.setDstPort(destPort);
             newBun.setValidPort(validPort);
@@ -227,6 +244,7 @@ public class NocInterconnect {
         // add clk/rst ports
         src.addPort(new Port("clk", Direction.INPUT, PortType.CLK, src, "clk"));
         src.addPort(new Port("rst", Direction.INPUT, PortType.RST, src, "rst"));
+        src.addPort(new Port("done", Direction.OUTPUT, 1, PortType.DONE, src));
 
         // create bundle ports
         Port dataPort = new Port("data_out", Direction.OUTPUT, bun.getWidth(), src);
@@ -262,6 +280,7 @@ public class NocInterconnect {
         // add clk/rst ports
         sink.addPort(new Port("clk", Direction.INPUT, PortType.CLK, sink, "clk"));
         sink.addPort(new Port("rst", Direction.INPUT, PortType.RST, sink, "rst"));
+        sink.addPort(new Port("done", Direction.OUTPUT, 1, PortType.DONE, sink));
 
         // create bundle ports
         Port dataPort = new Port("data_in", Direction.INPUT, bun.getWidth(), sink);

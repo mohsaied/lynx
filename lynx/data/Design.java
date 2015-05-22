@@ -27,6 +27,8 @@ public final class Design extends Module {
     private Map<String, DesignModule> modules;
     private Map<String, Integer> moduleIndices;
 
+    private DesignModule haltModule;
+
     private List<Connection> allConnections;
 
     private List<Translator> translators;
@@ -52,6 +54,7 @@ public final class Design extends Module {
         this.mappings = null;
         this.clusters = null;
         this.noc = null;
+        this.haltModule = null;
         this.setDebugAnnealCost(new ArrayList<Double>());
         log.info("Creating new design: " + name);
     }
@@ -99,6 +102,9 @@ public final class Design extends Module {
             allModules.add(DesignData.getInstance().getNoc());
         else
             allModules.add(noc);
+
+        if (haltModule != null)
+            allModules.add(haltModule);
 
         return allModules;
     }
@@ -348,6 +354,14 @@ public final class Design extends Module {
         Design cloneDesign = new Design(this.getName());
 
         return cloneDesign;
+    }
+
+    public DesignModule getHaltModule() {
+        return haltModule;
+    }
+
+    public void setHaltModule(DesignModule haltModule) {
+        this.haltModule = haltModule;
     }
 
 }

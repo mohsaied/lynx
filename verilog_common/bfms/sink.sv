@@ -15,6 +15,7 @@ module sink
 (
 	input clk,
 	input rst,
+    output done,
     
     input [WIDTH-1:0] data_in,
     input             valid_in,
@@ -72,6 +73,10 @@ begin
         end        
 	end
 end
+
+
+//time bomb to end simulation after 100 pieces of data
+assign done = data_counter > 100;
 
 //synopsys translate off
 final $fclose(fmain);

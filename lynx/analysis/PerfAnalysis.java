@@ -126,11 +126,11 @@ public class PerfAnalysis {
         // loop over srcs and sinks and find the throughput
         for (int srcMod : srcs) {
             ThroughputStruct throughput = findThroughput(srcMod, SimModType.SRC, srcEntryMap, sinkEntryMap);
-            log.info("Src(" + srcMod + "): throughput(cycles between operations)=" + throughput);
+            log.info("Src(" + srcMod + "): throughput(cycles)=" + throughput);
         }
         for (int dstMod : sinks) {
             ThroughputStruct throughput = findThroughput(dstMod, SimModType.SINK, srcEntryMap, sinkEntryMap);
-            log.info("Sink(" + dstMod + "): throughput(cycles between operations)=" + throughput);
+            log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
         }
 
         // loop over all connections and find the latency

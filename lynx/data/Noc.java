@@ -161,7 +161,9 @@ public class Noc extends Module {
     }
 
     private int getNumNocBundlesOutPerPort() {
-        return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
+        // TODO fix this after supporting combine-data mode
+        // return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
+        return 1;
     }
 
     public ArrayList<NocBundle> getNocInBundles(int router) {
@@ -250,16 +252,18 @@ public class Noc extends Module {
         this.addPort(new Port("clk_int", Direction.INPUT, getNumRouters(), PortType.CLKINT, this, "clk_int"));
 
         for (int i = 0; i < nocNumRouters; i++) {
-            this.addPort(new Port(buildNocPortName(PortType.CLK, Direction.INPUT, i), Direction.INPUT, 1, this));
-            this.addPort(new Port(buildNocPortName(PortType.CLKINT, Direction.INPUT, i), Direction.INPUT, 1, this));
 
-            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.INPUT, i), Direction.INPUT, nocInterfaceWidth, this));
-            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.INPUT, i), Direction.INPUT, 1, this));
-            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.OUTPUT, i), Direction.OUTPUT, 1, this));
+            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.INPUT, i), Direction.INPUT, nocInterfaceWidth,
+                    PortType.DATA, this));
+            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.INPUT, i), Direction.INPUT, 1, PortType.VALID, this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.OUTPUT, i), Direction.OUTPUT, 1, PortType.READY,
+                    this));
 
-            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.OUTPUT, i), Direction.OUTPUT, nocInterfaceWidth, this));
-            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.OUTPUT, i), Direction.OUTPUT, 1, this));
-            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, 1, this));
+            this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.OUTPUT, i), Direction.OUTPUT, nocInterfaceWidth,
+                    PortType.DATA, this));
+            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.OUTPUT, i), Direction.OUTPUT, 1, PortType.VALID,
+                    this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, 1, PortType.READY, this));
         }
     }
 

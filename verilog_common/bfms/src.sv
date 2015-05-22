@@ -16,6 +16,7 @@ module src
 (
 	input clk,
 	input rst,
+    output done,
     
     output        [WIDTH-1:0] data_out,
     output [N_ADDR_WIDTH-1:0] dest_out,
@@ -77,11 +78,7 @@ begin
 end
 
 //time bomb to end simulation after 100 pieces of data
-//synopsys translate off
-always @ (posedge clk)
-if(data_counter == 100)
-    $finish(0);
-//synopsys translate on
+assign done = data_counter > 100;
 
 
 //synopsys translate off

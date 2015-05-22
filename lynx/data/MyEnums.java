@@ -32,7 +32,7 @@ public class MyEnums {
 
     public enum PortType {
         DATA("data"), VALID("valid"), READY("ready"), DST("dst"), CLK("clk"), CLKINT("clkint"), CLKRTL("clkrtl"), RST("rst"), TOP(
-                "top"), UNKNOWN("unknown");
+                "top"), DONE("done"), UNKNOWN("unknown");
 
         private final String name;
 
@@ -62,10 +62,10 @@ public class MyEnums {
         }
 
         public String toShortString() {
-            if (name.contains("packetizer"))
-                return "pkt";
-            else if (name.contains("depacketizer"))
+            if (name.contains("depacketizer"))
                 return "depkt";
+            else if (name.contains("packetizer"))
+                return "pkt";
             else
                 return "error";
         }
