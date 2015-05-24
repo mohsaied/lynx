@@ -12,7 +12,10 @@ module halt_sim
 //synopsys translate off
 always @ (*)
     if(done)
+    begin
+        $display("Shutting down simulation, good bye, thank you for playing with the lynx simulator!");
         $finish(0);
+    end
 //synopsys translate on
 
 endmodule

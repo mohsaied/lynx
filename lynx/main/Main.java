@@ -3,6 +3,7 @@ package lynx.main;
 import java.io.File;
 import java.util.logging.Level;
 
+import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.data.Noc;
@@ -17,24 +18,23 @@ public class Main {
 
     @SuppressWarnings("unused")
     public final static void main(String[] args) {
-/*
+
+//        try {
+//            MyLogger parentLog = new MyLogger(Level.ALL);
+//            runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            ReportData.getInstance().writeToRpt("SCHMETTERLING");
+//            ReportData.getInstance().writeToRpt(e.getMessage());
+//            ReportData.getInstance().closeRpt();
+//        }
+
         try {
-            MyLogger parentLog = new MyLogger(Level.ALL);
-            runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ReportData.getInstance().writeToRpt("SCHMETTERLING");
-            ReportData.getInstance().writeToRpt(e.getMessage());
-            ReportData.getInstance().closeRpt();
-        }
-*/
-        try {
-            if (args.length == 0) {
-                // bring up the GUI
+            if (args.length == 0) { // bring up the GUI
                 Gui gui = new Gui(null);
                 MyLogger parentLog = new MyLogger(Level.ALL);
             } else if (args[0].equals("-c")) {
-                // command line requested -- second argument is the designpath
+                // command line requested -- second argumentis the designpath
                 MyLogger parentLog = new MyLogger(Level.ALL);
                 String filePath = args[1];
                 runFlow(filePath);
@@ -45,7 +45,6 @@ public class Main {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
-
     }
 
     /**
@@ -62,7 +61,7 @@ public class Main {
         XmlDesign.readXMLDesign(filePath);
 
         // add NoC circuitry - NoC and translators
-        NocInterconnect.addNoc("nocs/w150_n16_v1_d16.xml");
+        NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
 
         // cluster design into SCCs
         NocClustering.clusterDesign();
@@ -79,7 +78,12 @@ public class Main {
         NocInterconnect.connectDesignToNoc(clusteredDesign, noc);
 
         // output simulation directory
-        Simulation.generateSimDir(clusteredDesign, noc);
+        Design simulationDesign = DesignData.getInstance().getSimulationDesign();
+        Simulation.generateSimDir(simulationDesign, noc);
+
+        // parse lynx_trace and print some performance metrics
+        File simRepFile = ReportData.getInstance().getSimRepFile();
+        PerfAnalysis.parseSimFile(simRepFile);
 
     }
 

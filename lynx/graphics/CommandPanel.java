@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
+import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.data.Noc;
@@ -39,6 +40,7 @@ public class CommandPanel extends JPanel {
     private JPanel clusterPanel;
     private JPanel mapPanel;
     private JPanel fileOutPanel;
+    private JPanel perfPanel;
     private JPanel logoPanel;
 
     // logo image
@@ -49,6 +51,7 @@ public class CommandPanel extends JPanel {
     private JButton clusterButton;
     private JButton mapButton;
     private JButton fileOutButton;
+    private JButton perfButton;
 
     // opened file
     private File openedFile;
@@ -58,12 +61,14 @@ public class CommandPanel extends JPanel {
     private JLabel clusterSecLabel;
     private JLabel mapSecLabel;
     private JLabel fileOutSecLabel;
+    private JLabel perfSecLabel;
 
     // progress bars for algorithms
     private JProgressBar fileProgress;
     private JProgressBar clusterProgress;
     private JProgressBar mapProgress;
     private JProgressBar fileOutProgress;
+    private JProgressBar perfProgress;
 
     private MainPanel mainPanel;
 
@@ -72,7 +77,7 @@ public class CommandPanel extends JPanel {
      * initializes everything
      */
     public CommandPanel(MainPanel mainPanel) {
-        super(new GridLayout(5, 1));
+        super(new GridLayout(6, 1));
         this.mainPanel = mainPanel;
 
         // create a panel for each group of buttons
@@ -89,6 +94,9 @@ public class CommandPanel extends JPanel {
 
         // fourth panel is for file generation
         createFilePanel();
+
+        // fifth panel is for performance evaluation
+        createPerfPanel();
     }
 
     private void createOpenPanel() {
@@ -177,6 +185,19 @@ public class CommandPanel extends JPanel {
                                 }
                                 fileOutProgress.setIndeterminate(false);
                                 fileOutProgress.setString("done.");
+
+                                perfProgress.setIndeterminate(true);
+                                perfProgress.setStringPainted(true);
+                                perfProgress.setString("working...");
+                                File simRepFile = ReportData.getInstance().getSimRepFile();
+                                try {
+                                    PerfAnalysis.parseSimFile(simRepFile);
+                                } catch (IOException e1) {
+                                    log.warning("Performance analysis failed - stack trace to follow");
+                                    e1.printStackTrace();
+                                }
+                                perfProgress.setIndeterminate(false);
+                                perfProgress.setString("done.");
                             }
                         }.start();
                     } else {
@@ -244,7 +265,7 @@ public class CommandPanel extends JPanel {
         fileOutSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         fileOutProgress = new JProgressBar();
-        fileOutButton = new JButton("Generate Verilog");
+        fileOutButton = new JButton("Generate Verilog Simulation");
         fileOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -255,6 +276,38 @@ public class CommandPanel extends JPanel {
         fileOutPanel.add(fileOutButton);
         fileOutPanel.add(fileOutProgress);
         this.add(fileOutPanel);
+    }
+
+    private void createPerfPanel() {
+        perfPanel = new JPanel(new GridLayout(4, 1));
+
+        // first create a label for this section
+        perfSecLabel = new JLabel("5. Performance Evaluation");
+        perfSecLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        perfProgress = new JProgressBar();
+        perfButton = new JButton("Analyze Simulation Trace");
+        perfButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                perfProgress.setIndeterminate(true);
+                perfProgress.setStringPainted(true);
+                perfProgress.setString("working...");
+                File simRepFile = ReportData.getInstance().getSimRepFile();
+                try {
+                    PerfAnalysis.parseSimFile(simRepFile);
+                } catch (IOException e1) {
+                    log.warning("Performance analysis failed - stack trace to follow");
+                    e1.printStackTrace();
+                }
+                perfProgress.setIndeterminate(false);
+                perfProgress.setString("done.");
+            }
+        });
+        perfPanel.add(perfSecLabel);
+        perfPanel.add(perfButton);
+        perfPanel.add(perfProgress);
+        this.add(perfPanel);
     }
 
     private void createLogoPanel() {

@@ -38,6 +38,7 @@ public class ReportData {
         this.designFile = null;
         this.report = null;
         this.verilogFile = null;
+        System.setProperty("line.separator", "\n");
     }
 
     public static ReportData getInstance() {
