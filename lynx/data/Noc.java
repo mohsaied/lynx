@@ -148,11 +148,11 @@ public class Noc extends Module {
         }
     }
 
-    private int getNocBundleOutWidth() {
+    public int getNocBundleOutWidth() {
         return getInterfaceWidth() / getNumNocBundlesOutPerPort();
     }
 
-    private int getNocBundleInWidth() {
+    public int getNocBundleInWidth() {
         return getInterfaceWidth() / getNumNocBundlesInPerPort();
     }
 

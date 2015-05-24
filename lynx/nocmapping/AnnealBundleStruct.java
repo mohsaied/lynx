@@ -166,8 +166,8 @@ public class AnnealBundleStruct {
                 this.usedNocBundle.put(nocbun, false);
                 requiredBundles--;
             }
-            List<NocBundle> emptyNocBundleList1 = new ArrayList<NocBundle>();
-            this.bundleMap.put(bun, emptyNocBundleList1);
+            List<NocBundle> emptyNocBundleList = new ArrayList<NocBundle>();
+            this.bundleMap.put(bun, emptyNocBundleList);
             // if we have removed enough -> exit
             if (requiredBundles <= 0)
                 break;
@@ -176,6 +176,7 @@ public class AnnealBundleStruct {
         for (Bundle bun : markedForRemoval) {
             // remove this bundle from bundlesAtRouter
             this.bundlesAtRouter.get(selectedRouter).remove(bun);
+            this.bundlesAtRouter.get(this.bundlesAtRouter.size()-1).add(bun);
         }
     }
 
@@ -193,15 +194,12 @@ public class AnnealBundleStruct {
         // how many noc bundles do I need?
         // input noc bundles are equal to flit(noc) width
         // output noc bundles are equal to fabric width/numVCs - more or less
-        // TODO put that calculation in the Noc object because it doesn't belong
-        // here
-        // TODO also need a more general formula than that
         Direction selectedBundleDirection = selectedBundle.getDirection();
         int nocBundleWidth = 0;
         if (selectedBundleDirection == Direction.INPUT)
-            nocBundleWidth = noc.getInterfaceWidth() / noc.getNumVcs();
+            nocBundleWidth = noc.getNocBundleOutWidth();
         else
-            nocBundleWidth = noc.getWidth();
+            nocBundleWidth = noc.getNocBundleInWidth();
 
         int numNocBundlesRequired = bunWidth / nocBundleWidth + (bunWidth % nocBundleWidth == 0 ? 0 : 1);
 
@@ -227,6 +225,7 @@ public class AnnealBundleStruct {
                 this.usedNocBundle.put(nocbun, true);
             }
             this.bundlesAtRouter.get(selectedRouter).add(selectedBundle);
+            this.bundlesAtRouter.get(noc.getNumRouters()).remove(selectedBundle);
         }
 
         return numNocBundlesRequired;
