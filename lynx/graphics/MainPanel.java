@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import lynx.analysis.Analysis;
 import lynx.data.Design;
 import lynx.data.Noc;
 
@@ -16,6 +17,8 @@ public class MainPanel extends JPanel {
     public static final int GRAPHTABID = 0;
     public static final int CLUSTERTABID = 1;
     public static final int MAPTABID = 2;
+    public static final int ANNEALTABID = 3;
+    public static final int PERFTABID = 3;
 
     // tabbed panel
     JTabbedPane tabbedPane;
@@ -25,6 +28,7 @@ public class MainPanel extends JPanel {
     private ClusteredGraphPanel clusteredGraphPanel;
     private NocPanel nocPanel;
     private PlotPanel chartPanel;
+    private PerfPanel perfPanel;
 
     public MainPanel(Design design) {
         super(new GridLayout(1, 1));
@@ -41,26 +45,33 @@ public class MainPanel extends JPanel {
         // graph of given application
         graphPanel = new GraphPanel();
         tabbedPane.addTab("Graph", null, graphPanel, "Visualize the provided connectivity graph");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        tabbedPane.setMnemonicAt(GRAPHTABID, KeyEvent.VK_1);
     }
 
     public void addClusterTab() {
         // graph after clustering
         clusteredGraphPanel = new ClusteredGraphPanel();
         tabbedPane.addTab("Clustered Graph", null, clusteredGraphPanel, "Coarse application graph after clustering");
-        tabbedPane.setMnemonicAt(1, KeyEvent.VK_1);
+        tabbedPane.setMnemonicAt(CLUSTERTABID, KeyEvent.VK_1);
     }
 
     public void addNoCTabs(Design design, Noc noc) {
         // NoC
         nocPanel = new NocPanel(design, noc);
         tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
-        tabbedPane.setMnemonicAt(2, KeyEvent.VK_1);
+        tabbedPane.setMnemonicAt(MAPTABID, KeyEvent.VK_1);
 
         // charts
         chartPanel = new PlotPanel(design);
         tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
-        tabbedPane.setMnemonicAt(3, KeyEvent.VK_1);
+        tabbedPane.setMnemonicAt(ANNEALTABID, KeyEvent.VK_1);
+    }
+
+    public void addPerfTab(Analysis analysis) {
+        // NoC
+        perfPanel = new PerfPanel(analysis);
+        tabbedPane.addTab("Performance", null, perfPanel, "Performance analysis summary");
+        tabbedPane.setMnemonicAt(PERFTABID, KeyEvent.VK_1);
     }
 
     public boolean switchTab(int tabID) {

@@ -29,14 +29,16 @@ public class PerfAnalysis {
     /**
      * Struct to hold the latencies of transfers
      */
-    private static class LatencyStruct {
+    public static class LatencyStruct {
 
-        int avgLatency;
-        int minLatency;
-        int maxLatency;
-        int numberOfSamples;
+        public String name;
+        public double avgLatency;
+        public int minLatency;
+        public int maxLatency;
+        public int numberOfSamples;
 
-        private LatencyStruct(int avgLatency, int minLatency, int maxLatency, int numberOfSamples) {
+        private LatencyStruct(String name, double avgLatency, int minLatency, int maxLatency, int numberOfSamples) {
+            this.name = name;
             this.avgLatency = avgLatency;
             this.minLatency = minLatency;
             this.maxLatency = maxLatency;
@@ -45,21 +47,24 @@ public class PerfAnalysis {
 
         @Override
         public String toString() {
-            return "avg:" + avgLatency + ", min/max:" + minLatency + "/" + maxLatency + ", num:" + numberOfSamples;
+            return "name: " + name + ", avg:" + avgLatency + ", min/max:" + minLatency + "/" + maxLatency + ", num:"
+                    + numberOfSamples;
         }
     }
 
     /**
      * Struct to hold the latencies of transfers
      */
-    private static class ThroughputStruct {
+    public static class ThroughputStruct {
 
-        double avgThroughput;
-        double minThroughput;
-        double maxThroughput;
-        int numberOfSamples;
+        public int module;
+        public double avgThroughput;
+        public double minThroughput;
+        public double maxThroughput;
+        public int numberOfSamples;
 
-        private ThroughputStruct(double avgThroughput, double minThroughput, double maxThroughput, int numberOfSamples) {
+        private ThroughputStruct(int module, double avgThroughput, double minThroughput, double maxThroughput, int numberOfSamples) {
+            this.module = module;
             this.avgThroughput = avgThroughput;
             this.minThroughput = minThroughput;
             this.maxThroughput = maxThroughput;
@@ -68,7 +73,8 @@ public class PerfAnalysis {
 
         @Override
         public String toString() {
-            return "avg:" + avgThroughput + ", min/max:" + minThroughput + "/" + maxThroughput + ", num:" + numberOfSamples;
+            return "module: " + module + ", avg:" + avgThroughput + ", min/max:" + minThroughput + "/" + maxThroughput + ", num:"
+                    + numberOfSamples;
         }
     }
 
@@ -78,14 +84,14 @@ public class PerfAnalysis {
      * @param simRepFile
      * @throws IOException
      */
-    public static void parseSimFile(File simRepFile) throws IOException {
+    public static Analysis parseSimFile(File simRepFile) throws IOException {
 
         log.info("Starting performance analysis of trace file: " + simRepFile.getPath());
 
         if (!simRepFile.isFile()) {
             log.warning("No lynx_trace.txt file was found in " + simRepFile.getParent()
                     + ". Please run a performance simulation first.");
-            return;
+            return null;
         }
 
         // create a map that keeps track of all flits
@@ -120,6 +126,8 @@ public class PerfAnalysis {
             }
         }
 
+        Analysis analysis = new Analysis(sinks.size() + srcs.size(), connections.size());
+
         // what did we find?
         log.info("Found " + srcs.size() + " src(s), " + sinks.size() + " sink(s) and " + connections.size() + " connection(s)");
 
@@ -127,10 +135,12 @@ public class PerfAnalysis {
         for (int srcMod : srcs) {
             ThroughputStruct throughput = findThroughput(srcMod, SimModType.SRC, srcEntryMap, sinkEntryMap);
             log.info("Src(" + srcMod + "): throughput(cycles)=" + throughput);
+            analysis.addThroughputEntry(throughput, srcMod);
         }
         for (int dstMod : sinks) {
             ThroughputStruct throughput = findThroughput(dstMod, SimModType.SINK, srcEntryMap, sinkEntryMap);
             log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
+            analysis.addThroughputEntry(throughput, dstMod);
         }
 
         // loop over all connections and find the latency
@@ -139,9 +149,12 @@ public class PerfAnalysis {
             int dstMod = connSink(connString);
             LatencyStruct latency = findLatency(srcMod, dstMod, srcEntryMap);
             log.info("Connection(" + srcMod + "->" + dstMod + "): latency = " + latency);
+            analysis.addLatencyEntry(latency);
         }
 
         br.close();
+
+        return analysis;
     }
 
     private static String connString(int srcMod, int sinkMod) {
@@ -197,7 +210,7 @@ public class PerfAnalysis {
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
         }
         double avgThroughput = sumThroughput / (num - 2);
-        return new ThroughputStruct(avgThroughput, minThroughput, maxThroughput, num - 2);
+        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2);
     }
 
     /**
@@ -233,7 +246,7 @@ public class PerfAnalysis {
         }
 
         int avgLatency = sumLatency / num;
-        return new LatencyStruct(avgLatency, minLatency, maxLatency, num);
+        return new LatencyStruct(connString(srcMod, dstMod), avgLatency, minLatency, maxLatency, num);
     }
 
     protected static SimModType findModType(String line) {

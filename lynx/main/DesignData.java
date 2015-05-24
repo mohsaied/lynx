@@ -1,5 +1,6 @@
 package lynx.main;
 
+import lynx.analysis.Analysis;
 import lynx.data.Design;
 import lynx.data.Clustering;
 import lynx.data.Noc;
@@ -42,6 +43,11 @@ public class DesignData {
      * A design instance with src/sink/via instead of actual modules
      */
     Design simulationDesign;
+
+    /**
+     * Analysis of the opened design
+     */
+    Analysis analysis;
 
     /**
      * Singleton of design data
@@ -100,6 +106,14 @@ public class DesignData {
 
     public final void setNocMapping(Mapping nocMapping) {
         this.nocMapping = nocMapping;
+    }
+
+    public final Analysis getAnalysis() {
+        return analysis;
+    }
+
+    public final void setAnalysis(Analysis analysis) {
+        this.analysis = analysis;
     }
 
 }

@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
+import lynx.analysis.Analysis;
 import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
@@ -191,11 +192,15 @@ public class CommandPanel extends JPanel {
                                 perfProgress.setString("working...");
                                 File simRepFile = ReportData.getInstance().getSimRepFile();
                                 try {
-                                    PerfAnalysis.parseSimFile(simRepFile);
+                                    Analysis analysis = PerfAnalysis.parseSimFile(simRepFile);
+                                    DesignData.getInstance().setAnalysis(analysis);
                                 } catch (IOException e1) {
                                     log.warning("Performance analysis failed - stack trace to follow");
                                     e1.printStackTrace();
                                 }
+                                Analysis analysis = DesignData.getInstance().getAnalysis();
+                                if (analysis != null)
+                                    mainPanel.addPerfTab(analysis);
                                 perfProgress.setIndeterminate(false);
                                 perfProgress.setString("done.");
                             }
@@ -297,7 +302,8 @@ public class CommandPanel extends JPanel {
                 new Thread() {
                     public void run() {
                         try {
-                            PerfAnalysis.parseSimFile(simRepFile);
+                            Analysis analysis = PerfAnalysis.parseSimFile(simRepFile);
+                            DesignData.getInstance().setAnalysis(analysis);
                         } catch (IOException e) {
                             log.warning("Performance analysis failed - stack trace to follow");
                             e.printStackTrace();

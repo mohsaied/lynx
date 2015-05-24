@@ -3,6 +3,7 @@ package lynx.main;
 import java.io.File;
 import java.util.logging.Level;
 
+import lynx.analysis.Analysis;
 import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
@@ -83,8 +84,9 @@ public class Main {
 
         // parse lynx_trace and print some performance metrics
         File simRepFile = ReportData.getInstance().getSimRepFile();
-        PerfAnalysis.parseSimFile(simRepFile);
-
+        Analysis analysis = PerfAnalysis.parseSimFile(simRepFile);
+        DesignData.getInstance().setAnalysis(analysis);
+        
     }
 
 }
