@@ -135,12 +135,12 @@ public class PerfAnalysis {
 
         // loop over srcs and sinks and find the throughput
         for (int srcMod : srcs) {
-            ThroughputStruct throughput = findThroughput(srcMod, SimModType.SRC, srcEntryMap, sinkEntryMap);
+            ThroughputStruct throughput = findThroughput(srcMod, SimModType.SRC, srcEntryMap, sinkEntryMap, analysis);
             log.info("Src(" + srcMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, srcMod);
         }
         for (int dstMod : sinks) {
-            ThroughputStruct throughput = findThroughput(dstMod, SimModType.SINK, srcEntryMap, sinkEntryMap);
+            ThroughputStruct throughput = findThroughput(dstMod, SimModType.SINK, srcEntryMap, sinkEntryMap, analysis);
             log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, dstMod);
         }
@@ -149,7 +149,7 @@ public class PerfAnalysis {
         for (String connString : connections) {
             int srcMod = connSrc(connString);
             int dstMod = connSink(connString);
-            LatencyStruct latency = findLatency(srcMod, dstMod, srcEntryMap);
+            LatencyStruct latency = findLatency(srcMod, dstMod, srcEntryMap, analysis);
             log.info("Connection(" + srcMod + "->" + dstMod + "): latency = " + latency);
             analysis.addLatencyEntry(latency);
         }
@@ -181,10 +181,11 @@ public class PerfAnalysis {
      * @param modType
      * @param srcEntryMap
      * @param sinkEntryMap
+     * @param analysis
      * @return
      */
     private static ThroughputStruct findThroughput(int mod, SimModType modType, Map<String, SimEntry> srcEntryMap,
-            Map<String, SimEntry> sinkEntryMap) {
+            Map<String, SimEntry> sinkEntryMap, Analysis analysis) {
 
         Map<String, SimEntry> entryMap;
         if (modType == SimModType.SRC)
@@ -195,7 +196,7 @@ public class PerfAnalysis {
         double sumThroughput = 0.0;
         double minThroughput = 999999999.9;
         double maxThroughput = -1.0;
-        int num = WARMUP_CYCLES;
+        int num = 0;
         int prevSendTime = -1;
         SimEntry simEntry = entryMap.get(SimEntry.hash(mod, ++num));
         while (simEntry != null) {
@@ -206,7 +207,12 @@ public class PerfAnalysis {
                     minThroughput = currThroughput;
                 if (currThroughput > maxThroughput)
                     maxThroughput = currThroughput;
-                sumThroughput += currThroughput;
+
+                if (num >= WARMUP_CYCLES)
+                    sumThroughput += currThroughput;
+
+                // debugging for plot
+                analysis.addDebugThroughput("" + mod, (int) currThroughput);
             }
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
@@ -220,10 +226,11 @@ public class PerfAnalysis {
      * 
      * @param srcMod
      * @param dstMod
+     * @param analysis
      * @param entryMap
      * @return
      */
-    private static LatencyStruct findLatency(int srcMod, int dstMod, Map<String, SimEntry> srcEntryMap) {
+    private static LatencyStruct findLatency(int srcMod, int dstMod, Map<String, SimEntry> srcEntryMap, Analysis analysis) {
 
         int sumLatency = 0;
         int minLatency = 999999999;
@@ -243,6 +250,9 @@ public class PerfAnalysis {
                     if (latency < minLatency)
                         minLatency = latency;
                     sumLatency += latency;
+
+                    // debugging for plot
+                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency);
                 }
             }
         }

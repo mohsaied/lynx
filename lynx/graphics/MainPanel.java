@@ -27,8 +27,9 @@ public class MainPanel extends JPanel {
     private GraphPanel graphPanel;
     private ClusteredGraphPanel clusteredGraphPanel;
     private NocPanel nocPanel;
-    private PlotPanel chartPanel;
+    private PlotPanel chartPanel1;
     private PerfPanel perfPanel;
+    private PlotAnalysisPanel chartPanel2;
 
     public MainPanel(Design design) {
         super(new GridLayout(1, 1));
@@ -62,8 +63,8 @@ public class MainPanel extends JPanel {
         tabbedPane.setMnemonicAt(MAPTABID, KeyEvent.VK_1);
 
         // charts
-        chartPanel = new PlotPanel(design);
-        tabbedPane.addTab("Charts", null, chartPanel, "Charts visualizing the simulated annealing");
+        chartPanel1 = new PlotPanel(design);
+        tabbedPane.addTab("Charts 1", null, chartPanel1, "Charts visualizing the simulated annealing");
         tabbedPane.setMnemonicAt(ANNEALTABID, KeyEvent.VK_1);
     }
 
@@ -72,6 +73,11 @@ public class MainPanel extends JPanel {
         perfPanel = new PerfPanel(analysis);
         tabbedPane.addTab("Performance", null, perfPanel, "Performance analysis summary");
         tabbedPane.setMnemonicAt(PERFTABID, KeyEvent.VK_1);
+
+        // charts
+        chartPanel2 = new PlotAnalysisPanel(analysis);
+        tabbedPane.addTab("Charts 2", null, chartPanel2, "Charts visualizing the simulated annealing");
+        tabbedPane.setMnemonicAt(ANNEALTABID, KeyEvent.VK_1);
     }
 
     public boolean switchTab(int tabID) {
@@ -87,6 +93,7 @@ public class MainPanel extends JPanel {
     }
 
     public void removePerfTab() {
+        tabbedPane.remove(chartPanel2);
         tabbedPane.remove(perfPanel);
     }
 
