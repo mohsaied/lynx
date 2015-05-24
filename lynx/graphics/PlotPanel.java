@@ -1,11 +1,12 @@
 package lynx.graphics;
 
-import java.awt.FlowLayout;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -16,7 +17,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import lynx.data.Design;
 
-public class PlotPanel extends JPanel {
+public class PlotPanel extends JScrollPane {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,12 +25,20 @@ public class PlotPanel extends JPanel {
 
     private Design design;
 
+    private JPanel panel;
+
     public PlotPanel(Design design) {
-        super(new FlowLayout());
+
+        this.panel = new JPanel();
+        BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(bl);
+
         log.setLevel(Level.ALL);
         this.design = design;
 
         initPane();
+
+        this.setViewportView(panel);
     }
 
     public void setDesign(Design design) {
@@ -41,16 +50,16 @@ public class PlotPanel extends JPanel {
 
         if (design != null) {
 
-            //create anneal cost chart
-            addChart(design.getDebugAnnealCost(),"SA Cost");
-            
-            //create anneal cost chart
-            addChart(design.getDebugAnnealTemp(),"SA Temp");
+            // create anneal cost chart
+            addChart(design.getDebugAnnealCost(), "SA Cost");
+
+            // create anneal cost chart
+            addChart(design.getDebugAnnealTemp(), "SA Temp");
         }
     }
 
     private void addChart(List<Double> dataSet, String name) {
-     // create a dataset...
+        // create a dataset...
         XYSeries data = new XYSeries(name);
 
         for (int i = 0; i < dataSet.size(); i++)
@@ -66,6 +75,6 @@ public class PlotPanel extends JPanel {
 
         // create and display a frame...
         ChartPanel panel = new ChartPanel(chart);
-        this.add(panel);
+        this.panel.add(panel);
     }
 }

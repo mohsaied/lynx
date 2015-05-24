@@ -24,6 +24,8 @@ public class PerfAnalysis {
     protected static final int DATA_POS = 5;
     protected static final int SRCMOD_POS = 6;
 
+    private static final int WARMUP_CYCLES = 100;
+
     protected static final int CLK_PERIOD = 10000;
 
     /**
@@ -193,7 +195,7 @@ public class PerfAnalysis {
         double sumThroughput = 0.0;
         double minThroughput = 999999999.9;
         double maxThroughput = -1.0;
-        int num = 0;
+        int num = WARMUP_CYCLES;
         int prevSendTime = -1;
         SimEntry simEntry = entryMap.get(SimEntry.hash(mod, ++num));
         while (simEntry != null) {
@@ -209,8 +211,8 @@ public class PerfAnalysis {
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
         }
-        double avgThroughput = sumThroughput / (num - 2);
-        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2);
+        double avgThroughput = sumThroughput / (num - 2 - WARMUP_CYCLES);
+        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2 - WARMUP_CYCLES);
     }
 
     /**

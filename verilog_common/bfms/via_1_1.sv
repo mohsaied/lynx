@@ -161,7 +161,7 @@ end
 
 
 //time bomb to end simulation after 100 pieces of data
-assign done = (i0_data_counter > 100) && (o0_data_counter > 100);
+assign done = (i0_data_counter > 1000) && (o0_data_counter > 1000);
 
 //synopsys translate off
 final $fclose(fmain);
