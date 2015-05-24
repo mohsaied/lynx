@@ -18,7 +18,7 @@ public class MainPanel extends JPanel {
     public static final int CLUSTERTABID = 1;
     public static final int MAPTABID = 2;
     public static final int ANNEALTABID = 3;
-    public static final int PERFTABID = 3;
+    public static final int PERFTABID = 4;
 
     // tabbed panel
     JTabbedPane tabbedPane;
@@ -84,6 +84,10 @@ public class MainPanel extends JPanel {
 
     public void clearTabs() {
         tabbedPane.removeAll();
+    }
+
+    public void removePerfTab() {
+        tabbedPane.remove(perfPanel);
     }
 
 }

@@ -310,8 +310,15 @@ public class CommandPanel extends JPanel {
                         }
                     }
                 }.start();
+                Analysis analysis = DesignData.getInstance().getAnalysis();
+                if (analysis != null){
+                    mainPanel.removePerfTab();
+                    mainPanel.addPerfTab(analysis);
+                }
                 perfProgress.setIndeterminate(false);
                 perfProgress.setString("done.");
+                if (!mainPanel.switchTab(MainPanel.PERFTABID))
+                    log.warning("Performance analysis was never run.");
             }
         });
         perfPanel.add(perfSecLabel);
