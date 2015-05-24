@@ -294,12 +294,16 @@ public class CommandPanel extends JPanel {
                 perfProgress.setStringPainted(true);
                 perfProgress.setString("working...");
                 File simRepFile = ReportData.getInstance().getSimRepFile();
-                try {
-                    PerfAnalysis.parseSimFile(simRepFile);
-                } catch (IOException e1) {
-                    log.warning("Performance analysis failed - stack trace to follow");
-                    e1.printStackTrace();
-                }
+                new Thread() {
+                    public void run() {
+                        try {
+                            PerfAnalysis.parseSimFile(simRepFile);
+                        } catch (IOException e) {
+                            log.warning("Performance analysis failed - stack trace to follow");
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 perfProgress.setIndeterminate(false);
                 perfProgress.setString("done.");
             }
