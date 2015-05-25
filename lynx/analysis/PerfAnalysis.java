@@ -218,7 +218,7 @@ public class PerfAnalysis {
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
         }
         double avgThroughput = sumThroughput / (num - 2 - WARMUP_CYCLES);
-        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2 - WARMUP_CYCLES);
+        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2);
     }
 
     /**

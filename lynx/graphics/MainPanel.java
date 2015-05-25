@@ -19,6 +19,7 @@ public class MainPanel extends JPanel {
     public static final int MAPTABID = 2;
     public static final int ANNEALTABID = 3;
     public static final int PERFTABID = 4;
+    public static final int CHARTTABID = 5;
 
     // tabbed panel
     JTabbedPane tabbedPane;
@@ -77,7 +78,7 @@ public class MainPanel extends JPanel {
         // charts
         chartPanel2 = new PlotAnalysisPanel(analysis);
         tabbedPane.addTab("Charts 2", null, chartPanel2, "Charts visualizing the simulated annealing");
-        tabbedPane.setMnemonicAt(ANNEALTABID, KeyEvent.VK_1);
+        tabbedPane.setMnemonicAt(CHARTTABID, KeyEvent.VK_1);
     }
 
     public boolean switchTab(int tabID) {
