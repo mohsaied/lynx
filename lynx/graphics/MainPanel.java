@@ -77,7 +77,7 @@ public class MainPanel extends JPanel {
 
         // charts
         chartPanel2 = new PlotAnalysisPanel(analysis);
-        tabbedPane.addTab("Charts 2", null, chartPanel2, "Charts visualizing the simulated annealing");
+        tabbedPane.addTab("Charts 2", null, chartPanel2, "Charts of throughput and latency from simulation");
         tabbedPane.setMnemonicAt(CHARTTABID, KeyEvent.VK_1);
     }
 

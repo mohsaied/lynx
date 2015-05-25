@@ -203,7 +203,7 @@ public class PerfAnalysis {
                     sumThroughput += currThroughput;
 
                 // debugging for plot
-                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime);
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime/CLK_PERIOD);
             }
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
@@ -245,7 +245,7 @@ public class PerfAnalysis {
                     sumThroughput += currThroughput;
 
                 // debugging for plot
-                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime);
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime/CLK_PERIOD);
             }
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
@@ -285,7 +285,7 @@ public class PerfAnalysis {
                     sumLatency += latency;
 
                     // debugging for plot
-                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time);
+                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time/CLK_PERIOD);
                 }
             }
         }

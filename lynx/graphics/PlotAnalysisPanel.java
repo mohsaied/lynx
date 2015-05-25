@@ -73,7 +73,7 @@ public class PlotAnalysisPanel extends JScrollPane {
         }
 
         // create a chart...
-        JFreeChart chart = ChartFactory.createXYLineChart("", "Time", name, dataset, PlotOrientation.VERTICAL, true, // legend?
+        JFreeChart chart = ChartFactory.createXYLineChart("", "Time (cycles)", name, dataset, PlotOrientation.VERTICAL, true, // legend?
                 true, // tooltips?
                 false // URLs?
                 );
