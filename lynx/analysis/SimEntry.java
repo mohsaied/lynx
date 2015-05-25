@@ -60,7 +60,7 @@ class SimEntry {
         return value;
     }
 
-    public String getSinkHash() {
-        return "" + currMod + "_" + data;
+    public int getSinkHash() {
+        return time;
     }
 }

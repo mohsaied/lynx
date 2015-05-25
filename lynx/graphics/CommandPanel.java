@@ -318,7 +318,7 @@ public class CommandPanel extends JPanel {
                 perfProgress.setIndeterminate(false);
                 perfProgress.setString("done.");
                 if (!mainPanel.switchTab(MainPanel.PERFTABID))
-                    log.warning("Performance analysis was never run.");
+                    log.warning("Performance analysis did not complete, make sure you ran a simulation until completion.");
             }
         });
         perfPanel.add(perfSecLabel);

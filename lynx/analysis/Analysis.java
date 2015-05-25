@@ -19,15 +19,19 @@ public class Analysis {
     List<LatencyStruct> latency;
     List<ThroughputStruct> throughput;
 
-    Map<String, List<Integer>> debugThroughput;
-    Map<String, List<Integer>> debugLatency;
+    Map<String, List<Integer>> debugYThroughput;
+    Map<String, List<Integer>> debugXThroughput;
+    Map<String, List<Integer>> debugYLatency;
+    Map<String, List<Integer>> debugXLatency;
 
     public Analysis(int numMods, int numConns) {
         this.latency = new ArrayList<PerfAnalysis.LatencyStruct>();
         this.throughput = new ArrayList<PerfAnalysis.ThroughputStruct>();
 
-        this.debugThroughput = new HashMap<String, List<Integer>>();
-        this.debugLatency = new HashMap<String, List<Integer>>();
+        this.debugYThroughput = new HashMap<String, List<Integer>>();
+        this.debugXThroughput = new HashMap<String, List<Integer>>();
+        this.debugYLatency = new HashMap<String, List<Integer>>();
+        this.debugXLatency = new HashMap<String, List<Integer>>();
     }
 
     public void addLatencyEntry(LatencyStruct entry) {
@@ -46,27 +50,45 @@ public class Analysis {
         return this.throughput;
     }
 
-    public void addDebugThroughput(String mod, int entry) {
-        List<Integer> list = new ArrayList<Integer>();
-        if (debugThroughput.get(mod) != null)
-            list = debugThroughput.get(mod);
-        list.add(entry);
-        debugThroughput.put(mod, list);
+    public void addDebugThroughput(String mod, int throughput, int time) {
+        List<Integer> yList = new ArrayList<Integer>();
+        List<Integer> xList = new ArrayList<Integer>();
+        if (debugYThroughput.get(mod) != null) {
+            yList = debugYThroughput.get(mod);
+            xList = debugXThroughput.get(mod);
+        }
+        yList.add(throughput);
+        xList.add(time);
+        debugYThroughput.put(mod, yList);
+        debugXThroughput.put(mod, xList);
     }
 
-    public Map<String, List<Integer>> getDebugThroughput() {
-        return debugThroughput;
+    public Map<String, List<Integer>> getDebugYThroughput() {
+        return debugYThroughput;
     }
 
-    public void addDebugLatency(String conn, int entry) {
-        List<Integer> list = new ArrayList<Integer>();
-        if (debugLatency.get(conn) != null)
-            list = debugLatency.get(conn);
-        list.add(entry);
-        debugLatency.put(conn, list);
+    public Map<String, List<Integer>> getDebugXThroughput() {
+        return debugXThroughput;
     }
 
-    public Map<String, List<Integer>> getDebugLatency() {
-        return debugLatency;
+    public void addDebugLatency(String conn, int latency, int time) {
+        List<Integer> yList = new ArrayList<Integer>();
+        List<Integer> xList = new ArrayList<Integer>();
+        if (debugYLatency.get(conn) != null) {
+            yList = debugYLatency.get(conn);
+            xList = debugXLatency.get(conn);
+        }
+        yList.add(latency);
+        xList.add(time);
+        debugYLatency.put(conn, yList);
+        debugXLatency.put(conn, xList);
+    }
+
+    public Map<String, List<Integer>> getDebugYLatency() {
+        return debugYLatency;
+    }
+
+    public Map<String, List<Integer>> getDebugXLatency() {
+        return debugXLatency;
     }
 }

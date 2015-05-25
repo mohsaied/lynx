@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.SimModType;
@@ -98,7 +100,7 @@ public class PerfAnalysis {
 
         // create a map that keeps track of all flits
         Map<String, SimEntry> srcEntryMap = new HashMap<String, SimEntry>();
-        Map<String, SimEntry> sinkEntryMap = new HashMap<String, SimEntry>();
+        Map<Integer, SimEntry> sinkEntryMap = new HashMap<Integer, SimEntry>();
 
         // sets to keep all the sources and sinks
         Set<Integer> srcs = new HashSet<Integer>();
@@ -121,7 +123,7 @@ public class PerfAnalysis {
             } else if (findModType(line) == SimModType.SINK) {
                 SimEntry origSimEntry = srcEntryMap.get(hash);
                 origSimEntry.update(simEntry);
-                String sinkHash = simEntry.getSinkHash();
+                int sinkHash = simEntry.getSinkHash();
                 sinkEntryMap.put(sinkHash, simEntry);
                 sinks.add(simEntry.currMod);
                 connections.add(connString(simEntry.srcMod, simEntry.currMod));
@@ -135,12 +137,12 @@ public class PerfAnalysis {
 
         // loop over srcs and sinks and find the throughput
         for (int srcMod : srcs) {
-            ThroughputStruct throughput = findThroughput(srcMod, SimModType.SRC, srcEntryMap, sinkEntryMap, analysis);
+            ThroughputStruct throughput = findOutputThroughput(srcMod, srcEntryMap, analysis);
             log.info("Src(" + srcMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, srcMod);
         }
         for (int dstMod : sinks) {
-            ThroughputStruct throughput = findThroughput(dstMod, SimModType.SINK, srcEntryMap, sinkEntryMap, analysis);
+            ThroughputStruct throughput = findInputThroughput(dstMod, sinkEntryMap, analysis);
             log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, dstMod);
         }
@@ -172,26 +174,57 @@ public class PerfAnalysis {
     }
 
     /**
-     * For a module, find its output throughput in number of operations per
-     * cycle. This is measured by finding the number of cycles between
-     * successive operations, the target is one, and the higher the worse (in
-     * some cases)
+     * For a sink module, this function finds its input throughput
      * 
-     * @param mod
-     * @param modType
-     * @param srcEntryMap
+     * @param dstMod
      * @param sinkEntryMap
      * @param analysis
      * @return
      */
-    private static ThroughputStruct findThroughput(int mod, SimModType modType, Map<String, SimEntry> srcEntryMap,
-            Map<String, SimEntry> sinkEntryMap, Analysis analysis) {
+    private static ThroughputStruct findInputThroughput(int mod, Map<Integer, SimEntry> entryMap, Analysis analysis) {
+        // first, we need to sort that entryMap by key
+        SortedSet<Integer> keys = new TreeSet<Integer>(entryMap.keySet());
+        int prevSendTime = -1;
+        double sumThroughput = 0.0;
+        double minThroughput = 999999999.9;
+        double maxThroughput = -1.0;
+        int num = 0;
+        for (Integer key : keys) {
+            SimEntry simEntry = entryMap.get(key);
+            int currSendTime = simEntry.time;
+            if (prevSendTime != -1) {
+                double currThroughput = (currSendTime - prevSendTime) / CLK_PERIOD;
+                if (currThroughput < minThroughput)
+                    minThroughput = currThroughput;
+                if (currThroughput > maxThroughput)
+                    maxThroughput = currThroughput;
 
-        Map<String, SimEntry> entryMap;
-        if (modType == SimModType.SRC)
-            entryMap = srcEntryMap;
-        else
-            entryMap = sinkEntryMap;
+                if (num >= WARMUP_CYCLES)
+                    sumThroughput += currThroughput;
+
+                // debugging for plot
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime);
+            }
+            prevSendTime = currSendTime;
+            simEntry = entryMap.get(SimEntry.hash(mod, ++num));
+        }
+        double avgThroughput = sumThroughput / (num - 2 - WARMUP_CYCLES);
+        return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2);
+    }
+
+    /**
+     * For a src module, find its output throughput in number of operations per
+     * cycle. This is measured by finding the number of cycles between
+     * successive operations that are output from a single module, the target is
+     * one, and the higher the worse (in some cases)
+     * 
+     * @param mod
+     * @param modType
+     * @param srcEntryMap
+     * @param analysis
+     * @return
+     */
+    private static ThroughputStruct findOutputThroughput(int mod, Map<String, SimEntry> entryMap, Analysis analysis) {
 
         double sumThroughput = 0.0;
         double minThroughput = 999999999.9;
@@ -212,7 +245,7 @@ public class PerfAnalysis {
                     sumThroughput += currThroughput;
 
                 // debugging for plot
-                analysis.addDebugThroughput("" + mod, (int) currThroughput);
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime);
             }
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
@@ -252,7 +285,7 @@ public class PerfAnalysis {
                     sumLatency += latency;
 
                     // debugging for plot
-                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency);
+                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time);
                 }
             }
         }

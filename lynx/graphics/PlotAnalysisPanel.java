@@ -49,22 +49,25 @@ public class PlotAnalysisPanel extends JScrollPane {
     private void initPane() {
 
         if (analysis != null) {
-            Map<String, List<Integer>> debugThroughput = analysis.getDebugThroughput();
-            addChart(debugThroughput, "Throughput");
-            Map<String, List<Integer>> debugLatency = analysis.getDebugLatency();
-            addChart(debugLatency, "Latency");
+            Map<String, List<Integer>> debugYThroughput = analysis.getDebugYThroughput();
+            Map<String, List<Integer>> debugXThroughput = analysis.getDebugXThroughput();
+            addChart(debugYThroughput, debugXThroughput, "Throughput");
+            Map<String, List<Integer>> debugYLatency = analysis.getDebugYLatency();
+            Map<String, List<Integer>> debugXLatency = analysis.getDebugXLatency();
+            addChart(debugYLatency, debugXLatency, "Latency");
         }
     }
 
-    private void addChart(Map<String, List<Integer>> debugThroughput, String name) {
+    private void addChart(Map<String, List<Integer>> debugY, Map<String, List<Integer>> debugX, String name) {
         final XYSeriesCollection dataset = new XYSeriesCollection();
-        for (String legendString : debugThroughput.keySet()) {
-            List<Integer> list = debugThroughput.get(legendString);
+        for (String legendString : debugY.keySet()) {
+            List<Integer> yList = debugY.get(legendString);
+            List<Integer> xList = debugX.get(legendString);
             // create a dataset...
             XYSeries data = new XYSeries(legendString);
 
-            for (int i = 0; i < list.size(); i++)
-                data.add(i, list.get(i));
+            for (int i = 0; i < yList.size(); i++)
+                data.add(xList.get(i), yList.get(i));
 
             dataset.addSeries(data);
         }
