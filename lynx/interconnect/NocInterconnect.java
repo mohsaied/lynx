@@ -171,7 +171,7 @@ public class NocInterconnect {
     private static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, Map<Bundle, Bundle> bbMap) {
         int numSrc = mod.getBundles(Direction.OUTPUT).size();
         int numSink = mod.getBundles(Direction.INPUT).size();
-        DesignModule via = new DesignModule("via_" + numSink + "_" + numSrc, "via_" + mod.getName());
+        DesignModule via = new DesignModule("via_" + numSrc + "_" + numSink, "via_" + mod.getName());
 
         // fixed parameters
         via.addParameter(new Parameter("N", noc.getNumRouters()));

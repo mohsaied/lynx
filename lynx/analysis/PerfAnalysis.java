@@ -100,7 +100,7 @@ public class PerfAnalysis {
 
         // create a map that keeps track of all flits
         Map<String, SimEntry> srcEntryMap = new HashMap<String, SimEntry>();
-        Map<Integer, SimEntry> sinkEntryMap = new HashMap<Integer, SimEntry>();
+        Map<Integer, Map<Integer, SimEntry>> sinkEntryMap = new HashMap<Integer, Map<Integer, SimEntry>>();
 
         // sets to keep all the sources and sinks
         Set<Integer> srcs = new HashSet<Integer>();
@@ -124,7 +124,15 @@ public class PerfAnalysis {
                 SimEntry origSimEntry = srcEntryMap.get(hash);
                 origSimEntry.update(simEntry);
                 int sinkHash = simEntry.getSinkHash();
-                sinkEntryMap.put(sinkHash, simEntry);
+                // insert into sinkEntryMap
+                Map<Integer, SimEntry> currSinkMap;
+                if (sinkEntryMap.containsKey(simEntry.currMod)) {
+                    currSinkMap = sinkEntryMap.get(simEntry.currMod);
+                } else {
+                    currSinkMap = new HashMap<Integer, SimEntry>();
+                    sinkEntryMap.put(simEntry.currMod, currSinkMap);
+                }
+                currSinkMap.put(sinkHash, simEntry);
                 sinks.add(simEntry.currMod);
                 connections.add(connString(simEntry.srcMod, simEntry.currMod));
             }
@@ -142,7 +150,7 @@ public class PerfAnalysis {
             analysis.addThroughputEntry(throughput, srcMod);
         }
         for (int dstMod : sinks) {
-            ThroughputStruct throughput = findInputThroughput(dstMod, sinkEntryMap, analysis);
+            ThroughputStruct throughput = findInputThroughput(dstMod, sinkEntryMap.get(dstMod), analysis);
             log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, dstMod);
         }
@@ -159,18 +167,6 @@ public class PerfAnalysis {
         br.close();
 
         return analysis;
-    }
-
-    private static String connString(int srcMod, int sinkMod) {
-        return srcMod + "_" + sinkMod;
-    }
-
-    private static int connSrc(String connString) {
-        return Integer.parseInt(connString.split("_")[0]);
-    }
-
-    private static int connSink(String connString) {
-        return Integer.parseInt(connString.split("_")[1]);
     }
 
     /**
@@ -203,10 +199,10 @@ public class PerfAnalysis {
                     sumThroughput += currThroughput;
 
                 // debugging for plot
-                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime/CLK_PERIOD);
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime / CLK_PERIOD);
             }
             prevSendTime = currSendTime;
-            simEntry = entryMap.get(SimEntry.hash(mod, ++num));
+            num++;
         }
         double avgThroughput = sumThroughput / (num - 2 - WARMUP_CYCLES);
         return new ThroughputStruct(mod, avgThroughput, minThroughput, maxThroughput, num - 2);
@@ -245,7 +241,7 @@ public class PerfAnalysis {
                     sumThroughput += currThroughput;
 
                 // debugging for plot
-                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime/CLK_PERIOD);
+                analysis.addDebugThroughput("" + mod, (int) currThroughput, currSendTime / CLK_PERIOD);
             }
             prevSendTime = currSendTime;
             simEntry = entryMap.get(SimEntry.hash(mod, ++num));
@@ -285,7 +281,7 @@ public class PerfAnalysis {
                     sumLatency += latency;
 
                     // debugging for plot
-                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time/CLK_PERIOD);
+                    analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time / CLK_PERIOD);
                 }
             }
         }
@@ -299,5 +295,17 @@ public class PerfAnalysis {
         String typeField = partList[CURRMOD_POS];
         String type = typeField.split("=")[0].trim();
         return SimModType.valueOf(type);
+    }
+
+    private static String connString(int srcMod, int sinkMod) {
+        return srcMod + "_" + sinkMod;
+    }
+
+    private static int connSrc(String connString) {
+        return Integer.parseInt(connString.split("_")[0]);
+    }
+
+    private static int connSink(String connString) {
+        return Integer.parseInt(connString.split("_")[1]);
     }
 }

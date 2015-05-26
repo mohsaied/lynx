@@ -4,6 +4,7 @@
  * date     : 19-MAY-2015
  */
 
+//naming: via_numsrc_numsink
 module via_1_1
 #(
 	parameter i0_WIDTH = 32,                  //data width for i0
