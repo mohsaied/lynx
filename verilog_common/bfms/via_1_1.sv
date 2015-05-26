@@ -14,7 +14,8 @@ module via_1_1
     parameter [7:0] o0_ID = 0,                //unique id associated with each src
     parameter [7:0] i0_ID = 0,                //unique id associated with each sink
 	parameter [N_ADDR_WIDTH-1:0] NODE = 15,   //router index that this tpg is connected to
-	parameter [N_ADDR_WIDTH-1:0] o0_DEST = 15 //router index that this tpg sends to
+    parameter o0_NUM_DEST = 4,                  //number of destinations for output 0
+	parameter [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}} //router index that this tpg sends to
 )
 (
 	input clk,
@@ -57,6 +58,9 @@ reg [o0_WIDTH-N_ADDR_WIDTH*2-8-1:0] o0_data_counter;
 reg              [N_ADDR_WIDTH-1:0] o0_dest_reg;
 reg                                 o0_valid_reg;
 
+//count the dst we're sending to
+integer o0_dstcount;
+
 //wires from registers to outputs
 //o0 assigns
 assign o0_data_out  = {NODE,o0_dest_reg,o0_ID,o0_data_counter};
@@ -93,6 +97,7 @@ begin
         o0_data_counter = 0;
         o0_valid_reg    = 0;
         o0_dest_reg     = 0;
+        o0_dstcount     = 0;
         o0_buffered_data_consumed = 0;
 	end
 	else
@@ -101,7 +106,12 @@ begin
         begin
             o0_data_counter = o0_data_counter + 1;
             o0_valid_reg    = 1;
-            o0_dest_reg     = o0_DEST;
+            
+            o0_dest_reg = o0_DEST[o0_dstcount];
+            
+            o0_dstcount = o0_dstcount + 1;
+            if(o0_dstcount == o0_NUM_DEST)
+                o0_dstcount = 0;
             
             //synopsys translate off
 	        curr_time = $time;

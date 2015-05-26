@@ -11,7 +11,8 @@ module src
 	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
     parameter [7:0] ID = 0,                  //unique id associated with each src
 	parameter [N_ADDR_WIDTH-1:0] NODE = 15,  //router index that this src is connected to
-	parameter [N_ADDR_WIDTH-1:0] DEST = 15   //router index that this src sends to
+    parameter NUM_DEST = 4,                  //number of destinations for output 0
+	parameter [N_ADDR_WIDTH-1:0] DEST [0:NUM_DEST-1] = '{NUM_DEST{1}} //router index that this tpg sends to
 )
 (
 	input clk,
@@ -30,6 +31,9 @@ reg [WIDTH-N_ADDR_WIDTH*2-8-1:0] data_counter;
 //registers for outputs
 reg [N_ADDR_WIDTH-1:0] dest_reg;
 reg                    valid_reg;
+
+//count the dst we're sending to
+integer dstcount;
 
 assign data_out  = {NODE,dest_reg,ID,data_counter};
 assign dest_out  = dest_reg;
@@ -53,14 +57,21 @@ begin
         data_counter = 0;
         valid_reg    = 0;
         dest_reg     = 0;
+        dstcount     = 0;
 	end
 	else
 	begin
         if(ready_in)
         begin
             data_counter = data_counter + 1;
-            valid_reg    = 1;
-            dest_reg     = DEST;
+            valid_reg = 1;
+            
+            dest_reg = DEST[dstcount];
+            
+            dstcount = dstcount + 1;
+            if(dstcount == NUM_DEST)
+                dstcount = 0;
+            
             
             //synopsys translate off
 	        curr_time = $time;
@@ -70,9 +81,7 @@ begin
         end        
         else
         begin
-            data_counter = data_counter;
-            valid_reg    = 0;
-            dest_reg     = DEST;            
+            valid_reg    = 0;            
         end
 	end
 end

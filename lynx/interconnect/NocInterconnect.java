@@ -208,7 +208,13 @@ public class NocInterconnect {
         for (Bundle bun : mod.getBundles(Direction.OUTPUT)) {
             via.addParameter(new Parameter("o" + num + "_WIDTH", bun.getWidth()));
             via.addParameter(new Parameter("o" + num + "_ID", CURRID++));
-            via.addParameter(new Parameter("o" + num + "_DEST", mapping.getRouter(bun.getConnections().get(0))));
+            via.addParameter(new Parameter("o" + num + "_NUM_DEST", bun.getConnections().size()));
+            String destinations = "'{";
+            for (Bundle con : bun.getConnections()) {
+                destinations += mapping.getRouter(con) + ",";
+            }
+            destinations = destinations.substring(0, destinations.length() - 1) + "}";
+            via.addParameter(new Parameter("o" + num + "_DEST", destinations));
 
             // create bundle ports
             Port dataPort = new Port("o" + num + "_data_out", Direction.OUTPUT, bun.getWidth(), via);
@@ -239,7 +245,13 @@ public class NocInterconnect {
         src.addParameter(new Parameter("N", noc.getNumRouters()));
         src.addParameter(new Parameter("ID", CURRID++));
         src.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
-        src.addParameter(new Parameter("DEST", mapping.getRouter(bun.getConnections().get(0))));
+        src.addParameter(new Parameter("NUM_DEST", bun.getConnections().size()));
+        String destinations = "'{";
+        for (Bundle con : bun.getConnections()) {
+            destinations += mapping.getRouter(con) + ",";
+        }
+        destinations = destinations.substring(0, destinations.length() - 1) + "}";
+        src.addParameter(new Parameter("DEST", destinations));
 
         // add clk/rst ports
         src.addPort(new Port("clk", Direction.INPUT, PortType.CLK, src, "clk"));

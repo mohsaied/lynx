@@ -20,15 +20,15 @@ public class Main {
     @SuppressWarnings("unused")
     public final static void main(String[] args) {
 
-//        try {
-//            MyLogger parentLog = new MyLogger(Level.ALL);
-//            runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            ReportData.getInstance().writeToRpt("SCHMETTERLING");
-//            ReportData.getInstance().writeToRpt(e.getMessage());
-//            ReportData.getInstance().closeRpt();
-//        }
+        // try {
+        // MyLogger parentLog = new MyLogger(Level.ALL);
+        // runFlow("D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\simple\\simple.xml");
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // ReportData.getInstance().writeToRpt("SCHMETTERLING");
+        // ReportData.getInstance().writeToRpt(e.getMessage());
+        // ReportData.getInstance().closeRpt();
+        // }
 
         try {
             if (args.length == 0) { // bring up the GUI
@@ -56,6 +56,8 @@ public class Main {
      */
     private static void runFlow(String filePath) throws Exception {
 
+        DesignData.resetSingleton();
+        ReportData.resetSingleton();
         ReportData.getInstance().setDesignFile(new File(filePath));
 
         // read XML design
@@ -86,7 +88,7 @@ public class Main {
         File simRepFile = ReportData.getInstance().getSimRepFile();
         Analysis analysis = PerfAnalysis.parseSimFile(simRepFile);
         DesignData.getInstance().setAnalysis(analysis);
-        
+
     }
 
 }

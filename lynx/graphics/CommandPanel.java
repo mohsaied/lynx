@@ -135,6 +135,8 @@ public class CommandPanel extends JPanel {
                                     fileProgress.setString("Opening file...");
                                     fileProgress.setStringPainted(true);
                                     fileProgress.setIndeterminate(true);
+                                    DesignData.resetSingleton();
+                                    ReportData.resetSingleton();
                                     ReportData.getInstance().setDesignFile(openedFile);
                                     XmlDesign.readXMLDesign(designPath);
                                     NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
@@ -311,7 +313,7 @@ public class CommandPanel extends JPanel {
                     }
                 }.start();
                 Analysis analysis = DesignData.getInstance().getAnalysis();
-                if (analysis != null){
+                if (analysis != null) {
                     mainPanel.removePerfTab();
                     mainPanel.addPerfTab(analysis);
                 }

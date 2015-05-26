@@ -47,6 +47,10 @@ public class ReportData {
         return instance;
     }
 
+    public static void resetSingleton() {
+        instance = null;
+    }
+
     public File getDesignFile() {
         return designFile;
     }

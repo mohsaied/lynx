@@ -67,6 +67,11 @@ public class DesignData {
         return instance;
     }
 
+
+    public static void resetSingleton() {
+        instance = null;
+    }
+
     public final Design getDesign() {
         return design;
     }
