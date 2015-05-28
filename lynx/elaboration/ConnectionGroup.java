@@ -1,10 +1,12 @@
-package lynx.data;
+package lynx.elaboration;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lynx.data.Bundle;
+import lynx.data.Connection;
 import lynx.data.MyEnums.ConnectionType;
 
 /**
