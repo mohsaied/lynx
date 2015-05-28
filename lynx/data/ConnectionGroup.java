@@ -8,7 +8,7 @@ import java.util.Set;
 import lynx.data.MyEnums.ConnectionType;
 
 /**
- * A ConnectionGroup is a logical grouping of connections that ahsare a certain
+ * A ConnectionGroup is a logical grouping of connections that share a certain
  * connection pattern (defined in the connectionType) -- can either be
  * arbitration, broadcast of just p2p
  * 
