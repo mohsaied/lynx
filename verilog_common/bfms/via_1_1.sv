@@ -15,7 +15,8 @@ module via_1_1
     parameter [7:0] i0_ID = 0,                //unique id associated with each sink
 	parameter [N_ADDR_WIDTH-1:0] NODE = 15,   //router index that this tpg is connected to
     parameter o0_NUM_DEST = 4,                  //number of destinations for output 0
-	parameter [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}} //router index that this tpg sends to
+	parameter [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //router index that this tpg sends to
+    parameter NODEP = 1'b0
 )
 (
 	input clk,
@@ -72,11 +73,13 @@ reg all_inputs_buffered;
 reg all_buffered_data_consumed;
 reg i0_input_buffered;
 reg o0_buffered_data_consumed;
+reg all_outputs_ready;
 
 always @ (*)
 begin
-    all_inputs_buffered = i0_input_buffered;
-    all_buffered_data_consumed = o0_buffered_data_consumed;
+    all_inputs_buffered = i0_input_buffered || NODEP;
+    all_buffered_data_consumed = o0_buffered_data_consumed || NODEP;
+    all_outputs_ready = o0_ready_in;
 end
 
 //-------------------------------------------------------
@@ -123,6 +126,7 @@ begin
         end        
         else
         begin
+            o0_buffered_data_consumed = 0;
             o0_valid_reg = 0;
         end
 	end
@@ -139,7 +143,7 @@ begin
 	else
 	begin
         
-        if(all_buffered_data_consumed)
+        if(all_buffered_data_consumed || all_outputs_ready)
         begin
             i0_input_buffered = 0;
         end

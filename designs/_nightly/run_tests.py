@@ -140,8 +140,17 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values,
 ####################################################################################################
 ############## MAIN PROGRAM START ##################################################################
 ####################################################################################################
-    
-java_cmd_win = "java -cp \"D:\\Dropbox\\PhD\\Software\\noclynx;D:\\Dropbox\\PhD\\Software\\noclynx\\jfreechart\\jcommon-1.0.23\\jcommon-1.0.23.jar;D:\\Dropbox\\PhD\\Software\\noclynx\\jfreechart\\jfreechart-1.0.19\\lib\\jfreechart-1.0.19.jar;D:\\Dropbox\\PhD\\Software\\noclynx\\jgraphx\\jgraphx.jar\" lynx.main.Main -c "
+
+platform = "windows"
+#platform = "linux"
+
+path_start = "D:"
+path_seperator = "\\"
+if platform == "linux":
+    path_start = "/home/mohamed"
+    path_seperator = "/"
+
+java_cmd = "java -cp \""+path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx;"+path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"jfreechart"+path_seperator+"jcommon-1.0.23"+path_seperator+"jcommon-1.0.23.jar;"+path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"jfreechart"+path_seperator+"jfreechart-1.0.19"+path_seperator+"lib"+path_seperator+"jfreechart-1.0.19.jar;"+path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"jgraphx"+path_seperator+"jgraphx.jar\" lynx.main.Main -c "
 
 #if run is set to true, we run through the latest code base
 #if it is set to false, then we simply compare two results directories
@@ -151,7 +160,7 @@ run = True
 #increment version number with each set of major changes
 version = 13
 
-tests_dir = "D:\\Dropbox\\PhD\\Software\\noclynx\\designs\\"
+tests_dir = path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"designs"+path_seperator+""
 reports_dir = "archive/"+str(version)+"/"
 prev_reports_dir = "archive/"+str(version-1)+"/"
 web_dir= "web/"
@@ -212,17 +221,18 @@ init_web(web_dir, version, metric_names)
 #*******************************************************************************************
 for test_name in test_names:
     
-    curr_test_path = tests_dir+test_name+"\\"+test_name+".xml"
-    golden_path = tests_dir+test_name+"\\golden.txt"
+    curr_test_path = tests_dir+test_name+""+path_seperator+""+test_name+".xml"
+    golden_path = tests_dir+test_name+""+path_seperator+"golden.txt"
     
-    #vfile = tests_dir+test_name+"\\"+test_name+".v"
+    #vfile = tests_dir+test_name+""+path_seperator+""+test_name+".v"
     #os.system('rm '+vfile)
 
     if run:
         #------------------------------------------------------------------
         #run test
         #------------------------------------------------------------------
-        os.system(java_cmd_win+curr_test_path)
+        print java_cmd+curr_test_path
+        os.system(java_cmd+curr_test_path)
         
         #------------------------------------------------------------------
         #copy report

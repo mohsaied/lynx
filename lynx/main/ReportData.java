@@ -13,7 +13,7 @@ import java.io.PrintWriter;
  */
 public class ReportData {
 
-    private final String vlogCommonPath = "/home/mohamed/Dropbox/PhD/Software/NOCLYNX/verilog_common";
+    private final String vlogCommonPath = "/home/mohamed/Dropbox/PhD/Software/noclynx/verilog_common";
 
     /**
      * the currently opened design file
@@ -145,7 +145,7 @@ public class ReportData {
         }
 
         // uppercase fiasco!
-        linuxPath = linuxPath.replaceAll("noclynx", "NOCLYNX");
+        // linuxPath = linuxPath.replaceAll("noclynx", "NOCLYNX");
 
         return linuxPath;
     }

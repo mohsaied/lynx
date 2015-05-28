@@ -91,6 +91,7 @@ public class NocInterconnect {
     public static void createAndConnectSimulationDesignToNoc(Design design, Noc noc) {
 
         Noc newNoc = noc.clone();
+        CURRID = 0;
 
         Mapping mapping = DesignData.getInstance().getNocMapping();
 

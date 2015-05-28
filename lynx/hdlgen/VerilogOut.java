@@ -205,7 +205,7 @@ public class VerilogOut {
             } else if (por.getType() == PortType.DONE && por.getWires().size() > 1) {
                 connectionString = "";
                 for (Wire wire : por.getWires()) {
-                    connectionString += por.getConnectingWireName(wire) + "&";
+                    connectionString += por.getConnectingWireName(wire) + "|";
                 }
                 connectionString = connectionString.substring(0, connectionString.length() - 1);
             }

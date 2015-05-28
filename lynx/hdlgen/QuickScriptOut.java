@@ -57,6 +57,7 @@ public class QuickScriptOut {
         writer.println("#compile the translators and tpg/oras");
         writer.println("vlog  $VERILOG_COMMON_DIR/translators/standard/*.sv");
         writer.println("vlog  $VERILOG_COMMON_DIR/bfms/*.sv");
+        writer.println("vlog  $VERILOG_COMMON_DIR/credit_shells/*.sv");
         writer.println();
         writer.println("#compile the fabric interface which instantiates fabric ports and an rtl interface");
         writer.println("vlog $HNOCSIM_DIR/booksim/fabric_interface.sv");
