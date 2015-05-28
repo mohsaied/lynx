@@ -1,9 +1,13 @@
-package lynx.data;
+package lynx.clustering;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import lynx.data.Connection;
+import lynx.data.Design;
+import lynx.data.DesignModule;
 
 /**
  * Similar to a Mapping object, this Clustering object keeps all info of the

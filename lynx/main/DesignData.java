@@ -1,8 +1,8 @@
 package lynx.main;
 
 import lynx.analysis.Analysis;
+import lynx.clustering.Clustering;
 import lynx.data.Design;
-import lynx.data.Clustering;
 import lynx.data.Noc;
 import lynx.nocmapping.Mapping;
 

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
-import lynx.data.Clustering;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Parameter;
