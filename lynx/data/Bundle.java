@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import lynx.data.MyEnums.BundleStatus;
 import lynx.data.MyEnums.Direction;
+import lynx.elaboration.ConnectionGroup;
 
 /**
  * 
@@ -35,7 +35,7 @@ public final class Bundle {
 
     private List<Bundle> connections;
 
-    private BundleStatus bundleStatus;
+    private ConnectionGroup connectionGroup;
 
     public Bundle() {
         this(null);
@@ -56,7 +56,6 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
-        setBundleStatus(BundleStatus.UNCONNECTED);
         log.fine("Creating new bundle, name = " + name);
     }
 
@@ -168,12 +167,12 @@ public final class Bundle {
         this.connections.add(connection);
     }
 
-    public BundleStatus getBundleStatus() {
-        return bundleStatus;
+    public ConnectionGroup getConnectionGroup() {
+        return connectionGroup;
     }
 
-    public void setBundleStatus(BundleStatus bundleStatus) {
-        this.bundleStatus = bundleStatus;
+    public void setConnectionGroup(ConnectionGroup connectionGroup) {
+        this.connectionGroup = connectionGroup;
     }
 
     public Bundle clone(DesignModule mod, Set<String> scc) {

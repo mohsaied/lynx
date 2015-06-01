@@ -18,6 +18,7 @@ import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.Packetizer;
 import lynx.data.Port;
+import lynx.elaboration.Elaboration;
 import lynx.main.DesignData;
 import lynx.nocmapping.Mapping;
 
@@ -67,6 +68,9 @@ public class NocInterconnect {
      * @param noc
      */
     public static void connectDesignToNoc(Design design, Noc noc) {
+
+        log.info("Elaborating design connections");
+        Elaboration.identifyConnectionGroups(design);
 
         log.info("Creating and connecting simulation model");
         createAndConnectHollowSim(design, noc);
