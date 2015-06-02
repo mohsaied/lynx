@@ -25,6 +25,9 @@ public final class Bundle {
     private Port validPort;
     private Port readyPort;
     private Port dstPort; // will be null for depkt
+    private Port waitForReplyPort; // will be null for non-arbitration
+                                   // connectiongroups, or if it is missing from
+                                   // port definition
 
     private Direction direction;
     private int width;
@@ -51,6 +54,7 @@ public final class Bundle {
         validPort = null;
         readyPort = null;
         dstPort = null;
+        waitForReplyPort = null;
         width = 0;
         direction = Direction.UNKNOWN;
         translator = null;
@@ -115,6 +119,14 @@ public final class Bundle {
     public final void setDstPort(Port addrPort) {
         assert direction == Direction.OUTPUT || direction == Direction.UNKNOWN : "Input bundles cannot have a dst port";
         this.dstPort = addrPort;
+    }
+
+    public final void setWaitForReplyPort(Port port) {
+        this.waitForReplyPort = port;
+    }
+
+    public final Port getWaitforReplyPort() {
+        return waitForReplyPort;
     }
 
     public final Direction getDirection() {

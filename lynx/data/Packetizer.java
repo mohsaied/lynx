@@ -101,7 +101,7 @@ public final class Packetizer extends Translator {
         pktValidIn.addWire(modValidOut);
         modValidOut.addWire(pktValidIn);
 
-        // connect valid
+        // connect dest
         Port pktDstIn = getPort(PortType.DST, Direction.INPUT);
         Port modDstOut = parentBundle.getDstPort();
         pktDstIn.addWire(modDstOut);
