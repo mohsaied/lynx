@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -22,6 +23,8 @@ import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.data.Noc;
+import lynx.elaboration.ConnectionGroup;
+import lynx.elaboration.Elaboration;
 import lynx.interconnect.NocInterconnect;
 import lynx.main.DesignData;
 import lynx.main.Main;
@@ -176,8 +179,11 @@ public class CommandPanel extends JPanel {
                                 fileOutProgress.setIndeterminate(true);
                                 fileOutProgress.setStringPainted(true);
                                 fileOutProgress.setString("working...");
-                                log.info("Generating output files");
+                                log.info("Elaborating design");
+                                List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(design);
+                                DesignData.getInstance().setConnectionGroups(cgList);
                                 NocInterconnect.connectDesignToNoc(design, noc);
+                                log.info("Generating output files");
                                 try {
                                     Design simulationDesign = DesignData.getInstance().getSimulationDesign();
                                     Simulation.generateSimDir(simulationDesign, noc);

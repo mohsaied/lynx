@@ -94,4 +94,10 @@ public class Connection {
         this.latencySpec = latency_spec;
     }
 
+    @Override
+    public String toString() {
+        return fromBundle.getFullName() + "-->" + toBundle.getFullName();
+
+    }
+
 }

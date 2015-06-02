@@ -27,18 +27,23 @@ public class ConnectionGroup {
     private ConnectionType connectionType;
 
     public ConnectionGroup() {
+        this(ConnectionType.UNKNOWN);
+    }
 
+    public ConnectionGroup(ConnectionType type) {
         this.fromBundles = new HashSet<Bundle>();
         this.toBundles = new HashSet<Bundle>();
-
         this.connections = new ArrayList<Connection>();
-
-        this.connectionType = ConnectionType.UNKNOWN;
+        this.connectionType = type;
     }
 
     public void addConnection(Connection con) {
-        fromBundles.add(con.getFromBundle());
-        toBundles.add(con.getToBundle());
+        if (fromBundles.add(con.getFromBundle()))
+            con.getFromBundle().setConnectionGroup(this);
+
+        if (toBundles.add(con.getToBundle()))
+            con.getToBundle().setConnectionGroup(this);
+
         connections.add(con);
     }
 

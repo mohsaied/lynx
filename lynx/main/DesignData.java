@@ -1,9 +1,12 @@
 package lynx.main;
 
+import java.util.List;
+
 import lynx.analysis.Analysis;
 import lynx.clustering.Clustering;
 import lynx.data.Design;
 import lynx.data.Noc;
+import lynx.elaboration.ConnectionGroup;
 import lynx.nocmapping.Mapping;
 
 /**
@@ -50,6 +53,11 @@ public class DesignData {
     Analysis analysis;
 
     /**
+     * List of ConnectionGroups in this design
+     */
+    private List<ConnectionGroup> connectionGroups;
+
+    /**
      * Singleton of design data
      */
     private static DesignData instance = null;
@@ -66,7 +74,6 @@ public class DesignData {
             instance = new DesignData();
         return instance;
     }
-
 
     public static void resetSingleton() {
         instance = null;
@@ -119,6 +126,14 @@ public class DesignData {
 
     public final void setAnalysis(Analysis analysis) {
         this.analysis = analysis;
+    }
+
+    public void setConnectionGroups(List<ConnectionGroup> cgList) {
+        this.connectionGroups = cgList;
+    }
+
+    public List<ConnectionGroup> getConnectionGroups() {
+        return connectionGroups;
     }
 
 }

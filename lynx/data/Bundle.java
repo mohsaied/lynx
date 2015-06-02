@@ -56,6 +56,7 @@ public final class Bundle {
         translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
+        this.connectionGroup = null;
         log.fine("Creating new bundle, name = " + name);
     }
 

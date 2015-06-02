@@ -1,6 +1,7 @@
 package lynx.main;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Level;
 
 import lynx.analysis.Analysis;
@@ -8,6 +9,8 @@ import lynx.analysis.PerfAnalysis;
 import lynx.clustering.NocClustering;
 import lynx.data.Design;
 import lynx.data.Noc;
+import lynx.elaboration.ConnectionGroup;
+import lynx.elaboration.Elaboration;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
 import lynx.nocmapping.NocMapping;
@@ -76,6 +79,9 @@ public class Main {
 
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");
+
+        List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(clusteredDesign);
+        DesignData.getInstance().setConnectionGroups(cgList);
 
         // connect modules and insert translators
         NocInterconnect.connectDesignToNoc(clusteredDesign, noc);
