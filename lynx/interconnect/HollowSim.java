@@ -13,6 +13,7 @@ import lynx.data.NocBundle;
 import lynx.data.Packetizer;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 import lynx.nocmapping.Mapping;
@@ -145,6 +146,12 @@ public class HollowSim {
             destinations = destinations.substring(0, destinations.length() - 1) + "}";
             via.addParameter(new Parameter("o" + num + "_DEST", destinations));
 
+            // nodep parameter is set to 1 when this via's outputs do not wait
+            // for all its inputs to be valid - this happens for masters that
+            // support outstanding transactions
+            int noDepValue = findNoDepValue(bun);
+            via.addParameter(new Parameter("o" + num + "_NODEP", noDepValue));
+
             // create bundle ports
             Port dataPort = new Port("o" + num + "_data_out", Direction.OUTPUT, bun.getWidth(), via);
             Port destPort = new Port("o" + num + "_dest_out", Direction.OUTPUT, noc.getAddressWidth(), via);
@@ -164,6 +171,17 @@ public class HollowSim {
             num++;
         }
         return via;
+    }
+
+    private static int findNoDepValue(Bundle bun) {
+        // nodepvalue is 1 for masters - we want them to always be sending data
+        // so that we can investigate the different tradeoffs of credit or
+        // token-based schemes
+        // to qualify for nodep, the bundle has to be part of an arbitration
+        // connectiongroup and be a master as well
+        if (bun.getConnectionGroup().getConnectionType() == ConnectionType.ARBITRATION && bun.getConnectionGroup().isMaster(bun))
+            return 1;
+        return 0;
     }
 
     protected static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {

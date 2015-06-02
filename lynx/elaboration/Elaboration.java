@@ -58,7 +58,7 @@ public class Elaboration {
                 for (Connection con1 : conList) {
                     if (con1.getToBundle() == dstBundle) {
                         log.info("\tAdding connection: " + con1);
-                        mmGroup.addConnection(con1);
+                        mmGroup.addMasterConnection(con1);
                         // mark connection as processed
                         doneSet.add(con1);
                     }
