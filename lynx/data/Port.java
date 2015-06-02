@@ -32,6 +32,9 @@ public class Port {
     private String globalPortName;
     private boolean globalOnNoc;
 
+    // if this port is constant
+    private int constantValue;
+
     public Port() {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false, null);
     }
@@ -68,6 +71,10 @@ public class Port {
         this(name, direction, width, arrayWidth, type, parentModule, isBundled, null);
     }
 
+    public Port(Port basePort, Design design) {
+        this(basePort.globalPortName, basePort.direction, basePort.width, basePort.arrayWidth, basePort.type, design, false, null);
+    }
+
     public Port(String name, Direction direction, int width, int arrayWidth, PortType type, Module parentModule,
             boolean isBundled, String globalPortName) {
         this.name = name;
@@ -79,13 +86,15 @@ public class Port {
         this.wires = new ArrayList<Wire>();
         this.isBundled = isBundled;
         this.isGlobal = globalPortName != null;
+        this.setConstantValue(0);
         this.setGlobalPortName(globalPortName);
         this.setGlobalOnNoc(false);
         assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
     }
 
-    public Port(Port basePort, Design design) {
-        this(basePort.globalPortName, basePort.direction, basePort.width, basePort.arrayWidth, basePort.type, design, false, null);
+    public Port(int constantValue, int width) {
+        this(null, Direction.UNKNOWN, width, 1, PortType.CONSTANT, null, false, null);
+        this.setConstantValue(constantValue);
     }
 
     public final Direction getDirection() {
@@ -257,5 +266,14 @@ public class Port {
 
     public void setGlobalOnNoc(boolean globalOnNoc) {
         this.globalOnNoc = globalOnNoc;
+    }
+
+    public int getConstantValue() {
+        assert this.type == PortType.CONSTANT : "Attempting to get the constant value of a non-constant port.";
+        return constantValue;
+    }
+
+    public void setConstantValue(int constantValue) {
+        this.constantValue = constantValue;
     }
 }
