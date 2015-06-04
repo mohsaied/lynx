@@ -2,6 +2,7 @@ package lynx.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -44,6 +45,7 @@ public class Main {
                 String filePath = args[1];
                 runFlow(filePath);
             } else if (args[0].equals("--analysis")) {
+                MyLogger parentLog = new MyLogger(Level.ALL);
                 String inLynxTrace = args[1];
                 String outReport = args[2];
                 runAnalysis(inLynxTrace, outReport);
@@ -104,7 +106,7 @@ public class Main {
 
     private static void runAnalysis(String inLynxTrace, String outReport) throws IOException {
         Analysis analysis = PerfAnalysis.parseSimFile(new File(inLynxTrace));
-        PerfAnalysis.writeAnalysisReport(new File(outReport), analysis);
+        PerfAnalysis.writeAnalysisReport(new PrintWriter(outReport), analysis);
     }
 
 }

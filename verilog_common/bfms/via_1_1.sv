@@ -118,8 +118,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
-            $display("SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
+            $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
+            $display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
             //synopsys translate on
             
             o0_buffered_data_consumed = 1;

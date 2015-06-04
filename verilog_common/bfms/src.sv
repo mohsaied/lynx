@@ -75,8 +75,8 @@ begin
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
-            $display("SRC=%d; time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
+            $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
+            $display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
             //synopsys translate on
         end        
         else

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -172,11 +173,17 @@ public class PerfAnalysis {
     /**
      * Use the analysis object to create an analysis report
      * 
-     * @param file
+     * @param writer
      * @param analysis
      */
-    public static void writeAnalysisReport(File file, Analysis analysis) {
-        // TODO
+    public static void writeAnalysisReport(PrintWriter writer, Analysis analysis) {
+        for (ThroughputStruct xput : analysis.throughput) {
+            writer.println("module=" + xput.module + "; xput_avg=" + xput.avgThroughput);
+        }
+        for (LatencyStruct latency : analysis.latency) {
+            writer.println("connection=" + latency.name + "; lat_avg=" + latency.avgLatency);
+        }
+        writer.close();
     }
 
     /**
