@@ -165,24 +165,25 @@ public class CommandPanel extends JPanel {
                                 clusterProgress.setIndeterminate(false);
                                 clusterProgress.setString("done.");
 
+                                log.info("Elaborating design");
+                                Design clusteredDesign = DesignData.getInstance().getClusteredDesign();
+                                List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(clusteredDesign);
+                                DesignData.getInstance().setConnectionGroups(cgList);
+
                                 mapProgress.setIndeterminate(true);
                                 mapProgress.setStringPainted(true);
                                 mapProgress.setString("working...");
                                 log.info("Mapping " + openedFile.getName() + " started");
-                                Design design = DesignData.getInstance().getClusteredDesign();
                                 Noc noc = DesignData.getInstance().getNoc();
-                                NocMapping.findMappings(design, noc);
-                                mainPanel.addNoCTabs(design, noc);
+                                NocMapping.findMappings(clusteredDesign, noc);
+                                mainPanel.addNoCTabs(clusteredDesign, noc);
                                 mapProgress.setIndeterminate(false);
                                 mapProgress.setString("done.");
 
                                 fileOutProgress.setIndeterminate(true);
                                 fileOutProgress.setStringPainted(true);
                                 fileOutProgress.setString("working...");
-                                log.info("Elaborating design");
-                                List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(design);
-                                DesignData.getInstance().setConnectionGroups(cgList);
-                                NocInterconnect.connectDesignToNoc(design, noc);
+                                NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList);
                                 log.info("Generating output files");
                                 try {
                                     Design simulationDesign = DesignData.getInstance().getSimulationDesign();

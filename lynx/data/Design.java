@@ -33,6 +33,8 @@ public final class Design extends Module {
 
     private List<Translator> translators;
 
+    private List<Wrapper> wrappers;
+
     // output of NoC clustering
     private List<Set<String>> clusters;
 
@@ -51,6 +53,7 @@ public final class Design extends Module {
         this.moduleIndices = new HashMap<String, Integer>();
         this.allConnections = new ArrayList<Connection>();
         this.translators = new ArrayList<Translator>();
+        this.wrappers = new ArrayList<Wrapper>();
         this.mappings = null;
         this.clusters = null;
         this.noc = null;
@@ -97,6 +100,9 @@ public final class Design extends Module {
 
         if (!translators.isEmpty())
             allModules.addAll(translators);
+
+        if (!wrappers.isEmpty())
+            allModules.addAll(wrappers);
 
         if (noc == null)
             allModules.add(DesignData.getInstance().getNoc());
@@ -362,6 +368,14 @@ public final class Design extends Module {
 
     public void setHaltModule(DesignModule haltModule) {
         this.haltModule = haltModule;
+    }
+
+    public List<Wrapper> getWrappers() {
+        return wrappers;
+    }
+
+    public void addWrapper(Wrapper wrapper) {
+        this.wrappers.add(wrapper);
     }
 
 }

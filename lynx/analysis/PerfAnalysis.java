@@ -170,6 +170,16 @@ public class PerfAnalysis {
     }
 
     /**
+     * Use the analysis object to create an analysis report
+     * 
+     * @param file
+     * @param analysis
+     */
+    public static void writeAnalysisReport(File file, Analysis analysis) {
+        // TODO
+    }
+
+    /**
      * For a sink module, this function finds its input throughput
      * 
      * @param dstMod

@@ -179,6 +179,16 @@ public class Port {
         this.wires.add(new Wire(dstPort, srcPortStart, srcPortEnd, dstPortStart, dstPortEnd));
     }
 
+    public void removeWire(Port por) {
+        for (Wire wire : wires) {
+            log.info("\t\twire = " + wire.dstPort.name + ", port = " + por.name);
+            if (wire.dstPort == por) {
+                this.wires.remove(wire);
+                break;
+            }
+        }
+    }
+
     public boolean isBundled() {
         return isBundled;
     }

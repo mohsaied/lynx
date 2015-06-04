@@ -3,6 +3,7 @@ package lynx.interconnect;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import lynx.data.Bundle;
 import lynx.data.Depacketizer;
@@ -16,6 +17,8 @@ import lynx.data.Port;
 import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
+import lynx.data.Wrapper;
+import lynx.elaboration.ConnectionGroup;
 import lynx.nocmapping.Mapping;
 
 /**
@@ -25,6 +28,8 @@ import lynx.nocmapping.Mapping;
  *
  */
 public class HollowSim {
+
+    private static final Logger log = Logger.getLogger(HollowSim.class.getName());
 
     protected static int CURRID = 0;
 
@@ -275,5 +280,96 @@ public class HollowSim {
         }
 
         design.setHaltModule(halt);
+    }
+
+    public static void insertTrafficManagers(Noc newNoc, Design simulationDesign, Map<Bundle, Bundle> designToSimBundleMap,
+            Mapping mapping, List<ConnectionGroup> cgList) {
+
+        // loop over connectionGroups, we'll add traffic managers for
+        // arbitration masters only
+        for (ConnectionGroup cgGroup : cgList) {
+            if (cgGroup.getConnectionType() == ConnectionType.ARBITRATION) {
+                // find bundles that are:
+                // 1- masters
+                // 2- output
+                for (Bundle outbun : cgGroup.getFromBundles()) {
+                    if (cgGroup.isMaster(outbun)) {
+
+                        // then find the corresponding input bundle:
+                        // 1- master
+                        // 2- input
+                        // 3- same module
+                        // (TODO: doesn't handle the cases of modules that
+                        // consist of more than one master)
+                        for (Bundle inbun : cgGroup.getToBundles()) {
+                            if (cgGroup.isMaster(inbun) && inbun.getParentModule() == outbun.getParentModule()) {
+                                Bundle inbunSim = designToSimBundleMap.get(inbun);
+                                Bundle outbunSim = designToSimBundleMap.get(outbun);
+                                // TODO need definite function to return the
+                                // router index for a bundle
+                                int router = mapping.getApproxRouterForModule(inbun.getParentModule());
+                                createAndConnectCreditMasterTM(inbunSim, outbunSim, simulationDesign, newNoc, router);
+                            }
+                        }
+                        // if no input bundle is found, we'll do nothing
+                        // for converge patterns, receive bundle should be
+                        // inserted earlier
+                    }
+                }
+            }
+        }
+    }
+
+    private static void createAndConnectCreditMasterTM(Bundle inbunSim, Bundle outbunSim, Design simulationDesign, Noc newNoc,
+            int router) {
+        // create the credit TM module
+        Wrapper tm = new Wrapper("tm_master_credit", outbunSim.getParentModule().getName() + "_tm", outbunSim.getParentModule());
+
+        log.info("Adding TM " + tm.getName());
+
+        // parameters
+        tm.addParameter(new Parameter("NUM_CREDITS", 8));
+
+        // ports
+        Port sendValidPort = new Port("send_valid", Direction.INPUT, tm);
+        Port sendReadyOutPort = new Port("send_ready_out", Direction.OUTPUT, tm);
+        Port sendReadyInPort = new Port("send_ready_in", Direction.INPUT, tm);
+        Port receiveValidPort = new Port("receive_valid", Direction.INPUT, tm);
+
+        tm.addPort(sendValidPort);
+        tm.addPort(sendReadyOutPort);
+        tm.addPort(sendReadyInPort);
+        tm.addPort(receiveValidPort);
+
+        // fetch the translators for the inbunSim and outbunsim
+        Packetizer outbunPkt = (Packetizer) outbunSim.getTranslator();
+
+        // now stich in the ports in their right locations
+
+        // send_valid reads the output valid
+        Port pktValid = outbunPkt.getPort(PortType.VALID, Direction.OUTPUT);
+        sendValidPort.addWire(pktValid);
+        pktValid.addWire(sendValidPort);
+
+        // receive valid is pretty much the same but snoops on the noc valid
+        Port nocValid = newNoc.getPort(PortType.VALID, Direction.OUTPUT, router);
+        nocValid.addWire(receiveValidPort);
+        receiveValidPort.addWire(nocValid);
+
+        // sendReadyOut requires undoing a connection between the router and
+        // packetizer -- first: get these two ports
+        Port routerReady = newNoc.getPort(PortType.READY, Direction.OUTPUT, router);
+        Port pktReady = outbunPkt.getPort(PortType.READY, Direction.INPUT);
+        // second: remove their connection
+        routerReady.removeWire(pktReady);
+        pktReady.removeWire(routerReady);
+        // third: connect the TM
+        routerReady.addWire(sendReadyInPort);
+        sendReadyInPort.addWire(routerReady);
+        pktReady.addWire(sendReadyOutPort);
+        sendReadyOutPort.addWire(pktReady);
+
+        // add to design
+        simulationDesign.addWrapper(tm);
     }
 }

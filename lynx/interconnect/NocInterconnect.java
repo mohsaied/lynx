@@ -18,6 +18,7 @@ import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.Packetizer;
 import lynx.data.Port;
+import lynx.elaboration.ConnectionGroup;
 import lynx.main.DesignData;
 import lynx.nocmapping.Mapping;
 
@@ -66,16 +67,16 @@ public class NocInterconnect {
      * @param design
      * @param noc
      */
-    public static void connectDesignToNoc(Design design, Noc noc) {
+    public static void connectDesignToNoc(Design design, Noc noc, List<ConnectionGroup> cgList) {
 
         log.info("Creating and connecting simulation model");
-        createAndConnectHollowSim(design, noc);
+        createAndConnectHollowSim(design, noc, cgList);
 
         log.info("Creating and connecting actual design");
-        connectActualDesignToNoc(design, noc);
+        connectActualDesignToNoc(design, noc, cgList);
     }
 
-    private static void createAndConnectHollowSim(Design design, Noc noc) {
+    private static void createAndConnectHollowSim(Design design, Noc noc, List<ConnectionGroup> cgList) {
 
         Noc newNoc = noc.clone();
         HollowSim.CURRID = 0;
@@ -94,11 +95,14 @@ public class NocInterconnect {
         log.info("Adding Translators and connecting them to modules");
         HollowSim.insertSimulationTranslators(newNoc, simulationDesign, mapping, designToSimBundleMap);
 
+        log.info("Adding traffic managers");
+        HollowSim.insertTrafficManagers(newNoc, simulationDesign, designToSimBundleMap, mapping, cgList);
+
         log.info("Inferring top-level ports");
         inferTopLevelPorts(simulationDesign);
     }
 
-    public static void connectActualDesignToNoc(Design design, Noc noc) {
+    public static void connectActualDesignToNoc(Design design, Noc noc, List<ConnectionGroup> cgList) {
         Mapping mapping = DesignData.getInstance().getNocMapping();
 
         log.info("Configuring module clocks");

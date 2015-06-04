@@ -18,8 +18,6 @@ public class DesignModule extends Module {
 
     private Map<String, Bundle> bundles;
 
-    private int router;
-
     public DesignModule() {
         this(null, null);
     }
@@ -35,7 +33,6 @@ public class DesignModule extends Module {
     public DesignModule(String type, String name, int router) {
         super(type, name);
         bundles = new HashMap<String, Bundle>();
-        this.router = router;
     }
 
     public Map<String, Bundle> getBundles() {
@@ -53,14 +50,6 @@ public class DesignModule extends Module {
         this.addPort(bun.getValidPort());
         if (bun.getDstPort() != null)
             this.addPort(bun.getDstPort());
-    }
-
-    public int getRouter() {
-        return router;
-    }
-
-    public void setRouter(int router) {
-        this.router = router;
     }
 
     public List<String> getConnectedModuleNames(Direction dir) {

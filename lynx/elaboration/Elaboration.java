@@ -61,10 +61,24 @@ public class Elaboration {
                         mmGroup.addMasterConnection(con1);
                         // mark connection as processed
                         doneSet.add(con1);
+                        // need to find the connections coming back, if they are
+                        // present
+                        for (Connection con2 : conList) {
+                            if ((con2.getFromBundle().getParentModule() == con1.getToBundle().getParentModule())
+                                    && (con2.getToBundle().getParentModule() == con1.getFromBundle().getParentModule())) {
+                                log.info("\tAdding connection: " + con2);
+                                mmGroup.addSlaveConnection(con2);
+                                doneSet.add(con2);
+                            }
+                        }
                     }
                 }
                 cgList.add(mmGroup);
-            } else {
+            }
+        }
+
+        for (Connection con : conList) {
+            if (!doneSet.contains(con)) {
                 log.info("Found p2p connection: " + con);
                 p2pGroup.addConnection(con);
                 doneSet.add(con);

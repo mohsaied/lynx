@@ -373,8 +373,6 @@ public class XmlDesign {
             // set name and type - both are required
             modElement.setAttribute("type", mod.getType());
             modElement.setAttribute("name", mod.getName());
-            if (mod instanceof DesignModule && ((DesignModule) mod).getRouter() != -1)
-                modElement.setAttribute("router", Integer.toString(((DesignModule) mod).getRouter()));
 
             writeParameters(doc, modElement, mod);
 

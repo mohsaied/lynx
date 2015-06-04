@@ -1,6 +1,7 @@
 package lynx.main;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -38,10 +39,14 @@ public class Main {
                 Gui gui = new Gui(null);
                 MyLogger parentLog = new MyLogger(Level.ALL);
             } else if (args[0].equals("-c")) {
-                // command line requested -- second argumentis the designpath
+                // command line requested -- second argument is the designpath
                 MyLogger parentLog = new MyLogger(Level.ALL);
                 String filePath = args[1];
                 runFlow(filePath);
+            } else if (args[0].equals("--analysis")) {
+                String inLynxTrace = args[1];
+                String outReport = args[2];
+                runAnalysis(inLynxTrace, outReport);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,20 +76,20 @@ public class Main {
 
         // cluster design into SCCs
         NocClustering.clusterDesign();
+        Design clusteredDesign = DesignData.getInstance().getClusteredDesign();
+
+        List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(clusteredDesign);
+        DesignData.getInstance().setConnectionGroups(cgList);
 
         // find possible locations on the NoC
-        Design clusteredDesign = DesignData.getInstance().getClusteredDesign();
         Noc noc = DesignData.getInstance().getNoc();
         NocMapping.findMappings(clusteredDesign, noc);
 
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");
 
-        List<ConnectionGroup> cgList = Elaboration.identifyConnectionGroups(clusteredDesign);
-        DesignData.getInstance().setConnectionGroups(cgList);
-
         // connect modules and insert translators
-        NocInterconnect.connectDesignToNoc(clusteredDesign, noc);
+        NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList);
 
         // output simulation directory
         Design simulationDesign = DesignData.getInstance().getSimulationDesign();
@@ -95,6 +100,11 @@ public class Main {
         Analysis analysis = PerfAnalysis.parseSimFile(simRepFile);
         DesignData.getInstance().setAnalysis(analysis);
 
+    }
+
+    private static void runAnalysis(String inLynxTrace, String outReport) throws IOException {
+        Analysis analysis = PerfAnalysis.parseSimFile(new File(inLynxTrace));
+        PerfAnalysis.writeAnalysisReport(new File(outReport), analysis);
     }
 
 }
