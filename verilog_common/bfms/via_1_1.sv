@@ -1,7 +1,7 @@
 /*
- * function : Basic dependency point in a simulation model
+ * function : Basic dependency point in a simulation model - returns data to whoever sent to it
  * author   : Mohamed S. Abdelfattah
- * date     : 19-MAY-2015
+ * date     : 9-JUNE-2015
  */
 
 //naming: via_numsrc_numsink
@@ -14,9 +14,10 @@ module via_1_1
     parameter [7:0] o0_ID = 0,                //unique id associated with each src
     parameter [7:0] i0_ID = 0,                //unique id associated with each sink
 	parameter [N_ADDR_WIDTH-1:0] NODE = 15,   //router index that this tpg is connected to
-    parameter o0_NUM_DEST = 4,                  //number of destinations for output 0
+    parameter o0_NUM_DEST = 4,                //number of destinations for output 0
 	parameter [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //router index that this tpg sends to
-    parameter o0_NODEP = 1'b0
+    parameter o0_NODEP = 1'b0,
+    parameter RETURN_TO_SENDER = !o0_NODEP    // if there is a dependency, then this via replies to the same module that sent stuff to it
 )
 (
 	input clk,
@@ -115,7 +116,11 @@ begin
             o0_valid_reg    = 1;
             o0_queued_flag = 0;
             
-            o0_dest_reg = o0_DEST[o0_dstcount];
+            if(!RETURN_TO_SENDER) begin
+                o0_dest_reg = o0_DEST[o0_dstcount];
+            end else begin
+                o0_dest_reg = i0_src_in;
+            end
             
             o0_dstcount = o0_dstcount + 1;
             if(o0_dstcount == o0_NUM_DEST)
@@ -154,7 +159,7 @@ begin
 	if (rst)
 	begin
         i0_ready_reg = 0;
-        i0_input_buffered = 1;
+        i0_input_buffered = 0;
 	end
 	else
 	begin
