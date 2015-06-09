@@ -59,6 +59,9 @@ reg [o0_WIDTH-N_ADDR_WIDTH*2-8-1:0] o0_data_counter;
 reg              [N_ADDR_WIDTH-1:0] o0_dest_reg;
 reg                                 o0_valid_reg;
 
+//flag indicating that something is queued
+reg o0_queued_flag;
+
 //count the dst we're sending to
 integer o0_dstcount;
 
@@ -102,6 +105,7 @@ begin
         o0_dest_reg     = 0;
         o0_dstcount     = 0;
         o0_buffered_data_consumed = 0;
+        o0_queued_flag = 0;
 	end
 	else
 	begin
@@ -109,6 +113,7 @@ begin
         begin
             o0_data_counter = o0_data_counter + 1;
             o0_valid_reg    = 1;
+            o0_queued_flag = 0;
             
             o0_dest_reg = o0_DEST[o0_dstcount];
             
@@ -119,7 +124,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
-            $display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
+            //$display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter);
             //synopsys translate on
             
             o0_buffered_data_consumed = 1;
@@ -128,6 +133,17 @@ begin
         begin
             o0_buffered_data_consumed = o0_NODEP;
             o0_valid_reg = 0;
+            
+            //synopsys translate off
+            if(o0_queued_flag == 0) //we only want to print the queued message once
+            begin
+                curr_time = $time;
+                $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;QUEUED=1;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter+1);
+                //$display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;QUEUED=1;",o0_ID,curr_time,NODE,o0_dest_reg,NODE,o0_data_counter+1);
+            end
+            //synopsys translate on
+            
+            o0_queued_flag = 1;
         end
 	end
 end
@@ -165,7 +181,7 @@ begin
                 //synopsys translate off
                 curr_time = $time;
                 $fdisplay(fmain,"SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,NODE,i0_data_counter,i0_id_in);
-                $display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,NODE,i0_data_counter,i0_id_in);
+                //$display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,NODE,i0_data_counter,i0_id_in);
                 //synopsys translate on
                 
                 i0_input_buffered = 1;

@@ -21,6 +21,7 @@ public class PerfPanel extends JScrollPane {
 
         JTable throughputTable = createThroughputTable(analysis);
         JTable latencyTable = createLatencyTable(analysis);
+        JTable queueTimeTable = createQueueTimeTable(analysis);
 
         JPanel panel = new JPanel();
         BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
@@ -33,6 +34,10 @@ public class PerfPanel extends JScrollPane {
         panel.add(new JTextArea("Latency Analysis"));
         panel.add(latencyTable.getTableHeader(), BorderLayout.NORTH);
         panel.add(latencyTable, BorderLayout.CENTER);
+
+        panel.add(new JTextArea("QueueTime Analysis"));
+        panel.add(queueTimeTable.getTableHeader(), BorderLayout.NORTH);
+        panel.add(queueTimeTable, BorderLayout.CENTER);
 
         this.setViewportView(panel);
     }
@@ -57,6 +62,21 @@ public class PerfPanel extends JScrollPane {
         Object rows[][] = new Object[analysis.getLatencyList().size()][columns.length];
         int num = 0;
         for (LatencyStruct entry : analysis.getLatencyList()) {
+            rows[num][0] = entry.name;
+            rows[num][1] = String.format("%.3g%n", entry.avgLatency);
+            rows[num][2] = entry.minLatency;
+            rows[num][3] = entry.maxLatency;
+            rows[num][4] = entry.numberOfSamples;
+            num++;
+        }
+        return new JTable(rows, columns);
+    }
+
+    private JTable createQueueTimeTable(Analysis analysis) {
+        String[] columns = { "conn", "avg", "min", "max", "num" };
+        Object rows[][] = new Object[analysis.getQueueTimeList().size()][columns.length];
+        int num = 0;
+        for (LatencyStruct entry : analysis.getQueueTimeList()) {
             rows[num][0] = entry.name;
             rows[num][1] = String.format("%.3g%n", entry.avgLatency);
             rows[num][2] = entry.minLatency;

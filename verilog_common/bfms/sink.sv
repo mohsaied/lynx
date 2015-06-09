@@ -68,7 +68,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",ID,curr_time,src_in,dst_in,NODE,data_counter,id_in);
-            $display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",ID,curr_time,src_in,dst_in,NODE,data_counter,id_in);
+            //$display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",ID,curr_time,src_in,dst_in,NODE,data_counter,id_in);
             //synopsys translate on
         end        
 	end

@@ -17,6 +17,7 @@ import lynx.analysis.PerfAnalysis.ThroughputStruct;
 public class Analysis {
 
     List<LatencyStruct> latency;
+    List<LatencyStruct> queueTime;
     List<ThroughputStruct> throughput;
 
     Map<String, List<Integer>> debugYThroughput;
@@ -26,6 +27,7 @@ public class Analysis {
 
     public Analysis(int numMods, int numConns) {
         this.latency = new ArrayList<PerfAnalysis.LatencyStruct>();
+        this.queueTime = new ArrayList<PerfAnalysis.LatencyStruct>();
         this.throughput = new ArrayList<PerfAnalysis.ThroughputStruct>();
 
         this.debugYThroughput = new HashMap<String, List<Integer>>();
@@ -38,12 +40,20 @@ public class Analysis {
         this.latency.add(entry);
     }
 
+    public void addqueueTimeEntry(LatencyStruct entry) {
+        this.queueTime.add(entry);
+    }
+
     public void addThroughputEntry(ThroughputStruct entry, int i) {
         this.throughput.add(entry);
     }
 
     public List<LatencyStruct> getLatencyList() {
         return this.latency;
+    }
+
+    public List<LatencyStruct> getQueueTimeList() {
+        return this.queueTime;
     }
 
     public List<ThroughputStruct> getThroughputList() {

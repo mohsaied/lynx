@@ -31,6 +31,7 @@ reg [WIDTH-N_ADDR_WIDTH*2-8-1:0] data_counter;
 //registers for outputs
 reg [N_ADDR_WIDTH-1:0] dest_reg;
 reg                    valid_reg;
+reg                    queued_flag;
 
 //count the dst we're sending to
 integer dstcount;
@@ -58,6 +59,7 @@ begin
         valid_reg    = 0;
         dest_reg     = 0;
         dstcount     = 0;
+        queued_flag  = 0;
 	end
 	else
 	begin
@@ -65,6 +67,7 @@ begin
         begin
             data_counter = data_counter + 1;
             valid_reg = 1;
+            queued_flag  = 0;
             
             dest_reg = DEST[dstcount];
             
@@ -76,12 +79,24 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
-            $display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
+            //$display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",ID,curr_time,NODE,dest_reg,NODE,data_counter);
             //synopsys translate on
         end        
         else
         begin
-            valid_reg    = 0;            
+            valid_reg    = 0;   
+            
+            dest_reg = DEST[dstcount];
+            //synopsys translate off
+            if(queued_flag == 0) //we only want to print the queued message once
+            begin
+                curr_time = $time;
+                $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d; QUEUED=1;",ID,curr_time,NODE,dest_reg,NODE,data_counter+1);
+                //$display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d; QUEUED=1;",ID,curr_time,NODE,dest_reg,NODE,data_counter+1);
+            end
+            //synopsys translate on  
+            
+            queued_flag  = 1;      
         end
 	end
 end

@@ -119,7 +119,13 @@ public class PerfAnalysis {
             SimEntry simEntry = new SimEntry(line);
             String hash = simEntry.getHash();
             if (findModType(line) == SimModType.SRC) {
-                srcEntryMap.put(hash, simEntry);
+                // we have to check if we already entered one qith a queued flag
+                if (srcEntryMap.containsKey(hash)) {
+                    SimEntry origSimEntry = srcEntryMap.get(hash);
+                    origSimEntry.updateQueued(simEntry);
+                } else {
+                    srcEntryMap.put(hash, simEntry);
+                }
                 srcs.add(simEntry.currMod);
             } else if (findModType(line) == SimModType.SINK) {
                 SimEntry origSimEntry = srcEntryMap.get(hash);
@@ -163,6 +169,15 @@ public class PerfAnalysis {
             LatencyStruct latency = findLatency(srcMod, dstMod, srcEntryMap, analysis);
             log.info("Connection(" + srcMod + "->" + dstMod + "): latency = " + latency);
             analysis.addLatencyEntry(latency);
+        }
+
+        // loop over all connections and find the queuetime
+        for (String connString : connections) {
+            int srcMod = connSrc(connString);
+            int dstMod = connSink(connString);
+            LatencyStruct latency = findQueueTime(srcMod, dstMod, srcEntryMap, analysis);
+            log.info("Connection(" + srcMod + "->" + dstMod + "): queueTime = " + latency);
+            analysis.addqueueTimeEntry(latency);
         }
 
         br.close();
@@ -299,6 +314,45 @@ public class PerfAnalysis {
 
                     // debugging for plot
                     analysis.addDebugLatency(connString(srcMod, dstMod), (int) latency, simEntry.time / CLK_PERIOD);
+                }
+            }
+        }
+
+        int avgLatency = sumLatency / num;
+        return new LatencyStruct(connString(srcMod, dstMod), avgLatency, minLatency, maxLatency, num);
+    }
+
+    /**
+     * Find the queueTime for a specific connection between a specified src/dst
+     * 
+     * @param srcMod
+     * @param dstMod
+     * @param analysis
+     * @param entryMap
+     * @return
+     */
+    private static LatencyStruct findQueueTime(int srcMod, int dstMod, Map<String, SimEntry> srcEntryMap, Analysis analysis) {
+
+        int sumLatency = 0;
+        int minLatency = 999999999;
+        int maxLatency = -1;
+        int num = 0;
+
+        for (SimEntry simEntry : srcEntryMap.values()) {
+            if (simEntry.complete) {
+                int currSrcMod = simEntry.srcMod;
+                int currDstMod = simEntry.dstMod;
+
+                if (currSrcMod == srcMod && currDstMod == dstMod) {
+                    num++;
+                    int latency = simEntry.getQueueTime();
+                    if (latency > maxLatency)
+                        maxLatency = latency;
+                    if (latency < minLatency)
+                        minLatency = latency;
+                    sumLatency += latency;
+
+                    // debugging for plot
                 }
             }
         }

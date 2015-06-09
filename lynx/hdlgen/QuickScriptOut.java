@@ -96,9 +96,9 @@ public class QuickScriptOut {
         writer.println("#cleanup");
         writer.println("#########");
         writer.println();
-        writer.println("#killall booksim");
-        writer.println("#killall vsim");
-        writer.println("#killall vsimk");
+        writer.println("killall booksim");
+        writer.println("killall vsim");
+        writer.println("killall vsimk");
         writer.println();
         writer.println("rm -r work");
         writer.println("rm transcript");
