@@ -318,7 +318,7 @@ public class PerfAnalysis {
             }
         }
 
-        int avgLatency = sumLatency / num;
+        double avgLatency = (double) sumLatency / num;
         return new LatencyStruct(connString(srcMod, dstMod), avgLatency, minLatency, maxLatency, num);
     }
 
@@ -357,7 +357,7 @@ public class PerfAnalysis {
             }
         }
 
-        int avgLatency = sumLatency / num;
+        double avgLatency = (double) sumLatency / num;
         return new LatencyStruct(connString(srcMod, dstMod), avgLatency, minLatency, maxLatency, num);
     }
 

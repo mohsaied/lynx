@@ -7,8 +7,9 @@
 module qsys_master
 #(
 	parameter           WIDTH = 32, //data width
-    parameter [7:0]        ID =  0, //unique id associated with each src
-    parameter [7:0]    DST_ID =  0, //id associated with the destination
+    parameter [7:0]    SRC_ID =  2, //unique id associated with each src
+    parameter [7:0]    SNK_ID =  3, //unique id associated with each sink
+    parameter [7:0]    DST_ID =  1, //id associated with the destination
     parameter      ADDR_WIDTH = 32  //address width doesn't matter
 )
 (
@@ -30,11 +31,12 @@ reg [WIDTH-8*2-1:0] data_counter;
 
 //do we have something queued?
 reg queued_flag;
+reg read_reg;
 
-assign writedata = {ID,DST_ID,data_counter};
+assign writedata = {SRC_ID,DST_ID,data_counter};
 assign address   = 0;
 assign write     = 0;
-assign read      = 1;
+assign read      = read_reg;
 
 //parse out things from incoming response
 localparam SRC_POS  = WIDTH-1;
@@ -65,6 +67,7 @@ begin
 	begin
         data_counter = 0;
         queued_flag  = 0;
+        read_reg = 0;
 	end
 	else
 	begin
@@ -72,22 +75,22 @@ begin
         begin
             data_counter = data_counter + 1;
             queued_flag  = 0;
+            read_reg = 1;
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SRC=%d; DST=%d; time=%d; data=%d;",ID,DST_ID,curr_time,data_counter);
-            $display("SRC=%d; DST=%d; time=%d; data=%d;",ID,DST_ID,curr_time,data_counter);
+            $fdisplay(fmain,"SRC=%d; time=%d; from=0; to=0; curr=0; data=%d;",SRC_ID,curr_time,data_counter);
+            $display("SRC=%d; time=%d; from=0; to=0; curr=0; data=%d;",SRC_ID,curr_time,data_counter);
             //synopsys translate on
         end        
         else
         begin
-            
             //synopsys translate off
             if(queued_flag == 0) //we only want to print the queued message once
             begin
                 curr_time = $time;
-                $fdisplay(fmain,"SRC=%d; DST=%d; time=%d; data=%d; MASTER; QUEUED=1;",ID,DST_ID,curr_time,data_counter+1);
-                $display("SRC=%d; DST=%d; time=%d; data=%d; MASTER; QUEUED=1;",ID,DST_ID,curr_time,data_counter+1);
+                $fdisplay(fmain,"SRC=%d; time=%d; from=0; to=0; curr=0; data=%d; QUEUED=1;",SRC_ID,curr_time,data_counter+1);
+                $display("SRC=%d; time=%d; from=0; to=0; curr=0; data=%d; QUEUED=1;",SRC_ID,curr_time,data_counter+1);
             end
             //synopsys translate on  
             
@@ -107,8 +110,8 @@ begin
         
         //synopsys translate off
         curr_time = $time;
-        $fdisplay(fmain,"SINK=%d; SRC=%d; time=%d; data=%d; MASTER;",src_id_in,dst_id_in,curr_time,data_in);
-        $display("SINK=%d; SRC=%d; time=%d; data=%d; MASTER;",src_id_in,dst_id_in,curr_time,data_in);
+        $fdisplay(fmain,"SINK=%d; time=%d; from=0; to=0; curr=0; data=%d; SRC=%d;",SNK_ID,curr_time,data_in,src_id_in);
+        $display("SINK=%d; time=%d; from=0; to=0; curr=0; data=%d; SRC=%d;",SNK_ID,curr_time,data_in,src_id_in);
         //synopsys translate on 
     end
 end

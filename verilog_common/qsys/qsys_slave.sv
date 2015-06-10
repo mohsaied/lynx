@@ -6,9 +6,10 @@
 
 module qsys_slave
 #(
-	parameter           WIDTH = 32, //data width
-    parameter [7:0]        ID =  0, //unique id associated with each src
-    parameter      ADDR_WIDTH = 32  //address width doesn't matter
+	parameter           WIDTH = 32,  //data width
+    parameter [7:0]     SRC_ID =  0, //unique id associated with each src
+    parameter [7:0]     SNK_ID =  1, //unique id associated with each src
+    parameter      ADDR_WIDTH = 32   //address width doesn't matter
 )
 (
 	input clk,
@@ -39,7 +40,7 @@ reg [7:0] src_id_in;
 reg [7:0] dst_id_in;
 reg [WIDTH-8*2-1:0] data_in;
 
-assign readdata = {ID,src_id_in,data_counter};
+assign readdata = {SRC_ID,src_id_in,data_counter};
 assign readdatavalid = readdatavalid_reg;
 
 //-------------------------------------------------------
@@ -67,14 +68,15 @@ begin
 	begin
         if(request)
         begin
-            data_counter = data_counter + 1;
             readdatavalid_reg = 1;
             
             //synopsys translate off
 	        curr_time = $time;
-            $fdisplay(fmain,"SRC=%d; DST=%d; time=%d; data=%d; SLAVE;",ID,src_id_in,curr_time,data_counter);
-            $display("SRC=%d; DST=%d; time=%d; data=%d; SLAVE;",ID,src_id_in,curr_time,data_counter);
+            $fdisplay(fmain,"SRC=%d; time=%d; from=0; to=0; curr=0; data=%d;",SRC_ID,curr_time,data_counter);
+            $display("SRC=%d; time=%d; from=0; to=0; curr=0; data=%d;",SRC_ID,curr_time,data_counter);
             //synopsys translate on
+            
+            data_counter = data_counter + 1;
         end
         else
         begin
@@ -96,8 +98,8 @@ begin
         
         //synopsys translate off
         curr_time = $time;
-        $fdisplay(fmain,"SINK=%d; SRC=%d; time=%d; data=%d; SLAVE;",src_id_in,dst_id_in,curr_time,data_in);
-        $display("SINK=%d; SRC=%d; time=%d; data=%d; SLAVE;",src_id_in,dst_id_in,curr_time,data_in);
+        $fdisplay(fmain,"SINK=%d; time=%d; from=0; to=0; curr=0; data=%d; SRC=%d;",SNK_ID,curr_time,data_in,src_id_in);
+        $display("SINK=%d; time=%d; from=0; to=0; curr=0; data=%d; SRC=%d;",SNK_ID,curr_time,data_in,src_id_in);
         //synopsys translate on 
     end
     else

@@ -5,7 +5,7 @@
  */
  
 `timescale 1ns/1ps
-module tb_qsys();
+module testbench();
 
 parameter           WIDTH = 32;
 parameter [7:0]        ID =  0;
