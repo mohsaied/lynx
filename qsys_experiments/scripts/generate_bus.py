@@ -3,17 +3,9 @@ import time
 import sys
 import shutil
 
-import qsys_utils
-from qsys_utils import *
+#import qsys_utils
+#from qsys_utils import *
 
-import quartus_utils
-from quartus_utils import *
-
-import modelsim_utils
-from modelsim_utils import *
-
-import parse_utils
-from parse_utils import *
 
 #********************************************************************************************#
 #				      PROGRAM START
@@ -21,17 +13,21 @@ from parse_utils import *
 
 #parameters
 num_master = int(sys.argv[1]) 
-width = int(sys.argv[3])
-num_pipeline = int(sys.argv[4])
+width = int(sys.argv[2])
+num_pipeline = int(sys.argv[3])
+multiclock = bool(sys.argv[4])
 
-if not os.path.exists('../'+project_name+'/'+project_name+'/synthesis/'+project_name+'.pow.rpt'):
+
+if not os.path.exists('../experiments/'+project_name+'/'+project_name+'/simulation/mentor/reports/qsys_trace.txt'):
 
 	#--------------------------------------------------------------------------------------------#
 	# Generate Qsys file then generate simulation outputs
 	#--------------------------------------------------------------------------------------------#
 
+    #copy base project from origs to experiments and rename it
+    
 	#change directory
-	os.chdir("../"+project_name)
+	os.chdir("../experiments/"+project_name)
 
 	#generate testbench files
 	os.system("qsys-generate --testbench=STANDARD --testbench-simulation=VERILOG "+project_name+".qsys")
