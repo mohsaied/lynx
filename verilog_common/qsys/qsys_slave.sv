@@ -6,10 +6,10 @@
 
 module qsys_slave
 #(
-	parameter           WIDTH = 32,  //data width
-    parameter [7:0]     SRC_ID =  0, //unique id associated with each src
-    parameter [7:0]     SNK_ID =  1, //unique id associated with each src
-    parameter      ADDR_WIDTH = 32   //address width doesn't matter
+	parameter            WIDTH = 32, //data width
+    parameter [7:0]     SRC_ID = 0,  //unique id associated with each src
+    parameter [7:0]     SNK_ID = 1,  //unique id associated with each src
+    parameter       ADDR_WIDTH = 30  //address width doesn't matter
 )
 (
 	input clk,

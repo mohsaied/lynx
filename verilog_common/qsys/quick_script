@@ -1,0 +1,43 @@
+#!/bin/bash
+
+export PATH=$PATH:/home/mohamed/altera/14.0/modelsim_ase/bin
+
+DESIGN_DIR=`pwd`
+VERILOG_COMMON_DIR='/home/mohamed/Dropbox/PhD/Software/noclynx/verilog_common'
+
+#create work library
+rm -rf work
+vlib work
+
+#######################
+#compile verilog files
+#######################
+
+#compile the translators and tpg/oras
+vlog  $VERILOG_COMMON_DIR/qsys/*.sv
+
+#compile your design files (and testbenches) here
+vlog $DESIGN_DIR/*.sv
+
+################
+#run simulation
+################
+
+if [ "$1" == "vsim" ]; then
+    vsim testbench -do wave.do 
+else
+    vsim -c testbench -do "run -all"
+fi
+
+#########
+#cleanup
+#########
+
+killall vsim
+killall vsimk
+
+rm -r work
+rm transcript
+rm socket
+rm *.out
+rm *.o *.so *.wlf *.vstf
