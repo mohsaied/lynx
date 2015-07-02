@@ -86,7 +86,7 @@ public class NocInterconnect {
         Design simulationDesign = new Design(design.getName(), newNoc);
         DesignData.getInstance().setSimulationDesign(simulationDesign);
 
-        log.info("Adding srcs/sinks/vias instead or designmodules");
+        log.info("Adding srcs/sinks/vias instead of designmodules");
         Map<Bundle, Bundle> designToSimBundleMap = HollowSim.populateHollowSimDesign(design, simulationDesign, mapping);
 
         log.info("Configuring module clocks");
