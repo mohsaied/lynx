@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system name="$${FILENAME}">
+ <component
+   name="$${FILENAME}"
+   displayName="$${FILENAME}"
+   version="1.0"
+   description=""
+   tags=""
+   categories="System" />
+ <parameter name="bonusData"><![CDATA[bonusData 
+{
+   element $${FILENAME}
+   {
+   }
+   element clk_0
+   {
+      datum _sortIndex
+      {
+         value = "0";
+         type = "int";
+      }
+   }
+   element qsys_master_0
+   {
+      datum _sortIndex
+      {
+         value = "2";
+         type = "int";
+      }
+   }
+   element qsys_master_1
+   {
+      datum _sortIndex
+      {
+         value = "3";
+         type = "int";
+      }
+   }
+   element qsys_master_10
+   {
+      datum _sortIndex
+      {
+         value = "12";
+         type = "int";
+      }
+   }
+   element qsys_master_11
+   {
+      datum _sortIndex
+      {
+         value = "13";
+         type = "int";
+      }
+   }
+   element qsys_master_12
+   {
+      datum _sortIndex
+      {
+         value = "14";
+         type = "int";
+      }
+   }
+   element qsys_master_2
+   {
+      datum _sortIndex
+      {
+         value = "4";
+         type = "int";
+      }
+   }
+   element qsys_master_3
+   {
+      datum _sortIndex
+      {
+         value = "5";
+         type = "int";
+      }
+   }
+   element qsys_master_4
+   {
+      datum _sortIndex
+      {
+         value = "6";
+         type = "int";
+      }
+   }
+   element qsys_master_5
+   {
+      datum _sortIndex
+      {
+         value = "7";
+         type = "int";
+      }
+   }
+   element qsys_master_6
+   {
+      datum _sortIndex
+      {
+         value = "8";
+         type = "int";
+      }
+   }
+   element qsys_master_7
+   {
+      datum _sortIndex
+      {
+         value = "9";
+         type = "int";
+      }
+   }
+   element qsys_master_8
+   {
+      datum _sortIndex
+      {
+         value = "10";
+         type = "int";
+      }
+   }
+   element qsys_master_9
+   {
+      datum _sortIndex
+      {
+         value = "11";
+         type = "int";
+      }
+   }
+   element qsys_slave_0
+   {
+      datum _sortIndex
+      {
+         value = "1";
+         type = "int";
+      }
+   }
+}
+]]></parameter>
+ <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
+ <parameter name="device" value="5SGSED8K1F40C2" />
+ <parameter name="deviceFamily" value="Stratix V" />
+ <parameter name="deviceSpeedGrade" value="2_H1" />
+ <parameter name="fabricMode" value="QSYS" />
+ <parameter name="generateLegacySim" value="false" />
+ <parameter name="generationId" value="0" />
+ <parameter name="globalResetBus" value="false" />
+ <parameter name="hdlLanguage" value="VERILOG" />
+ <parameter name="hideFromIPCatalog" value="false" />
+ <parameter name="maxAdditionalLatency" value="4" />
+ <parameter name="projectName" value="" />
+ <parameter name="sopcBorderPoints" value="false" />
+ <parameter name="systemHash" value="0" />
+ <parameter name="testBenchDutName" value="" />
+ <parameter name="timeStamp" value="0" />
+ <parameter name="useTestBenchNamingPattern" value="false" />
+ <instanceScript></instanceScript>
+ <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
+ <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <interface
+   name="qsys_master_1_done"
+   internal="qsys_master_1.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_1_v_inputs"
+   internal="qsys_master_1.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_1_v_outputs"
+   internal="qsys_master_1.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_0_v_inputs"
+   internal="qsys_master_0.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_0_v_outputs"
+   internal="qsys_master_0.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_0_done"
+   internal="qsys_master_0.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_slave_0_done"
+   internal="qsys_slave_0.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_slave_0_v_inputs"
+   internal="qsys_slave_0.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_slave_0_v_outputs"
+   internal="qsys_slave_0.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_slave_0_readdatavalid"
+   internal="qsys_slave_0.readdatavalid"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_2_done"
+   internal="qsys_master_2.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_2_v_inputs"
+   internal="qsys_master_2.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_2_v_outputs"
+   internal="qsys_master_2.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_3_done"
+   internal="qsys_master_3.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_3_v_inputs"
+   internal="qsys_master_3.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_3_v_outputs"
+   internal="qsys_master_3.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_4_done"
+   internal="qsys_master_4.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_4_v_inputs"
+   internal="qsys_master_4.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_4_v_outputs"
+   internal="qsys_master_4.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_5_done"
+   internal="qsys_master_5.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_5_v_inputs"
+   internal="qsys_master_5.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_5_v_outputs"
+   internal="qsys_master_5.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_6_done"
+   internal="qsys_master_6.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_6_v_inputs"
+   internal="qsys_master_6.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_6_v_outputs"
+   internal="qsys_master_6.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_7_done"
+   internal="qsys_master_7.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_7_v_inputs"
+   internal="qsys_master_7.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_7_v_outputs"
+   internal="qsys_master_7.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_8_done"
+   internal="qsys_master_8.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_8_v_inputs"
+   internal="qsys_master_8.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_8_v_outputs"
+   internal="qsys_master_8.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_9_done"
+   internal="qsys_master_9.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_9_v_inputs"
+   internal="qsys_master_9.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_9_v_outputs"
+   internal="qsys_master_9.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_10_done"
+   internal="qsys_master_10.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_10_v_inputs"
+   internal="qsys_master_10.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_10_v_outputs"
+   internal="qsys_master_10.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_11_done"
+   internal="qsys_master_11.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_11_v_inputs"
+   internal="qsys_master_11.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_11_v_outputs"
+   internal="qsys_master_11.v_outputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_12_done"
+   internal="qsys_master_12.done"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_12_v_inputs"
+   internal="qsys_master_12.v_inputs"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="qsys_master_12_v_outputs"
+   internal="qsys_master_12.v_outputs"
+   type="conduit"
+   dir="end" />
+ <module kind="clock_source" version="14.0" enabled="1" name="clk_0">
+  <parameter name="clockFrequency" value="100000000" />
+  <parameter name="clockFrequencyKnown" value="true" />
+  <parameter name="inputClockFrequency" value="0" />
+  <parameter name="resetSynchronousEdges" value="NONE" />
+ </module>
+ <module kind="qsys_slave" version="2.0" enabled="1" name="qsys_slave_0">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="0" />
+  <parameter name="SNK_ID" value="1" />
+  <parameter name="ADDR_WIDTH" value="30" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_0">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_1">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_2">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_3">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_4">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_5">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_6">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_7">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_8">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_9">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_10">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_11">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <module kind="qsys_master" version="2.0" enabled="1" name="qsys_master_12">
+  <parameter name="WIDTH" value="32" />
+  <parameter name="SRC_ID" value="2" />
+  <parameter name="SNK_ID" value="3" />
+  <parameter name="DST_ID" value="0" />
+  <parameter name="ADDR_WIDTH" value="32" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+ </module>
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_slave_0.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_slave_0.clk" />
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_0.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_1.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_0.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_0.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_1.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_1.clk" />
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_2.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_3.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_4.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_5.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_6.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_7.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_8.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_9.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_10.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_11.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="14.0"
+   start="qsys_master_12.avl"
+   end="qsys_slave_0.avl">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_2.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_2.clk" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_3.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_3.rst" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_4.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_4.clk" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_8.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_8.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_5.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_5.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_7.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_7.rst" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_9.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_9.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_10.rst" />
+ <connection kind="clock" version="14.0" start="clk_0.clk" end="qsys_master_6.clk" />
+ <connection
+   kind="clock"
+   version="14.0"
+   start="clk_0.clk"
+   end="qsys_master_10.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_11.rst" />
+ <connection
+   kind="clock"
+   version="14.0"
+   start="clk_0.clk"
+   end="qsys_master_11.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_12.rst" />
+ <connection
+   kind="clock"
+   version="14.0"
+   start="clk_0.clk"
+   end="qsys_master_12.clk" />
+ <connection
+   kind="reset"
+   version="14.0"
+   start="clk_0.clk_reset"
+   end="qsys_master_6.rst" />
+ <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
+ <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="4" />
+ <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
+</system>

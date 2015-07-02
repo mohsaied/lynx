@@ -1,0 +1,5 @@
+/db/
+/incremental_db/
+/output_files/
+/noc_on_fpga_assignment_defaults.qdf
+/noc_on_fpga.qws
