@@ -8,6 +8,7 @@ import lynx.data.Noc;
 public class Simulation {
 
     private static final Logger log = Logger.getLogger(Simulation.class.getName());
+    public static final boolean USE_SW_FABRICPORT = true;
 
     public static void generateSimDir(Design design, Noc noc) throws Exception {
 

@@ -61,6 +61,7 @@ public class QuickScriptOut {
         writer.println();
         writer.println("#compile the fabric interface which instantiates fabric ports and an rtl interface");
         writer.println("vlog $HNOCSIM_DIR/booksim/fabric_interface.sv");
+        writer.println("vlog -dpiheader $HNOCSIM_DIR/booksim/dpi_fabric.h $HNOCSIM_DIR/booksim/fabric_interface_sw.sv");
         writer.println();
         writer.println("#compile your design files (and testbenches) here");
         writer.println("vlog $DESIGN_DIR/*.sv");
@@ -69,8 +70,13 @@ public class QuickScriptOut {
         writer.println("#recompile the booksim socket interface");
         writer.println("########################################");
         writer.println();
-        writer.println("g++ -c -fPIC -m32 -I/home/mohamed/altera/14.0/modelsim_ase/include $HNOCSIM_DIR/booksim/booksim_interface.cpp");
-        writer.println("g++ -shared -Bsymbolic -fPIC -m32 -o booksim_interface.so booksim_interface.o");
+        if (Simulation.USE_SW_FABRICPORT) {
+            writer.println("g++ -c -fPIC -m32 -I/home/mohamed/altera/14.0/modelsim_ase/include $HNOCSIM_DIR/booksim/fabric_sw_interface.cpp");
+            writer.println("g++ -shared -Bsymbolic -fPIC -m32 -o fabric_sw_interface.so fabric_sw_interface.o");
+        } else {
+            writer.println("g++ -c -fPIC -m32 -I/home/mohamed/altera/14.0/modelsim_ase/include $HNOCSIM_DIR/booksim/booksim_interface.cpp");
+            writer.println("g++ -shared -Bsymbolic -fPIC -m32 -o booksim_interface.so booksim_interface.o");
+        }
         writer.println();
         writer.println("###############################");
         writer.println("#run booksim in a new terminal");
@@ -87,9 +93,15 @@ public class QuickScriptOut {
         writer.println("################");
         writer.println();
         writer.println("if [ \"$1\" == \"vsim\" ]; then");
-        writer.println("    vsim -sv_lib booksim_interface testbench -do wave.do ");
+        if (Simulation.USE_SW_FABRICPORT)
+            writer.println("    vsim -sv_lib fabric_sw_interface testbench -do wave.do ");
+        else
+            writer.println("    vsim -sv_lib booksim_interface testbench -do wave.do ");
         writer.println("else");
-        writer.println("    vsim -c -sv_lib booksim_interface testbench -do \"run -all\"");
+        if (Simulation.USE_SW_FABRICPORT)
+            writer.println("    vsim -c -sv_lib fabric_sw_interface testbench -do \"run -all\"");
+        else
+            writer.println("    vsim -c -sv_lib booksim_interface testbench -do \"run -all\"");
         writer.println("fi");
         writer.println();
         writer.println("#########");

@@ -220,7 +220,7 @@ public class Noc extends Module {
         nocAddressWidth = clog2(nocNumRouters);
         nocVcAddressWidth = clog2(nocNumVcs);
         this.nocNumRoutersPerDimension = (int) Math.sqrt(nocNumRouters);
-        assert Math.ceil(Math.sqrt(nocNumRouters)) == Math.sqrt(nocNumRouters) : "Number of routers must be a square (2, 4, 9, 16, etc..)";
+        assert Math.ceil(Math.sqrt(nocNumRouters)) == Math.sqrt(nocNumRouters) : "Number of routers must be square (2, 4, 9, 16, etc..)";
     }
 
     public static int clog2(double num) {
@@ -247,6 +247,7 @@ public class Noc extends Module {
     private void addNocPorts() {
         // ports
         this.addPort(new Port("clk_noc", Direction.INPUT, PortType.CLK, this, "clk_noc"));
+        this.addPort(new Port("clk", Direction.INPUT, PortType.QUARTERCLK, this, "clk"));
         this.addPort(new Port("rst", Direction.INPUT, PortType.RST, this, "rst"));
         this.addPort(new Port("clk_rtl", Direction.INPUT, getNumRouters(), PortType.CLKRTL, this, "clk_rtl"));
         this.addPort(new Port("clk_int", Direction.INPUT, getNumRouters(), PortType.CLKINT, this, "clk_int"));
@@ -400,6 +401,15 @@ public class Noc extends Module {
                 return por;
         }
         assert false : "Can't find clknoc in noc!";
+        return null;
+    }
+
+    public Port getNocQuarterClock() {
+        for (Port por : getPorts().values()) {
+            if (por.getType() == PortType.QUARTERCLK)
+                return por;
+        }
+        assert false : "Can't find quarter clk in noc!";
         return null;
     }
 

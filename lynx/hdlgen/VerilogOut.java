@@ -50,6 +50,7 @@ public class VerilogOut {
     private static void writeClockingAndReset(Noc noc, PrintWriter writer) {
         writer.println("//clocking");
         writer.println("initial " + noc.getNocClock().getName() + "  = 1'b1;");
+        writer.println("initial " + noc.getNocQuarterClock().getName() + "  = 1'b1;");
         writer.print("initial " + noc.getIntClock().getName() + " = " + noc.getIntClock().getWidth() + "'b");
         for (int i = 0; i < noc.getIntClock().getWidth(); i++)
             writer.print("1");
@@ -59,6 +60,7 @@ public class VerilogOut {
             writer.print("1");
         writer.println(";");
         writer.println("always #1    " + noc.getNocClock().getName() + " = ~" + noc.getNocClock().getName() + ";");
+        writer.println("always #4    " + noc.getNocQuarterClock().getName() + " = ~" + noc.getNocQuarterClock().getName() + ";");
         writer.println("always #1.25 " + noc.getIntClock().getName() + " = ~" + noc.getIntClock().getName() + "; ");
         writer.println("always #5    " + noc.getRtlClock().getName() + " = ~" + noc.getRtlClock().getName() + "; ");
         writer.println();
