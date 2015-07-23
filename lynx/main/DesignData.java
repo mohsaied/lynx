@@ -1,10 +1,13 @@
 package lynx.main;
 
+import java.util.HashSet;
 import java.util.List;
 
 import lynx.analysis.Analysis;
 import lynx.clustering.Clustering;
+import lynx.data.Bundle;
 import lynx.data.Design;
+import lynx.data.MyEnums.Direction;
 import lynx.data.Noc;
 import lynx.elaboration.ConnectionGroup;
 import lynx.nocmapping.Mapping;
@@ -118,6 +121,25 @@ public class DesignData {
 
     public final void setNocMapping(Mapping nocMapping) {
         this.nocMapping = nocMapping;
+        // also need to update combine_data array here
+        // TODO make sure that this is the right place to do this
+
+        String combineDataStr = "'{";
+
+        for (int i = 0; i < this.noc.getNumRouters(); i++) {
+            HashSet<Bundle> bunSet = this.nocMapping.getBundlesAtRouters().get(i);
+            int numOutBuns = 0;
+            for (Bundle bun : bunSet) {
+                if (bun.getDirection() == Direction.OUTPUT) {
+                    numOutBuns++;
+                }
+            }
+            combineDataStr += numOutBuns == 0 ? "0," : "" + (numOutBuns - 1) + ",";
+        }
+        combineDataStr = combineDataStr.substring(0, combineDataStr.length() - 1) + "}";
+
+        this.noc.editParameter("COMBINE_DATA", combineDataStr);
+
     }
 
     public final Analysis getAnalysis() {

@@ -440,7 +440,15 @@ public class Noc extends Module {
     }
 
     public Noc clone() {
-        return new Noc(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth, nocTdmFactor);
+        Noc nocClone = new Noc(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth, nocTdmFactor);
+        // TODO copy all parameters in cloning
+        String combineDataStr = "NOT FOUND!";
+        for (Parameter par : this.parameters) {
+            if (par.getName().equals("COMBINE_DATA"))
+                combineDataStr = par.getValue();
+        }
+        nocClone.editParameter("COMBINE_DATA", combineDataStr);
+        return nocClone;
     }
 
 }
