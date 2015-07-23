@@ -161,9 +161,7 @@ public class Noc extends Module {
     }
 
     private int getNumNocBundlesOutPerPort() {
-        // TODO fix this after supporting combine-data mode
-        // return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
-        return 1;
+        return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
     }
 
     public ArrayList<NocBundle> getNocInBundles(int router) {
@@ -242,6 +240,7 @@ public class Noc extends Module {
             else
                 vcs += "0,";
         this.addParameter(new Parameter("ASSIGNED_VC", vcs));
+        this.addParameter(new Parameter("COMBINE_DATA", vcs));
     }
 
     private void addNocPorts() {

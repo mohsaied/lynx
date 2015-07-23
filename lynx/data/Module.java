@@ -62,6 +62,15 @@ public abstract class Module {
         this.parameters.add(parameter);
     }
 
+    public final void editParameter(String parName, String parValue) {
+        // find parameter in list and update its value
+        for (Parameter par : this.parameters) {
+            if (par.getName().equals(parName)) {
+                par.setValue(parValue);
+            }
+        }
+    }
+
     public final Map<String, Port> getPorts() {
         return ports;
     }
