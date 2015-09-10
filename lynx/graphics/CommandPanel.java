@@ -348,7 +348,7 @@ public class CommandPanel extends JPanel {
 
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(logo, 10, 10, this.getWidth() - 20, (logo.getHeight() - 20) * this.getWidth()
+                g.drawImage(logo, 10, 0, this.getWidth() - 20, (logo.getHeight() - 20) * this.getWidth()
                         / (logo.getWidth() - 20), null);
             }
         };
