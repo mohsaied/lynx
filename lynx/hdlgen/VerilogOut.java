@@ -204,6 +204,19 @@ public class VerilogOut {
                     connectionString += por.getConnectingWireName(wire) + "|";
                 }
                 connectionString = connectionString.substring(0, connectionString.length() - 1);
+                // fifth case: READY signal with combine-data mode
+                // TODO we should have separate ready signals for each VC to
+                // have a truly independent combine-data mode
+                // In the current state, deadlock is possible!
+                // NOTE: separate ready signals are available in the SW fabric
+                // ports but are not exposed
+            } else if (por.getType() == PortType.READY && por.getWires().size() > 1) {
+                connectionString = "";
+                for (Wire wire : por.getWires()) {
+                    connectionString += por.getConnectingWireName(wire) + "&";
+                }
+                connectionString = connectionString.substring(0, connectionString.length() - 1);
+                // special case for the done signal to end simulation
             } else if (por.getType() == PortType.DONE && por.getWires().size() > 1) {
                 connectionString = "";
                 for (Wire wire : por.getWires()) {
