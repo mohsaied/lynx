@@ -161,7 +161,8 @@ public class Noc extends Module {
     }
 
     private int getNumNocBundlesOutPerPort() {
-        return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
+        //return (nocNumVcs < nocTdmFactor ? nocNumVcs : nocTdmFactor);
+        return 1;
     }
 
     public ArrayList<NocBundle> getNocInBundles(int router) {
