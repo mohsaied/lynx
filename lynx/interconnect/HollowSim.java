@@ -186,6 +186,15 @@ public class HollowSim {
         // connectiongroup and be a master as well
         if (bun.getConnectionGroup().getConnectionType() == ConnectionType.ARBITRATION && bun.getConnectionGroup().isMaster(bun))
             return 1;
+        // also if it's part of a simple p2p group it will have nodep = 1 -- a
+        // module in a feedforward pipeline doesn't have to wait for it's input
+        // to send data in our hollowsim simulation (this is also partly because
+        // the RETURN_TO_SENDER parameter in the vias is currently tied to
+        // NODEP)
+        if (bun.getConnectionGroup().getConnectionType() == ConnectionType.P2P)
+            return 1;
+        // TODO make sure we set the via NODEP value correctly for all cases
+        // (e.g. broadcast etc)
         return 0;
     }
 
