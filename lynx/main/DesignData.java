@@ -130,7 +130,7 @@ public class DesignData {
             HashSet<Bundle> bunSet = this.nocMapping.getBundlesAtRouters().get(i);
             int numOutBuns = 0;
             for (Bundle bun : bunSet) {
-                if (bun.getDirection() == Direction.OUTPUT) {
+                if (bun.getDirection() == Direction.INPUT) {
                     numOutBuns++;
                 }
             }
