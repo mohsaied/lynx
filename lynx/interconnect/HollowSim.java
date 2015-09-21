@@ -191,10 +191,8 @@ public class HollowSim {
         // to send data in our hollowsim simulation (this is also partly because
         // the RETURN_TO_SENDER parameter in the vias is currently tied to
         // NODEP)
-        if (bun.getConnectionGroup().getConnectionType() == ConnectionType.P2P)
+        if (bun.getConnectionGroup().getConnectionType() != ConnectionType.ARBITRATION)
             return 1;
-        // TODO make sure we set the via NODEP value correctly for all cases
-        // (e.g. broadcast etc)
         return 0;
     }
 
