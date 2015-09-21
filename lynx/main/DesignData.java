@@ -128,13 +128,13 @@ public class DesignData {
 
         for (int i = 0; i < this.noc.getNumRouters(); i++) {
             HashSet<Bundle> bunSet = this.nocMapping.getBundlesAtRouters().get(i);
-            int numOutBuns = 0;
+            int numInBuns = 0;
             for (Bundle bun : bunSet) {
                 if (bun.getDirection() == Direction.INPUT) {
-                    numOutBuns++;
+                    numInBuns++;
                 }
             }
-            combineDataStr += numOutBuns == 0 ? "0," : "" + (numOutBuns - 1) + ",";
+            combineDataStr += numInBuns == 0 ? "0," : "" + (numInBuns - 1) + ",";
         }
         combineDataStr = combineDataStr.substring(0, combineDataStr.length() - 1) + "}";
 
