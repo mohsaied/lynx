@@ -11,6 +11,7 @@ import lynx.data.MyEnums.Direction;
 import lynx.data.Noc;
 import lynx.elaboration.ConnectionGroup;
 import lynx.nocmapping.Mapping;
+import lynx.vcmapping.VcMap;
 
 /**
  * This singleton class holds all design info for the flow when using an NoC
@@ -44,6 +45,11 @@ public class DesignData {
      * the design mapping from clustered Module to router
      */
     Mapping nocMapping;
+
+    /**
+     * which VC does each connection use?
+     */
+    VcMap vcMap;
 
     /**
      * A design instance with src/sink/via instead of actual modules
@@ -122,7 +128,7 @@ public class DesignData {
     public final void setNocMapping(Mapping nocMapping) {
         this.nocMapping = nocMapping;
         // also need to update combine_data array here
-        // TODO make sure that this is the right place to do this
+        // TODO will move this inside VcMapping
 
         String combineDataStr = "'{";
 
@@ -140,6 +146,14 @@ public class DesignData {
 
         this.noc.editParameter("COMBINE_DATA", combineDataStr);
 
+    }
+
+    public final VcMap getVcMap() {
+        return vcMap;
+    }
+
+    public final void setVcMap(VcMap vcMap) {
+        this.vcMap = vcMap;
     }
 
     public final Analysis getAnalysis() {
