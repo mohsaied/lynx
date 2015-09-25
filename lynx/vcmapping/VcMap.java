@@ -1,6 +1,7 @@
 package lynx.vcmapping;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import lynx.data.Bundle;
@@ -39,10 +40,11 @@ public class VcMap {
      * @param combineData
      *            the combine data value associated with the sink
      */
-    public void addVcDesignation(Bundle srcBundle, Bundle dstBundle, int router, int vc, int combineData) {
+    public void addVcDesignation(Bundle dstBundle, List<Bundle> srcBundles, int router, int vc, int combineData) {
 
-        bundleToVcs.put(srcBundle, vc);
         bundleToVcs.put(dstBundle, vc);
+        for (Bundle srcBundle : srcBundles)
+            bundleToVcs.put(srcBundle, vc);
 
         dstBundleToCombineData.put(dstBundle, combineData);
 
