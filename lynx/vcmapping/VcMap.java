@@ -16,6 +16,12 @@ import lynx.data.Bundle;
  */
 public class VcMap {
 
+    /**
+     * a map that tells which VC each bundle is using. If the value of the VC is
+     * -1, this indicates that the SRC bundle can send on multiple VCs to
+     * different destinations. To find out the dst-vc table, look at the
+     * dstbundle VCs
+     */
     private Map<Bundle, Integer> bundleToVcs;
     private Map<Bundle, Integer> dstBundleToCombineData;
     private Map<Integer, Integer> routerToCombineData;
@@ -43,8 +49,14 @@ public class VcMap {
     public void addVcDesignation(Bundle dstBundle, List<Bundle> srcBundles, int router, int vc, int combineData) {
 
         bundleToVcs.put(dstBundle, vc);
-        for (Bundle srcBundle : srcBundles)
-            bundleToVcs.put(srcBundle, vc);
+        for (Bundle srcBundle : srcBundles) {
+            if (!bundleToVcs.containsKey(srcBundle)) {
+                bundleToVcs.put(srcBundle, vc);
+            } else if (bundleToVcs.get(srcBundle) != vc) {
+                // this src bundle sends on multiple VCs
+                bundleToVcs.put(srcBundle, -1);
+            }
+        }
 
         dstBundleToCombineData.put(dstBundle, combineData);
 
@@ -74,10 +86,11 @@ public class VcMap {
             s += "  Src Bundles: ";
             List<Bundle> srcBuns = dstBun.getConnections();
             for (Bundle srcBun : srcBuns) {
-                if (bundleToVcs.get(srcBun) == bundleToVcs.get(dstBun))
+                if (bundleToVcs.get(srcBun) == bundleToVcs.get(dstBun)) {
                     s += srcBun.getFullName() + " ,";
-                else
-                    assert false : "Src bundles have different VCs than dst bundles";
+                } else {
+                    s += srcBun.getFullName() + "(" + bundleToVcs.get(srcBun) + "),";
+                }
             }
             s += "\n";
         }
