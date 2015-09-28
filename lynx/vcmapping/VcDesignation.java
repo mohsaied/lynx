@@ -94,8 +94,8 @@ public class VcDesignation {
                 }
             }
 
-            // at the very end, go over all bundles; if they weren't already
-            // added then we'll add them with defaults
+            // TODO at the very end, go over all bundles; if they weren't
+            // already added then we'll add them with defaults (optional)
         }
 
         return vcMap;

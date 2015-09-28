@@ -48,7 +48,7 @@ public class VcMap {
 
         dstBundleToCombineData.put(dstBundle, combineData);
 
-        routerToCombineData.put(router, vc);
+        routerToCombineData.put(router, combineData);
     }
 
     public Map<Bundle, Integer> getBundleToVcs() {
@@ -63,4 +63,26 @@ public class VcMap {
         return routerToCombineData;
     }
 
+    @Override
+    public String toString() {
+
+        String s = "";
+
+        for (Bundle dstBun : dstBundleToCombineData.keySet()) {
+            s += "Dst. Bundle " + dstBun.getFullName() + ", c_d = " + dstBundleToCombineData.get(dstBun) + ", vc = "
+                    + bundleToVcs.get(dstBun) + "\n";
+            s += "Src Bundles: ";
+            List<Bundle> srcBuns = dstBun.getConnections();
+            for (Bundle srcBun : srcBuns) {
+                if (bundleToVcs.get(srcBun) == bundleToVcs.get(dstBun))
+                    s += srcBun.getFullName() + " ,";
+                else
+                    assert false : "Src bundles have different VCs than dst bundles";
+            }
+            s += "\n";
+        }
+
+        return s;
+
+    }
 }
