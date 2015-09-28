@@ -23,7 +23,15 @@ public class VcMap {
      * dstbundle VCs
      */
     private Map<Bundle, Integer> bundleToVcs;
+    /**
+     * the combine data status of each dstbundle. The integer tells how many
+     * bundles are being combined here
+     */
     private Map<Bundle, Integer> dstBundleToCombineData;
+    /**
+     * combine_data status per router. The integer tells how many bundles are
+     * being combined here
+     */
     private Map<Integer, Integer> routerToCombineData;
 
     public VcMap() {

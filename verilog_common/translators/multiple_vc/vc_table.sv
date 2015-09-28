@@ -7,11 +7,9 @@
 
 module vc_table
 #(
-    parameter N            = 16,             //number of nodes
-    parameter NUM_VC       = 2,              //number of VCs
-	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
-	parameter VC_ADDR_WIDTH = $clog2(NUM_VC),//VC address width
-    parameter NUM_DEST = 4,                  //number of destinations
+	parameter N_ADDR_WIDTH = 4,    //router address width
+	parameter VC_ADDR_WIDTH = 2,   //VC address width
+    parameter NUM_DEST = 4,        //number of destinations
 	parameter  [N_ADDR_WIDTH-1:0] DEST [0:NUM_DEST-1] = '{NUM_DEST{1}}, //router index that this vc_table sends to
 	parameter [VC_ADDR_WIDTH-1:0]   VC [0:NUM_DEST-1] = '{NUM_DEST{1}}  //VC of each destination
 )
