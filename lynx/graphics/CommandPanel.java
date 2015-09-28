@@ -29,7 +29,10 @@ import lynx.interconnect.NocInterconnect;
 import lynx.main.DesignData;
 import lynx.main.Main;
 import lynx.main.ReportData;
+import lynx.nocmapping.Mapping;
 import lynx.nocmapping.NocMapping;
+import lynx.vcmapping.VcDesignation;
+import lynx.vcmapping.VcMap;
 import lynx.xml.XmlDesign;
 import lynx.hdlgen.Simulation;
 
@@ -175,8 +178,11 @@ public class CommandPanel extends JPanel {
                                 mapProgress.setString("working...");
                                 log.info("Mapping " + openedFile.getName() + " started");
                                 Noc noc = DesignData.getInstance().getNoc();
-                                NocMapping.findMappings(clusteredDesign, noc);
+                                Mapping mapping = NocMapping.findMappings(clusteredDesign, noc);
                                 mainPanel.addNoCTabs(clusteredDesign, noc);
+                                log.info("Vc Designation started");
+                                VcMap vcMap = VcDesignation.createVcMap(clusteredDesign, noc, mapping);
+                                DesignData.getInstance().setVcMap(vcMap);
                                 mapProgress.setIndeterminate(false);
                                 mapProgress.setString("done.");
 
@@ -348,8 +354,8 @@ public class CommandPanel extends JPanel {
 
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(logo, 10, 0, this.getWidth() - 20, (logo.getHeight() - 20) * this.getWidth()
-                        / (logo.getWidth() - 20), null);
+                g.drawImage(logo, 10, 0, this.getWidth() - 20,
+                        (logo.getHeight() - 20) * this.getWidth() / (logo.getWidth() - 20), null);
             }
         };
         this.add(logoPanel);

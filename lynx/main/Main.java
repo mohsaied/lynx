@@ -15,9 +15,12 @@ import lynx.elaboration.ConnectionGroup;
 import lynx.elaboration.Elaboration;
 import lynx.interconnect.NocInterconnect;
 import lynx.log.MyLogger;
+import lynx.nocmapping.Mapping;
 import lynx.nocmapping.NocMapping;
 import lynx.graphics.Gui;
 import lynx.hdlgen.Simulation;
+import lynx.vcmapping.VcDesignation;
+import lynx.vcmapping.VcMap;
 import lynx.xml.XmlDesign;
 
 public class Main {
@@ -85,7 +88,9 @@ public class Main {
 
         // find possible locations on the NoC
         Noc noc = DesignData.getInstance().getNoc();
-        NocMapping.findMappings(clusteredDesign, noc);
+        Mapping mapping = NocMapping.findMappings(clusteredDesign, noc);
+        VcMap vcMap = VcDesignation.createVcMap(clusteredDesign, noc, mapping);
+        DesignData.getInstance().setVcMap(vcMap);
 
         // write out XML design
         // XmlDesign.writeXMLDesign(design, filePath + ".out");

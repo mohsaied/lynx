@@ -29,6 +29,7 @@ public class VcDesignation {
         ReportData.getInstance().writeToRpt("Started VC designation...");
 
         VcMap vcMap = assignVcs(design, noc, mapping);
+        log.info(vcMap.toString());
 
         long endTime = System.nanoTime();
         DecimalFormat secondsFormat = new DecimalFormat("#.00");

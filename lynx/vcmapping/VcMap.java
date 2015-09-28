@@ -66,12 +66,12 @@ public class VcMap {
     @Override
     public String toString() {
 
-        String s = "";
+        String s = "VC MAP:\n";
 
         for (Bundle dstBun : dstBundleToCombineData.keySet()) {
             s += "Dst. Bundle " + dstBun.getFullName() + ", c_d = " + dstBundleToCombineData.get(dstBun) + ", vc = "
                     + bundleToVcs.get(dstBun) + "\n";
-            s += "Src Bundles: ";
+            s += "  Src Bundles: ";
             List<Bundle> srcBuns = dstBun.getConnections();
             for (Bundle srcBun : srcBuns) {
                 if (bundleToVcs.get(srcBun) == bundleToVcs.get(dstBun))
@@ -82,7 +82,7 @@ public class VcMap {
             s += "\n";
         }
 
-        return s;
+        return s.substring(0, s.length() - 1);
 
     }
 }
