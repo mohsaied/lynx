@@ -96,7 +96,7 @@ public class Main {
         // XmlDesign.writeXMLDesign(design, filePath + ".out");
 
         // connect modules and insert translators
-        NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList);
+        NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList, vcMap);
 
         // output simulation directory
         Design simulationDesign = DesignData.getInstance().getSimulationDesign();

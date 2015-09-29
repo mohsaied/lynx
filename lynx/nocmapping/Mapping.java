@@ -14,7 +14,6 @@ import lynx.data.DesignModule;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
 import lynx.data.MyEnums.Direction;
-import lynx.main.DesignData;
 import lynx.main.ReportData;
 
 /**
@@ -40,10 +39,10 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
-    public Mapping(boolean[][] mapMatrixValues, Design design) {
+    public Mapping(boolean[][] mapMatrixValues, Design design, Noc noc) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
-        this.noc = DesignData.getInstance().getNoc();
+        this.noc = noc;
         annealStruct = new AnnealBundleStruct();
         try {
             connectBundles();
@@ -57,10 +56,10 @@ public class Mapping {
         findLinkUtilization();
     }
 
-    public Mapping(AnnealBundleStruct annealStruct, Design design) {
+    public Mapping(AnnealBundleStruct annealStruct, Design design, Noc noc) {
         this.annealStruct = annealStruct;
         this.design = design;
-        this.noc = DesignData.getInstance().getNoc();
+        this.noc = noc;
         // create mapMatrix
         boolean[][] mapMatrixValues = new boolean[design.getNumDesignModules()][noc.getNumRouters()];
         for (int i = 0; i < design.getNumDesignModules(); i++) {
@@ -376,5 +375,9 @@ public class Mapping {
         if (annealStruct.bundleMap.get(bun).size() == 0)
             return noc.getNumRouters();
         return annealStruct.bundleMap.get(bun).get(0).getRouter();
+    }
+
+    public AnnealBundleStruct getAnnealBundleStruct() {
+        return annealStruct;
     }
 }

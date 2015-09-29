@@ -189,7 +189,7 @@ public class CommandPanel extends JPanel {
                                 fileOutProgress.setIndeterminate(true);
                                 fileOutProgress.setStringPainted(true);
                                 fileOutProgress.setString("working...");
-                                NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList);
+                                NocInterconnect.connectDesignToNoc(clusteredDesign, noc, cgList, vcMap);
                                 log.info("Generating output files");
                                 try {
                                     Design simulationDesign = DesignData.getInstance().getSimulationDesign();

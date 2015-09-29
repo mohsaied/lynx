@@ -5,6 +5,8 @@ import java.util.List;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 import lynx.data.MyEnums.TranslatorType;
+import lynx.nocmapping.Mapping;
+import lynx.vcmapping.VcMap;
 
 /**
  * Packetizer
@@ -14,17 +16,19 @@ import lynx.data.MyEnums.TranslatorType;
  */
 public final class Packetizer extends Translator {
 
-    public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, getPacketizerType(parentNoc, nocbuns));
+    public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns, VcMap vcMap, Mapping mapping) {
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER_VC);
 
-        addParametersAndPorts(nocbuns);
+        addParametersAndPorts(parentBundle, nocbuns, vcMap, mapping);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
     }
 
-    private static TranslatorType getPacketizerType(Noc parentNoc, List<NocBundle> nocbuns) {
+    @SuppressWarnings("unused")
+    @Deprecated
+    private static TranslatorType getPacketizerType(Noc parentNoc, List<NocBundle> nocbuns, int vc) {
         // get total nocbuns width
         int width = 0;
         for (NocBundle nocbun : nocbuns) {
@@ -34,6 +38,12 @@ public final class Packetizer extends Translator {
 
         int numFlitsForThisTranslator = width / nocWidth;
 
+        // if we need a vc table for this packetizer, then we'll instantiate
+        // packetizer_vc
+        if (vc == -1)
+            return TranslatorType.PACKETIZER_VC;
+
+        // otherwise instantiate the right packetizer size
         TranslatorType type = null;
         switch (numFlitsForThisTranslator) {
         case 4:
@@ -54,8 +64,7 @@ public final class Packetizer extends Translator {
         return type;
     }
 
-    @Override
-    protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
+    protected final void addParametersAndPorts(Bundle bundle, List<NocBundle> nocbuns, VcMap vcMap, Mapping mapping) {
 
         // find the Noc-facing width -- sum up width of nocbuns
         int nocFacingWidth = 0;
@@ -68,7 +77,35 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
         this.addParameter(new Parameter("WIDTH_IN", parentBundle.getWidth()));
         this.addParameter(new Parameter("WIDTH_OUT", nocFacingWidth));
-        this.addParameter(new Parameter("ASSIGNED_VC", "0"));
+        this.addParameter(new Parameter("PACKETIZER_WIDTH", nocbuns.size()));
+
+        int vc = vcMap.getVcForBundle(bundle);
+
+        int numDest = 1;
+        String dests = "'{0}";
+        String vcs = "'{" + vc + "}";
+
+        // this packetizer will send on multiple VCs
+        if (vc == -1) {
+            // find the number of dests for this bundle
+            numDest = bundle.getConnections().size();
+
+            dests = "'{";
+            vcs = "'{";
+
+            // loop over bundles, populate their router and VC
+            for (Bundle dstBun : bundle.getConnections()) {
+                dests += mapping.getRouter(dstBun) + ",";
+                vcs += vcMap.getVcForBundle(dstBun) + ",";
+            }
+
+            dests = dests.substring(0, dests.length() - 1) + "}";
+            vcs = vcs.substring(0, vcs.length() - 1) + "}";
+        }
+
+        this.addParameter(new Parameter("NUM_DEST", numDest));
+        this.addParameter(new Parameter("DEST", dests));
+        this.addParameter(new Parameter("VC", vcs));
 
         // ports
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentBundle.getWidth(), this));

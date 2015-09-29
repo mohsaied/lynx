@@ -31,7 +31,7 @@ public class SimulatedAnnealingBundle {
 
         // initial solution -- all off noc
         AnnealBundleStruct annealStruct = new AnnealBundleStruct(design, noc);
-        Mapping currMapping = new Mapping(annealStruct, design);
+        Mapping currMapping = new Mapping(annealStruct, design, noc);
         List<Bundle> bundleList = design.getAllBundles();
 
         double cost = currMapping.computeCost();
@@ -80,7 +80,7 @@ public class SimulatedAnnealingBundle {
                 }
 
                 // measure its cost
-                currMapping = new Mapping(newAnnealStruct, design);
+                currMapping = new Mapping(newAnnealStruct, design, noc);
                 double newCost = currMapping.computeCost();
                 double oldCost = cost;
                 boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
@@ -141,7 +141,7 @@ public class SimulatedAnnealingBundle {
                     }
 
                     // measure its cost
-                    currMapping = new Mapping(newAnnealStruct, design);
+                    currMapping = new Mapping(newAnnealStruct, design, noc);
                     double newCost = currMapping.computeCost();
                     double oldCost = cost;
 
@@ -182,7 +182,7 @@ public class SimulatedAnnealingBundle {
         debugPrintMapping(design, annealStruct);
 
         // export solution to the design
-        currMapping = new Mapping(annealStruct, design);
+        currMapping = new Mapping(annealStruct, design, noc);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
         design.setDebugAnnealTemp(debugAnnealTemp);

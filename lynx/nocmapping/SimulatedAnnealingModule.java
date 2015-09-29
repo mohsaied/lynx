@@ -43,7 +43,7 @@ public class SimulatedAnnealingModule {
             currPermMatrix[i][i] = true;
         }
 
-        Mapping currMapping = new Mapping(currPermMatrix, design);
+        Mapping currMapping = new Mapping(currPermMatrix, design, noc);
         double cost = currMapping.computeCost();
 
         // time
@@ -79,7 +79,7 @@ public class SimulatedAnnealingModule {
             boolean[][] newPermMatrix = annealMove(currPermMatrix, rand);
 
             // measure its cost
-            currMapping = new Mapping(newPermMatrix, design);
+            currMapping = new Mapping(newPermMatrix, design, noc);
             double newCost = currMapping.computeCost();
             double oldCost = cost;
             boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
@@ -113,7 +113,7 @@ public class SimulatedAnnealingModule {
         ReportData.getInstance().writeToRpt("map_cost = " + cost);
 
         // export solution to the design
-        currMapping = new Mapping(currPermMatrix, design);
+        currMapping = new Mapping(currPermMatrix, design, noc);
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
         design.setDebugAnnealTemp(debugAnnealTemp);
@@ -121,25 +121,25 @@ public class SimulatedAnnealingModule {
     }
 
     private static int setTempInterval(double temp) {
-        if(temp < 100 && temp >= 90)
+        if (temp < 100 && temp >= 90)
             return 100;
-        if(temp < 90 && temp >= 80)
+        if (temp < 90 && temp >= 80)
             return 100;
-        if(temp < 80 && temp >= 70)
+        if (temp < 80 && temp >= 70)
             return 100;
-        if(temp < 70 && temp >= 60)
+        if (temp < 70 && temp >= 60)
             return 100;
-        if(temp < 60 && temp >= 50)
+        if (temp < 60 && temp >= 50)
             return 100;
-        if(temp < 50 && temp >= 40)
+        if (temp < 50 && temp >= 40)
             return 100;
-        if(temp < 40 && temp >= 30)
+        if (temp < 40 && temp >= 30)
             return 100;
-        if(temp < 30 && temp >= 20)
+        if (temp < 30 && temp >= 20)
             return 200;
-        if(temp < 20 && temp >= 10)
+        if (temp < 20 && temp >= 10)
             return 200;
-        if(temp < 10 && temp >= 0)
+        if (temp < 10 && temp >= 0)
             return 200;
         else
             return 0;

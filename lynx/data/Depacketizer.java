@@ -37,12 +37,11 @@ public final class Depacketizer extends Translator {
             type = TranslatorType.DEPACKETIZER_2;
             break;
         default:
-            assert false : "Unsupported depacketizer requested";
+            assert false : "Unsupported depacketizer requested of size " + numFlitsForThisTranslator + " flits";
         }
         return type;
     }
 
-    @Override
     protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
 
         // find the Noc-facing width -- sum up width of nocbuns

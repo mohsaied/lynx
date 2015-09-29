@@ -110,7 +110,7 @@ public class Ullman {
                     log.info("numsols: " + numSols + " - numrecs: " + numRecs + " - numprune: " + numPrune + " - bestlatency: "
                             + bestTotalLatency);
                 if (design != null) {// && validMappings.size() < 10000) {
-                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design);
+                    Mapping permMatrixMapping = new Mapping(permMatrix.clone().getData(), design, noc);
                     validMappings.add(permMatrixMapping);
                 }
                 numSols++;

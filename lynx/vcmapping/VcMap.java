@@ -71,16 +71,12 @@ public class VcMap {
         routerToCombineData.put(router, combineData);
     }
 
-    public Map<Bundle, Integer> getBundleToVcs() {
-        return bundleToVcs;
-    }
-
-    public Map<Bundle, Integer> getBundleToCombineData() {
-        return dstBundleToCombineData;
-    }
-
-    public Map<Integer, Integer> getRouterToCombineData() {
-        return routerToCombineData;
+    public int getVcForBundle(Bundle bundle) {
+        if (bundleToVcs.containsKey(bundle))
+            return bundleToVcs.get(bundle);
+        else
+            // default VC is 0 if it was never added
+            return 0;
     }
 
     @Override
@@ -105,5 +101,29 @@ public class VcMap {
 
         return s.substring(0, s.length() - 1);
 
+    }
+
+    public final Map<Bundle, Integer> getBundleToVcs() {
+        return bundleToVcs;
+    }
+
+    public final void setBundleToVcs(Map<Bundle, Integer> bundleToVcs) {
+        this.bundleToVcs = bundleToVcs;
+    }
+
+    public final Map<Bundle, Integer> getDstBundleToCombineData() {
+        return dstBundleToCombineData;
+    }
+
+    public final void setDstBundleToCombineData(Map<Bundle, Integer> dstBundleToCombineData) {
+        this.dstBundleToCombineData = dstBundleToCombineData;
+    }
+
+    public final Map<Integer, Integer> getRouterToCombineData() {
+        return routerToCombineData;
+    }
+
+    public final void setRouterToCombineData(Map<Integer, Integer> routerToCombineData) {
+        this.routerToCombineData = routerToCombineData;
     }
 }

@@ -47,4 +47,10 @@ public class NocBundle {
         return width;
     }
 
+    @Override
+    public String toString() {
+        String s = "router = " + router + ", index = " + index + ", direction" + direction + ", width = " + width;
+        return s;
+    }
+
 }

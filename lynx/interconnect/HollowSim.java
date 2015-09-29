@@ -1,25 +1,26 @@
 package lynx.interconnect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
-import lynx.data.Depacketizer;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
 import lynx.data.NocBundle;
-import lynx.data.Packetizer;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
-import lynx.data.Wrapper;
-import lynx.elaboration.ConnectionGroup;
+import lynx.nocmapping.AnnealBundleStruct;
 import lynx.nocmapping.Mapping;
+import lynx.vcmapping.VcMap;
 
 /**
  * Includes subroutines that pertain to creating a hollow simulation
@@ -29,6 +30,7 @@ import lynx.nocmapping.Mapping;
  */
 public class HollowSim {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger(HollowSim.class.getName());
 
     protected static int CURRID = 0;
@@ -74,33 +76,6 @@ public class HollowSim {
         createAndConnectHaltModule(simulationDesign);
 
         return bbMap;
-    }
-
-    protected static void insertSimulationTranslators(Noc noc, Design design, Mapping mapping, Map<Bundle, Bundle> bbMap) {
-
-        // mapping contains bundle-nocbundle mapping
-        Map<Bundle, List<NocBundle>> bundleMap = mapping.getBundleMap();
-        for (Bundle origBun : bundleMap.keySet()) {
-            // this is the bundle in our src/sink/via modules
-            Bundle bun = bbMap.get(origBun);
-            // insert and connect translators for bundles that are mapped onto
-            // NoC - i.e. has nonzero list of nocbundles
-            List<NocBundle> nocbuns = bundleMap.get(origBun);
-            if (nocbuns.size() != 0) {
-                switch (bun.getDirection()) {
-                case OUTPUT:
-                    Packetizer packetizer = new Packetizer(noc, bun, nocbuns);
-                    design.addTranslator(packetizer);
-                    break;
-                case INPUT:
-                    Depacketizer depacketizer = new Depacketizer(noc, bun, nocbuns);
-                    design.addTranslator(depacketizer);
-                    break;
-                default:
-                    assert false : "Bundle direction was never set.";
-                }
-            }
-        }
     }
 
     protected static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, Map<Bundle, Bundle> bbMap) {
@@ -289,95 +264,79 @@ public class HollowSim {
         design.setHaltModule(halt);
     }
 
-    public static void insertTrafficManagers(Noc newNoc, Design simulationDesign, Map<Bundle, Bundle> designToSimBundleMap,
-            Mapping mapping, List<ConnectionGroup> cgList) {
+    public static Mapping cloneMapping(Design simDesign, Noc simNoc, Mapping mapping, Map<Bundle, Bundle> designToSimBundleMap) {
+        AnnealBundleStruct oldAnnealStruct = mapping.getAnnealBundleStruct();
+        AnnealBundleStruct newAnnealStruct = new AnnealBundleStruct();
 
-        // loop over connectionGroups, we'll add traffic managers for
-        // arbitration masters only
-        for (ConnectionGroup cgGroup : cgList) {
-            if (cgGroup.getConnectionType() == ConnectionType.ARBITRATION) {
-                // find bundles that are:
-                // 1- masters
-                // 2- output
-                for (Bundle outbun : cgGroup.getFromBundles()) {
-                    if (cgGroup.isMaster(outbun)) {
-
-                        // then find the corresponding input bundle:
-                        // 1- master
-                        // 2- input
-                        // 3- same module
-                        // (TODO: doesn't handle the cases of modules that
-                        // consist of more than one master)
-                        for (Bundle inbun : cgGroup.getToBundles()) {
-                            if (cgGroup.isMaster(inbun) && inbun.getParentModule() == outbun.getParentModule()) {
-                                Bundle inbunSim = designToSimBundleMap.get(inbun);
-                                Bundle outbunSim = designToSimBundleMap.get(outbun);
-                                // TODO need definite function to return the
-                                // router index for a bundle
-                                int router = mapping.getApproxRouterForModule(inbun.getParentModule());
-                                createAndConnectCreditMasterTM(inbunSim, outbunSim, simulationDesign, newNoc, router);
-                            }
-                        }
-                        // if no input bundle is found, we'll do nothing
-                        // for converge patterns, receive bundle should be
-                        // inserted earlier
-                    }
-                }
+        // deep copy and replace with sim bundles
+        for (int i = 0; i < oldAnnealStruct.bundlesAtRouter.size(); i++) {
+            Set<Bundle> bunSet = oldAnnealStruct.bundlesAtRouter.get(i);
+            HashSet<Bundle> newBunList = new HashSet<Bundle>();
+            for (Bundle bun : bunSet) {
+                newBunList.add(designToSimBundleMap.get(bun));
             }
+            newAnnealStruct.bundlesAtRouter.add(newBunList);
         }
+
+        for (NocBundle nocbun : oldAnnealStruct.usedNocBundle.keySet()) {
+            NocBundle simNocbun = getEquivalentSimNocBundle(nocbun, simNoc);
+            boolean used = oldAnnealStruct.usedNocBundle.get(nocbun);
+            newAnnealStruct.usedNocBundle.put(simNocbun, used);
+        }
+
+        for (Bundle bun : oldAnnealStruct.bundleMap.keySet()) {
+            List<NocBundle> oldNocBunList = oldAnnealStruct.bundleMap.get(bun);
+            List<NocBundle> newNocBunList = new ArrayList<NocBundle>();
+            for (NocBundle nocbun : oldNocBunList) {
+                newNocBunList.add(getEquivalentSimNocBundle(nocbun, simNoc));
+            }
+            newAnnealStruct.bundleMap.put(designToSimBundleMap.get(bun), newNocBunList);
+        }
+
+        Mapping mappingClone = new Mapping(newAnnealStruct, simDesign, simNoc);
+        return mappingClone;
     }
 
-    private static void createAndConnectCreditMasterTM(Bundle inbunSim, Bundle outbunSim, Design simulationDesign, Noc newNoc,
-            int router) {
-        // create the credit TM module
-        Wrapper tm = new Wrapper("tm_master_credit", outbunSim.getParentModule().getName() + "_tm", outbunSim.getParentModule());
+    private static NocBundle getEquivalentSimNocBundle(NocBundle nocbun, Noc simNoc) {
+        NocBundle simNocbun = null;
+        if (nocbun.getDirection() == Direction.INPUT) {
+            simNocbun = simNoc.getNocInBundles(nocbun.getRouter()).get(nocbun.getIndex());
+        } else {
+            simNocbun = simNoc.getNocOutBundles(nocbun.getRouter()).get(nocbun.getIndex());
+        }
+        assert simNocbun != null : "Can't find equivalent nocbun for " + nocbun;
+        return simNocbun;
+    }
 
-        log.info("Adding TM " + tm.getName());
+    public static VcMap cloneVcMap(VcMap vcMap, Map<Bundle, Bundle> designToSimBundleMap) {
+        VcMap vcMapClone = new VcMap();
 
-        // parameters
-        // TODO replace 8 with the ideal number of credits for fair arbitration
-        tm.addParameter(new Parameter("NUM_CREDITS", 8));
+        // get the original pieces
+        Map<Bundle, Integer> oldDestBundleToCombineData = vcMap.getDstBundleToCombineData();
+        Map<Bundle, Integer> oldDestBundleToVc = vcMap.getBundleToVcs();
+        Map<Integer, Integer> oldRouterToCombineData = vcMap.getRouterToCombineData();
 
-        // ports
-        Port sendValidPort = new Port("send_valid", Direction.INPUT, tm);
-        Port sendReadyOutPort = new Port("send_ready_out", Direction.OUTPUT, tm);
-        Port sendReadyInPort = new Port("send_ready_in", Direction.INPUT, tm);
-        Port receiveValidPort = new Port("receive_valid", Direction.INPUT, tm);
+        // create the clones
+        Map<Bundle, Integer> newDestBundleToCombineData = new HashMap<Bundle, Integer>();
+        Map<Bundle, Integer> newBundleToVc = new HashMap<Bundle, Integer>();
+        Map<Integer, Integer> newRouterToCombineData = new HashMap<Integer, Integer>();
 
-        tm.addPort(sendValidPort);
-        tm.addPort(sendReadyOutPort);
-        tm.addPort(sendReadyInPort);
-        tm.addPort(receiveValidPort);
+        // deep copy and replace bundles
+        for (int router : oldRouterToCombineData.keySet()) {
+            newRouterToCombineData.put(router, oldRouterToCombineData.get(router));
+        }
+        for (Bundle bun : oldDestBundleToCombineData.keySet()) {
+            newDestBundleToCombineData.put(designToSimBundleMap.get(bun), oldDestBundleToCombineData.get(bun));
+        }
+        for (Bundle bun : oldDestBundleToVc.keySet()) {
+            newBundleToVc.put(designToSimBundleMap.get(bun), oldDestBundleToVc.get(bun));
+        }
 
-        // fetch the translators for the inbunSim and outbunsim
-        Packetizer outbunPkt = (Packetizer) outbunSim.getTranslator();
+        // put them back in the new data structure
+        vcMapClone.setBundleToVcs(newBundleToVc);
+        vcMapClone.setDstBundleToCombineData(newDestBundleToCombineData);
+        vcMapClone.setRouterToCombineData(newRouterToCombineData);
 
-        // now stich in the ports in their right locations
-
-        // send_valid reads the output valid
-        Port pktValid = outbunPkt.getPort(PortType.VALID, Direction.OUTPUT);
-        sendValidPort.addWire(pktValid);
-        pktValid.addWire(sendValidPort);
-
-        // receive valid is pretty much the same but snoops on the noc valid
-        Port nocValid = newNoc.getPort(PortType.VALID, Direction.OUTPUT, router);
-        nocValid.addWire(receiveValidPort);
-        receiveValidPort.addWire(nocValid);
-
-        // sendReadyOut requires undoing a connection between the router and
-        // packetizer -- first: get these two ports
-        Port routerReady = newNoc.getPort(PortType.READY, Direction.OUTPUT, router);
-        Port pktReady = outbunPkt.getPort(PortType.READY, Direction.INPUT);
-        // second: remove their connection
-        routerReady.removeWire(pktReady);
-        pktReady.removeWire(routerReady);
-        // third: connect the TM
-        routerReady.addWire(sendReadyInPort);
-        sendReadyInPort.addWire(routerReady);
-        pktReady.addWire(sendReadyOutPort);
-        sendReadyOutPort.addWire(pktReady);
-
-        // add to design
-        simulationDesign.addWrapper(tm);
+        return vcMapClone;
     }
 }

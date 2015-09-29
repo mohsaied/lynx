@@ -449,6 +449,7 @@ public class Noc extends Module {
                 combineDataStr = par.getValue();
         }
         nocClone.editParameter("COMBINE_DATA", combineDataStr);
+        
         return nocClone;
     }
 
