@@ -335,6 +335,7 @@ public class HollowSim {
         log.info("Adding TM " + tm.getName());
 
         // parameters
+        // TODO replace 8 with the ideal number of credits for fair arbitration
         tm.addParameter(new Parameter("NUM_CREDITS", 8));
 
         // ports
