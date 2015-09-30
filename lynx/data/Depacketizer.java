@@ -100,6 +100,8 @@ public final class Depacketizer extends Translator {
 
         // all nocbundles should be connected to the same router so getting the
         // router of the first one suffices
+        // TODO is this an assumption or a constraint? needs to be clear and
+        // enforced
         int router = nocbuns.get(0).getRouter();
 
         // and where do they start and end? //max is tdm

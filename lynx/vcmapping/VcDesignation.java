@@ -81,16 +81,26 @@ public class VcDesignation {
             // how do we choose the VC? randomly is fine for now.
             // But later (TODO), we should also look at path overlap in the
             // whole NoC and choose the VC such that it minimizes HOL blocking
-            // when two connection paths overlap
+            // when two connection paths overlap. This will have to be done in
+            // mapping because here we are bound to whatever part of the port
+            // that mapping gave us.
+            // Actually, we can just swap the bundles here as well if we need to
+            // change VCs
 
             // go over the bunset. For each input bundle, find the source bundle
             // then assign each bundle a VC
             if (combineData != 0) {
-                int currVC = combineData;
+                // here we need to make sure that each bundle is assigned its
+                // correct VC
+                // The VCs start from 0 at the most significant bit, then
+                // increases with each nocbundle towards least-significant
                 for (Bundle dstBun : bunSet) {
                     if (dstBun.getDirection() == Direction.INPUT) {
                         List<Bundle> srcBuns = dstBun.getConnections();
-                        vcMap.addVcDesignation(dstBun, srcBuns, i, currVC--, combineData);
+                        assert mapping.getBundleMap().get(dstBun).size() == 1 : "The number of NocBundles per Bundle involved in combine data should be exactly 1 but was "
+                                + mapping.getBundleMap().get(dstBun).size();
+                        int currVc = mapping.getBundleMap().get(dstBun).get(0).getIndex();
+                        vcMap.addVcDesignation(dstBun, srcBuns, i, currVc, combineData);
                     }
                 }
             }

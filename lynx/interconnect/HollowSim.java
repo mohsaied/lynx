@@ -54,7 +54,7 @@ public class HollowSim {
         Map<Bundle, Bundle> designToSimBundleMap = populateHollowSimDesign(design, simulationDesign, mapping);
 
         mappingClone = cloneMappingSimBundles(simulationDesign, nocClone, mapping, designToSimBundleMap);
-        vcMapClone = cloneVcMapSimBubdles(vcMap, designToSimBundleMap);
+        vcMapClone = cloneVcMapSimBundles(vcMap, designToSimBundleMap);
 
         log.info("Configuring module clocks");
         NocInterconnect.configureModuleClocks(simulationDesign, nocClone, mappingClone);
@@ -343,7 +343,7 @@ public class HollowSim {
         return simNocbun;
     }
 
-    public static VcMap cloneVcMapSimBubdles(VcMap vcMap, Map<Bundle, Bundle> designToSimBundleMap) {
+    public static VcMap cloneVcMapSimBundles(VcMap vcMap, Map<Bundle, Bundle> designToSimBundleMap) {
         VcMap vcMapClone = new VcMap();
 
         // get the original pieces
