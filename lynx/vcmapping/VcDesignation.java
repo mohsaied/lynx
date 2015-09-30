@@ -97,8 +97,25 @@ public class VcDesignation {
 
             // TODO at the very end, go over all bundles; if they weren't
             // already added then we'll add them with defaults (optional)
+            // right now I just assume that unspecified bundles are assigned
+            // default values (VC0 and combine_data 0)
         }
 
+        // last thing is to edit the combine_data parameter in the NoC
+        editNocCombineDataParameter(noc, vcMap);
+
         return vcMap;
+    }
+
+    private static void editNocCombineDataParameter(Noc noc, VcMap vcMap) {
+        String combineDataStr = "'{";
+
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+
+            combineDataStr += vcMap.getRouterToCombineData().containsKey(i) ? vcMap.getRouterToCombineData().get(i) + "," : "0,";
+        }
+        combineDataStr = combineDataStr.substring(0, combineDataStr.length() - 1) + "}";
+
+        noc.editParameter("COMBINE_DATA", combineDataStr);
     }
 }

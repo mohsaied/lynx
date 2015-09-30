@@ -41,21 +41,15 @@ public class NocInterconnect {
     /**
      * Add default NoC to design
      * 
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
      */
     public static void addNoc() throws ParserConfigurationException, SAXException, IOException {
         addNoc(null);
     }
 
     /**
-     * Parse an NoC description from n xml file
+     * Parse an NoC description from an xml file
      * 
      * @param nocPath
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
      */
     public static void addNoc(String nocPath) throws ParserConfigurationException, SAXException, IOException {
 
