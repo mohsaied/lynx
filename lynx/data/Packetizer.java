@@ -16,10 +16,10 @@ import lynx.vcmapping.VcMap;
  */
 public final class Packetizer extends Translator {
 
-    public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns, VcMap vcMap, Mapping mapping) {
+    public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {
         super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER_VC);
 
-        addParametersAndPorts(parentBundle, nocbuns, vcMap, mapping);
+        addParametersAndPorts(parentBundle, nocbuns, mapping, vcMap);
 
         connectToBundle();
 
@@ -64,7 +64,7 @@ public final class Packetizer extends Translator {
         return type;
     }
 
-    protected final void addParametersAndPorts(Bundle bundle, List<NocBundle> nocbuns, VcMap vcMap, Mapping mapping) {
+    protected final void addParametersAndPorts(Bundle bundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {
 
         // find the Noc-facing width -- sum up width of nocbuns
         int nocFacingWidth = 0;
@@ -72,12 +72,21 @@ public final class Packetizer extends Translator {
             nocFacingWidth += nocbun.getWidth();
         }
 
+        // get total nocbuns width
+        int width = 0;
+        for (NocBundle nocbun : nocbuns) {
+            width += nocbun.getWidth();
+        }
+        int nocWidth = parentNoc.getWidth();
+
+        int numFlitsForThisTranslator = width / nocWidth;
+
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
         this.addParameter(new Parameter("WIDTH_IN", parentBundle.getWidth()));
         this.addParameter(new Parameter("WIDTH_OUT", nocFacingWidth));
-        this.addParameter(new Parameter("PACKETIZER_WIDTH", nocbuns.size()));
+        this.addParameter(new Parameter("PACKETIZER_WIDTH", numFlitsForThisTranslator));
 
         int vc = vcMap.getVcForBundle(bundle);
 

@@ -18,6 +18,8 @@ import lynx.data.Port;
 import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
+import lynx.elaboration.ConnectionGroup;
+import lynx.main.DesignData;
 import lynx.nocmapping.AnnealBundleStruct;
 import lynx.nocmapping.Mapping;
 import lynx.vcmapping.VcMap;
@@ -30,10 +32,42 @@ import lynx.vcmapping.VcMap;
  */
 public class HollowSim {
 
-    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger(HollowSim.class.getName());
 
     protected static int CURRID = 0;
+
+    protected static void createAndConnectHollowSim(Design design, Noc noc, List<ConnectionGroup> cgList, VcMap vcMap) {
+
+        HollowSim.CURRID = 0;
+
+        Mapping mapping = DesignData.getInstance().getNocMapping();
+
+        // clone the data structures for the hollowsim
+        Noc nocClone = noc.clone();
+        Mapping mappingClone;
+        VcMap vcMapClone;
+
+        Design simulationDesign = new Design(design.getName(), nocClone);
+        DesignData.getInstance().setSimulationDesign(simulationDesign);
+
+        log.info("Adding srcs/sinks/vias instead of designmodules");
+        Map<Bundle, Bundle> designToSimBundleMap = populateHollowSimDesign(design, simulationDesign, mapping);
+
+        mappingClone = cloneMappingSimBundles(simulationDesign, nocClone, mapping, designToSimBundleMap);
+        vcMapClone = cloneVcMapSimBubdles(vcMap, designToSimBundleMap);
+
+        log.info("Configuring module clocks");
+        NocInterconnect.configureModuleClocks(simulationDesign, nocClone, mappingClone);
+
+        log.info("Adding Translators and connecting them to modules");
+        NocInterconnect.insertTranslators(nocClone, simulationDesign, mappingClone, vcMapClone);
+
+        log.info("Adding traffic managers");
+        NocInterconnect.insertTrafficManagers(nocClone, simulationDesign, mappingClone, cgList);
+
+        log.info("Inferring top-level ports");
+        NocInterconnect.inferTopLevelPorts(simulationDesign);
+    }
 
     /**
      * Replace designmodules with src/sink/vias
@@ -264,7 +298,8 @@ public class HollowSim {
         design.setHaltModule(halt);
     }
 
-    public static Mapping cloneMapping(Design simDesign, Noc simNoc, Mapping mapping, Map<Bundle, Bundle> designToSimBundleMap) {
+    public static Mapping cloneMappingSimBundles(Design simDesign, Noc simNoc, Mapping mapping,
+            Map<Bundle, Bundle> designToSimBundleMap) {
         AnnealBundleStruct oldAnnealStruct = mapping.getAnnealBundleStruct();
         AnnealBundleStruct newAnnealStruct = new AnnealBundleStruct();
 
@@ -308,7 +343,7 @@ public class HollowSim {
         return simNocbun;
     }
 
-    public static VcMap cloneVcMap(VcMap vcMap, Map<Bundle, Bundle> designToSimBundleMap) {
+    public static VcMap cloneVcMapSimBubdles(VcMap vcMap, Map<Bundle, Bundle> designToSimBundleMap) {
         VcMap vcMapClone = new VcMap();
 
         // get the original pieces

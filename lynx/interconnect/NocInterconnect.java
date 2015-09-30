@@ -76,43 +76,10 @@ public class NocInterconnect {
     public static void connectDesignToNoc(Design design, Noc noc, List<ConnectionGroup> cgList, VcMap vcMap) {
 
         log.info("Creating and connecting simulation model");
-        createAndConnectHollowSim(design, noc, cgList, vcMap);
+        HollowSim.createAndConnectHollowSim(design, noc, cgList, vcMap);
 
         log.info("Creating and connecting actual design");
         connectActualDesignToNoc(design, noc, cgList, vcMap);
-    }
-
-    private static void createAndConnectHollowSim(Design design, Noc noc, List<ConnectionGroup> cgList, VcMap vcMap) {
-
-        HollowSim.CURRID = 0;
-
-        Mapping mapping = DesignData.getInstance().getNocMapping();
-
-        // clone the data structures for the hollowsim
-        Noc nocClone = noc.clone();
-        Mapping mappingClone;
-        VcMap vcMapClone;
-
-        Design simulationDesign = new Design(design.getName(), nocClone);
-        DesignData.getInstance().setSimulationDesign(simulationDesign);
-
-        log.info("Adding srcs/sinks/vias instead of designmodules");
-        Map<Bundle, Bundle> designToSimBundleMap = HollowSim.populateHollowSimDesign(design, simulationDesign, mapping);
-
-        mappingClone = HollowSim.cloneMapping(simulationDesign, nocClone, mapping, designToSimBundleMap);
-        vcMapClone = HollowSim.cloneVcMap(vcMap, designToSimBundleMap);
-
-        log.info("Configuring module clocks");
-        configureModuleClocks(simulationDesign, nocClone, mappingClone);
-
-        log.info("Adding Translators and connecting them to modules");
-        insertTranslators(nocClone, simulationDesign, mappingClone, vcMapClone);
-
-        log.info("Adding traffic managers");
-        insertTrafficManagers(nocClone, simulationDesign, mappingClone, cgList);
-
-        log.info("Inferring top-level ports");
-        inferTopLevelPorts(simulationDesign);
     }
 
     // TODO this flow is unfinished (but shouldn't take long to get it working)
@@ -130,7 +97,7 @@ public class NocInterconnect {
 
     }
 
-    private static void configureModuleClocks(Design design, Noc noc, Mapping mapping) {
+    protected static void configureModuleClocks(Design design, Noc noc, Mapping mapping) {
         for (DesignModule mod : design.getDesignModules().values()) {
             int router = mapping.getApproxRouterForModule(mod);
             if (router < noc.getNumRouters()) {
@@ -151,7 +118,7 @@ public class NocInterconnect {
         DesignData.getInstance().setNoc(noc);
     }
 
-    private static void insertTranslators(Noc noc, Design design, Mapping mapping, VcMap vcMap) {
+    protected static void insertTranslators(Noc noc, Design design, Mapping mapping, VcMap vcMap) {
 
         // mapping contains bundle-nocbundle mapping
         Map<Bundle, List<NocBundle>> bundleMap = mapping.getBundleMap();
@@ -162,7 +129,7 @@ public class NocInterconnect {
             if (nocbuns.size() != 0) {
                 switch (bun.getDirection()) {
                 case OUTPUT:
-                    Packetizer packetizer = new Packetizer(noc, bun, nocbuns, vcMap, mapping);
+                    Packetizer packetizer = new Packetizer(noc, bun, nocbuns, mapping, vcMap);
                     design.addTranslator(packetizer);
                     break;
                 case INPUT:
@@ -264,7 +231,7 @@ public class NocInterconnect {
         design.addWrapper(tm);
     }
 
-    private static void inferTopLevelPorts(Design design) {
+    protected static void inferTopLevelPorts(Design design) {
         // loop over all modules and all ports - the ports that have a global
         // export
         for (Module mod : design.getAllModules()) {
