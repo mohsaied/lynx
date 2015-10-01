@@ -440,6 +440,17 @@ public class Noc extends Module {
         return null;
     }
 
+    public int getAverageLatency() {
+        // TODO should return the average number of cycles latency between two
+        // routers on the NoC.
+        // Note that this has to take the frequency into account as well.
+        // will fix to 8 for now because this works for our testing 100 MHz
+        // frequency -- this is also a reasonable guess since the latency
+        // doesn't change by much
+        return 8;
+    }
+
+    @Override
     public Noc clone() {
         Noc nocClone = new Noc(nocWidth, nocNumRouters, nocNumVcs, nocVcDepth, nocTdmFactor);
         // TODO copy all parameters in cloning
@@ -449,7 +460,7 @@ public class Noc extends Module {
                 combineDataStr = par.getValue();
         }
         nocClone.editParameter("COMBINE_DATA", combineDataStr);
-        
+
         return nocClone;
     }
 

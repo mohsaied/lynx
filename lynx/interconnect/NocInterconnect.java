@@ -143,6 +143,13 @@ public class NocInterconnect {
         // arbitration masters only
         for (ConnectionGroup cgGroup : cgList) {
             if (cgGroup.getConnectionType() == ConnectionType.ARBITRATION) {
+                // how many masters do we have in this arbitration group?
+                int numSendingMasters = 0;
+                for (Bundle outbun : cgGroup.getFromBundles()) {
+                    if (cgGroup.isMaster(outbun)) {
+                        numSendingMasters++;
+                    }
+                }
                 // find bundles that are:
                 // 1- masters
                 // 2- output
@@ -160,7 +167,7 @@ public class NocInterconnect {
                                 // TODO need definite function to return the
                                 // router index for a bundle
                                 int router = mapping.getApproxRouterForModule(inbun.getParentModule());
-                                createAndConnectCreditMasterTM(inbun, outbun, design, noc, router);
+                                createAndConnectCreditMasterTM(inbun, outbun, design, noc, router, numSendingMasters);
                             }
                         }
                         // if no input bundle is found, we'll do nothing
@@ -172,7 +179,8 @@ public class NocInterconnect {
         }
     }
 
-    private static void createAndConnectCreditMasterTM(Bundle inbun, Bundle outbun, Design design, Noc noc, int router) {
+    private static void createAndConnectCreditMasterTM(Bundle inbun, Bundle outbun, Design design, Noc noc, int router,
+            int numSendingMasters) {
         // create the credit TM module
         Wrapper tm = new Wrapper("tm_master_credit", outbun.getParentModule().getName() + "_tm", outbun.getParentModule());
 
@@ -180,7 +188,9 @@ public class NocInterconnect {
 
         // parameters
         // TODO replace 8 with the ideal number of credits for fair arbitration
-        tm.addParameter(new Parameter("NUM_CREDITS", 8));
+        float idealNumCredits = Math.round((2 * noc.getAverageLatency() + 1) / numSendingMasters);
+        int idealNumCreditsInt = (int) Math.ceil(idealNumCredits);
+        tm.addParameter(new Parameter("NUM_CREDITS", idealNumCreditsInt));
 
         // ports
         Port sendValidPort = new Port("send_valid", Direction.INPUT, tm);
