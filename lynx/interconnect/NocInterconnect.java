@@ -213,10 +213,12 @@ public class NocInterconnect {
         sendValidPort.addWire(pktValid);
         pktValid.addWire(sendValidPort);
 
-        // receive valid is pretty much the same but snoops on the noc valid
-        Port nocValid = noc.getPort(PortType.VALID, Direction.OUTPUT, router);
-        nocValid.addWire(receiveValidPort);
-        receiveValidPort.addWire(nocValid);
+        // we track the valid signal going to the depacketizer of that module
+        // to increment the number of credits whenever we get something back
+        Depacketizer inbundepkt = (Depacketizer) inbun.getTranslator();
+        Port depktValid = inbundepkt.getPort(PortType.VALID, Direction.OUTPUT);
+        depktValid.addWire(receiveValidPort);
+        receiveValidPort.addWire(depktValid);
 
         // sendReadyOut requires undoing a connection between the router and
         // packetizer -- first: get these two ports

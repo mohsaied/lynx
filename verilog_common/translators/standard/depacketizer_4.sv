@@ -30,6 +30,8 @@ localparam DATA_POS_TAIL = WIDTH_PKT - 3*WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
 localparam WIDTH_DATA_IDL = WIDTH_PKT - 3*4 -4*VC_ADDRESS_WIDTH - ADDRESS_WIDTH;
 localparam EXTRA_BITS = WIDTH_DATA_IDL - WIDTH_DATA;
 
+localparam VALID_POS_HEAD = WIDTH_PKT - 1;
+
 wire [WIDTH_DATA_IDL-1:0] full_data;
 
 
@@ -38,7 +40,7 @@ wire [WIDTH_DATA_IDL-1:0] full_data;
 //------------------------------------------------------------------------
 
 assign ready_out = ready_in;
-assign valid_out = valid_in;
+assign valid_out = valid_in & data_in[VALID_POS_HEAD];
 
 
 //here we need to strip all the control bits and concat data back together
