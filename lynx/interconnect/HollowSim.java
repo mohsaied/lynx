@@ -19,6 +19,7 @@ import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 import lynx.elaboration.ConnectionGroup;
+import lynx.elaboration.Elaboration;
 import lynx.main.DesignData;
 import lynx.nocmapping.AnnealBundleStruct;
 import lynx.nocmapping.Mapping;
@@ -46,6 +47,7 @@ public class HollowSim {
         Noc nocClone = noc.clone();
         Mapping mappingClone;
         VcMap vcMapClone;
+        List<ConnectionGroup> cgListClone;
 
         Design simulationDesign = new Design(design.getName(), nocClone);
         DesignData.getInstance().setSimulationDesign(simulationDesign);
@@ -55,6 +57,7 @@ public class HollowSim {
 
         mappingClone = cloneMappingSimBundles(simulationDesign, nocClone, mapping, designToSimBundleMap);
         vcMapClone = cloneVcMapSimBundles(vcMap, designToSimBundleMap);
+        cgListClone = cloneCgListSimBundles(simulationDesign, designToSimBundleMap);
 
         log.info("Configuring module clocks");
         NocInterconnect.configureModuleClocks(simulationDesign, nocClone, mappingClone);
@@ -63,7 +66,7 @@ public class HollowSim {
         NocInterconnect.insertTranslators(nocClone, simulationDesign, mappingClone, vcMapClone);
 
         log.info("Adding traffic managers");
-        NocInterconnect.insertTrafficManagers(nocClone, simulationDesign, mappingClone, cgList);
+        NocInterconnect.insertTrafficManagers(nocClone, simulationDesign, mappingClone, cgListClone);
 
         log.info("Inferring top-level ports");
         NocInterconnect.inferTopLevelPorts(simulationDesign);
@@ -107,9 +110,25 @@ public class HollowSim {
             }
         }
 
+        connectSimulationDesign(simulationDesign, bbMap);
+
         createAndConnectHaltModule(simulationDesign);
 
         return bbMap;
+    }
+
+    private static void connectSimulationDesign(Design simulationDesign, Map<Bundle, Bundle> bbMap) {
+
+        // loop over bb map
+        for (Bundle origBun : bbMap.keySet()) {
+            Bundle simBun = bbMap.get(origBun);
+            // find connections in origBun
+            for (Bundle conOrigBun : origBun.getConnections()) {
+                simBun.addConnection(bbMap.get(conOrigBun));
+            }
+        }
+
+        simulationDesign.update();
     }
 
     protected static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, Map<Bundle, Bundle> bbMap) {
@@ -373,5 +392,11 @@ public class HollowSim {
         vcMapClone.setRouterToCombineData(newRouterToCombineData);
 
         return vcMapClone;
+    }
+
+    private static List<ConnectionGroup> cloneCgListSimBundles(Design simulationDesign, Map<Bundle, Bundle> designToSimBundleMap) {
+        List<ConnectionGroup> cgListClone = Elaboration.identifyConnectionGroups(simulationDesign);
+
+        return cgListClone;
     }
 }
