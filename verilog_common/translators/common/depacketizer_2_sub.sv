@@ -4,7 +4,7 @@
  * date     : 3-SEPT-2014
  */
 
-module depacketizer_2
+module depacketizer_2_sub
 #(
 	parameter WIDTH_PKT = 36,
 	parameter WIDTH_DATA = 12,

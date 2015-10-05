@@ -1,10 +1,10 @@
 /*
  * function : take in packets and spit out data only (strip control)
  * author   : Mohamed S. Abdelfattah
- * date     : 3-SEPT-2014
+ * date     : 5-OCT-2015
  */
 
-module depacketizer_4
+module depacketizer_1_sub
 #(
 	parameter WIDTH_PKT = 36,
 	parameter WIDTH_DATA = 12,
@@ -21,13 +21,11 @@ module depacketizer_4
 	input                   ready_in
 );
 
-localparam WIDTH_FLIT = WIDTH_PKT/4;
+localparam WIDTH_FLIT = WIDTH_PKT/2;
 localparam DATA_POS_HEAD = WIDTH_PKT - 3 - VC_ADDRESS_WIDTH - ADDRESS_WIDTH - 1;
-localparam DATA_POS_B1   = WIDTH_PKT - WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
-localparam DATA_POS_B2   = WIDTH_PKT - 2*WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
-localparam DATA_POS_TAIL = WIDTH_PKT - 3*WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
+localparam DATA_POS_TAIL = WIDTH_PKT - WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
 
-localparam WIDTH_DATA_IDL = WIDTH_PKT - 3*4 -4*VC_ADDRESS_WIDTH - ADDRESS_WIDTH;
+localparam WIDTH_DATA_IDL = WIDTH_PKT - 3*2 -2*VC_ADDRESS_WIDTH - ADDRESS_WIDTH;
 localparam EXTRA_BITS = WIDTH_DATA_IDL - WIDTH_DATA;
 
 localparam VALID_POS_HEAD = WIDTH_PKT - 1;
@@ -44,17 +42,11 @@ assign valid_out = valid_in & data_in[VALID_POS_HEAD];
 
 
 //here we need to strip all the control bits and concat data back together
-
-
 assign full_data = {
-		data_in[DATA_POS_HEAD : 3*WIDTH_FLIT],
-		data_in[DATA_POS_B1   : 2*WIDTH_FLIT],
-		data_in[DATA_POS_B2   : 1*WIDTH_FLIT],
-		data_in[DATA_POS_TAIL : 0]
+		data_in[DATA_POS_HEAD : 0]
 };
 
 assign data_out = full_data[WIDTH_DATA_IDL-1 -: WIDTH_DATA];
-
 
 
 endmodule

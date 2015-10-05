@@ -97,7 +97,7 @@ public class HollowSim {
 
             if (numSink == 0) { // we're a src/tpg
                 for (Bundle bun : mod.getBundles().values()) {
-                    DesignModule src = createSrcModule(noc, bun, mapping, bbMap);
+                    DesignModule src = createSrcModule(noc, bun, mapping, vcMap, bbMap);
                     simulationDesign.addModule(src);
                 }
             } else if (numSrc == 0) { // we're a sink/ora
@@ -106,7 +106,7 @@ public class HollowSim {
                     simulationDesign.addModule(sink);
                 }
             } else { // this is a via
-                DesignModule src = createViaModule(noc, mod, mapping, bbMap, vcMap);
+                DesignModule src = createViaModule(noc, mod, mapping, vcMap, bbMap);
                 simulationDesign.addModule(src);
             }
         }
@@ -132,8 +132,8 @@ public class HollowSim {
         simulationDesign.update();
     }
 
-    protected static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, Map<Bundle, Bundle> bbMap,
-            VcMap vcMap) {
+    protected static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, VcMap vcMap,
+            Map<Bundle, Bundle> bbMap) {
         int numSrc = mod.getBundles(Direction.OUTPUT).size();
         int numSink = mod.getBundles(Direction.INPUT).size();
         DesignModule via = new DesignModule("via_" + numSrc + "_" + numSink, "via_" + mod.getName());
@@ -236,21 +236,28 @@ public class HollowSim {
         return 0;
     }
 
-    protected static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {
+    protected static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, VcMap vcMap, Map<Bundle, Bundle> bbMap) {
         DesignModule src = new DesignModule("src", "src_" + bun.getFullNameDash());
 
         // add parameters
         src.addParameter(new Parameter("WIDTH", bun.getWidth()));
         src.addParameter(new Parameter("N", noc.getNumRouters()));
+        src.addParameter(new Parameter("NUM_VC", noc.getNumVcs()));
         src.addParameter(new Parameter("ID", CURRID++));
         src.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
         src.addParameter(new Parameter("NUM_DEST", bun.getConnections().size()));
+
         String destinations = "'{";
+        String destinationVcs = "'{";
         for (Bundle con : bun.getConnections()) {
             destinations += mapping.getRouter(con) + ",";
+            destinationVcs += vcMap.getVcForBundle(con) + ",";
         }
         destinations = destinations.substring(0, destinations.length() - 1) + "}";
+        destinationVcs = destinationVcs.substring(0, destinationVcs.length() - 1) + "}";
+
         src.addParameter(new Parameter("DEST", destinations));
+        src.addParameter(new Parameter("VC", destinationVcs));
 
         // add clk/rst ports
         src.addPort(new Port("clk", Direction.INPUT, PortType.CLK, src, "clk"));
@@ -260,6 +267,7 @@ public class HollowSim {
         // create bundle ports
         Port dataPort = new Port("data_out", Direction.OUTPUT, bun.getWidth(), src);
         Port destPort = new Port("dest_out", Direction.OUTPUT, noc.getAddressWidth(), src);
+        Port vcPort = new Port("vc_out", Direction.OUTPUT, noc.getVcAddressWidth(), src);
         Port validPort = new Port("valid_out", Direction.OUTPUT, src);
         Port readyPort = new Port("ready_in", Direction.INPUT, src);
 
@@ -267,6 +275,7 @@ public class HollowSim {
         Bundle newBun = new Bundle("outbun", src);
         newBun.addDataPort(dataPort);
         newBun.setDstPort(destPort);
+        newBun.setVcPort(vcPort);
         newBun.setValidPort(validPort);
         newBun.setReadyPort(readyPort);
 

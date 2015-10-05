@@ -17,51 +17,13 @@ import lynx.vcmapping.VcMap;
 public final class Packetizer extends Translator {
 
     public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER_VC);
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER_STD);
 
         addParametersAndPorts(parentBundle, nocbuns, mapping, vcMap);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
-    }
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    private static TranslatorType getPacketizerType(Noc parentNoc, List<NocBundle> nocbuns, int vc) {
-        // get total nocbuns width
-        int width = 0;
-        for (NocBundle nocbun : nocbuns) {
-            width += nocbun.getWidth();
-        }
-        int nocWidth = parentNoc.getWidth();
-
-        int numFlitsForThisTranslator = width / nocWidth;
-
-        // if we need a vc table for this packetizer, then we'll instantiate
-        // packetizer_vc
-        if (vc == -1)
-            return TranslatorType.PACKETIZER_VC;
-
-        // otherwise instantiate the right packetizer size
-        TranslatorType type = null;
-        switch (numFlitsForThisTranslator) {
-        case 4:
-            type = TranslatorType.PACKETIZER_4;
-            break;
-        case 3:
-            type = TranslatorType.PACKETIZER_3;
-            break;
-        case 2:
-            type = TranslatorType.PACKETIZER_2;
-            break;
-        case 1:
-            type = TranslatorType.PACKETIZER_1;
-            break;
-        default:
-            assert false : "Unsupported packetizer requested";
-        }
-        return type;
     }
 
     protected final void addParametersAndPorts(Bundle bundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {

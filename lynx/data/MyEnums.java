@@ -48,8 +48,7 @@ public class MyEnums {
     }
 
     public enum TranslatorType {
-        PACKETIZER_VC("packetizer_vc"), PACKETIZER_1("packetizer_1"), PACKETIZER_2("packetizer_2"), PACKETIZER_3("packetizer_3"), PACKETIZER_4(
-                "packetizer_4"), DEPACKETIZER_2("depacketizer_2"), DEPACKETIZER_4("depacketizer_4");
+        PACKETIZER_STD("packetizer_std"), DEPACKETIZER_STD("depacketizer_std");
 
         private final String name;
 

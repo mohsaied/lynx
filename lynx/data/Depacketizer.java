@@ -9,37 +9,13 @@ import lynx.data.MyEnums.TranslatorType;
 public final class Depacketizer extends Translator {
 
     public Depacketizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, getDepacketizerType(parentNoc, nocbuns));
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.DEPACKETIZER_STD);
 
         addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
-    }
-
-    private static TranslatorType getDepacketizerType(Noc parentNoc, List<NocBundle> nocbuns) {
-        // get total nocbuns width
-        int width = 0;
-        for (NocBundle nocbun : nocbuns) {
-            width += nocbun.getWidth();
-        }
-        int nocWidth = parentNoc.getWidth();
-
-        int numFlitsForThisTranslator = width / nocWidth;
-
-        TranslatorType type = null;
-        switch (numFlitsForThisTranslator) {
-        case 4:
-            type = TranslatorType.DEPACKETIZER_4;
-            break;
-        case 2:
-            type = TranslatorType.DEPACKETIZER_2;
-            break;
-        default:
-            assert false : "Unsupported depacketizer requested of size " + numFlitsForThisTranslator + " flits";
-        }
-        return type;
     }
 
     protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
@@ -50,11 +26,21 @@ public final class Depacketizer extends Translator {
             nocFacingWidth += nocbun.getWidth();
         }
 
+        // get total nocbuns width
+        int width = 0;
+        for (NocBundle nocbun : nocbuns) {
+            width += nocbun.getWidth();
+        }
+        int nocWidth = parentNoc.getWidth();
+
+        int numFlitsForThisTranslator = width / nocWidth;
+
         // parameters
         this.addParameter(new Parameter("ADDRESS_WIDTH", parentNoc.getAddressWidth()));
         this.addParameter(new Parameter("VC_ADDRESS_WIDTH", parentNoc.getVcAddressWidth()));
         this.addParameter(new Parameter("WIDTH_PKT", nocFacingWidth));
         this.addParameter(new Parameter("WIDTH_DATA", parentBundle.getWidth()));
+        this.addParameter(new Parameter("DEPACKETIZER_WIDTH", numFlitsForThisTranslator));
 
         // ports
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, nocFacingWidth, this));

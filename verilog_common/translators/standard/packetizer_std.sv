@@ -4,7 +4,7 @@
  * date     : 26-AUG-2014
  */
 
-module packetizer_vc
+module packetizer_std
 #(
 	parameter ADDRESS_WIDTH = 4,
 	parameter VC_ADDRESS_WIDTH = 1,
@@ -29,8 +29,6 @@ module packetizer_vc
 	output                 valid_out,
 	input                  ready_in
 );
-
-wire [VC_ADDRESS_WIDTH-1:0] vc_wire;
 
 
 //-------------------------------------------------------------------------
@@ -109,8 +107,8 @@ pk1_4_sub
 (
 	.data_in(data_in),
 	.valid_in(valid_in),
-	.dst_in(vc_in),
-	.vc_in(vc_wire),
+	.dst_in(dst_in),
+	.vc_in(vc_in),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),
