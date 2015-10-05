@@ -50,6 +50,8 @@ public class DesignModule extends Module {
         this.addPort(bun.getValidPort());
         if (bun.getDstPort() != null)
             this.addPort(bun.getDstPort());
+        if (bun.getVcPort() != null)
+            this.addPort(bun.getVcPort());
     }
 
     public List<String> getConnectedModuleNames(Direction dir) {

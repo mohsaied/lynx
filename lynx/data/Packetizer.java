@@ -120,6 +120,7 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentBundle.getWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
+        this.addPort(new Port(buildPortName(PortType.VC, Direction.INPUT), Direction.INPUT, parentNoc.getVcAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, nocFacingWidth, this));
@@ -152,6 +153,12 @@ public final class Packetizer extends Translator {
         Port modDstOut = parentBundle.getDstPort();
         pktDstIn.addWire(modDstOut);
         modDstOut.addWire(pktDstIn);
+
+        // connect vc
+        Port pktVcIn = getPort(PortType.VC, Direction.INPUT);
+        Port modVcOut = parentBundle.getVcPort();
+        pktVcIn.addWire(modVcOut);
+        modVcOut.addWire(pktVcIn);
 
         // connect ready
         Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);

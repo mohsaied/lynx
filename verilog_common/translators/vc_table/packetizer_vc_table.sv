@@ -4,7 +4,7 @@
  * date     : 26-AUG-2014
  */
 
-module packetizer_vc
+module packetizer_vc_table
 #(
 	parameter ADDRESS_WIDTH = 4,
 	parameter VC_ADDRESS_WIDTH = 1,

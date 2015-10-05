@@ -72,8 +72,8 @@ public class NocInterconnect {
         log.info("Creating and connecting simulation model");
         HollowSim.createAndConnectHollowSim(design, noc, cgList, vcMap);
 
-        log.info("Creating and connecting actual design");
-        connectActualDesignToNoc(design, noc, cgList, vcMap);
+        //log.info("Creating and connecting actual design");
+        //connectActualDesignToNoc(design, noc, cgList, vcMap);
     }
 
     // TODO this flow is unfinished (but shouldn't take long to get it working)
