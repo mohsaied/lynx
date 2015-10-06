@@ -233,15 +233,14 @@ public class Noc extends Module {
         this.addParameter(new Parameter("N", nocNumRouters));
         this.addParameter(new Parameter("NUM_VC", nocNumVcs));
         this.addParameter(new Parameter("DEPTH_PER_VC", nocVcDepth));
-        this.addParameter(new Parameter("VERBOSE", "0"));
-        String vcs = "'{";
+        this.addParameter(new Parameter("VERBOSE", 0));
+        String cds = "'{";
         for (int i = 0; i < nocNumRouters; i++)
             if (i == nocNumRouters - 1)
-                vcs += "0}";
+                cds += "0}";
             else
-                vcs += "0,";
-        this.addParameter(new Parameter("ASSIGNED_VC", vcs));
-        this.addParameter(new Parameter("COMBINE_DATA", vcs));
+                cds += "0,";
+        this.addParameter(new Parameter("COMBINE_DATA", cds));
     }
 
     private void addNocPorts() {
@@ -254,17 +253,17 @@ public class Noc extends Module {
 
         for (int i = 0; i < nocNumRouters; i++) {
 
+            //input to NoC
             this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.INPUT, i), Direction.INPUT, nocInterfaceWidth,
                     PortType.DATA, this));
             this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.INPUT, i), Direction.INPUT, 1, PortType.VALID, this));
             this.addPort(new Port(buildNocPortName(PortType.READY, Direction.OUTPUT, i), Direction.OUTPUT, 1, PortType.READY,
                     this));
 
+            //output from NoC
             this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.OUTPUT, i), Direction.OUTPUT, nocInterfaceWidth,
                     PortType.DATA, this));
-            this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.OUTPUT, i), Direction.OUTPUT, 1, PortType.VALID,
-                    this));
-            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, 1, PortType.READY, this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, getTdmFactor(), PortType.READY, this));
         }
     }
 

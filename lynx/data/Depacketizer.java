@@ -110,10 +110,19 @@ public final class Depacketizer extends Translator {
         nocDataOut.addWire(pktDataIn, startWidthNocPort, endWidthNocPort, 0, pktDataIn.getWidth() - 1);
 
         // ready
+        // now we have a ready per TDM slot, each depkt should set the readys
+        // that its nocbundles use
         Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);
         Port nocReadyIn = parentNoc.getPort(PortType.READY, Direction.INPUT, router);
-        pktReadyOut.addWire(nocReadyIn);
-        nocReadyIn.addWire(pktReadyOut);
+
+        // depending on the NocBundle index, we'll set the appropriate ready
+        // signals -- inflation ratio is how many slots we have per nocbundle
+        int inflationRatio = this.parentNoc.getInterfaceWidth() / this.parentNoc.getNocBundleOutWidth();
+
+        for (int i = startIndex * inflationRatio; i <= endIndex * inflationRatio + 1; i++) {
+            nocReadyIn.addWire(pktReadyOut, i, i, 0, 0);
+            pktReadyOut.addWire(nocReadyIn, 0, 0, i, i);
+        }
 
     }
 }
