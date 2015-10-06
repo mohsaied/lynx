@@ -1,6 +1,7 @@
 package lynx.vcmapping;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -9,6 +10,7 @@ import lynx.data.Bundle;
 import lynx.data.Design;
 import lynx.data.Noc;
 import lynx.data.MyEnums.Direction;
+import lynx.data.NocBundle;
 import lynx.main.ReportData;
 import lynx.nocmapping.Mapping;
 
@@ -103,6 +105,31 @@ public class VcDesignation {
                         vcMap.addVcDesignation(dstBun, srcBuns, i, currVc, combineData);
                     }
                 }
+            } else {
+                // for modules that don't share a port, we'll make sure they are
+                // connected to the more-significant nocbundle(s) because this
+                // is where data always arrives
+                // TODO assign VCs to the non-combine-data modules too to
+                // optimize paths and what not
+                for (Bundle dstBun : bunSet) {
+                    if (dstBun.getDirection() == Direction.INPUT) {
+                        // there is only one dstbun
+                        // fetch its list of nocbuns and make sure they are at
+                        // the msbs
+                        List<NocBundle> nocbuns = mapping.getBundleMap().get(dstBun);
+                        int router = mapping.getRouter(dstBun);
+                        int numNocBuns = nocbuns.size();
+
+                        int currNocBunIdx = noc.getNocOutBundles(router).size() - 1;
+                        List<NocBundle> newNocBuns = new ArrayList<NocBundle>();
+                        for (int j = 0; j < numNocBuns; j++) {
+                            newNocBuns.add(noc.getNocOutBundles(router).get(currNocBunIdx--));
+                        }
+
+                        mapping.getBundleMap().put(dstBun, newNocBuns);
+                    }
+                }
+
             }
 
             // TODO at the very end, go over all bundles; if they weren't

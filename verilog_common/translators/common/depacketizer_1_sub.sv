@@ -13,7 +13,6 @@ module depacketizer_1_sub
 )
 (
 	input [WIDTH_PKT-1:0] data_in,
-	input                 valid_in,
 	output                ready_out,
 	
 	output [WIDTH_DATA-1:0] data_out,
@@ -38,7 +37,7 @@ wire [WIDTH_DATA_IDL-1:0] full_data;
 //------------------------------------------------------------------------
 
 assign ready_out = ready_in;
-assign valid_out = valid_in & data_in[VALID_POS_HEAD];
+assign valid_out = data_in[VALID_POS_HEAD]===1'b1; //need this because of X's
 
 
 //here we need to strip all the control bits and concat data back together

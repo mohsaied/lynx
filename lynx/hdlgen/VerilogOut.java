@@ -176,6 +176,7 @@ public class VerilogOut {
                     if (currBit != maxEnd) {
                         int padSize = currBit - maxEnd;
                         connectionString += "{" + padSize + "{1'b0}},";
+                        assert padSize > 0 : "VerilogOut: something is wrong with port connections causing a padsize of " + padSize + " in port " + por.getName();
                     }
 
                     // output the current wire and remove from list

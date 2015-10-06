@@ -40,7 +40,7 @@ begin
 	end
 	else
 	begin
-        if(send_valid)
+        if(send_valid===1'b1)
         begin
             //synopsys translate off
             if(credit_counter == 0) begin
@@ -50,7 +50,7 @@ begin
             //synopsys translate on
             credit_counter = credit_counter - 1;
         end
-        if(receive_valid) 
+        if(receive_valid===1'b1) 
         begin
             //synopsys translate off
             if(credit_counter == NUM_CREDITS+1) begin
@@ -64,7 +64,7 @@ begin
 end
 
 // assign the ready signal
-assign send_ready_out = (credit_counter > 1) && send_ready_in;
+assign send_ready_out = (credit_counter > 1) && send_ready_in===1'b1;
 
 
 endmodule

@@ -14,7 +14,6 @@ module depacketizer_std
 )
 (
 	input [WIDTH_PKT-1:0] data_in,
-	input                 valid_in,
 	output                ready_out,
 	
 	output [WIDTH_DATA-1:0] data_out,
@@ -41,7 +40,6 @@ depacketizer_1_sub
 pk1_1_sub
 (
 	.data_in(data_in),
-	.valid_in(valid_in),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),
@@ -58,7 +56,6 @@ depacketizer_2_sub
 pk1_2_sub
 (
 	.data_in(data_in),
-	.valid_in(valid_in),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),
@@ -75,7 +72,6 @@ depacketizer_4_sub
 pk1_4_sub
 (
 	.data_in(data_in),
-	.valid_in(valid_in),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),

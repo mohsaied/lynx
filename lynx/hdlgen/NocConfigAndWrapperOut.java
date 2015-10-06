@@ -26,6 +26,7 @@ public class NocConfigAndWrapperOut {
         writeNocConfig(noc);
     }
 
+    @Deprecated
     private static void writeNocWrapper(Noc noc) throws FileNotFoundException {
         PrintWriter writer = ReportData.getInstance().getNocWrapperFile();
 
@@ -178,12 +179,6 @@ public class NocConfigAndWrapperOut {
         writer.println("    parameter DEPTH_PER_VC = " + depthPerVc + ",");
         writer.println("    parameter VERBOSE      = 1,");
         writer.println("    parameter VC_ADDRESS_WIDTH = $clog2(NUM_VC),");
-        writer.print("    parameter [VC_ADDRESS_WIDTH-1:0] ASSIGNED_VC [0:N-1] = '{");
-        for (int i = 0; i < n; i++)
-            if (i == n - 1)
-                writer.println("0},");
-            else
-                writer.print("0,");
         writer.print("    parameter [VC_ADDRESS_WIDTH-1:0] COMBINE_DATA [0:N-1] = '{");
         for (int i = 0; i < n; i++)
             if (i == n - 1)
@@ -214,13 +209,10 @@ public class NocConfigAndWrapperOut {
             writer.println("    output [WIDTH_RTL-1:0] r" + i + "_data_out,");
         writer.println();
         for (int i = 0; i < n; i++)
-            writer.println("    output r" + i + "_valid_out,");
-        writer.println();
-        for (int i = 0; i < n; i++)
             if (i == n - 1)
-                writer.println("    input r" + i + "_ready_in");
+                writer.println("    input [3:0] r" + i + "_ready_in");
             else
-                writer.println("    input r" + i + "_ready_in,");
+                writer.println("    input [3:0] r" + i + "_ready_in,");
         writer.println(");");
         writer.println();
         writer.println("//from rtl modules to noc");
@@ -230,8 +222,7 @@ public class NocConfigAndWrapperOut {
         writer.println();
         writer.println("//from noc to rtl modules");
         writer.println("wire [WIDTH_RTL-1:0] fi_o_packets_out [0:N-1];");
-        writer.println("wire                 fi_o_valids_out  [0:N-1];");
-        writer.println("wire                 fi_o_readys_in   [0:N-1];");
+        writer.println("wire    [3:0]        fi_o_readys_in   [0:N-1];");
         writer.println();
         writer.println("//instantiate fabric interface");
         writer.println("fabric_interface_sw");
@@ -255,7 +246,6 @@ public class NocConfigAndWrapperOut {
         writer.println("    .i_readys_out  (fi_i_readys_out),");
         writer.println();
         writer.println("    .o_packets_out (fi_o_packets_out),");
-        writer.println("    .o_valids_out  (fi_o_valids_out),");
         writer.println("    .o_readys_in   (fi_o_readys_in)");
         writer.println(");");
         writer.println();
@@ -271,9 +261,6 @@ public class NocConfigAndWrapperOut {
         writer.println();
         for (int i = 0; i < n; i++)
             writer.println("assign r" + i + "_data_out = fi_o_packets_out[" + i + "];");
-        writer.println();
-        for (int i = 0; i < n; i++)
-            writer.println("assign r" + i + "_valid_out = fi_o_valids_out[" + i + "];");
         writer.println();
         for (int i = 0; i < n; i++)
             writer.println("assign fi_o_readys_in[" + i + "] = r" + i + "_ready_in;");
