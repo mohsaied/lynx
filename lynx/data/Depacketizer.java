@@ -44,7 +44,6 @@ public final class Depacketizer extends Translator {
 
         // ports
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, nocFacingWidth, this));
-        this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
 
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentBundle.getWidth(), this));
@@ -101,21 +100,14 @@ public final class Depacketizer extends Translator {
                 endIndex = nocbun.getIndex();
         }
 
-        // find start and end widths on the Noc Ports
-        int startWidthNocPort = nocbuns.get(0).getNoc().getInterfaceWidth() - nocbuns.get(0).getWidth() * (endIndex + 1);
-        int endWidthNocPort = nocbuns.get(0).getNoc().getInterfaceWidth() - nocbuns.get(0).getWidth() * startIndex - 1;
+        int startWidthNocPort = nocbuns.get(0).getWidth() * startIndex;
+        int endWidthNocPort = nocbuns.get(0).getWidth() * (endIndex + 1) - 1;
 
         // data
         Port pktDataIn = getPort(PortType.DATA, Direction.INPUT);
         Port nocDataOut = parentNoc.getPort(PortType.DATA, Direction.OUTPUT, router);
         pktDataIn.addWire(nocDataOut, 0, pktDataIn.getWidth() - 1, startWidthNocPort, endWidthNocPort);
         nocDataOut.addWire(pktDataIn, startWidthNocPort, endWidthNocPort, 0, pktDataIn.getWidth() - 1);
-
-        // valid
-        Port pktValidIn = getPort(PortType.VALID, Direction.INPUT);
-        Port nocValidOut = parentNoc.getPort(PortType.VALID, Direction.OUTPUT, router);
-        pktValidIn.addWire(nocValidOut);
-        nocValidOut.addWire(pktValidIn);
 
         // ready
         Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);
