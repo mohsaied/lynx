@@ -253,17 +253,18 @@ public class Noc extends Module {
 
         for (int i = 0; i < nocNumRouters; i++) {
 
-            //input to NoC
+            // input to NoC
             this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.INPUT, i), Direction.INPUT, nocInterfaceWidth,
                     PortType.DATA, this));
             this.addPort(new Port(buildNocPortName(PortType.VALID, Direction.INPUT, i), Direction.INPUT, 1, PortType.VALID, this));
             this.addPort(new Port(buildNocPortName(PortType.READY, Direction.OUTPUT, i), Direction.OUTPUT, 1, PortType.READY,
                     this));
 
-            //output from NoC
+            // output from NoC
             this.addPort(new Port(buildNocPortName(PortType.DATA, Direction.OUTPUT, i), Direction.OUTPUT, nocInterfaceWidth,
                     PortType.DATA, this));
-            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, getTdmFactor(), PortType.READY, this));
+            this.addPort(new Port(buildNocPortName(PortType.READY, Direction.INPUT, i), Direction.INPUT, getTdmFactor(),
+                    PortType.READY, this));
         }
     }
 
@@ -446,7 +447,7 @@ public class Noc extends Module {
         // will fix to 8 for now because this works for our testing 100 MHz
         // frequency -- this is also a reasonable guess since the latency
         // doesn't change by much
-        return 8;
+        return 9;
     }
 
     @Override

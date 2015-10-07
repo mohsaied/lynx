@@ -117,9 +117,9 @@ public final class Depacketizer extends Translator {
 
         // depending on the NocBundle index, we'll set the appropriate ready
         // signals -- inflation ratio is how many slots we have per nocbundle
-        int inflationRatio = this.parentNoc.getInterfaceWidth() / this.parentNoc.getNocBundleOutWidth();
+        int inflationRatio = this.parentNoc.getNocBundleOutWidth() / this.parentNoc.getWidth();
 
-        for (int i = startIndex * inflationRatio; i <= endIndex * inflationRatio + 1; i++) {
+        for (int i = startIndex * inflationRatio; i < (endIndex + 1) * inflationRatio; i++) {
             nocReadyIn.addWire(pktReadyOut, i, i, 0, 0);
             pktReadyOut.addWire(nocReadyIn, 0, 0, i, i);
         }
