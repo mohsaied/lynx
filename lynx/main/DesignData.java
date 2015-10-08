@@ -18,6 +18,8 @@ import lynx.vcmapping.VcMap;
  */
 public class DesignData {
 
+    private final static String nocFilePath = "nocs/w150_n16_v4_d16.xml";
+
     /**
      * The user-entered design
      */
@@ -148,6 +150,10 @@ public class DesignData {
 
     public List<ConnectionGroup> getConnectionGroups() {
         return connectionGroups;
+    }
+
+    public static String getNocFilePath() {
+        return nocFilePath;
     }
 
 }
