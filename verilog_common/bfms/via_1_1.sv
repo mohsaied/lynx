@@ -59,12 +59,12 @@ localparam i0_DATA_POS     = i0_ID_POS - 8;
 
 //registers for ora inputs
 //i0 regs
-reg                [N_ADDR_WIDTH:0] i0_src_in;
-reg                [N_ADDR_WIDTH:0] i0_return_in;
-reg               [VC_ADDR_WIDTH:0] i0_returnvc_in;
-reg                [N_ADDR_WIDTH:0] i0_dst_in;
-reg                           [7:0] i0_id_in;
-reg [i0_WIDTH-N_ADDR_WIDTH*2-8-1:0] i0_data_counter;
+reg                [N_ADDR_WIDTH-1:0] i0_src_in;
+reg                [N_ADDR_WIDTH-1:0] i0_return_in;
+reg               [VC_ADDR_WIDTH-1:0] i0_returnvc_in;
+reg                [N_ADDR_WIDTH-1:0] i0_dst_in;
+reg                             [7:0] i0_id_in;
+reg [i0_WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8 - 1:0] i0_data_counter;
 reg                                 i0_buffered_data;
 reg                                 i0_ready_reg;
 
