@@ -77,7 +77,7 @@ public class Main {
         XmlDesign.readXMLDesign(filePath);
 
         // add NoC circuitry - NoC and translators
-        NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
+        NocInterconnect.addNoc(DesignData.getNocFilePath());
 
         // cluster design into SCCs
         NocClustering.clusterDesign();

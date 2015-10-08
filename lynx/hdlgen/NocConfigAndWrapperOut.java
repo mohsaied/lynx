@@ -287,7 +287,7 @@ public class NocConfigAndWrapperOut {
         writer.println("routing_function = dim_order;");
         writer.println();
         writer.println("// Flow control");
-        writer.println("num_vcs     = 2;");
+        writer.println("num_vcs     = " + noc.getNumVcs() + ";");
         writer.println("vc_buf_size = 16;");
         writer.println("wait_for_tail_credit = 0;");
         writer.println();

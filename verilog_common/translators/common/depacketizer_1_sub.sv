@@ -20,11 +20,9 @@ module depacketizer_1_sub
 	input                   ready_in
 );
 
-localparam WIDTH_FLIT = WIDTH_PKT/2;
 localparam DATA_POS_HEAD = WIDTH_PKT - 3 - VC_ADDRESS_WIDTH - ADDRESS_WIDTH - 1;
-localparam DATA_POS_TAIL = WIDTH_PKT - WIDTH_FLIT - 3 - VC_ADDRESS_WIDTH - 1;
 
-localparam WIDTH_DATA_IDL = WIDTH_PKT - 3*2 -2*VC_ADDRESS_WIDTH - ADDRESS_WIDTH;
+localparam WIDTH_DATA_IDL = WIDTH_PKT - 3 - VC_ADDRESS_WIDTH - ADDRESS_WIDTH;
 localparam EXTRA_BITS = WIDTH_DATA_IDL - WIDTH_DATA;
 
 localparam VALID_POS_HEAD = WIDTH_PKT - 1;

@@ -145,7 +145,7 @@ public class CommandPanel extends JPanel {
                                     ReportData.resetSingleton();
                                     ReportData.getInstance().setDesignFile(openedFile);
                                     XmlDesign.readXMLDesign(designPath);
-                                    NocInterconnect.addNoc("nocs/w150_n16_v2_d16.xml");
+                                    NocInterconnect.addNoc(DesignData.getNocFilePath());
                                     fileProgress.setString(openedFile.getName() + " (valid)");
                                     log.info("Valid design " + openedFile.getName() + " opened successfully");
                                     mainPanel.clearTabs();
