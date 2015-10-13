@@ -9,27 +9,28 @@
 //naming: via_numsrc_numsink
 module via_1_1
 #(
-    parameter             N = 16,             //number of nodes
-    parameter        NUM_VC = 2,              //number of VCs
-	parameter  N_ADDR_WIDTH = $clog2(N),      //router address width
-	parameter VC_ADDR_WIDTH = $clog2(NUM_VC), //router address width
-    
-	parameter i0_WIDTH = 32,                  //data width for i0
-	parameter o0_WIDTH = 32,                  //data width for o0
-    
-    parameter [7:0] o0_ID = 0,                //unique id associated with each src
-    parameter [7:0] i0_ID = 0,                //unique id associated with each sink
-    
-	parameter  [N_ADDR_WIDTH-1:0] o0_NODE = 15,   //router index that this tpg is connected to
-	parameter  [N_ADDR_WIDTH-1:0] i0_NODE = 15,   //router index that this ora is connected to
-	parameter [VC_ADDR_WIDTH-1:0] i0_VC   = 0,    //vc index that this ora is connected to
-    
-    parameter o0_NODEP = 1'b0,
-    parameter RETURN_TO_SENDER = !o0_NODEP,    // if there is a dependency, then this via replies to the same module that sent stuff to it
-    
-    parameter o0_NUM_DEST = 4,  //number of destinations for output 0
-	parameter [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //router index that this tpg sends to
-	parameter [VC_ADDR_WIDTH-1:0] o0_VC [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}} //vc index that this tpg sends to
+parameter             N = 16,               //number of nodes
+parameter        NUM_VC = 2,                //number of VCs
+parameter  N_ADDR_WIDTH = $clog2(N),        //router address width
+parameter VC_ADDR_WIDTH = $clog2(NUM_VC),   //router address width
+
+parameter o0_WIDTH = 32,                    //data width for o0
+parameter i0_WIDTH = 32,                    //data width for i0
+
+parameter [7:0] o0_ID = 0,                  //unique id associated with each src
+parameter [7:0] i0_ID = 0,                  //unique id associated with each sink
+
+parameter  [N_ADDR_WIDTH-1:0] o0_NODE = 15, //router index that this tpg is connected to
+parameter  [N_ADDR_WIDTH-1:0] i0_NODE = 15, //router index that this ora is connected to
+parameter [VC_ADDR_WIDTH-1:0] i0_VC   = 0,  //vc index that this ora is connected to
+
+parameter o0_NODEP = 1'b0,                  // NODEP = 1 indicates that this via won't wait for a response to send a reply -- it'll just keep sending when it can
+parameter RETURN_TO_SENDER = !o0_NODEP,     // if there is a dependency, then this via replies to the same module that sent stuff to it
+
+parameter o0_NUM_DEST = 4,  //number of destinations for output 0
+parameter  [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //router index that this tpg sends to
+parameter [VC_ADDR_WIDTH-1:0]   o0_VC [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //vc index that this tpg sends to
+parameter NUM_TESTS = 1000 // will stop the simulation aafter this many pieces of data are sent and recieved
 )
 (
 	input clk,
@@ -57,16 +58,19 @@ localparam i0_VC_POS       = i0_DST_POS - N_ADDR_WIDTH;
 localparam i0_ID_POS       = i0_VC_POS - VC_ADDR_WIDTH;
 localparam i0_DATA_POS     = i0_ID_POS - 8;
 
+localparam i0_DATA_COUNTER_WIDTH = i0_WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8;
+localparam o0_DATA_COUNTER_WIDTH = o0_WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8;
+
 //registers for ora inputs
 //i0 regs
-reg                [N_ADDR_WIDTH-1:0] i0_src_in;
-reg                [N_ADDR_WIDTH-1:0] i0_return_in;
-reg               [VC_ADDR_WIDTH-1:0] i0_returnvc_in;
-reg                [N_ADDR_WIDTH-1:0] i0_dst_in;
-reg                             [7:0] i0_id_in;
-reg [i0_WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8 - 1:0] i0_data_counter;
-reg                                 i0_buffered_data;
-reg                                 i0_ready_reg;
+reg            [N_ADDR_WIDTH-1:0] i0_src_in;
+reg            [N_ADDR_WIDTH-1:0] i0_return_in;
+reg           [VC_ADDR_WIDTH-1:0] i0_returnvc_in;
+reg            [N_ADDR_WIDTH-1:0] i0_dst_in;
+reg                         [7:0] i0_id_in;
+reg [i0_DATA_COUNTER_WIDTH - 1:0] i0_data_counter;
+reg                               i0_buffered_data;
+reg                               i0_ready_reg;
 
 //wires from registers to outputs
 //i0 assigns
@@ -75,10 +79,10 @@ assign i0_ready_out = i0_ready_reg;
 //registers for tpg outputs
 //o0 regs
 //update the data counter width if I add any control fields in the data being sent
-reg [o0_WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8 - 1:0] o0_data_counter;
-reg              [N_ADDR_WIDTH-1:0] o0_dest_reg;
-reg              [VC_ADDR_WIDTH-1:0] o0_vc_reg;
-reg                                 o0_valid_reg;
+reg [o0_DATA_COUNTER_WIDTH - 1:0] o0_data_counter;
+reg            [N_ADDR_WIDTH-1:0] o0_dest_reg;
+reg           [VC_ADDR_WIDTH-1:0] o0_vc_reg;
+reg                               o0_valid_reg;
 
 //flag indicating that something is queued
 reg o0_queued_flag;
@@ -223,8 +227,8 @@ begin
 end
 
 
-//time bomb to end simulation after 100 pieces of data
-assign done = (i0_data_counter > 1000) && (o0_data_counter > 1000);
+//time bomb to end simulation after NUM_TESTS pieces of data
+assign done = (i0_data_counter > NUM_TESTS) && (o0_data_counter > NUM_TESTS);
 
 //synopsys translate off
 final $fclose(fmain);

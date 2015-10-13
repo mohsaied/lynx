@@ -10,7 +10,8 @@ module sink
     parameter N     = 16,                    //number of nodes
 	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
     parameter [7:0] ID = 0,                  //unique id associated with each sink
-    parameter [N_ADDR_WIDTH-1:0] NODE = 15   //router index that this tpg is connected to
+    parameter [N_ADDR_WIDTH-1:0] NODE = 15,  //router index that this tpg is connected to
+    parameter NUM_TESTS = 1000 // will stop the simulation aafter this many pieces of data are sent and recieved
 )
 (
 	input clk,
@@ -75,8 +76,8 @@ begin
 end
 
 
-//time bomb to end simulation after 100 pieces of data
-assign done = data_counter > 1000;
+//time bomb to end simulation after NUM_TESTS pieces of data
+assign done = data_counter > NUM_TESTS;
 
 //synopsys translate off
 final $fclose(fmain);

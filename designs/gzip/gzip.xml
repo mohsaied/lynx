@@ -32,6 +32,24 @@
             <port direction="output" width="4" name="o_dest_out" type="dst" />
             <port direction="input" width="1" name="o_ready_in" type="ready" />
         </bundle>
+        <bundle name="outbun1">
+            <port direction="output" width="512" name="o_y" type="data" />
+            <port direction="output" width="1" name="o_valid_out" type="valid" />
+            <port direction="output" width="4" name="o_dest_out" type="dst" />
+            <port direction="input" width="1" name="o_ready_in" type="ready" />
+        </bundle>
+        <bundle name="outbun2">
+            <port direction="output" width="512" name="o_y" type="data" />
+            <port direction="output" width="1" name="o_valid_out" type="valid" />
+            <port direction="output" width="4" name="o_dest_out" type="dst" />
+            <port direction="input" width="1" name="o_ready_in" type="ready" />
+        </bundle>
+        <bundle name="outbun3">
+            <port direction="output" width="512" name="o_y" type="data" />
+            <port direction="output" width="1" name="o_valid_out" type="valid" />
+            <port direction="output" width="4" name="o_dest_out" type="dst" />
+            <port direction="input" width="1" name="o_ready_in" type="ready" />
+        </bundle>
     </module>
     
     <!-- Dictionary 0 -->
@@ -343,9 +361,9 @@
     <connection start="mr.outbun0" end="ddr.inbun0" />
     
     <connection start="rw.outbun0" end="dict0.inbun0" />
-    <connection start="rw.outbun0" end="dict1.inbun0" />
-    <connection start="rw.outbun0" end="dict2.inbun0" />
-    <connection start="rw.outbun0" end="dict3.inbun0" />
+    <connection start="rw.outbun1" end="dict1.inbun0" />
+    <connection start="rw.outbun2" end="dict2.inbun0" />
+    <connection start="rw.outbun3" end="dict3.inbun0" />
     
     <connection start="dict0.outbun0" end="cw0.inbun0" />
     <connection start="dict0.outbun0" end="cw1.inbun0" />

@@ -34,6 +34,10 @@ import lynx.vcmapping.VcMap;
 public class HollowSim {
 
     private static final Logger log = Logger.getLogger(HollowSim.class.getName());
+    /**
+     * will halt the simulation after this many tests
+     */
+    private static final int NUM_TESTS = 1000;
 
     protected static int CURRID = 0;
 
@@ -132,13 +136,13 @@ public class HollowSim {
         simulationDesign.update();
     }
 
-    protected static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, VcMap vcMap,
-            Map<Bundle, Bundle> bbMap) {
+    private static DesignModule createViaModule(Noc noc, DesignModule mod, Mapping mapping, VcMap vcMap, Map<Bundle, Bundle> bbMap) {
         int numSrc = mod.getBundles(Direction.OUTPUT).size();
         int numSink = mod.getBundles(Direction.INPUT).size();
         DesignModule via = new DesignModule("via_" + numSrc + "_" + numSink, "via_" + mod.getName());
 
         // fixed parameters
+        via.addParameter(new Parameter("NUM_TESTS", NUM_TESTS));
         via.addParameter(new Parameter("N", noc.getNumRouters()));
         via.addParameter(new Parameter("NUM_VC", noc.getNumVcs()));
 
@@ -236,7 +240,7 @@ public class HollowSim {
         return 0;
     }
 
-    protected static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, VcMap vcMap, Map<Bundle, Bundle> bbMap) {
+    private static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, VcMap vcMap, Map<Bundle, Bundle> bbMap) {
         DesignModule src = new DesignModule("src", "src_" + bun.getFullNameDash());
 
         // add parameters
@@ -246,6 +250,7 @@ public class HollowSim {
         src.addParameter(new Parameter("ID", CURRID++));
         src.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
         src.addParameter(new Parameter("NUM_DEST", bun.getConnections().size()));
+        src.addParameter(new Parameter("NUM_TESTS", NUM_TESTS));
 
         String destinations = "'{";
         String destinationVcs = "'{";
@@ -288,7 +293,7 @@ public class HollowSim {
         return src;
     }
 
-    protected static DesignModule createSinkModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {
+    private static DesignModule createSinkModule(Noc noc, Bundle bun, Mapping mapping, Map<Bundle, Bundle> bbMap) {
         DesignModule sink = new DesignModule("sink", "sink_" + bun.getFullNameDash());
 
         // add parameters
@@ -296,6 +301,7 @@ public class HollowSim {
         sink.addParameter(new Parameter("N", noc.getNumRouters()));
         sink.addParameter(new Parameter("ID", CURRID++));
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
+        sink.addParameter(new Parameter("NUM_TESTS", NUM_TESTS));
 
         // add clk/rst ports
         sink.addPort(new Port("clk", Direction.INPUT, PortType.CLK, sink, "clk"));

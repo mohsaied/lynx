@@ -153,12 +153,12 @@ public class PerfAnalysis {
         // loop over srcs and sinks and find the throughput
         for (int srcMod : srcs) {
             ThroughputStruct throughput = findOutputThroughput(srcMod, srcEntryMap, analysis);
-            log.info("Src(" + srcMod + "): throughput(cycles)=" + throughput);
+            log.fine("Src(" + srcMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, srcMod);
         }
         for (int dstMod : sinks) {
             ThroughputStruct throughput = findInputThroughput(dstMod, sinkEntryMap.get(dstMod), analysis);
-            log.info("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
+            log.fine("Sink(" + dstMod + "): throughput(cycles)=" + throughput);
             analysis.addThroughputEntry(throughput, dstMod);
         }
 
@@ -167,7 +167,7 @@ public class PerfAnalysis {
             int srcMod = connSrc(connString);
             int dstMod = connSink(connString);
             LatencyStruct latency = findLatency(srcMod, dstMod, srcEntryMap, analysis);
-            log.info("Connection(" + srcMod + "->" + dstMod + "): latency = " + latency);
+            log.fine("Connection(" + srcMod + "->" + dstMod + "): latency = " + latency);
             analysis.addLatencyEntry(latency);
         }
 
@@ -176,7 +176,7 @@ public class PerfAnalysis {
             int srcMod = connSrc(connString);
             int dstMod = connSink(connString);
             LatencyStruct latency = findQueueTime(srcMod, dstMod, srcEntryMap, analysis);
-            log.info("Connection(" + srcMod + "->" + dstMod + "): queueTime = " + latency);
+            log.fine("Connection(" + srcMod + "->" + dstMod + "): queueTime = " + latency);
             analysis.addqueueTimeEntry(latency);
         }
 
