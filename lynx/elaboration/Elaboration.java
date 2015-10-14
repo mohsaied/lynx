@@ -9,7 +9,9 @@ import java.util.logging.Logger;
 import lynx.data.Bundle;
 import lynx.data.Connection;
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.MyEnums.ConnectionType;
+import lynx.data.MyEnums.Direction;
 
 public class Elaboration {
 
@@ -48,15 +50,50 @@ public class Elaboration {
 
             // for this connection, check its dst bundle
             // does the dstbundle have other incoming connections to it?
-            Bundle dstBundle = con.getToBundle();
+            Bundle slaveDstBun = con.getToBundle();
             // we're part of a multimaster connectiongroup if the dst bundle
             // that this connection feeds has multiple connections
-            boolean multimaster = dstBundle.getConnections().size() > 1;
+            // and these connections also have responses
+            int twoWayConnections = 0;
+            DesignModule mod = slaveDstBun.getParentModule();
+            // loop over module's bundles
+            for (Bundle slaveSrcBun : mod.getBundles().values()) {
+                if (slaveSrcBun.getDirection() == Direction.OUTPUT) {
+                    // we found a bundle that outputs data
+                    // now we need to make sure that there are multiple
+                    // connections from other modules to this dstBundle, and
+                    // return connections from this dstbundle back to the same
+                    // module
+                    twoWayConnections = 0;
+                    for (Bundle masterDstBun : slaveSrcBun.getConnections()) {
+
+                        // look for a way back to our slave bun
+                        boolean foundWayBack = false;
+                        for (Bundle masterSrcBun : masterDstBun.getParentModule().getBundles().values()) {
+                            // if this module contains an outgoing bundle to our
+                            // mod, then we're good
+                            for (Bundle masterSrcBunDst : masterSrcBun.getConnections()) {
+                                if (masterSrcBunDst == slaveDstBun) {
+                                    foundWayBack = true;
+                                    twoWayConnections++;
+                                    break;
+                                }
+                            }
+                            if (foundWayBack)
+                                break;
+                        }
+
+                    }
+                    if (twoWayConnections > 1)
+                        break;
+                }
+            }
+            boolean multimaster = twoWayConnections > 1;
             if (multimaster) {
                 log.info("Found arbitration connectiongroup");
                 ConnectionGroup mmGroup = new ConnectionGroup(ConnectionType.ARBITRATION);
                 for (Connection con1 : conList) {
-                    if (con1.getToBundle() == dstBundle) {
+                    if (con1.getToBundle() == slaveDstBun) {
                         log.info("\tAdding connection: " + con1);
                         mmGroup.addMasterConnection(con1);
                         // mark connection as processed

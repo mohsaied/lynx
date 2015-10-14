@@ -30,8 +30,11 @@ module src
     input                     ready_in
 );
 
+
+localparam DATA_COUNTER_WIDTH = WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8;
+
 //counter for data at this node
-reg [WIDTH-N_ADDR_WIDTH*2-8-1:0] data_counter;
+reg [DATA_COUNTER_WIDTH-1:0] data_counter;
 
 //registers for outputs
 reg [N_ADDR_WIDTH-1:0] dest_reg;

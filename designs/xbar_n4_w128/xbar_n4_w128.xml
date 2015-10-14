@@ -1,0 +1,113 @@
+<design name="xbar">
+  
+  <module type="master" name="src1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="ram" name="dst1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="src1.outbun" end="dst1.inbun"/>
+  <connection start="src2.outbun" end="dst1.inbun"/>
+  <connection start="src3.outbun" end="dst1.inbun"/>
+  <connection start="src4.outbun" end="dst1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst2.inbun"/>
+  <connection start="src2.outbun" end="dst2.inbun"/>
+  <connection start="src3.outbun" end="dst2.inbun"/>
+  <connection start="src4.outbun" end="dst2.inbun"/>
+  
+  <connection start="src1.outbun" end="dst3.inbun"/>
+  <connection start="src2.outbun" end="dst3.inbun"/>
+  <connection start="src3.outbun" end="dst3.inbun"/>
+  <connection start="src4.outbun" end="dst3.inbun"/>
+  
+  <connection start="src1.outbun" end="dst4.inbun"/>
+  <connection start="src2.outbun" end="dst4.inbun"/>
+  <connection start="src3.outbun" end="dst4.inbun"/>
+  <connection start="src4.outbun" end="dst4.inbun"/>
+  
+  
+  
+</design>

@@ -87,7 +87,7 @@ public class MyEnums {
     }
 
     public enum ConnectionType {
-        P2P("p2p"), ARBITRATION("arbitration"), BROADCAST("broadcast"), UNKNOWN("unknown");
+        P2P("p2p"), ARBITRATION("arbitration"), CONVERGE("converge"), BROADCAST("broadcast"), UNKNOWN("unknown");
 
         private final String name;
 

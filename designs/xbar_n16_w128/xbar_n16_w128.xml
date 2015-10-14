@@ -1,0 +1,617 @@
+<design name="xbar">
+  
+  <module type="master" name="src1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src5">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src6">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src7">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src8">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src9">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src10">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src11">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src12">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src13">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src14">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src15">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="master" name="src16">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="128" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>	
+  </module>
+  
+  <module type="ram" name="dst1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst5">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst6">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst7">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst8">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst9">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst10">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst11">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst12">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst13">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst14">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst15">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="ram" name="dst16">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="128" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="src1.outbun" end="dst1.inbun"/>
+  <connection start="src2.outbun" end="dst1.inbun"/>
+  <connection start="src3.outbun" end="dst1.inbun"/>
+  <connection start="src4.outbun" end="dst1.inbun"/>
+  <connection start="src5.outbun" end="dst1.inbun"/>
+  <connection start="src6.outbun" end="dst1.inbun"/>
+  <connection start="src7.outbun" end="dst1.inbun"/>
+  <connection start="src8.outbun" end="dst1.inbun"/>
+  <connection start="src9.outbun" end="dst1.inbun"/>
+  <connection start="src10.outbun" end="dst1.inbun"/>
+  <connection start="src11.outbun" end="dst1.inbun"/>
+  <connection start="src12.outbun" end="dst1.inbun"/>
+  <connection start="src13.outbun" end="dst1.inbun"/>
+  <connection start="src14.outbun" end="dst1.inbun"/>
+  <connection start="src15.outbun" end="dst1.inbun"/>
+  <connection start="src16.outbun" end="dst1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst2.inbun"/>
+  <connection start="src2.outbun" end="dst2.inbun"/>
+  <connection start="src3.outbun" end="dst2.inbun"/>
+  <connection start="src4.outbun" end="dst2.inbun"/>
+  <connection start="src5.outbun" end="dst2.inbun"/>
+  <connection start="src6.outbun" end="dst2.inbun"/>
+  <connection start="src7.outbun" end="dst2.inbun"/>
+  <connection start="src8.outbun" end="dst2.inbun"/>
+  <connection start="src9.outbun" end="dst2.inbun"/>
+  <connection start="src10.outbun" end="dst2.inbun"/>
+  <connection start="src11.outbun" end="dst2.inbun"/>
+  <connection start="src12.outbun" end="dst2.inbun"/>
+  <connection start="src13.outbun" end="dst2.inbun"/>
+  <connection start="src14.outbun" end="dst2.inbun"/>
+  <connection start="src15.outbun" end="dst2.inbun"/>
+  <connection start="src16.outbun" end="dst2.inbun"/>
+  
+  <connection start="src1.outbun" end="dst3.inbun"/>
+  <connection start="src2.outbun" end="dst3.inbun"/>
+  <connection start="src3.outbun" end="dst3.inbun"/>
+  <connection start="src4.outbun" end="dst3.inbun"/>
+  <connection start="src5.outbun" end="dst3.inbun"/>
+  <connection start="src6.outbun" end="dst3.inbun"/>
+  <connection start="src7.outbun" end="dst3.inbun"/>
+  <connection start="src8.outbun" end="dst3.inbun"/>
+  <connection start="src9.outbun" end="dst3.inbun"/>
+  <connection start="src10.outbun" end="dst3.inbun"/>
+  <connection start="src11.outbun" end="dst3.inbun"/>
+  <connection start="src12.outbun" end="dst3.inbun"/>
+  <connection start="src13.outbun" end="dst3.inbun"/>
+  <connection start="src14.outbun" end="dst3.inbun"/>
+  <connection start="src15.outbun" end="dst3.inbun"/>
+  <connection start="src16.outbun" end="dst3.inbun"/>
+  
+  <connection start="src1.outbun" end="dst4.inbun"/>
+  <connection start="src2.outbun" end="dst4.inbun"/>
+  <connection start="src3.outbun" end="dst4.inbun"/>
+  <connection start="src4.outbun" end="dst4.inbun"/>
+  <connection start="src5.outbun" end="dst4.inbun"/>
+  <connection start="src6.outbun" end="dst4.inbun"/>
+  <connection start="src7.outbun" end="dst4.inbun"/>
+  <connection start="src8.outbun" end="dst4.inbun"/>
+  <connection start="src9.outbun" end="dst4.inbun"/>
+  <connection start="src10.outbun" end="dst4.inbun"/>
+  <connection start="src11.outbun" end="dst4.inbun"/>
+  <connection start="src12.outbun" end="dst4.inbun"/>
+  <connection start="src13.outbun" end="dst4.inbun"/>
+  <connection start="src14.outbun" end="dst4.inbun"/>
+  <connection start="src15.outbun" end="dst4.inbun"/>
+  <connection start="src16.outbun" end="dst4.inbun"/>
+  
+  <connection start="src1.outbun" end="dst5.inbun"/>
+  <connection start="src2.outbun" end="dst5.inbun"/>
+  <connection start="src3.outbun" end="dst5.inbun"/>
+  <connection start="src4.outbun" end="dst5.inbun"/>
+  <connection start="src5.outbun" end="dst5.inbun"/>
+  <connection start="src6.outbun" end="dst5.inbun"/>
+  <connection start="src7.outbun" end="dst5.inbun"/>
+  <connection start="src8.outbun" end="dst5.inbun"/>
+  <connection start="src9.outbun" end="dst5.inbun"/>
+  <connection start="src10.outbun" end="dst5.inbun"/>
+  <connection start="src11.outbun" end="dst5.inbun"/>
+  <connection start="src12.outbun" end="dst5.inbun"/>
+  <connection start="src13.outbun" end="dst5.inbun"/>
+  <connection start="src14.outbun" end="dst5.inbun"/>
+  <connection start="src15.outbun" end="dst5.inbun"/>
+  <connection start="src16.outbun" end="dst5.inbun"/>
+  
+  <connection start="src1.outbun" end="dst6.inbun"/>
+  <connection start="src2.outbun" end="dst6.inbun"/>
+  <connection start="src3.outbun" end="dst6.inbun"/>
+  <connection start="src4.outbun" end="dst6.inbun"/>
+  <connection start="src5.outbun" end="dst6.inbun"/>
+  <connection start="src6.outbun" end="dst6.inbun"/>
+  <connection start="src7.outbun" end="dst6.inbun"/>
+  <connection start="src8.outbun" end="dst6.inbun"/>
+  <connection start="src9.outbun" end="dst6.inbun"/>
+  <connection start="src10.outbun" end="dst6.inbun"/>
+  <connection start="src11.outbun" end="dst6.inbun"/>
+  <connection start="src12.outbun" end="dst6.inbun"/>
+  <connection start="src13.outbun" end="dst6.inbun"/>
+  <connection start="src14.outbun" end="dst6.inbun"/>
+  <connection start="src15.outbun" end="dst6.inbun"/>
+  <connection start="src16.outbun" end="dst6.inbun"/>
+  
+  <connection start="src1.outbun" end="dst7.inbun"/>
+  <connection start="src2.outbun" end="dst7.inbun"/>
+  <connection start="src3.outbun" end="dst7.inbun"/>
+  <connection start="src4.outbun" end="dst7.inbun"/>
+  <connection start="src5.outbun" end="dst7.inbun"/>
+  <connection start="src6.outbun" end="dst7.inbun"/>
+  <connection start="src7.outbun" end="dst7.inbun"/>
+  <connection start="src8.outbun" end="dst7.inbun"/>
+  <connection start="src9.outbun" end="dst7.inbun"/>
+  <connection start="src10.outbun" end="dst7.inbun"/>
+  <connection start="src11.outbun" end="dst7.inbun"/>
+  <connection start="src12.outbun" end="dst7.inbun"/>
+  <connection start="src13.outbun" end="dst7.inbun"/>
+  <connection start="src14.outbun" end="dst7.inbun"/>
+  <connection start="src15.outbun" end="dst7.inbun"/>
+  <connection start="src16.outbun" end="dst7.inbun"/>
+  
+  <connection start="src1.outbun" end="dst8.inbun"/>
+  <connection start="src2.outbun" end="dst8.inbun"/>
+  <connection start="src3.outbun" end="dst8.inbun"/>
+  <connection start="src4.outbun" end="dst8.inbun"/>
+  <connection start="src5.outbun" end="dst8.inbun"/>
+  <connection start="src6.outbun" end="dst8.inbun"/>
+  <connection start="src7.outbun" end="dst8.inbun"/>
+  <connection start="src8.outbun" end="dst8.inbun"/>
+  <connection start="src9.outbun" end="dst8.inbun"/>
+  <connection start="src10.outbun" end="dst8.inbun"/>
+  <connection start="src11.outbun" end="dst8.inbun"/>
+  <connection start="src12.outbun" end="dst8.inbun"/>
+  <connection start="src13.outbun" end="dst8.inbun"/>
+  <connection start="src14.outbun" end="dst8.inbun"/>
+  <connection start="src15.outbun" end="dst8.inbun"/>
+  <connection start="src16.outbun" end="dst8.inbun"/>
+  
+  <connection start="src1.outbun" end="dst9.inbun"/>
+  <connection start="src2.outbun" end="dst9.inbun"/>
+  <connection start="src3.outbun" end="dst9.inbun"/>
+  <connection start="src4.outbun" end="dst9.inbun"/>
+  <connection start="src5.outbun" end="dst9.inbun"/>
+  <connection start="src6.outbun" end="dst9.inbun"/>
+  <connection start="src7.outbun" end="dst9.inbun"/>
+  <connection start="src8.outbun" end="dst9.inbun"/>
+  <connection start="src9.outbun" end="dst9.inbun"/>
+  <connection start="src10.outbun" end="dst9.inbun"/>
+  <connection start="src11.outbun" end="dst9.inbun"/>
+  <connection start="src12.outbun" end="dst9.inbun"/>
+  <connection start="src13.outbun" end="dst9.inbun"/>
+  <connection start="src14.outbun" end="dst9.inbun"/>
+  <connection start="src15.outbun" end="dst9.inbun"/>
+  <connection start="src16.outbun" end="dst9.inbun"/>
+  
+  <connection start="src1.outbun" end="dst10.inbun"/>
+  <connection start="src2.outbun" end="dst10.inbun"/>
+  <connection start="src3.outbun" end="dst10.inbun"/>
+  <connection start="src4.outbun" end="dst10.inbun"/>
+  <connection start="src5.outbun" end="dst10.inbun"/>
+  <connection start="src6.outbun" end="dst10.inbun"/>
+  <connection start="src7.outbun" end="dst10.inbun"/>
+  <connection start="src8.outbun" end="dst10.inbun"/>
+  <connection start="src9.outbun" end="dst10.inbun"/>
+  <connection start="src10.outbun" end="dst10.inbun"/>
+  <connection start="src11.outbun" end="dst10.inbun"/>
+  <connection start="src12.outbun" end="dst10.inbun"/>
+  <connection start="src13.outbun" end="dst10.inbun"/>
+  <connection start="src14.outbun" end="dst10.inbun"/>
+  <connection start="src15.outbun" end="dst10.inbun"/>
+  <connection start="src16.outbun" end="dst10.inbun"/>
+  
+  <connection start="src1.outbun" end="dst11.inbun"/>
+  <connection start="src2.outbun" end="dst11.inbun"/>
+  <connection start="src3.outbun" end="dst11.inbun"/>
+  <connection start="src4.outbun" end="dst11.inbun"/>
+  <connection start="src5.outbun" end="dst11.inbun"/>
+  <connection start="src6.outbun" end="dst11.inbun"/>
+  <connection start="src7.outbun" end="dst11.inbun"/>
+  <connection start="src8.outbun" end="dst11.inbun"/>
+  <connection start="src9.outbun" end="dst11.inbun"/>
+  <connection start="src10.outbun" end="dst11.inbun"/>
+  <connection start="src11.outbun" end="dst11.inbun"/>
+  <connection start="src12.outbun" end="dst11.inbun"/>
+  <connection start="src13.outbun" end="dst11.inbun"/>
+  <connection start="src14.outbun" end="dst11.inbun"/>
+  <connection start="src15.outbun" end="dst11.inbun"/>
+  <connection start="src16.outbun" end="dst11.inbun"/>
+  
+  <connection start="src1.outbun" end="dst12.inbun"/>
+  <connection start="src2.outbun" end="dst12.inbun"/>
+  <connection start="src3.outbun" end="dst12.inbun"/>
+  <connection start="src4.outbun" end="dst12.inbun"/>
+  <connection start="src5.outbun" end="dst12.inbun"/>
+  <connection start="src6.outbun" end="dst12.inbun"/>
+  <connection start="src7.outbun" end="dst12.inbun"/>
+  <connection start="src8.outbun" end="dst12.inbun"/>
+  <connection start="src9.outbun" end="dst12.inbun"/>
+  <connection start="src10.outbun" end="dst12.inbun"/>
+  <connection start="src11.outbun" end="dst12.inbun"/>
+  <connection start="src12.outbun" end="dst12.inbun"/>
+  <connection start="src13.outbun" end="dst12.inbun"/>
+  <connection start="src14.outbun" end="dst12.inbun"/>
+  <connection start="src15.outbun" end="dst12.inbun"/>
+  <connection start="src16.outbun" end="dst12.inbun"/>
+  
+  <connection start="src1.outbun" end="dst13.inbun"/>
+  <connection start="src2.outbun" end="dst13.inbun"/>
+  <connection start="src3.outbun" end="dst13.inbun"/>
+  <connection start="src4.outbun" end="dst13.inbun"/>
+  <connection start="src5.outbun" end="dst13.inbun"/>
+  <connection start="src6.outbun" end="dst13.inbun"/>
+  <connection start="src7.outbun" end="dst13.inbun"/>
+  <connection start="src8.outbun" end="dst13.inbun"/>
+  <connection start="src9.outbun" end="dst13.inbun"/>
+  <connection start="src10.outbun" end="dst13.inbun"/>
+  <connection start="src11.outbun" end="dst13.inbun"/>
+  <connection start="src12.outbun" end="dst13.inbun"/>
+  <connection start="src13.outbun" end="dst13.inbun"/>
+  <connection start="src14.outbun" end="dst13.inbun"/>
+  <connection start="src15.outbun" end="dst13.inbun"/>
+  <connection start="src16.outbun" end="dst13.inbun"/>
+  
+  <connection start="src1.outbun" end="dst14.inbun"/>
+  <connection start="src2.outbun" end="dst14.inbun"/>
+  <connection start="src3.outbun" end="dst14.inbun"/>
+  <connection start="src4.outbun" end="dst14.inbun"/>
+  <connection start="src5.outbun" end="dst14.inbun"/>
+  <connection start="src6.outbun" end="dst14.inbun"/>
+  <connection start="src7.outbun" end="dst14.inbun"/>
+  <connection start="src8.outbun" end="dst14.inbun"/>
+  <connection start="src9.outbun" end="dst14.inbun"/>
+  <connection start="src10.outbun" end="dst14.inbun"/>
+  <connection start="src11.outbun" end="dst14.inbun"/>
+  <connection start="src12.outbun" end="dst14.inbun"/>
+  <connection start="src13.outbun" end="dst14.inbun"/>
+  <connection start="src14.outbun" end="dst14.inbun"/>
+  <connection start="src15.outbun" end="dst14.inbun"/>
+  <connection start="src16.outbun" end="dst14.inbun"/>
+  
+  <connection start="src1.outbun" end="dst15.inbun"/>
+  <connection start="src2.outbun" end="dst15.inbun"/>
+  <connection start="src3.outbun" end="dst15.inbun"/>
+  <connection start="src4.outbun" end="dst15.inbun"/>
+  <connection start="src5.outbun" end="dst15.inbun"/>
+  <connection start="src6.outbun" end="dst15.inbun"/>
+  <connection start="src7.outbun" end="dst15.inbun"/>
+  <connection start="src8.outbun" end="dst15.inbun"/>
+  <connection start="src9.outbun" end="dst15.inbun"/>
+  <connection start="src10.outbun" end="dst15.inbun"/>
+  <connection start="src11.outbun" end="dst15.inbun"/>
+  <connection start="src12.outbun" end="dst15.inbun"/>
+  <connection start="src13.outbun" end="dst15.inbun"/>
+  <connection start="src14.outbun" end="dst15.inbun"/>
+  <connection start="src15.outbun" end="dst15.inbun"/>
+  <connection start="src16.outbun" end="dst15.inbun"/>
+  
+  <connection start="src1.outbun" end="dst16.inbun"/>
+  <connection start="src2.outbun" end="dst16.inbun"/>
+  <connection start="src3.outbun" end="dst16.inbun"/>
+  <connection start="src4.outbun" end="dst16.inbun"/>
+  <connection start="src5.outbun" end="dst16.inbun"/>
+  <connection start="src6.outbun" end="dst16.inbun"/>
+  <connection start="src7.outbun" end="dst16.inbun"/>
+  <connection start="src8.outbun" end="dst16.inbun"/>
+  <connection start="src9.outbun" end="dst16.inbun"/>
+  <connection start="src10.outbun" end="dst16.inbun"/>
+  <connection start="src11.outbun" end="dst16.inbun"/>
+  <connection start="src12.outbun" end="dst16.inbun"/>
+  <connection start="src13.outbun" end="dst16.inbun"/>
+  <connection start="src14.outbun" end="dst16.inbun"/>
+  <connection start="src15.outbun" end="dst16.inbun"/>
+  <connection start="src16.outbun" end="dst16.inbun"/>
+  
+  
+  
+</design>

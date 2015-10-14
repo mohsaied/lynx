@@ -33,11 +33,15 @@ localparam VC_POS       = DST_POS - N_ADDR_WIDTH;
 localparam ID_POS       = VC_POS - VC_ADDR_WIDTH;
 localparam DATA_POS     = ID_POS - 8;
 
+
+localparam DATA_COUNTER_WIDTH = WIDTH - N_ADDR_WIDTH*3 - VC_ADDR_WIDTH*2 - 8;
+
 //components of data_in
 reg [N_ADDR_WIDTH:0] src_in;
 reg [N_ADDR_WIDTH:0] dst_in;
 reg [7:0] id_in;
-reg [WIDTH-N_ADDR_WIDTH*2-8-1:0] data_counter;
+reg [DATA_COUNTER_WIDTH-1:0] data_counter;
+
 
 reg ready_reg;
 
