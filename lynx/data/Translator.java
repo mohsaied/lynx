@@ -53,8 +53,6 @@ public abstract class Translator extends Module {
         return type + "_" + direction.toShortString();
     }
 
-    protected abstract void connectToBundle();
-
     public abstract void connectToRouter(List<NocBundle> nocbuns);
 
 }

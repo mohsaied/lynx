@@ -34,6 +34,7 @@ public class Port {
 
     // if this port is constant
     private int constantValue;
+    private boolean isConstant;
 
     public Port() {
         this(null, Direction.UNKNOWN, 0, 1, PortType.UNKNOWN, null, false, null);
@@ -86,15 +87,11 @@ public class Port {
         this.wires = new ArrayList<Wire>();
         this.isBundled = isBundled;
         this.isGlobal = globalPortName != null;
-        this.setConstantValue(0);
+        this.constantValue = -1;
+        this.isConstant = false;
         this.setGlobalPortName(globalPortName);
         this.setGlobalOnNoc(false);
         assert ((isBundled) && (globalPortName == null)) || !isBundled : "Bundled ports cannot be exported to top level!";
-    }
-
-    public Port(int constantValue, int width) {
-        this(null, Direction.UNKNOWN, width, 1, PortType.CONSTANT, null, false, null);
-        this.setConstantValue(constantValue);
     }
 
     public final Direction getDirection() {
@@ -279,11 +276,15 @@ public class Port {
     }
 
     public int getConstantValue() {
-        assert this.type == PortType.CONSTANT : "Attempting to get the constant value of a non-constant port.";
         return constantValue;
     }
 
     public void setConstantValue(int constantValue) {
+        this.isConstant = true;
         this.constantValue = constantValue;
+    }
+
+    public boolean isConstant() {
+        return isConstant;
     }
 }

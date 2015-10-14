@@ -9,13 +9,25 @@ import lynx.data.MyEnums.TranslatorType;
 public final class Depacketizer extends Translator {
 
     public Depacketizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.DEPACKETIZER_STD);
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, figureOutDepacketizerType(parentBundle));
 
         addParametersAndPorts(nocbuns);
 
         connectToBundle();
 
         connectToRouter(nocbuns);
+    }
+
+    private static TranslatorType figureOutDepacketizerType(Bundle parentBundle) {
+
+        // the DA depacketizer is only added for SLAVE modules that have no
+        // dest/vc signals -- in this case it'll parse and use return dst/VC
+
+        if (parentBundle.getConnectionGroup().isSlave(parentBundle)) {
+            return TranslatorType.DEPACKETIZER_DA;
+        }
+
+        return TranslatorType.DEPACKETIZER_STD;
     }
 
     protected final void addParametersAndPorts(List<NocBundle> nocbuns) {
@@ -49,10 +61,14 @@ public final class Depacketizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.OUTPUT), Direction.OUTPUT, parentBundle.getWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.OUTPUT), Direction.OUTPUT, 1, this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
+
+        if (this.getTranslatorType() == TranslatorType.DEPACKETIZER_DA) {
+            this.addPort(new Port(buildPortName(PortType.DST, Direction.OUTPUT), Direction.OUTPUT, 1, this));
+            this.addPort(new Port(buildPortName(PortType.VC, Direction.OUTPUT), Direction.OUTPUT, 1, this));
+        }
     }
 
-    @Override
-    protected final void connectToBundle() {
+    private final void connectToBundle() {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now

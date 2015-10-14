@@ -32,8 +32,7 @@ public class MyEnums {
 
     public enum PortType {
         DATA("data"), VALID("valid"), READY("ready"), DST("dst"), VC("vc"), CLK("clk"), CLKINT("clkint"), CLKRTL("clkrtl"), RST(
-                "rst"), TOP("top"), DONE("done"), WAITFORREPLY("wait_for_reply"), UNKNOWN("unknown"), CONSTANT("constant"), QUARTERCLK(
-                "clk");
+                "rst"), TOP("top"), DONE("done"), WAITFORREPLY("wait_for_reply"), UNKNOWN("unknown"), QUARTERCLK("clk");
 
         private final String name;
 
@@ -48,7 +47,8 @@ public class MyEnums {
     }
 
     public enum TranslatorType {
-        PACKETIZER_STD("packetizer_std"), DEPACKETIZER_STD("depacketizer_std");
+        PACKETIZER_STD("packetizer_std"), PACKETIZER_DA("packetizer_da"), DEPACKETIZER_STD("depacketizer_std"), DEPACKETIZER_DA(
+                "depacketizer_da");
 
         private final String name;
 

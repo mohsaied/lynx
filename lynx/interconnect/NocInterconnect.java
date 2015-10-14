@@ -19,10 +19,12 @@ import lynx.data.NocBundle;
 import lynx.data.Packetizer;
 import lynx.data.Parameter;
 import lynx.data.Port;
+import lynx.data.Translator;
 import lynx.data.Wrapper;
 import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
+import lynx.data.MyEnums.TranslatorType;
 import lynx.elaboration.ConnectionGroup;
 import lynx.main.DesignData;
 import lynx.nocmapping.Mapping;
@@ -72,8 +74,8 @@ public class NocInterconnect {
         log.info("Creating and connecting simulation model");
         HollowSim.createAndConnectHollowSim(design, noc, cgList, vcMap);
 
-        //log.info("Creating and connecting actual design");
-        //connectActualDesignToNoc(design, noc, cgList, vcMap);
+        // log.info("Creating and connecting actual design");
+        connectActualDesignToNoc(design, noc, cgList, vcMap);
     }
 
     // TODO this flow is unfinished (but shouldn't take long to get it working)
@@ -135,6 +137,95 @@ public class NocInterconnect {
                 }
             }
         }
+
+        // after adding all the translators, and connecting them to noc and
+        // modules we'll add any dest appenders that are needed, and connect
+        // them to the right translators
+        for (Translator translator : design.getTranslators()) {
+            if (translator.getTranslatorType() == TranslatorType.DEPACKETIZER_DA) {
+                Depacketizer depkt = (Depacketizer) translator;
+                // we need to add a dest_appender
+                // find the packetizer for the very same slave module
+                Bundle inbun = translator.getParentBundle();
+                assert inbun.getConnectionGroup().isSlave(inbun) && inbun.getDirection() == Direction.OUTPUT;
+                // find the slave input port and associated packetizer
+                Bundle outbun = null;
+                for (Bundle bun : inbun.getConnectionGroup().getFromBundles()) {
+                    if (inbun.getConnectionGroup().isSlave(bun))
+                        outbun = bun;
+                }
+                assert outbun != null : "Couldn't find output bundle for slave of input bundle " + inbun.getFullName();
+                assert inbun.getParentModule() != outbun.getParentModule() : "Slave input and output ports ("
+                        + inbun.getFullName() + "," + outbun.getFullName() + ") aren't part of the same module.";
+                // now find the packetizer for that outbun
+                Packetizer pkt = null;
+                for (Translator translator1 : design.getTranslators()) {
+                    if (translator1.getParentBundle() == outbun) {
+                        pkt = (Packetizer) translator1;
+                    }
+                }
+                assert pkt == null : "Couldn't find packetizer for " + outbun.getFullName();
+                assert pkt.getTranslatorType() == TranslatorType.PACKETIZER_STD : "Packetizer type " + pkt.getTranslatorType()
+                        + " cannot be connected to a dest appender.";
+
+                createAndConnectDestAppender(design, inbun, outbun, pkt, depkt);
+
+            }
+        }
+    }
+
+    private static void createAndConnectDestAppender(Design design, Bundle inbun, Bundle outbun, Packetizer pkt,
+            Depacketizer depkt) {
+
+        // create the credit TM module
+        Wrapper da = new Wrapper("dest_appender", outbun.getParentModule().getName() + "_da", outbun.getParentModule());
+
+        log.info("Adding DEST APPENDER " + da.getName());
+
+        // ports
+        Port iDstIn = new Port("i_dst_in", Direction.INPUT, da);
+        Port iVcIn = new Port("i_vc_in", Direction.INPUT, da);
+        Port iValidIn = new Port("i_valid_in", Direction.INPUT, da);
+        Port oDstOut = new Port("o_dst_out", Direction.OUTPUT, da);
+        Port oVcOut = new Port("o_vc_out", Direction.OUTPUT, da);
+        Port oValidIn = new Port("o_valid_in", Direction.INPUT, da);
+        da.addPort(iDstIn);
+        da.addPort(iVcIn);
+        da.addPort(iValidIn);
+        da.addPort(oDstOut);
+        da.addPort(oVcOut);
+        da.addPort(oValidIn);
+
+        // connect ports
+
+        // the i ports come from the depacketizer
+        Port dpktDest = depkt.getPort(PortType.DST, Direction.OUTPUT);
+        iDstIn.addWire(dpktDest);
+        dpktDest.addWire(iDstIn);
+
+        Port dpktVc = depkt.getPort(PortType.VC, Direction.OUTPUT);
+        iVcIn.addWire(dpktVc);
+        dpktVc.addWire(iVcIn);
+
+        Port validDest = depkt.getPort(PortType.VALID, Direction.OUTPUT);
+        iValidIn.addWire(validDest);
+        validDest.addWire(iValidIn);
+
+        // the o ports go to the packetizer
+        Port pktDst = pkt.getPort(PortType.DST, Direction.INPUT);
+        oDstOut.addWire(pktDst);
+        pktDst.addWire(oDstOut);
+
+        Port pktVc = pkt.getPort(PortType.VC, Direction.INPUT);
+        oVcOut.addWire(pktVc);
+        pktVc.addWire(oVcOut);
+
+        Port pktValid = pkt.getPort(PortType.VALID, Direction.OUTPUT);
+        oValidIn.addWire(pktValid);
+        pktValid.addWire(oValidIn);
+
+        // add to design
+        design.addWrapper(da);
     }
 
     public static void insertTrafficManagers(Noc noc, Design design, Mapping mapping, List<ConnectionGroup> cgList) {

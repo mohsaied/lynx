@@ -366,24 +366,24 @@
     <connection start="rw.outbun3" end="dict3.inbun0" />
     
     <connection start="dict0.outbun0" end="cw0.inbun0" />
-    <connection start="dict0.outbun0" end="cw1.inbun0" />
-    <connection start="dict0.outbun0" end="cw2.inbun0" />
-    <connection start="dict0.outbun0" end="cw3.inbun0" />
+    <connection start="dict0.outbun1" end="cw1.inbun0" />
+    <connection start="dict0.outbun2" end="cw2.inbun0" />
+    <connection start="dict0.outbun3" end="cw3.inbun0" />
     
     <connection start="dict1.outbun0" end="cw0.inbun1" />
-    <connection start="dict1.outbun0" end="cw1.inbun1" />
-    <connection start="dict1.outbun0" end="cw2.inbun1" />
-    <connection start="dict1.outbun0" end="cw3.inbun1" />
+    <connection start="dict1.outbun1" end="cw1.inbun1" />
+    <connection start="dict1.outbun2" end="cw2.inbun1" />
+    <connection start="dict1.outbun3" end="cw3.inbun1" />
     
     <connection start="dict2.outbun0" end="cw0.inbun2" />
-    <connection start="dict2.outbun0" end="cw1.inbun2" />
-    <connection start="dict2.outbun0" end="cw2.inbun2" />
-    <connection start="dict2.outbun0" end="cw3.inbun2" />
+    <connection start="dict2.outbun1" end="cw1.inbun2" />
+    <connection start="dict2.outbun2" end="cw2.inbun2" />
+    <connection start="dict2.outbun3" end="cw3.inbun2" />
     
     <connection start="dict3.outbun0" end="cw0.inbun3" />
-    <connection start="dict3.outbun0" end="cw1.inbun3" />
-    <connection start="dict3.outbun0" end="cw2.inbun3" />
-    <connection start="dict3.outbun0" end="cw3.inbun3" />
+    <connection start="dict3.outbun1" end="cw1.inbun3" />
+    <connection start="dict3.outbun2" end="cw2.inbun3" />
+    <connection start="dict3.outbun3" end="cw3.inbun3" />
     
     <connection start="cw0.outbun0" end="mr.inbun0" />
     <connection start="cw1.outbun0" end="mr.inbun1" />

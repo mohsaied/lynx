@@ -17,13 +17,24 @@ import lynx.vcmapping.VcMap;
 public final class Packetizer extends Translator {
 
     public Packetizer(Noc parentNoc, Bundle parentBundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {
-        super(parentNoc, parentBundle.getParentModule(), parentBundle, TranslatorType.PACKETIZER_STD);
+        super(parentNoc, parentBundle.getParentModule(), parentBundle, figureOutPacketizerType(parentBundle));
 
         addParametersAndPorts(parentBundle, nocbuns, mapping, vcMap);
 
-        connectToBundle();
+        connectToBundle(mapping, vcMap);
 
         connectToRouter(nocbuns);
+    }
+
+    private static TranslatorType figureOutPacketizerType(Bundle parentBundle) {
+
+        // if this is a master then we'll always append return dst/vc so the
+        // slave knows where to return the reply to
+        if (parentBundle.getConnectionGroup().isMaster(parentBundle)) {
+            return TranslatorType.PACKETIZER_DA;
+        }
+
+        return TranslatorType.PACKETIZER_STD;
     }
 
     protected final void addParametersAndPorts(Bundle bundle, List<NocBundle> nocbuns, Mapping mapping, VcMap vcMap) {
@@ -50,37 +61,17 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("WIDTH_OUT", nocFacingWidth));
         this.addParameter(new Parameter("PACKETIZER_WIDTH", numFlitsForThisTranslator));
 
-        int vc = vcMap.getVcForBundle(bundle);
-
-        int numDest = 1;
-        String dests = "'{0}";
-        String vcs = "'{" + vc + "}";
-
-        // this packetizer will send on multiple VCs
-        if (vc == -1) {
-            // find the number of dests for this bundle
-            numDest = bundle.getConnections().size();
-
-            dests = "'{";
-            vcs = "'{";
-
-            // loop over bundles, populate their router and VC
-            for (Bundle dstBun : bundle.getConnections()) {
-                dests += mapping.getRouter(dstBun) + ",";
-                vcs += vcMap.getVcForBundle(dstBun) + ",";
-            }
-
-            dests = dests.substring(0, dests.length() - 1) + "}";
-            vcs = vcs.substring(0, vcs.length() - 1) + "}";
+        if (this.getTranslatorType() == TranslatorType.PACKETIZER_DA) {
+            int dest_in = mapping.getRouter(bundle);
+            int vc_in = vcMap.getVcForBundle(bundle);
+            this.addParameter(new Parameter("DEST", dest_in));
+            this.addParameter(new Parameter("VC", vc_in));
         }
-
-        this.addParameter(new Parameter("NUM_DEST", numDest));
-        this.addParameter(new Parameter("DEST", dests));
-        this.addParameter(new Parameter("VC", vcs));
 
         // ports
         this.addPort(new Port(buildPortName(PortType.DATA, Direction.INPUT), Direction.INPUT, parentBundle.getWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VALID, Direction.INPUT), Direction.INPUT, 1, this));
+
         this.addPort(new Port(buildPortName(PortType.DST, Direction.INPUT), Direction.INPUT, parentNoc.getAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.VC, Direction.INPUT), Direction.INPUT, parentNoc.getVcAddressWidth(), this));
         this.addPort(new Port(buildPortName(PortType.READY, Direction.OUTPUT), Direction.OUTPUT, 1, this));
@@ -90,8 +81,7 @@ public final class Packetizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
     }
 
-    @Override
-    protected final void connectToBundle() {
+    private final void connectToBundle(Mapping mapping, VcMap vcMap) {
 
         // each translator has a parent module and bundle
         // connect the module side but leave the NoC side unconnected for now
@@ -113,14 +103,37 @@ public final class Packetizer extends Translator {
         // connect dest
         Port pktDstIn = getPort(PortType.DST, Direction.INPUT);
         Port modDstOut = parentBundle.getDstPort();
-        pktDstIn.addWire(modDstOut);
-        modDstOut.addWire(pktDstIn);
-
-        // connect vc
+        // and vc
         Port pktVcIn = getPort(PortType.VC, Direction.INPUT);
         Port modVcOut = parentBundle.getVcPort();
-        pktVcIn.addWire(modVcOut);
-        modVcOut.addWire(pktVcIn);
+        if (modDstOut == null || modVcOut == null) {
+            if (parentBundle.getConnections().size() == 1) {
+                // if we have one dest we can just add it as a constant
+                int dest = mapping.getRouter(parentBundle.getConnections().get(0));
+                int vc = vcMap.getVcForBundle(parentBundle.getConnections().get(0));
+                pktDstIn.setConstantValue(dest);
+                pktVcIn.setConstantValue(vc);
+            } else if (parentBundle.getConnectionGroup().isSlave(parentBundle)) {
+                assert this.getTranslatorType() == TranslatorType.PACKETIZER_STD : "A slave that sends to many masters can only have a std packetizer, not "
+                        + this.getTranslatorType();
+                // this is the packetizer of a slave that responds to whatever
+                // sent to it -- in this case this packetizer will get its
+                // signals from a dest_appender
+                // TODO add code to connect to dst appender
+                //we won't connect these signals here, but we'll do it in the dest_appender once we instantiate it after the translators
+            } else {
+                // if we have multiple destinations and we're not a slave, then
+                // the user has to add the signals (we don't know where data
+                // will be sent when)
+                assert false : "Bundle " + parentBundle.getFullName() + " doesn't have dst/vc signals but has multiple("
+                        + parentBundle.getConnections().size() + ") destinations -- cannot statically set dst/vc.";
+            }
+        } else {
+            pktDstIn.addWire(modDstOut);
+            modDstOut.addWire(pktDstIn);
+            pktVcIn.addWire(modVcOut);
+            modVcOut.addWire(pktVcIn);
+        }
 
         // connect ready
         Port pktReadyOut = getPort(PortType.READY, Direction.OUTPUT);

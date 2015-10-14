@@ -57,7 +57,7 @@ public class QuickScriptOut {
         writer.println("#compile the translators and tpg/oras");
         writer.println("vlog  $VERILOG_COMMON_DIR/translators/common/*.sv");
         writer.println("vlog  $VERILOG_COMMON_DIR/translators/standard/*.sv");
-        writer.println("vlog  $VERILOG_COMMON_DIR/translators/vc_table/*.sv");
+        writer.println("vlog  $VERILOG_COMMON_DIR/translators/dest_append/*.sv");
         writer.println("vlog  $VERILOG_COMMON_DIR/bfms/*.sv");
         writer.println("vlog  $VERILOG_COMMON_DIR/credit_shells/*.sv");
         writer.println();
