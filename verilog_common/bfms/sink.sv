@@ -7,8 +7,10 @@
 module sink
 #(
 	parameter WIDTH = 32,                    //data width
-    parameter N     = 16,                    //number of nodes
-	parameter N_ADDR_WIDTH = $clog2(N),      //router address width
+    parameter             N = 16,               //number of nodes
+    parameter        NUM_VC = 2,                //number of VCs
+    parameter  N_ADDR_WIDTH = $clog2(N),        //router address width
+    parameter VC_ADDR_WIDTH = $clog2(NUM_VC),   //router address width
     parameter [7:0] ID = 0,                  //unique id associated with each sink
     parameter [N_ADDR_WIDTH-1:0] NODE = 15,  //router index that this tpg is connected to
     parameter NUM_TESTS = 1000 // will stop the simulation aafter this many pieces of data are sent and recieved
@@ -23,10 +25,13 @@ module sink
     output            ready_out
 );
 
-localparam SRC_POS  = WIDTH-1;
-localparam DST_POS  = SRC_POS - N_ADDR_WIDTH;
-localparam ID_POS   = DST_POS - N_ADDR_WIDTH;
-localparam DATA_POS = ID_POS - 8;
+localparam RETURN_POS   = WIDTH-1;
+localparam RETURNVC_POS = RETURN_POS - N_ADDR_WIDTH;
+localparam SRC_POS      = RETURNVC_POS - VC_ADDR_WIDTH;
+localparam DST_POS      = SRC_POS - N_ADDR_WIDTH;
+localparam VC_POS       = DST_POS - N_ADDR_WIDTH;
+localparam ID_POS       = VC_POS - VC_ADDR_WIDTH;
+localparam DATA_POS     = ID_POS - 8;
 
 //components of data_in
 reg [N_ADDR_WIDTH:0] src_in;

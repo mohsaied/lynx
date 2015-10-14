@@ -42,7 +42,7 @@ reg                    queued_flag;
 //count the dst we're sending to
 integer dstcount;
 
-assign data_out  = {NODE,dest_reg,ID,data_counter};
+assign data_out  = {{N_ADDR_WIDTH{1'b0}}, {VC_ADDR_WIDTH{1'b0}}, NODE, dest_reg, vc_reg, ID, data_counter};
 assign dest_out  = dest_reg;
 assign vc_out    = vc_reg;
 assign valid_out = valid_reg;

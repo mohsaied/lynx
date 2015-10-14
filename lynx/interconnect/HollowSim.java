@@ -299,6 +299,7 @@ public class HollowSim {
         // add parameters
         sink.addParameter(new Parameter("WIDTH", bun.getWidth()));
         sink.addParameter(new Parameter("N", noc.getNumRouters()));
+        sink.addParameter(new Parameter("NUM_VC", noc.getNumVcs()));
         sink.addParameter(new Parameter("ID", CURRID++));
         sink.addParameter(new Parameter("NODE", mapping.getRouter(bun)));
         sink.addParameter(new Parameter("NUM_TESTS", NUM_TESTS));

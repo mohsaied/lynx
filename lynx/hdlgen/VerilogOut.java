@@ -142,7 +142,9 @@ public class VerilogOut {
 
     private static String figureOutPortConnection(Port por) {
         String connectionString = "ERROR";
-        if (por.getDirection() == Direction.OUTPUT) {
+        if (por.isConstant()) {
+            connectionString = por.getWidth() + "'d" + por.getConstantValue();
+        } else if (por.getDirection() == Direction.OUTPUT) {
             connectionString = por.getConnectingWireName();
         } else if (por.getDirection() == Direction.INPUT) {
             // first case: both this port and the wire feeding it are same size
@@ -176,7 +178,8 @@ public class VerilogOut {
                     if (currBit != maxEnd) {
                         int padSize = currBit - maxEnd;
                         connectionString += "{" + padSize + "{1'b0}},";
-                        assert padSize > 0 : "VerilogOut: something is wrong with port connections causing a padsize of " + padSize + " in port " + por.getName();
+                        assert padSize > 0 : "VerilogOut: something is wrong with port connections causing a padsize of "
+                                + padSize + " in port " + por.getName();
                     }
 
                     // output the current wire and remove from list

@@ -178,11 +178,16 @@ public class Port {
 
     public void removeWire(Port por) {
         for (Wire wire : wires) {
-            log.info("\t\twire = " + wire.dstPort.name + ", port = " + por.name);
             if (wire.dstPort == por) {
                 this.wires.remove(wire);
                 break;
             }
+        }
+    }
+
+    public void removeAllWires() {
+        for (Wire wire : wires) {
+            this.wires.remove(wire);
         }
     }
 
