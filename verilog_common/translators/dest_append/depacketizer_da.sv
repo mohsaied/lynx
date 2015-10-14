@@ -30,10 +30,14 @@ module depacketizer_da
 
 localparam RETURN_DEST_POS = WIDTH_PKT - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH -1;
 localparam RETURN_VC_POS = RETURN_DEST_POS - ADDRESS_WIDTH;
+localparam ORIG_DATA_POS = RETURN_VC_POS - VC_ADDRESS_WIDTH;
 
 //parse out the return dest and vc
-assign return_dest_out = data_in[RETURN_DEST_POS -: ADDRESS_WIDTH];
-assign return_vc_out   = data_in[RETURN_VC_POS -: VC_ADDRESS_WIDTH];
+assign dst_out = data_in[RETURN_DEST_POS -: ADDRESS_WIDTH];
+assign vc_out  = data_in[RETURN_VC_POS -: VC_ADDRESS_WIDTH];
+
+reg [WIDTH_PKT-1:0] data_in_after_extraction;
+assign data_in_after_extraction = {data_in[WIDTH_PKT-1 : RETURN_DEST_POS+1], data_in[ORIG_DATA_POS : 0], {ADDRESS_WIDTH{1'b0}}, {VC_ADDRESS_WIDTH{1'b0}} };
 
 //choose the depacketizer based on DEPACKETIZER_WIDTH parameter
 generate
@@ -48,7 +52,7 @@ depacketizer_1_sub
 )
 pk1_1_sub
 (
-	.data_in(data_in),
+	.data_in(data_in_after_extraction),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),
@@ -64,7 +68,7 @@ depacketizer_2_sub
 )
 pk1_2_sub
 (
-	.data_in(data_in),
+	.data_in(data_in_after_extraction),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),
@@ -80,7 +84,7 @@ depacketizer_4_sub
 )
 pk1_4_sub
 (
-	.data_in(data_in),
+	.data_in(data_in_after_extraction),
 	.ready_out(ready_out),
 	.data_out(data_out),
 	.valid_out(valid_out),

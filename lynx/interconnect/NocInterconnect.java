@@ -75,7 +75,7 @@ public class NocInterconnect {
         HollowSim.createAndConnectHollowSim(design, noc, cgList, vcMap);
 
         // log.info("Creating and connecting actual design");
-        connectActualDesignToNoc(design, noc, cgList, vcMap);
+        //connectActualDesignToNoc(design, noc, cgList, vcMap);
     }
 
     // TODO this flow is unfinished (but shouldn't take long to get it working)
@@ -147,7 +147,7 @@ public class NocInterconnect {
                 // we need to add a dest_appender
                 // find the packetizer for the very same slave module
                 Bundle inbun = translator.getParentBundle();
-                assert inbun.getConnectionGroup().isSlave(inbun) && inbun.getDirection() == Direction.OUTPUT;
+                assert inbun.getConnectionGroup().isSlave(inbun) && inbun.getDirection() == Direction.INPUT : "bundle for depacketizer_da isn't a slave or has wrong direction";
                 // find the slave input port and associated packetizer
                 Bundle outbun = null;
                 for (Bundle bun : inbun.getConnectionGroup().getFromBundles()) {
@@ -155,7 +155,7 @@ public class NocInterconnect {
                         outbun = bun;
                 }
                 assert outbun != null : "Couldn't find output bundle for slave of input bundle " + inbun.getFullName();
-                assert inbun.getParentModule() != outbun.getParentModule() : "Slave input and output ports ("
+                assert inbun.getParentModule() == outbun.getParentModule() : "Slave input and output ports ("
                         + inbun.getFullName() + "," + outbun.getFullName() + ") aren't part of the same module.";
                 // now find the packetizer for that outbun
                 Packetizer pkt = null;
@@ -164,17 +164,17 @@ public class NocInterconnect {
                         pkt = (Packetizer) translator1;
                     }
                 }
-                assert pkt == null : "Couldn't find packetizer for " + outbun.getFullName();
+                assert pkt != null : "Couldn't find packetizer for " + outbun.getFullName();
                 assert pkt.getTranslatorType() == TranslatorType.PACKETIZER_STD : "Packetizer type " + pkt.getTranslatorType()
                         + " cannot be connected to a dest appender.";
 
-                createAndConnectDestAppender(design, inbun, outbun, pkt, depkt);
+                createAndConnectDestAppender(design, noc, inbun, outbun, pkt, depkt);
 
             }
         }
     }
 
-    private static void createAndConnectDestAppender(Design design, Bundle inbun, Bundle outbun, Packetizer pkt,
+    private static void createAndConnectDestAppender(Design design, Noc noc, Bundle inbun, Bundle outbun, Packetizer pkt,
             Depacketizer depkt) {
 
         // create the credit TM module
@@ -182,12 +182,17 @@ public class NocInterconnect {
 
         log.info("Adding DEST APPENDER " + da.getName());
 
+        da.addParameter(new Parameter("ADDRESS_WIDTH", noc.getAddressWidth()));
+        da.addParameter(new Parameter("VC_ADDRESS_WIDTH", noc.getVcAddressWidth()));
+        // TODO this should be the slave latency + 2 or something
+        da.addParameter(new Parameter("DEPTH", 4));
+
         // ports
-        Port iDstIn = new Port("i_dst_in", Direction.INPUT, da);
-        Port iVcIn = new Port("i_vc_in", Direction.INPUT, da);
+        Port iDstIn = new Port("i_dst_in", Direction.INPUT, noc.getAddressWidth(), da);
+        Port iVcIn = new Port("i_vc_in", Direction.INPUT, noc.getVcAddressWidth(), da);
         Port iValidIn = new Port("i_valid_in", Direction.INPUT, da);
-        Port oDstOut = new Port("o_dst_out", Direction.OUTPUT, da);
-        Port oVcOut = new Port("o_vc_out", Direction.OUTPUT, da);
+        Port oDstOut = new Port("o_dst_out", Direction.OUTPUT, noc.getAddressWidth(), da);
+        Port oVcOut = new Port("o_vc_out", Direction.OUTPUT, noc.getVcAddressWidth(), da);
         Port oValidIn = new Port("o_valid_in", Direction.INPUT, da);
         da.addPort(iDstIn);
         da.addPort(iVcIn);
@@ -211,13 +216,20 @@ public class NocInterconnect {
         iValidIn.addWire(validDest);
         validDest.addWire(iValidIn);
 
-        // the o ports go to the packetizer
+        // the o ports go to the packetizer -- need to rip out existing wires
+        // first
         Port pktDst = pkt.getPort(PortType.DST, Direction.INPUT);
         oDstOut.addWire(pktDst);
+        Port modDstOut = pkt.getParentBundle().getDstPort();
+        modDstOut.removeWire(pktDst);
+        pktDst.removeWire(modDstOut);
         pktDst.addWire(oDstOut);
 
         Port pktVc = pkt.getPort(PortType.VC, Direction.INPUT);
         oVcOut.addWire(pktVc);
+        Port modVcOut = pkt.getParentBundle().getVcPort();
+        modVcOut.removeWire(pktVc);
+        pktVc.removeWire(modVcOut);
         pktVc.addWire(oVcOut);
 
         Port pktValid = pkt.getPort(PortType.VALID, Direction.OUTPUT);

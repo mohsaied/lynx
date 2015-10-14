@@ -35,10 +35,10 @@ reg fifo_empty;
 
 //synopsys translate off
 always @ (*)
-    if(fifo_full){
+    if(fifo_full) begin
         $display("CHECK DEST APPENDER: ITS FIFO IS FULL AND SHOULDN'T BE IF THE DEPTH IS LARGER THAN SLAVE LATENCY!");
         $finish(1);
-    }
+    end
 //synopsys translate on
 
 fifo_da

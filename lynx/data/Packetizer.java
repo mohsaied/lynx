@@ -62,10 +62,17 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("PACKETIZER_WIDTH", numFlitsForThisTranslator));
 
         if (this.getTranslatorType() == TranslatorType.PACKETIZER_DA) {
-            int dest_in = mapping.getRouter(bundle);
-            int vc_in = vcMap.getVcForBundle(bundle);
-            this.addParameter(new Parameter("DEST", dest_in));
-            this.addParameter(new Parameter("VC", vc_in));
+            // find bundle of same module and also a master but is the input one
+            for (Bundle inbun : parentBundle.getConnectionGroup().getToBundles()) {
+                if (parentBundle.getConnectionGroup().isMaster(inbun)
+                        && inbun.getParentModule() == parentBundle.getParentModule()) {
+                    int dest_in = mapping.getRouter(inbun);
+                    int vc_in = vcMap.getVcForBundle(inbun);
+                    this.addParameter(new Parameter("DEST", dest_in));
+                    this.addParameter(new Parameter("VC", vc_in));
+                    break;
+                }
+            }
         }
 
         // ports
@@ -120,7 +127,8 @@ public final class Packetizer extends Translator {
                 // sent to it -- in this case this packetizer will get its
                 // signals from a dest_appender
                 // TODO add code to connect to dst appender
-                //we won't connect these signals here, but we'll do it in the dest_appender once we instantiate it after the translators
+                // we won't connect these signals here, but we'll do it in the
+                // dest_appender once we instantiate it after the translators
             } else {
                 // if we have multiple destinations and we're not a slave, then
                 // the user has to add the signals (we don't know where data

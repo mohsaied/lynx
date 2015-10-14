@@ -63,8 +63,10 @@ public final class Depacketizer extends Translator {
         this.addPort(new Port(buildPortName(PortType.READY, Direction.INPUT), Direction.INPUT, 1, this));
 
         if (this.getTranslatorType() == TranslatorType.DEPACKETIZER_DA) {
-            this.addPort(new Port(buildPortName(PortType.DST, Direction.OUTPUT), Direction.OUTPUT, 1, this));
-            this.addPort(new Port(buildPortName(PortType.VC, Direction.OUTPUT), Direction.OUTPUT, 1, this));
+            this.addPort(new Port(buildPortName(PortType.DST, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getAddressWidth(),
+                    this));
+            this.addPort(new Port(buildPortName(PortType.VC, Direction.OUTPUT), Direction.OUTPUT, parentNoc.getVcAddressWidth(),
+                    this));
         }
     }
 

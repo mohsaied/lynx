@@ -12,8 +12,8 @@ module packetizer_da
 	//parameter WIDTH_OUT = ((WIDTH_IN + 3*4 + ADDRESS_WIDTH + 4*VC_ADDRESS_WIDTH + 3)/4) * 4 
 	parameter WIDTH_OUT = 36,
     parameter PACKETIZER_WIDTH = 1,
-    parameter [ADDRESS_WIDTH-1:0] DEST,
-    parameter [VC_ADDRESS_WIDTH-1:0] VC
+    parameter [ADDRESS_WIDTH-1:0] DEST = 0,
+    parameter [VC_ADDRESS_WIDTH-1:0] VC = 0
 )
 (
 	//input port
@@ -37,13 +37,14 @@ localparam WIDTH_IN_MOD = WIDTH_IN + ADDRESS_WIDTH + VC_ADDRESS_WIDTH;
 
 //synopsys translate off
 always @ (*)
-    if( (WIDTH_IN_MOD+3+ADDRESS_WIDTH+VC_ADDRESS_WIDTH) > WIDTH_OUT){
+    if( (WIDTH_IN_MOD+3+ADDRESS_WIDTH+VC_ADDRESS_WIDTH) > WIDTH_OUT) begin
         $display("PACKETIZER_DA needs to pack %d bits, but only has %d bits",WIDTH_IN_MOD+3+ADDRESS_WIDTH+VC_ADDRESS_WIDTH,WIDTH_OUT);
         $finish(1);
-    }
+    end
 //synopsys translate on
 
-reg [WIDTH_IN_MOD-1:0] data_dst_vc = {DEST,VC,data_in};
+reg [WIDTH_IN_MOD-1:0] data_dst_vc;
+assign data_dst_vc = {DEST,VC,data_in};
 
 
 //choose the packetizer based on PACKETIZER_WIDTH parameter
