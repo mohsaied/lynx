@@ -18,6 +18,12 @@ public class SimulatedAnnealingBundle {
     private static final Logger log = Logger.getLogger(SimulatedAnnealingBundle.class.getName());
 
     private final static int SEED = 1;
+    private final static int QUENCH_TIME = 50;
+    private final static int ANNEAL_TIME = 1000000000;
+    private final static int STABLE_MOVES = 1000;
+    private final static double INITIAL_TEMP = 100;
+    private final static double TEMP_FAC = 0.99;
+    private final static int INITIAL_TEMP_INTERVAL = 10;
 
     public static void findMappings(Design design, Noc noc) {
 
@@ -45,10 +51,8 @@ public class SimulatedAnnealingBundle {
         int takenMoves = 0;
 
         // annealing params
-        double initialTemp = 100;
-        double temp = initialTemp;
-        double tempFac = 0.99;
-        int tempInterval = 10;
+        double temp = INITIAL_TEMP;
+        int tempInterval = INITIAL_TEMP_INTERVAL;
         int stable_for = 0;
         double mapOnlyCost = cost;
 
@@ -60,11 +64,11 @@ public class SimulatedAnnealingBundle {
         if (bundleList.size() != 0) {
 
             // start anneal
-            while (stable_for < 5000 && elapsedSeconds < 100) {
+            while (stable_for < STABLE_MOVES && elapsedSeconds < ANNEAL_TIME) {
 
                 // decrement temperature
                 if (totalMoves % tempInterval == 0) {
-                    temp = temp * tempFac;
+                    temp = temp * TEMP_FAC;
                     tempInterval = setTempInterval(temp);
                 }
 
@@ -83,7 +87,9 @@ public class SimulatedAnnealingBundle {
                 currMapping = new Mapping(newAnnealStruct, design, noc);
                 double newCost = currMapping.computeCost();
                 double oldCost = cost;
-                boolean acceptMove = (((newCost - cost) / cost) < temp / initialTemp);
+                boolean acceptMove = ((newCost - cost) / cost) < (temp / INITIAL_TEMP);
+                log.finest("temp = " + Math.ceil(temp * 100) / 100 + " - costs: " + newCost + " - " + cost + " - accept = "
+                        + acceptMove);
 
                 log.finest(currMapping.toString());
 
@@ -109,7 +115,9 @@ public class SimulatedAnnealingBundle {
             }
 
             log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
-            log.info("mapping cost = " + cost);
+            log.info("Mapping cost = " + cost);
+            if (elapsedSeconds >= ANNEAL_TIME)
+                log.warning("Mapping anneal ended because of timeout " + elapsedSeconds + " seconds!");
             mapOnlyCost = cost;
 
             takenMoves = 0;
@@ -122,12 +130,16 @@ public class SimulatedAnnealingBundle {
             List<DesignModule> moduleList = findModulesWithGroupedBundles(design, noc, annealStruct);
             log.info("Found " + moduleList.size() + " thirsty modules");
 
+            double elapsedSecondsQuench = 0;
+            startTime = System.nanoTime();
+            endTime = System.nanoTime();
+
             if (moduleList.size() > 0) {
 
                 log.info("Starting quench with " + moduleList.size() + " modules");
 
                 // start module quench
-                while (stable_for < 5000 && elapsedSeconds < 110) {
+                while (stable_for < STABLE_MOVES && elapsedSecondsQuench < QUENCH_TIME) {
 
                     // make a move
                     AnnealBundleStruct newAnnealStruct = null;
@@ -162,7 +174,7 @@ public class SimulatedAnnealingBundle {
 
                     // time
                     endTime = System.nanoTime();
-                    elapsedSeconds = (endTime - startTime) / 1e9;
+                    elapsedSecondsQuench = (endTime - startTime) / 1e9;
 
                     // stats
                     totalMoves++;
@@ -173,7 +185,10 @@ public class SimulatedAnnealingBundle {
 
             log.info("Final mapping cost = " + cost);
             log.info("Quench reduction = " + (mapOnlyCost - cost));
-            
+
+            if (elapsedSecondsQuench >= QUENCH_TIME)
+                log.warning("Mapping quench ended because of timeout " + elapsedSecondsQuench + " seconds!");
+
             ReportData.getInstance().writeToRpt("map_cost = " + cost);
             ReportData.getInstance().writeToRpt("quench = " + (mapOnlyCost - cost));
 
@@ -333,14 +348,20 @@ public class SimulatedAnnealingBundle {
         if (temp < 50 && temp >= 40)
             return 10;
         if (temp < 40 && temp >= 30)
-            return 100;
+            return 10;
         if (temp < 30 && temp >= 20)
-            return 200;
+            return 10;
         if (temp < 20 && temp >= 10)
-            return 350;
+            return 10;
         if (temp < 10 && temp >= 5)
-            return 500;
-        if (temp < 5 && temp >= 0)
+            return 10;
+        if (temp < 5 && temp >= 3)
+            return 100;
+        if (temp < 3 && temp >= 2)
+            return 200;
+        if (temp < 2 && temp >= 1)
+            return 1000;
+        if (temp < 1 && temp >= 0)
             return 1000;
         else
             return 0;

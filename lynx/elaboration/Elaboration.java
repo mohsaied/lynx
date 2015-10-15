@@ -90,7 +90,7 @@ public class Elaboration {
             }
             boolean multimaster = twoWayConnections > 1;
             if (multimaster) {
-                log.info("Found arbitration connectiongroup");
+                log.fine("Found arbitration connectiongroup");
                 ConnectionGroup mmGroup = new ConnectionGroup(ConnectionType.ARBITRATION);
                 for (Connection con1 : conList) {
                     if (con1.getToBundle() == slaveDstBun) {
@@ -116,11 +116,14 @@ public class Elaboration {
 
         for (Connection con : conList) {
             if (!doneSet.contains(con)) {
-                log.info("Found p2p connection: " + con);
+                log.fine("Found p2p connection: " + con);
                 p2pGroup.addConnection(con);
                 doneSet.add(con);
             }
         }
+
+        log.info("Found " + p2pGroup.getConnections().size() + " P2P connections, and " + (cgList.size())
+                + " arbitration connection groups.");
 
         cgList.add(p2pGroup);
 

@@ -35,7 +35,7 @@ public class Connection {
         this.fromModuleIndex = design.getModuleIndex(fromModule.getName());
         this.toModuleIndex = design.getModuleIndex(toModule.getName());
 
-        this.setLatencySpec(1); // default latency
+        this.setLatencySpec(1); // default latency requirement
     }
 
     public final Bundle getFromBundle() {

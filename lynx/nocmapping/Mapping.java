@@ -188,7 +188,7 @@ public class Mapping {
         // TODO this is arbitrary right now
         for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
-                cost += 100;
+                cost += 1000;
         }
 
         // add penalty for any bundles that are split over more than one router
@@ -203,7 +203,7 @@ public class Mapping {
                 }
             }
             if (routers.size() > 1)
-                cost += 20 * (routers.size() - 1);
+                cost += 200 * (routers.size() - 1);
         }
 
         // area of off-noc connections
