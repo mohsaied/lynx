@@ -71,7 +71,7 @@ public class VcDesignation {
             // "combine data" is equal to the number of additional streams we
             // merge onto this router input.
             // So it is 0 for normal mode or if we have no bundles.
-            // And it is 1 if we have 2 bundles, or n-1 for n bunles
+            // And it is 1 if we have 2 bundles, or n-1 for n bundles
             int combineData = numInBuns == 0 ? 0 : (numInBuns - 1);
 
             // 1) assign the routers to this combine_data value.

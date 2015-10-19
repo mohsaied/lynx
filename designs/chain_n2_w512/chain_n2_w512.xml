@@ -1,0 +1,31 @@
+<design name="chain">
+  
+  <module type="dummy" name="x1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="outbun">
+		<port direction="output" width="512" name="o_y" type="data"/>
+		<port direction="output" width="1" name="o_valid_out" type="valid"/>
+		<port direction="output" width="4" name="o_dest_out" type="dst"/>
+		<port direction="input" width="1" name="o_ready_in" type="ready"/>
+	</bundle>
+  </module>
+  
+  <module type="dummy" name="x2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<bundle name="inbun">
+		<port direction="input" width="512" name="i_x" type="data"/>
+		<port direction="input" width="1" name="i_valid_in" type="valid"/>
+		<port direction="output" width="1" name="i_ready_out" type="ready"/>
+	</bundle>
+  </module>
+  
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="x1.outbun" end="x2.inbun"/>
+  
+</design>
