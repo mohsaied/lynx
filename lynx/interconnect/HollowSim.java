@@ -99,6 +99,12 @@ public class HollowSim {
             int numSrc = mod.getBundles(Direction.OUTPUT).size();
             int numSink = mod.getBundles(Direction.INPUT).size();
 
+            boolean arbitration = false;
+            for (Bundle bun : mod.getBundles().values()) {
+                if (bun.getConnectionGroup().getConnectionType() == ConnectionType.ARBITRATION)
+                    arbitration = true;
+            }
+
             if (numSrc == 0 && numSink == 0) // empty module?
                 continue;
 
@@ -113,8 +119,21 @@ public class HollowSim {
                     simulationDesign.addModule(sink);
                 }
             } else { // this is a via
-                DesignModule src = createViaModule(noc, mod, mapping, vcMap, bbMap);
-                simulationDesign.addModule(src);
+                if (!arbitration) {
+                    for (Bundle bun : mod.getBundles(Direction.OUTPUT)) {
+                        DesignModule src = createSrcModule(noc, bun, mapping, vcMap, bbMap);
+                        simulationDesign.addModule(src);
+                    }
+                    for (Bundle bun : mod.getBundles(Direction.INPUT)) {
+                        DesignModule sink = createSinkModule(noc, bun, mapping, bbMap);
+                        simulationDesign.addModule(sink);
+                    }
+                } else {
+                    assert numSink == 1 && numSrc == 1 : "Cannot currently create vias with more than one input and one output needed for module "
+                            + mod.getName();
+                    DesignModule src = createViaModule(noc, mod, mapping, vcMap, bbMap);
+                    simulationDesign.addModule(src);
+                }
             }
         }
 
@@ -226,21 +245,14 @@ public class HollowSim {
     }
 
     private static int findNoDepValue(Bundle bun) {
-        // nodepvalue is 1 for masters - we want them to always be sending data
-        // so that we can investigate the different tradeoffs of credit or
-        // token-based schemes
-        // to qualify for nodep, the bundle has to be part of an arbitration
-        // connectiongroup and be a master as well
-        if (bun.getConnectionGroup().getConnectionType() == ConnectionType.ARBITRATION && bun.getConnectionGroup().isMaster(bun))
-            return 1;
-        // also if it's part of a simple p2p group it will have nodep = 1 -- a
-        // module in a feedforward pipeline doesn't have to wait for it's input
-        // to send data in our hollowsim simulation (this is also partly because
-        // the RETURN_TO_SENDER parameter in the vias is currently tied to
-        // NODEP)
-        if (bun.getConnectionGroup().getConnectionType() != ConnectionType.ARBITRATION)
-            return 1;
-        return 0;
+        // NODEP means that the src in this via doesn't have to wait for the
+        // sink to receive data. We only wait for data when it is a slave that
+        // has to respond to a request
+        // TODO: in the future, we should disconnect NODEP from RETURN_TO_SENDER
+        // All return-to-sender modules have DEP but not vice versa
+        if (bun.getConnectionGroup().getConnectionType() == ConnectionType.ARBITRATION && bun.getConnectionGroup().isSlave(bun))
+            return 0;
+        return 1;
     }
 
     private static DesignModule createSrcModule(Noc noc, Bundle bun, Mapping mapping, VcMap vcMap, Map<Bundle, Bundle> bbMap) {
