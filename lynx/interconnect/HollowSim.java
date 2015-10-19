@@ -39,6 +39,9 @@ public class HollowSim {
      */
     private static final int NUM_TESTS = 1000;
 
+    /**
+     * Current src/sink ID
+     */
     protected static int CURRID = 0;
 
     protected static void createAndConnectHollowSim(Design design, Noc noc, List<ConnectionGroup> cgList, VcMap vcMap) {
