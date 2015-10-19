@@ -54,7 +54,9 @@ public class PerfPanel extends JScrollPane {
             rows[num][4] = entry.numberOfSamples;
             num++;
         }
-        return new JTable(rows, columns);
+        JTable table = new JTable(rows, columns);
+        table.setAutoCreateRowSorter(true);
+        return table;
     }
 
     private JTable createLatencyTable(Analysis analysis) {
@@ -69,7 +71,9 @@ public class PerfPanel extends JScrollPane {
             rows[num][4] = entry.numberOfSamples;
             num++;
         }
-        return new JTable(rows, columns);
+        JTable table = new JTable(rows, columns);
+        table.setAutoCreateRowSorter(true);
+        return table;
     }
 
     private JTable createQueueTimeTable(Analysis analysis) {
@@ -84,7 +88,9 @@ public class PerfPanel extends JScrollPane {
             rows[num][4] = entry.numberOfSamples;
             num++;
         }
-        return new JTable(rows, columns);
+        JTable table = new JTable(rows, columns);
+        table.setAutoCreateRowSorter(true);
+        return table;
     }
 
 }
