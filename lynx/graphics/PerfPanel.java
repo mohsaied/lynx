@@ -48,7 +48,7 @@ public class PerfPanel extends JScrollPane {
         int num = 0;
         for (ThroughputStruct entry : analysis.getThroughputList()) {
             rows[num][0] = entry.module;
-            rows[num][1] = String.format("%.3g%n", entry.avgThroughput);
+            rows[num][1] = (double) Math.round(entry.avgThroughput * 100) / 100.0;
             rows[num][2] = entry.minThroughput;
             rows[num][3] = entry.maxThroughput;
             rows[num][4] = entry.numberOfSamples;
@@ -65,7 +65,7 @@ public class PerfPanel extends JScrollPane {
         int num = 0;
         for (LatencyStruct entry : analysis.getLatencyList()) {
             rows[num][0] = entry.name;
-            rows[num][1] = String.format("%.3g%n", entry.avgLatency);
+            rows[num][1] = (double) Math.round(entry.avgLatency * 100) / 100.0;
             rows[num][2] = entry.minLatency;
             rows[num][3] = entry.maxLatency;
             rows[num][4] = entry.numberOfSamples;
@@ -82,7 +82,7 @@ public class PerfPanel extends JScrollPane {
         int num = 0;
         for (LatencyStruct entry : analysis.getQueueTimeList()) {
             rows[num][0] = entry.name;
-            rows[num][1] = String.format("%.3g%n", entry.avgLatency);
+            rows[num][1] = (double) Math.round(entry.avgLatency * 100) / 100.0;
             rows[num][2] = entry.minLatency;
             rows[num][3] = entry.maxLatency;
             rows[num][4] = entry.numberOfSamples;

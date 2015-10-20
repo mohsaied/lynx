@@ -1,7 +1,7 @@
 package lynx.data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class DesignModule extends Module {
 
     public DesignModule(String type, String name, int router) {
         super(type, name);
-        bundles = new HashMap<String, Bundle>();
+        bundles = new LinkedHashMap<String, Bundle>();
     }
 
     public Map<String, Bundle> getBundles() {

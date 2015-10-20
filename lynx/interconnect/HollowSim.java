@@ -2,7 +2,7 @@ package lynx.interconnect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -368,7 +368,7 @@ public class HollowSim {
         // deep copy and replace with sim bundles
         for (int i = 0; i < oldAnnealStruct.bundlesAtRouter.size(); i++) {
             Set<Bundle> bunSet = oldAnnealStruct.bundlesAtRouter.get(i);
-            HashSet<Bundle> newBunList = new HashSet<Bundle>();
+            LinkedHashSet<Bundle> newBunList = new LinkedHashSet<Bundle>();
             for (Bundle bun : bunSet) {
                 newBunList.add(designToSimBundleMap.get(bun));
             }

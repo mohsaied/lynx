@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
+import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
@@ -18,9 +19,10 @@ public class SimulatedAnnealingBundle {
     private static final Logger log = Logger.getLogger(SimulatedAnnealingBundle.class.getName());
 
     private final static int SEED = 1;
-    private final static int QUENCH_TIME = 50;
     private final static int ANNEAL_TIME = 1000000000;
+    private final static int QUENCH_TIME = 500000000;
     private final static int STABLE_MOVES = 1000;
+    private final static int STABLE_MOVES_QUENCH = 1000;
     private final static double INITIAL_TEMP = 100;
     private final static double TEMP_FAC = 0.99;
     private final static int INITIAL_TEMP_INTERVAL = 10;
@@ -117,7 +119,7 @@ public class SimulatedAnnealingBundle {
             log.info("Total number of moves = " + takenMoves + "/" + totalMoves);
             log.info("Mapping cost = " + cost);
             if (elapsedSeconds >= ANNEAL_TIME)
-                log.warning("Mapping anneal ended because of timeout " + elapsedSeconds + " seconds!");
+                log.severe("Mapping anneal ended because of timeout " + elapsedSeconds + " seconds!");
             mapOnlyCost = cost;
 
             takenMoves = 0;
@@ -139,7 +141,7 @@ public class SimulatedAnnealingBundle {
                 log.info("Starting quench with " + moduleList.size() + " modules");
 
                 // start module quench
-                while (stable_for < STABLE_MOVES && elapsedSecondsQuench < QUENCH_TIME) {
+                while (stable_for < STABLE_MOVES_QUENCH && elapsedSecondsQuench < QUENCH_TIME) {
 
                     // make a move
                     AnnealBundleStruct newAnnealStruct = null;
@@ -194,6 +196,9 @@ public class SimulatedAnnealingBundle {
 
         }
 
+        // print out problematic paths that need more bandwidth than they have
+        findOverUtilizedPaths(noc, currMapping);
+
         debugPrintMapping(design, annealStruct);
 
         // export solution to the design
@@ -201,6 +206,29 @@ public class SimulatedAnnealingBundle {
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
         design.setDebugAnnealTemp(debugAnnealTemp);
+    }
+
+    private static void findOverUtilizedPaths(Noc noc, Mapping currMapping) {
+        for (int i = 0; i < noc.getNumRouters(); i++) {
+            for (int j = 0; j < noc.getNumRouters(); j++) {
+                int totalWidth = 0;
+                if (currMapping.getLinkUtilization(Mapping.linkString(i, j)) != null)
+                    for (Connection con : currMapping.getLinkUtilization(Mapping.linkString(i, j))) {
+                        totalWidth += Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
+                    }
+                if (totalWidth > noc.getInterfaceWidth()) {
+                    log.warning("Connection between router " + i + " and " + j + " may be overutilized "
+                            + (int) ((double) totalWidth / noc.getInterfaceWidth() * 100) + "%");
+
+                    for (Connection con : currMapping.getLinkUtilization(Mapping.linkString(i, j))) {
+                        log.info("\t"
+                                + (int) ((double) (Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc
+                                        .getWidth()) / noc.getInterfaceWidth() * 100) + "% |Connection: "
+                                + con.getFromBundle().getFullName() + " to " + con.getToBundle().getFullName());
+                    }
+                }
+            }
+        }
     }
 
     /**

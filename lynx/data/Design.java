@@ -2,6 +2,7 @@ package lynx.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,7 @@ public final class Design extends Module {
 
     public Design(String name) {
         super(name, name + "_inst");
-        this.modules = new HashMap<String, DesignModule>();
+        this.modules = new LinkedHashMap<String, DesignModule>();
         this.moduleIndices = new HashMap<String, Integer>();
         this.allConnections = new ArrayList<Connection>();
         this.translators = new ArrayList<Translator>();

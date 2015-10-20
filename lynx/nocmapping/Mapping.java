@@ -3,6 +3,7 @@ package lynx.nocmapping;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -348,7 +349,7 @@ public class Mapping {
         return num;
     }
 
-    public ArrayList<HashSet<Bundle>> getBundlesAtRouters() {
+    public ArrayList<LinkedHashSet<Bundle>> getBundlesAtRouters() {
         return annealStruct.bundlesAtRouter;
     }
 

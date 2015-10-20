@@ -3,6 +3,7 @@ package lynx.nocmapping;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class AnnealBundleStruct {
 
     public Map<Bundle, List<NocBundle>> bundleMap;
     public Map<NocBundle, Boolean> usedNocBundle;
-    public ArrayList<HashSet<Bundle>> bundlesAtRouter;
+    public ArrayList<LinkedHashSet<Bundle>> bundlesAtRouter;
 
     // copy constructor initializes the struct with copies of maps contents
     public AnnealBundleStruct(AnnealBundleStruct original) {
@@ -48,9 +49,9 @@ public class AnnealBundleStruct {
         }
 
         // make a copy of the bundles at each router
-        bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
-        for (HashSet<Bundle> bunList : original.bundlesAtRouter) {
-            HashSet<Bundle> newBunSet = new HashSet<Bundle>();
+        bundlesAtRouter = new ArrayList<LinkedHashSet<Bundle>>();
+        for (LinkedHashSet<Bundle> bunList : original.bundlesAtRouter) {
+            LinkedHashSet<Bundle> newBunSet = new LinkedHashSet<Bundle>();
             for (Bundle bun : bunList) {
                 newBunSet.add(bun);
             }
@@ -83,13 +84,13 @@ public class AnnealBundleStruct {
         }
 
         // all routers have zero bundles on them except the last one
-        bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
+        bundlesAtRouter = new ArrayList<LinkedHashSet<Bundle>>();
         for (int i = 0; i < noc.getNumRouters(); i++) {
-            HashSet<Bundle> bunSet = new HashSet<Bundle>();
+            LinkedHashSet<Bundle> bunSet = new LinkedHashSet<Bundle>();
             bundlesAtRouter.add(bunSet);
         }
         // put all bundles in the last router (off-noc)
-        HashSet<Bundle> bunSet = new HashSet<Bundle>();
+        LinkedHashSet<Bundle> bunSet = new LinkedHashSet<Bundle>();
         for (Bundle bun : bundleList) {
             bunSet.add(bun);
         }
@@ -100,7 +101,7 @@ public class AnnealBundleStruct {
     public AnnealBundleStruct() {
         bundleMap = new HashMap<Bundle, List<NocBundle>>();
         usedNocBundle = new HashMap<NocBundle, Boolean>();
-        bundlesAtRouter = new ArrayList<HashSet<Bundle>>();
+        bundlesAtRouter = new ArrayList<LinkedHashSet<Bundle>>();
     }
 
     public void disconnectBundle(Bundle selectedBundle) {
