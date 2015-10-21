@@ -11,6 +11,16 @@ test_names = [
     "chain_n16_w128",
     "chain_n20_w128",
     
+    "multimaster_n3_w128",
+    "multimaster_n9_w128",
+    "multimaster_n17_w128",
+    
+    "xbar_n4_w128",
+    #"xbar_n16_w128",
+    #"xbar_n64_w128",
+    
+    "gzip",
+    
     "broadcast_n3_w128",
     "broadcast_n9_w128",
     "broadcast_n16_w128",
@@ -18,10 +28,6 @@ test_names = [
     "converge_n3_w128",
     "converge_n9_w128",
     "converge_n18_w128",
-    
-    "multimaster_n3_w128",
-    "multimaster_n9_w128",
-    "multimaster_n17_w128",
     
     "reconverge_n2_w128",
     "reconverge_n4_w128",

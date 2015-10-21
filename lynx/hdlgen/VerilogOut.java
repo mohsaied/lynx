@@ -193,7 +193,7 @@ public class VerilogOut {
                 }
 
                 // final padding
-                if (currBit > 0) {
+                if (currBit >= 0) {
                     int padSize = currBit + 1;
                     connectionString += "{" + padSize + "{1'b0}}";
                 }

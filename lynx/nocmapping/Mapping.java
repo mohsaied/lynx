@@ -40,6 +40,8 @@ public class Mapping {
     // link --> list of connections
     Map<String, List<Connection>> linkUtilization;
 
+    int overUtilizationPercent;
+
     public Mapping(boolean[][] mapMatrixValues, Design design, Noc noc) {
         mapMatrix = new BoolMatrix(mapMatrixValues);
         this.design = design;
@@ -53,6 +55,7 @@ public class Mapping {
             ReportData.getInstance().writeToRpt(e.getMessage());
             ReportData.getInstance().closeRpt();
         }
+        overUtilizationPercent = 0;
         findConnectionPaths();
         findLinkUtilization();
     }
@@ -70,6 +73,7 @@ public class Mapping {
             }
         }
         this.mapMatrix = new BoolMatrix(mapMatrixValues);
+        overUtilizationPercent = 0;
         findConnectionPaths();
         findLinkUtilization();
     }
@@ -189,7 +193,7 @@ public class Mapping {
         // TODO this is arbitrary right now
         for (List<NocBundle> list : annealStruct.bundleMap.values()) {
             if (list.size() == 0)
-                cost += 1000;
+                cost += 100000;
         }
 
         // add penalty for any bundles that are split over more than one router
@@ -204,7 +208,7 @@ public class Mapping {
                 }
             }
             if (routers.size() > 1)
-                cost += 200 * (routers.size() - 1);
+                cost += 2000 * (routers.size() - 1);
         }
 
         // area of off-noc connections
@@ -224,6 +228,7 @@ public class Mapping {
         }
 
         // path overlap portion of cost
+
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 int totalWidth = 0;
@@ -236,7 +241,7 @@ public class Mapping {
                     int overutil = totalWidth - noc.getInterfaceWidth();
                     if (overutil > 0) {
                         // extra penalty for overutilized links
-                        cost += overutil * 1.25;
+                        cost += overutil * (1 + overutil / 25 * 0.1);
                     }
                 }
             }

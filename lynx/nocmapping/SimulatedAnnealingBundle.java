@@ -1,6 +1,7 @@
 package lynx.nocmapping;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class SimulatedAnnealingBundle {
     private final static int SEED = 1;
     private final static int ANNEAL_TIME = 1000000000;
     private final static int QUENCH_TIME = 500000000;
-    private final static int STABLE_MOVES = 1000;
+    private final static int STABLE_MOVES = 2000;
     private final static int STABLE_MOVES_QUENCH = 1000;
     private final static double INITIAL_TEMP = 100;
     private final static double TEMP_FAC = 0.99;
@@ -196,11 +197,6 @@ public class SimulatedAnnealingBundle {
 
         }
 
-        // print out problematic paths that need more bandwidth than they have
-        int numOverUtilLinks = findOverUtilizedPaths(noc, currMapping);
-
-        ReportData.getInstance().writeToRpt("overutil_links = " + numOverUtilLinks);
-
         debugPrintMapping(design, annealStruct);
 
         // export solution to the design
@@ -208,6 +204,33 @@ public class SimulatedAnnealingBundle {
         design.setSingleMapping(currMapping);
         design.setDebugAnnealCost(debugAnnealCost);
         design.setDebugAnnealTemp(debugAnnealTemp);
+
+        // print out problematic paths that need more bandwidth than they have
+        int numOverUtilLinks = findOverUtilizedPaths(noc, currMapping);
+        ReportData.getInstance().writeToRpt("overutil_links = " + numOverUtilLinks);
+
+        // print out modules that are split over multiple routers
+        int routerSplit = findRouterSplit(design, noc, annealStruct);
+        ReportData.getInstance().writeToRpt("router_split = " + routerSplit);
+    }
+
+    private static int findRouterSplit(Design design, Noc noc, AnnealBundleStruct annealStruct) {
+        int routerSplit = 0;
+        for (DesignModule mod : design.getDesignModules().values()) {
+            Set<Integer> routers = new HashSet<Integer>();
+            for (int i = 0; i <= noc.getNumRouters(); i++) {
+                Set<Bundle> currRouterBundles = annealStruct.bundlesAtRouter.get(i);
+                for (Bundle bun : mod.getBundles().values()) {
+                    if (currRouterBundles.contains(bun))
+                        routers.add(i);
+                }
+            }
+            if (routers.size() > 1) {
+                routerSplit++;
+                log.warning("Module " + mod.getName() + " is split over " + routers.size() + " routers");
+            }
+        }
+        return routerSplit;
     }
 
     private static int findOverUtilizedPaths(Noc noc, Mapping currMapping) {
@@ -215,8 +238,9 @@ public class SimulatedAnnealingBundle {
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 int totalWidth = 0;
-                if (currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j)) != null)
-                    for (Connection con : currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j))) {
+                List<Connection> consAtLink = currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j));
+                if (consAtLink != null)
+                    for (Connection con : consAtLink) {
                         totalWidth += Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
                     }
                 if (totalWidth > noc.getInterfaceWidth()) {
@@ -225,7 +249,7 @@ public class SimulatedAnnealingBundle {
                             + (int) ((double) totalWidth / noc.getInterfaceWidth() * 100) + "%");
 
                     for (Connection con : currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j))) {
-                        log.info("\t"
+                        log.fine("\t"
                                 + (int) ((double) (Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc
                                         .getWidth()) / noc.getInterfaceWidth() * 100) + "% |Connection: "
                                 + con.getFromBundle().getFullName() + " to " + con.getToBundle().getFullName());

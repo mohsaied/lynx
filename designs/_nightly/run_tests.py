@@ -116,20 +116,20 @@ def update_web(web_dir, version, test_name, crash, metric_values, golden_values,
                 print >>web, "<td>"+metric+"</td>"
             else:
                 if previous == '-' or metric == previous or metric == '-':
-                    if metric_fl == 0 and i == 5: #special case for zero quench
+                    if metric_fl == 0 and i == 4: #special case for zero quench
                         print >>web, "<td bgcolor=\"#D3D3D3\">"+metric+"</td>"
                     else:
                         print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
                 else:
-                    if i==5 and metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
+                    if i==4 and metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
-                    elif i==5 and metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
+                    elif i==4 and metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
                     elif metric_fl < prev_fl and (prev_fl - metric_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#00FF00\">"+metric+" ("+previous+")"+"</td>"
                     elif metric_fl > prev_fl and (metric_fl - prev_fl) > 0.9:
                         print >>web, "<td bgcolor=\"#FFFF00\">"+metric+" ("+previous+")"+"</td>"
-                    elif metric_fl == 0 and i == 5:
+                    elif metric_fl == 0 and i == 4:
                         print >>web, "<td bgcolor=\"#D3D3D3\">"+metric+"</td>"
                     else:
                         print >>web, "<td bgcolor=\"#E0EEE0\">"+metric+"</td>"
@@ -158,7 +158,7 @@ run = True
 
 #version number of the program
 #increment version number with each set of major changes
-version = 15
+version = 16
 
 tests_dir = path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"designs"+path_seperator+""
 reports_dir = "archive/"+str(version)+"/"
@@ -208,13 +208,14 @@ metric_names = [
     "num_connections",
     "num_modules",
     "num_clusters",
-    "cluster_time",
+    #"cluster_time",
     "map_cost",
     "quench",
     "map_time",
-    "noc_in_bundles",
-    "noc_out_bundles",
+    #"noc_in_bundles",
+    #"noc_out_bundles",
     "overutil_links",
+    "router_split",
     #"max_link_util",
     #"noc_bw_util",
 ]
