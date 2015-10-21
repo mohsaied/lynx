@@ -158,7 +158,7 @@ run = True
 
 #version number of the program
 #increment version number with each set of major changes
-version = 13
+version = 15
 
 tests_dir = path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"designs"+path_seperator+""
 reports_dir = "archive/"+str(version)+"/"
@@ -170,6 +170,16 @@ test_names = [
     "chain_n16_w128",
     "chain_n20_w128",
     
+    "multimaster_n3_w128",
+    "multimaster_n9_w128",
+    "multimaster_n17_w128",
+    
+    "xbar_n4_w128",
+    #"xbar_n16_w128",
+    #"xbar_n64_w128",
+    
+    "gzip",
+    
     "broadcast_n3_w128",
     "broadcast_n9_w128",
     "broadcast_n16_w128",
@@ -177,10 +187,6 @@ test_names = [
     "converge_n3_w128",
     "converge_n9_w128",
     "converge_n18_w128",
-    
-    "multimaster_n3_w128",
-    "multimaster_n9_w128",
-    "multimaster_n17_w128",
     
     "reconverge_n2_w128",
     "reconverge_n4_w128",
@@ -208,6 +214,7 @@ metric_names = [
     "map_time",
     "noc_in_bundles",
     "noc_out_bundles",
+    "overutil_links",
     #"max_link_util",
     #"noc_bw_util",
 ]

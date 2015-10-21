@@ -226,9 +226,18 @@ public class Mapping {
         // path overlap portion of cost
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {
-                if (this.getLinkUtilization(linkString(i, j)) != null) {
-                    int currUtil = this.getLinkUtilization(linkString(i, j)).size();
-                    cost += currUtil == 0 ? 0 : (currUtil - 1);
+                int totalWidth = 0;
+                List<Connection> consAtLink = this.getLinkUtilizationConnections(Mapping.linkString(i, j));
+                if (consAtLink != null) {
+                    cost += consAtLink.size();
+                    for (Connection con : consAtLink) {
+                        totalWidth += Math.ceil(((float) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
+                    }
+                    int overutil = totalWidth - noc.getInterfaceWidth();
+                    if (overutil > 0) {
+                        // extra penalty for overutilized links
+                        cost += overutil * 1.25;
+                    }
                 }
             }
         }
@@ -268,8 +277,8 @@ public class Mapping {
                 String linkString = linkString(path.get(i), path.get(i + 1));
                 String linkString2 = linkString(path2.get(i), path2.get(i + 1));
 
-                List<Connection> link1 = this.getLinkUtilization(linkString);
-                List<Connection> link2 = mapping2.getLinkUtilization(linkString2);
+                List<Connection> link1 = this.getLinkUtilizationConnections(linkString);
+                List<Connection> link2 = mapping2.getLinkUtilizationConnections(linkString2);
 
                 // otherwise compare traffic on each link and return false if
                 // it's non-identical
@@ -317,7 +326,7 @@ public class Mapping {
         return connectionPaths.get(con);
     }
 
-    public final List<Connection> getLinkUtilization(String linkString) {
+    public final List<Connection> getLinkUtilizationConnections(String linkString) {
         return linkUtilization.get(linkString);
     }
 

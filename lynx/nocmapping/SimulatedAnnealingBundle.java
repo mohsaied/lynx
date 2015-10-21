@@ -197,7 +197,9 @@ public class SimulatedAnnealingBundle {
         }
 
         // print out problematic paths that need more bandwidth than they have
-        findOverUtilizedPaths(noc, currMapping);
+        int numOverUtilLinks = findOverUtilizedPaths(noc, currMapping);
+
+        ReportData.getInstance().writeToRpt("overutil_links = " + numOverUtilLinks);
 
         debugPrintMapping(design, annealStruct);
 
@@ -208,19 +210,21 @@ public class SimulatedAnnealingBundle {
         design.setDebugAnnealTemp(debugAnnealTemp);
     }
 
-    private static void findOverUtilizedPaths(Noc noc, Mapping currMapping) {
+    private static int findOverUtilizedPaths(Noc noc, Mapping currMapping) {
+        int numOverUtilLinks = 0;
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 int totalWidth = 0;
-                if (currMapping.getLinkUtilization(Mapping.linkString(i, j)) != null)
-                    for (Connection con : currMapping.getLinkUtilization(Mapping.linkString(i, j))) {
+                if (currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j)) != null)
+                    for (Connection con : currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j))) {
                         totalWidth += Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
                     }
                 if (totalWidth > noc.getInterfaceWidth()) {
+                    numOverUtilLinks++;
                     log.warning("Connection between router " + i + " and " + j + " may be overutilized "
                             + (int) ((double) totalWidth / noc.getInterfaceWidth() * 100) + "%");
 
-                    for (Connection con : currMapping.getLinkUtilization(Mapping.linkString(i, j))) {
+                    for (Connection con : currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j))) {
                         log.info("\t"
                                 + (int) ((double) (Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc
                                         .getWidth()) / noc.getInterfaceWidth() * 100) + "% |Connection: "
@@ -229,6 +233,7 @@ public class SimulatedAnnealingBundle {
                 }
             }
         }
+        return numOverUtilLinks;
     }
 
     /**
