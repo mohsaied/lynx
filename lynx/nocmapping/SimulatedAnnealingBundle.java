@@ -239,10 +239,11 @@ public class SimulatedAnnealingBundle {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 int totalWidth = 0;
                 List<Connection> consAtLink = currMapping.getLinkUtilizationConnections(Mapping.linkString(i, j));
-                if (consAtLink != null)
+                if (consAtLink != null) {
                     for (Connection con : consAtLink) {
                         totalWidth += Math.ceil(((double) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
                     }
+                }
                 if (totalWidth > noc.getInterfaceWidth()) {
                     numOverUtilLinks++;
                     log.warning("Connection between router " + i + " and " + j + " may be overutilized "

@@ -218,7 +218,7 @@ public class Mapping {
         for (Connection con : design.getConnections()) {
             if (annealStruct.bundleMap.get(con.getFromBundle()).size() == 0
                     || annealStruct.bundleMap.get(con.getFromBundle()).size() == 0)
-                cost += 4;
+                cost += 100000;
         }
 
         // latency portion of the cost
@@ -228,21 +228,25 @@ public class Mapping {
         }
 
         // path overlap portion of cost
+        final boolean xbar = false;
 
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {
                 int totalWidth = 0;
                 List<Connection> consAtLink = this.getLinkUtilizationConnections(Mapping.linkString(i, j));
-                if (consAtLink != null) {
-                    cost += consAtLink.size();
-                    for (Connection con : consAtLink) {
-                        totalWidth += Math.ceil(((float) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
+                if (consAtLink != null && consAtLink.size() > 0) {
+                    cost += consAtLink.size() * 5;
+                    if (!xbar) {
+                        for (Connection con : consAtLink) {
+                            totalWidth += Math.ceil(((float) con.getFromBundle().getWidth() / noc.getWidth())) * noc.getWidth();
+                        }
+                        int overutil = totalWidth - noc.getInterfaceWidth();
+                        if (overutil > 0) {
+                            // extra penalty for overutilized links
+                            cost += overutil * (1 + overutil / 25 * 0.1) * 0.5;
+                        }
                     }
-                    int overutil = totalWidth - noc.getInterfaceWidth();
-                    if (overutil > 0) {
-                        // extra penalty for overutilized links
-                        cost += overutil * (1 + overutil / 25 * 0.1);
-                    }
+
                 }
             }
         }

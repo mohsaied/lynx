@@ -158,7 +158,7 @@ run = True
 
 #version number of the program
 #increment version number with each set of major changes
-version = 16
+version = 18
 
 tests_dir = path_start+path_seperator+"Dropbox"+path_seperator+"PhD"+path_seperator+"Software"+path_seperator+"noclynx"+path_seperator+"designs"+path_seperator+""
 reports_dir = "archive/"+str(version)+"/"
