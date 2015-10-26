@@ -228,7 +228,7 @@ public class Mapping {
         }
 
         // path overlap portion of cost
-        final boolean xbar = false;
+        final boolean xbar = true;
 
         for (int i = 0; i < noc.getNumRouters(); i++) {
             for (int j = 0; j < noc.getNumRouters(); j++) {

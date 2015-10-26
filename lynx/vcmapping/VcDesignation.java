@@ -92,6 +92,18 @@ public class VcDesignation {
             // go over the bunset. For each input bundle, find the source bundle
             // then assign each bundle a VC
             if (combineData != 0) {
+
+                // FIXME This hack is to ensure that cd works with a bundle
+                // that uses one NoCbundle in a 4-VC NoC
+                // TODO ideally, we would want a more general method of
+                // assigning bundles to nocbundles in any combination of
+                // combine-data mode
+                // currently, the one thing that is not supported in lynx, but
+                // is supported in SW fabricport, is cd=1 with 4 VCs -- but it
+                // works if we switch it over to cd=2
+                if (combineData == 1 && noc.getNumVcs() > 2)
+                    combineData = 2;
+
                 // here we need to make sure that each bundle is assigned its
                 // correct VC
                 // The VCs start from 0 at the most significant bit, then
