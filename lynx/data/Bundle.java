@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import lynx.data.MyEnums.BundleType;
 import lynx.data.MyEnums.Direction;
 import lynx.elaboration.ConnectionGroup;
 
@@ -24,11 +25,8 @@ public final class Bundle {
     private Port dataPort;
     private Port validPort;
     private Port readyPort;
-    private Port dstPort; // will be null for depkt
-    private Port vcPort; // will be null for depkt
-    private Port waitForReplyPort; // will be null for non-arbitration
-                                   // connectiongroups, or if it is missing from
-                                   // port definition
+    private Port dstPort; // will be null for input or singular conn
+    private Port vcPort; // will be null for input or singular conn
 
     private Direction direction;
     private int width;
@@ -41,6 +39,13 @@ public final class Bundle {
 
     private ConnectionGroup connectionGroup;
 
+    // this part is mainly for masters and slaves
+    // as we parse bundles, we can set their type (master, or slave)
+    // and if it qualifies for one of those, then it must have exactly one
+    // sister-bundle which is either the sending/receiving 
+    private BundleType bundleType;
+    private Bundle sisterBundle;
+
     public Bundle() {
         this(null);
     }
@@ -50,19 +55,24 @@ public final class Bundle {
     }
 
     public Bundle(String name, DesignModule parentModule) {
+        this(name, BundleType.OTHER, parentModule);
+    }
+
+    public Bundle(String name, BundleType bundleType, DesignModule parentModule) {
         this.name = name;
-        dataPort = null;
-        validPort = null;
-        readyPort = null;
-        dstPort = null;
-        vcPort = null;
-        waitForReplyPort = null;
-        width = 0;
-        direction = Direction.UNKNOWN;
-        translator = null;
+        this.dataPort = null;
+        this.validPort = null;
+        this.readyPort = null;
+        this.dstPort = null;
+        this.vcPort = null;
+        this.width = 0;
+        this.direction = Direction.UNKNOWN;
+        this.translator = null;
         this.parentModule = parentModule;
         this.connections = new ArrayList<Bundle>();
         this.connectionGroup = null;
+        this.bundleType = bundleType;
+        this.sisterBundle = null;
         log.fine("Creating new bundle, name = " + name);
     }
 
@@ -132,14 +142,6 @@ public final class Bundle {
         this.vcPort = vcPort;
     }
 
-    public final void setWaitForReplyPort(Port port) {
-        this.waitForReplyPort = port;
-    }
-
-    public final Port getWaitforReplyPort() {
-        return waitForReplyPort;
-    }
-
     public final Direction getDirection() {
         return direction;
     }
@@ -197,6 +199,22 @@ public final class Bundle {
 
     public void setConnectionGroup(ConnectionGroup connectionGroup) {
         this.connectionGroup = connectionGroup;
+    }
+
+    public BundleType getBundleType() {
+        return bundleType;
+    }
+
+    public void setBundleType(BundleType bundleType) {
+        this.bundleType = bundleType;
+    }
+
+    public Bundle getSisterBundle() {
+        return sisterBundle;
+    }
+
+    public void setSisterBundle(Bundle sisterBundle) {
+        this.sisterBundle = sisterBundle;
     }
 
     public Bundle clone(DesignModule mod, Set<String> scc) {

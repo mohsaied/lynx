@@ -161,8 +161,14 @@ public class XmlDesign {
                     mod.addPort(por);
                     break;
                 case "bundle":
-                    Bundle bun = parseBundle(cNode, mod);
+                    Bundle bun = parseBundle(cNode, BundleType.OTHER, mod);
                     mod.addBundle(bun);
+                    break;
+                case "master":
+                    parseMasterOrSlave(cNode, BundleType.MASTER, mod);
+                    break;
+                case "slave":
+                    parseMasterOrSlave(cNode, BundleType.SLAVE, mod);
                     break;
                 default:
                     assert false : "Unexpected tag \"" + cNode.getNodeName() + "\"";
@@ -172,7 +178,42 @@ public class XmlDesign {
         return mod;
     }
 
-    private static Bundle parseBundle(Node node, DesignModule mod) {
+    private static void parseMasterOrSlave(Node node, BundleType bundleType, DesignModule mod) {
+
+        Bundle bun1 = null;
+        Bundle bun2 = null;
+
+        NodeList childNodes = node.getChildNodes();
+        for (int j = 0; j < childNodes.getLength(); j++) {
+            Node cNode = childNodes.item(j);
+
+            // Identifying the child tag of Module encountered
+            if (cNode instanceof Element) {
+
+                // child tags can be either ports or parameters
+                switch (cNode.getNodeName()) {
+                case "bundle":
+                    if (bun1 == null)
+                        bun1 = parseBundle(cNode, bundleType, mod);
+                    else
+                        bun2 = parseBundle(cNode, bundleType, mod);
+                    break;
+                default:
+                    assert false : "Unexpected tag \"" + cNode.getNodeName() + "\"";
+                }
+            }
+        }
+
+        assert (bun1 != null) && (bun2 != null) : "Master/slave groups must contain exactly 2 bundles, one input and one output.";
+
+        bun1.setSisterBundle(bun2);
+        bun2.setSisterBundle(bun1);
+
+        mod.addBundle(bun1);
+        mod.addBundle(bun2);
+    }
+
+    private static Bundle parseBundle(Node node, BundleType bundleType, DesignModule mod) {
 
         Bundle bun = new Bundle(node.getAttributes().getNamedItem("name").getNodeValue(), mod);
 

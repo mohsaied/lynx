@@ -46,6 +46,21 @@ public class MyEnums {
         }
     }
 
+    public enum BundleType {
+        MASTER("master"), SLAVE("slave"), OTHER("other");
+
+        private final String name;
+
+        private BundleType(String s) {
+            name = s;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     public enum TranslatorType {
         PACKETIZER_STD("packetizer_std"), PACKETIZER_DA("packetizer_da"), DEPACKETIZER_STD("depacketizer_std"), DEPACKETIZER_DA(
                 "depacketizer_da");
