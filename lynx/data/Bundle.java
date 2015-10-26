@@ -42,7 +42,7 @@ public final class Bundle {
     // this part is mainly for masters and slaves
     // as we parse bundles, we can set their type (master, or slave)
     // and if it qualifies for one of those, then it must have exactly one
-    // sister-bundle which is either the sending/receiving 
+    // sister-bundle which is either the sending/receiving
     private BundleType bundleType;
     private Bundle sisterBundle;
 
@@ -217,6 +217,14 @@ public final class Bundle {
         this.sisterBundle = sisterBundle;
     }
 
+    @Override
+    public String toString() {
+        String s = "";
+        s += this.getFullName();
+        s += " - " + this.getBundleType();
+        return s;
+    }
+
     public Bundle clone(DesignModule mod, Set<String> scc) {
         Bundle bun = new Bundle(parentModule.getName() + "^" + name, mod);
 
@@ -247,6 +255,8 @@ public final class Bundle {
         // initialize the connections, but the other bundles may not be made yet
         // so I cannot start adding them now
         bun.connections = new ArrayList<Bundle>();
+
+        bun.bundleType = bundleType;
         return bun;
     }
 

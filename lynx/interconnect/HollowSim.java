@@ -141,7 +141,17 @@ public class HollowSim {
 
         createAndConnectHaltModule(simulationDesign);
 
+        updateSisterBundles(simulationDesign, bbMap);
+
         return bbMap;
+    }
+
+    private static void updateSisterBundles(Design simulationDesign, Map<Bundle, Bundle> bbMap) {
+        for (Bundle origBun : bbMap.keySet()) {
+            Bundle simBun = bbMap.get(origBun);
+            simBun.setBundleType(origBun.getBundleType());
+            simBun.setSisterBundle(bbMap.get(origBun.getSisterBundle()));
+        }
     }
 
     private static void connectSimulationDesign(Design simulationDesign, Map<Bundle, Bundle> bbMap) {

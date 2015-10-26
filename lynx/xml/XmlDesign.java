@@ -215,7 +215,7 @@ public class XmlDesign {
 
     private static Bundle parseBundle(Node node, BundleType bundleType, DesignModule mod) {
 
-        Bundle bun = new Bundle(node.getAttributes().getNamedItem("name").getNodeValue(), mod);
+        Bundle bun = new Bundle(node.getAttributes().getNamedItem("name").getNodeValue(), bundleType, mod);
 
         // loop over the ports in a bundle
         NodeList childNodes = node.getChildNodes();

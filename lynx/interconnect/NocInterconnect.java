@@ -75,7 +75,7 @@ public class NocInterconnect {
         HollowSim.createAndConnectHollowSim(design, noc, cgList, vcMap);
 
         // log.info("Creating and connecting actual design");
-        //connectActualDesignToNoc(design, noc, cgList, vcMap);
+        // connectActualDesignToNoc(design, noc, cgList, vcMap);
     }
 
     // TODO this flow is unfinished (but shouldn't take long to get it working)
@@ -149,11 +149,7 @@ public class NocInterconnect {
                 Bundle inbun = translator.getParentBundle();
                 assert inbun.getConnectionGroup().isSlave(inbun) && inbun.getDirection() == Direction.INPUT : "bundle for depacketizer_da isn't a slave or has wrong direction";
                 // find the slave input port and associated packetizer
-                Bundle outbun = null;
-                for (Bundle bun : inbun.getConnectionGroup().getFromBundles()) {
-                    if (inbun.getConnectionGroup().isSlave(bun))
-                        outbun = bun;
-                }
+                Bundle outbun = inbun.getSisterBundle();
                 assert outbun != null : "Couldn't find output bundle for slave of input bundle " + inbun.getFullName();
                 assert inbun.getParentModule() == outbun.getParentModule() : "Slave input and output ports ("
                         + inbun.getFullName() + "," + outbun.getFullName() + ") aren't part of the same module.";

@@ -2,16 +2,17 @@ package lynx.elaboration;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import lynx.data.Bundle;
 import lynx.data.Connection;
 import lynx.data.Design;
-import lynx.data.DesignModule;
+import lynx.data.MyEnums.BundleType;
 import lynx.data.MyEnums.ConnectionType;
-import lynx.data.MyEnums.Direction;
 
 public class Elaboration {
 
@@ -44,72 +45,76 @@ public class Elaboration {
         // loop over each connection and figure out its type
         // whenever we process a connection, mark it as done
         for (Connection con : conList) {
+
             // if we already processed this connection, move on
             if (doneSet.contains(con))
                 continue;
 
-            // for this connection, check its dst bundle
-            // does the dstbundle have other incoming connections to it?
-            Bundle slaveDstBun = con.getToBundle();
-            // we're part of a multimaster connectiongroup if the dst bundle
-            // that this connection feeds has multiple connections
-            // and these connections also have responses
-            int twoWayConnections = 0;
-            DesignModule mod = slaveDstBun.getParentModule();
-            // loop over module's bundles
-            for (Bundle slaveSrcBun : mod.getBundles().values()) {
-                if (slaveSrcBun.getDirection() == Direction.OUTPUT) {
-                    // we found a bundle that outputs data
-                    // now we need to make sure that there are multiple
-                    // connections from other modules to this dstBundle, and
-                    // return connections from this dstbundle back to the same
-                    // module
-                    twoWayConnections = 0;
-                    for (Bundle masterDstBun : slaveSrcBun.getConnections()) {
+            boolean multimaster = false;
+            if ((con.getFromBundle().getBundleType() == BundleType.MASTER && con.getToBundle().getBundleType() == BundleType.SLAVE)
+                    || (con.getFromBundle().getBundleType() == BundleType.SLAVE && con.getToBundle().getBundleType() == BundleType.MASTER))
+                multimaster = true;
 
-                        // look for a way back to our slave bun
-                        boolean foundWayBack = false;
-                        for (Bundle masterSrcBun : masterDstBun.getParentModule().getBundles().values()) {
-                            // if this module contains an outgoing bundle to our
-                            // mod, then we're good
-                            for (Bundle masterSrcBunDst : masterSrcBun.getConnections()) {
-                                if (masterSrcBunDst == slaveDstBun) {
-                                    foundWayBack = true;
-                                    twoWayConnections++;
-                                    break;
-                                }
-                            }
-                            if (foundWayBack)
-                                break;
-                        }
-
-                    }
-                    if (twoWayConnections > 1)
-                        break;
-                }
-            }
-            boolean multimaster = twoWayConnections > 1;
             if (multimaster) {
-                log.fine("Found arbitration connectiongroup");
+                log.info("Found arbitration connectiongroup");
                 ConnectionGroup mmGroup = new ConnectionGroup(ConnectionType.ARBITRATION);
-                for (Connection con1 : conList) {
-                    if (con1.getToBundle() == slaveDstBun) {
-                        log.info("\tAdding connection: " + con1);
-                        mmGroup.addMasterConnection(con1);
-                        // mark connection as processed
-                        doneSet.add(con1);
-                        // need to find the connections coming back, if they are
-                        // present
-                        for (Connection con2 : conList) {
-                            if ((con2.getFromBundle().getParentModule() == con1.getToBundle().getParentModule())
-                                    && (con2.getToBundle().getParentModule() == con1.getFromBundle().getParentModule())) {
-                                log.info("\tAdding connection: " + con2);
-                                mmGroup.addSlaveConnection(con2);
-                                doneSet.add(con2);
+
+                // need to expand app graph from here (this connection's
+                // bundles) and add anything connected to the same MM network
+
+                // create a processing queue
+                Queue<Connection> processingQueue = new LinkedList<Connection>();
+
+                // add this connection's bundles to it
+                processingQueue.add(con);
+
+                while (!processingQueue.isEmpty()) {
+                    log.fine("pqsize = " + processingQueue.size());
+                    Connection currCon = processingQueue.remove();
+                    log.fine("pqsize (ar) = " + processingQueue.size());
+
+                    log.fine("=================");
+                    log.fine("\t" + con);
+                    log.fine("\t\t" + con.getFromBundle());
+                    log.fine("\t\t" + con.getToBundle());
+                    log.fine("------------------");
+
+                    if (doneSet.contains(currCon)) {
+                        log.fine("Doneset contains it!");
+                        continue;
+                    }
+
+                    Bundle fromBun = currCon.getFromBundle();
+                    Bundle toBun = currCon.getToBundle();
+
+                    log.fine("fromtype = " + fromBun.getBundleType());
+                    log.fine("totype = " + toBun.getBundleType());
+
+                    // add the current connection to the mmGroup
+                    if (fromBun.getBundleType() == BundleType.MASTER && toBun.getBundleType() == BundleType.SLAVE) {
+                        log.info("\tAdding master " + currCon);
+                        mmGroup.addMasterConnection(currCon);
+                    } else if (fromBun.getBundleType() == BundleType.SLAVE && toBun.getBundleType() == BundleType.MASTER) {
+                        log.info("\tAdding slave " + currCon);
+                        mmGroup.addSlaveConnection(currCon);
+                    }
+
+                    // mark as processed
+                    doneSet.add(currCon);
+
+                    // loop over all connections coming out of the same bundles,
+                    // also loop over all connections from the sisterbundles and
+                    // and add them
+                    for (Connection con1 : conList) {
+                        if (!doneSet.contains(con1))
+                            if ((con1.getFromBundle() == fromBun) || (con1.getToBundle() == toBun)
+                                    || (con1.getFromBundle() == toBun.getSisterBundle())
+                                    || (con1.getToBundle() == fromBun.getSisterBundle())) {
+                                processingQueue.add(con1);
                             }
-                        }
                     }
                 }
+
                 cgList.add(mmGroup);
             }
         }
