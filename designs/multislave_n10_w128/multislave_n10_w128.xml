@@ -1,0 +1,248 @@
+<design name="ram">
+  
+  <module type="master" name="src1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<master>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+    </master>
+  </module>
+  
+  <module type="ram" name="dst1">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst2">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst3">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst4">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst5">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst6">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst7">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst8">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst9">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <module type="ram" name="dst10">
+	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
+	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
+        <bundle name="inbun">
+            <port direction="input" width="128" name="i_x" type="data"/>
+            <port direction="input" width="1" name="i_valid_in" type="valid"/>
+            <port direction="output" width="1" name="i_ready_out" type="ready"/>
+        </bundle>
+        <bundle name="outbun">
+            <port direction="output" width="128" name="o_y" type="data"/>
+            <port direction="output" width="1" name="o_valid_out" type="valid"/>
+            <port direction="output" width="4" name="o_dest_out" type="dst"/>
+            <port direction="output" width="2" name="o_vc_out" type="vc"/>
+            <port direction="input" width="1" name="o_ready_in" type="ready"/>
+        </bundle>
+	</slave>
+  </module>
+  
+  <!-- Must parse modules before connections, can remove that restriction later -->
+  
+  <!-- Connections -->
+  
+  <connection start="src1.outbun" end="dst1.inbun"/>
+  <connection start="dst1.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst2.inbun"/>
+  <connection start="dst2.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst3.inbun"/>
+  <connection start="dst3.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst4.inbun"/>
+  <connection start="dst4.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst5.inbun"/>
+  <connection start="dst5.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst6.inbun"/>
+  <connection start="dst6.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst7.inbun"/>
+  <connection start="dst7.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst8.inbun"/>
+  <connection start="dst8.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst9.inbun"/>
+  <connection start="dst9.outbun" end="src1.inbun"/>
+  
+  <connection start="src1.outbun" end="dst10.inbun"/>
+  <connection start="dst10.outbun" end="src1.inbun"/>
+  
+  
+  
+</design>

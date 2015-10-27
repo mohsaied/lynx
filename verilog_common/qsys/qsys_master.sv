@@ -6,11 +6,13 @@
 
 module qsys_master
 #(
-	parameter           WIDTH = 32, //data width
-    parameter [7:0]    SRC_ID =  2, //unique id associated with each src
-    parameter [7:0]    SNK_ID =  3, //unique id associated with each sink
-    parameter [7:0]    DST_ID =  1, //id associated with the destination
-    parameter      ADDR_WIDTH = 32  //address width doesn't matter
+	parameter           WIDTH     = 32, //data width
+    parameter [7:0]    SRC_ID     =  2, //unique id associated with each src
+    parameter [7:0]    SNK_ID     =  3, //unique id associated with each sink
+    parameter [7:0]    DST_ID     =  1, //id associated with the destination
+    parameter [7:0]    NUM_SLAVES =  0, //Number of slaves we're sending to 
+    parameter [7:0]    BURST_SIZE =  16, //burst length
+    parameter          ADDR_WIDTH = 32  //address width doesn't matter
 )
 (
 	input clk,
@@ -29,12 +31,16 @@ module qsys_master
 //counter for data at this node
 reg [WIDTH-8*2-1:0] data_counter;
 
+reg [7:0] burst_counter;
+
 //do we have something queued?
 reg queued_flag;
 reg read_reg;
 
+reg [ADDR_WIDTH-1:0] address_reg;
+
 assign writedata = {SRC_ID,DST_ID,data_counter};
-assign address   = 0;
+assign address   = address_reg;
 assign write     = 0;
 assign read      = read_reg;
 
@@ -43,13 +49,18 @@ localparam SRC_POS  = WIDTH-1;
 localparam DST_POS  = SRC_POS - 8;
 localparam DATA_POS = DST_POS - 8;
 
+localparam ADDR_MOD = ADDR_WIDTH-32;
+
 reg [7:0] src_id_in;
 reg [7:0] dst_id_in;
 reg [WIDTH-8*2-1:0] data_in;
 
+reg [7:0] curr_dst;
+
 //-------------------------------------------------------
 // Implementation
 //-------------------------------------------------------
+
 
 //we always want to issue read requests so that we get replies back
 //but we won't necessarily wait for the replies - we'll keep sending read requests
@@ -68,6 +79,9 @@ begin
         data_counter = 0;
         queued_flag  = 0;
         read_reg = 0;
+        address_reg = 0;
+        curr_dst = 0;
+        burst_counter = BURST_SIZE;
 	end
 	else
 	begin
@@ -76,6 +90,20 @@ begin
             data_counter = data_counter + 1;
             queued_flag  = 0;
             read_reg = 1;
+
+            //select which slave to send to next
+            //slaves always have a 32-bit address
+            address_reg[ADDR_WIDTH-1 -: ADDR_MOD] = curr_dst;
+            
+            burst_counter = burst_counter - 1;
+            
+            if(burst_counter === 0)
+                curr_dst = curr_dst + 1;
+            if(curr_dst === NUM_SLAVES)
+                curr_dst = 0;
+                
+            if(burst_counter === 0)
+                burst_counter = BURST_SIZE;
             
             //synopsys translate off
 	        curr_time = $time;

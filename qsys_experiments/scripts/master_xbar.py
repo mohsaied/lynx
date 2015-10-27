@@ -2,8 +2,8 @@ import os
 import time
 import sys
 
-import generate_bus
-from generate_bus import *
+import generate_xbar
+from generate_xbar import *
 
 #********************************************************************************************#
 #                             PROGRAM START
@@ -16,7 +16,7 @@ num_pipelines = [0,1,2,3,4]
 multiclocks   = [0,1]
 
 #parameters being tested
-num_masters   = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+num_masters   = [4]
 widths        = [32]
 num_pipelines = [4]
 multiclocks   = [0]
@@ -41,7 +41,7 @@ for num_master in num_masters:
     for width in widths:
         for num_pipeline in num_pipelines:
             for multiclock in multiclocks:
-                generate_bus(num_master,width,num_pipeline,multiclock)
+                generate_xbar(num_master,width,num_pipeline,multiclock)
                 num_systems = num_systems + 1
                 
                 
@@ -79,7 +79,7 @@ for num_master in num_masters:
         for num_pipeline in num_pipelines:
             for multiclock in multiclocks:
     
-                test_name = 'm'+str(num_master)+'_w'+str(width)+'_p'+str(num_pipeline)+"_c"+str(multiclock)+".txt";
+                test_name = 'x'+str(num_master)+'_w'+str(width)+'_p'+str(num_pipeline)+"_c"+str(multiclock)+".txt";
                 
                 lynx_trace = trace_dir+path_seperator+test_name
                 
