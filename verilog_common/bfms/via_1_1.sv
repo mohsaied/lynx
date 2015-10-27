@@ -119,7 +119,9 @@ end
 //synopsys translate off
 int curr_time;
 integer fmain;
+integer fextra;
 initial fmain = $fopen("reports/lynx_trace.txt");
+initial fextra = $fopen("reports/lynx_trace_extra.txt");
 //synopsys translate on
 
 //TPG o0
@@ -158,6 +160,7 @@ begin
             //synopsys translate off
 	        curr_time = $time;
             $fdisplay(fmain,"SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,o0_NODE,o0_dest_reg,o0_NODE,o0_data_counter);
+            $fdisplay(fextra,"SRC=%d;  time=%d; from=%d; fromvc=%d; to=%d; tovc=%d; curr=%d; data=%d;",o0_ID,curr_time,o0_NODE,i0_VC,o0_dest_reg,o0_vc_reg,o0_NODE,o0_data_counter);
             //$display("SRC=%d;  time=%d; from=%d; to=%d; curr=%d; data=%d;",o0_ID,curr_time,o0_NODE,o0_dest_reg,o0_NODE,o0_data_counter);
             //synopsys translate on
             
@@ -217,6 +220,7 @@ begin
                 //synopsys translate off
                 curr_time = $time;
                 $fdisplay(fmain,"SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,i0_NODE,i0_data_counter,i0_id_in);
+                $fdisplay(fextra,"SINK=%d; time=%d; from=%d; fromvc=%d; to=%d; tovc=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_returnvc_in,i0_dst_in,i0_VC,i0_NODE,i0_data_counter,i0_id_in);
                 //$display("SINK=%d; time=%d; from=%d; to=%d; curr=%d; data=%d; SRC=%d;",i0_ID,curr_time,i0_src_in,i0_dst_in,i0_NODE,i0_data_counter,i0_id_in);
                 //synopsys translate on
                 
@@ -232,6 +236,7 @@ assign done = (i0_data_counter > NUM_TESTS) && (o0_data_counter > NUM_TESTS);
 
 //synopsys translate off
 final $fclose(fmain);
+final $fclose(fextra);
 //synopsys translate on
 
 endmodule
