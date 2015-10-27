@@ -244,6 +244,9 @@ public class XmlDesign {
                     case DST:
                         bun.setDstPort(por);
                         break;
+                    case VC:
+                        bun.setVcPort(por);
+                        break;
                     default:
                         assert false : "\"" + por.getType() + "\" is unexpected in a bundle, only data/valid/ready allowed";
                     }
@@ -281,6 +284,9 @@ public class XmlDesign {
                 break;
             case "dst":
                 type = PortType.DST;
+                break;
+            case "vc":
+                type = PortType.VC;
                 break;
             case "clk":
                 type = PortType.CLK;
