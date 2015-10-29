@@ -20,6 +20,7 @@ import lynx.data.Packetizer;
 import lynx.data.Parameter;
 import lynx.data.Port;
 import lynx.data.Translator;
+import lynx.data.Wire;
 import lynx.data.Wrapper;
 import lynx.data.MyEnums.ConnectionType;
 import lynx.data.MyEnums.Direction;
@@ -242,13 +243,17 @@ public class NocInterconnect {
         // arbitration masters only
         for (ConnectionGroup cgGroup : cgList) {
             if (cgGroup.getConnectionType() == ConnectionType.ARBITRATION) {
-                // how many masters do we have in this arbitration group?
-                int numSendingMasters = 0;
+                // how many masters/slaves do we have in this arbitration group?
+                int numMasters = 0;
+                int numSlaves = 0;
                 for (Bundle outbun : cgGroup.getFromBundles()) {
                     if (cgGroup.isMaster(outbun)) {
-                        numSendingMasters++;
+                        numMasters++;
+                    } else if (cgGroup.isSlave(outbun)) {
+                        numSlaves++;
                     }
                 }
+
                 // find bundles that are:
                 // 1- masters
                 // 2- output
@@ -256,38 +261,145 @@ public class NocInterconnect {
                     if (cgGroup.isMaster(outbun)) {
 
                         // then find the corresponding input bundle:
-                        // 1- master
-                        // 2- input
-                        // 3- same module
-                        // (TODO: doesn't handle the cases of modules that
-                        // consist of more than one master)
-                        for (Bundle inbun : cgGroup.getToBundles()) {
-                            if (cgGroup.isMaster(inbun) && inbun.getParentModule() == outbun.getParentModule()) {
-                                // TODO need definite function to return the
-                                // router index for a bundle
-                                int router = mapping.getApproxRouterForModule(inbun.getParentModule());
-                                createAndConnectCreditMasterTM(inbun, outbun, design, noc, router, numSendingMasters);
-                            }
+                        Bundle inbun = outbun.getSisterBundle();
+                        // router for output (sending) bun -- get its ready
+                        // signal to stall module when needed
+                        int router = mapping.getRouter(outbun);
+                        if (numSlaves == 1) {
+                            createAndConnectCreditTM(inbun, outbun, design, noc, router, numMasters);
+                        } else {
+                            createAndConnectCreditMultiSlaveTM(inbun, outbun, design, noc, router, numMasters, numSlaves);
                         }
-                        // if no input bundle is found, we'll do nothing
-                        // for converge patterns, receive bundle should be
-                        // inserted earlier
                     }
                 }
             }
         }
     }
 
-    private static void createAndConnectCreditMasterTM(Bundle inbun, Bundle outbun, Design design, Noc noc, int router,
-            int numSendingMasters) {
+    private static void createAndConnectCreditMultiSlaveTM(Bundle inbun, Bundle outbun, Design design, Noc noc, int router,
+            int numMasters, int numSlaves) {
+        // create the credit TM module
+        Wrapper tm = new Wrapper("tm_master_multislave", outbun.getParentModule().getName() + "_tm", outbun.getParentModule());
+
+        log.info("Adding (multislave) TM " + tm.getName());
+
+        // fetch the translators for the outbunsim
+        Packetizer outbunPkt = (Packetizer) outbun.getTranslator();
+        int nocFacingWidthOfSender = Integer.parseInt(outbun.getTranslator().getParameterByName("WIDTH_OUT"));
+
+        // parameters
+        // TODO incorporate slave latency in this computation
+        float idealNumCredits = Math.round((2 * noc.getAverageLatency() + 1) / numMasters);
+        int idealNumCreditsInt = (int) Math.ceil(idealNumCredits);
+        tm.addParameter(new Parameter("NUM_CREDITS", idealNumCreditsInt));
+        tm.addParameter(new Parameter("ADDRESS_WIDTH", noc.getAddressWidth()));
+        tm.addParameter(new Parameter("VC_ADDRESS_WIDTH", noc.getVcAddressWidth()));
+        tm.addParameter(new Parameter("WIDTH_NOC", nocFacingWidthOfSender));
+
+        // ports
+        Port sendValidInPort = new Port("send_valid_in", Direction.INPUT, tm);
+        Port sendValidOutPort = new Port("send_valid_out", Direction.OUTPUT, tm);
+        Port sendDataInPort = new Port("send_data_in", Direction.INPUT, nocFacingWidthOfSender, tm);
+        Port sendDataOutPort = new Port("send_data_out", Direction.OUTPUT, nocFacingWidthOfSender, tm);
+        Port sendDstPort = new Port("send_dest", Direction.INPUT, noc.getAddressWidth(), tm);
+        Port sendVcPort = new Port("send_vc", Direction.INPUT, noc.getVcAddressWidth(), tm);
+        Port sendReadyInPort = new Port("send_ready_in", Direction.INPUT, tm);
+        Port sendReadyOutPort = new Port("send_ready_out", Direction.OUTPUT, tm);
+        Port receiveValidPort = new Port("receive_valid", Direction.INPUT, tm);
+
+        tm.addPort(sendValidInPort);
+        tm.addPort(sendValidOutPort);
+        tm.addPort(sendDataInPort);
+        tm.addPort(sendDataOutPort);
+        tm.addPort(sendDstPort);
+        tm.addPort(sendVcPort);
+        tm.addPort(sendReadyInPort);
+        tm.addPort(sendReadyOutPort);
+        tm.addPort(receiveValidPort);
+
+        // now stitch in the ports in their right locations
+
+        // data in
+        Port pktDataOut = outbunPkt.getPort(PortType.DATA, Direction.OUTPUT);
+        sendDataInPort.addWire(pktDataOut);
+        pktDataOut.addWire(sendDataInPort);
+
+        // TODO This part needs to be simplified a lot to make it easier to
+        // connect wrappers and other things -- suggested functions include
+        // "replaceWire" for instance
+
+        // data out and valid out -- a bit tricky because they involve multiple
+        // signals concatenated together
+        // router data port
+        Port routerData = noc.getPort(PortType.DATA, Direction.INPUT, router);
+        // get the pkt wire in noc port to know where it connects exactly
+        Wire pktWireInNoc = routerData.getWireByPort(pktDataOut);
+        int srcPortStart = pktWireInNoc.getSrcPortStart();
+        int srcPortEnd = pktWireInNoc.getSrcPortEnd();
+        int dstPortStart = pktWireInNoc.getDstPortStart();
+        int dstPortEnd = pktWireInNoc.getDstPortEnd();
+        // now unstictch the previous connection between packetizer and noc
+        routerData.removeWire(pktDataOut);
+        pktDataOut.removeWire(routerData);
+        // now stich the TM data out in its place
+        routerData.addWire(sendDataOutPort, srcPortStart, srcPortEnd, dstPortStart, dstPortEnd);
+        sendDataOutPort.addWire(routerData, dstPortStart, dstPortEnd, srcPortStart, srcPortEnd);
+
+        // and valid
+        Port routerValid = noc.getPort(PortType.VALID, Direction.INPUT, router);
+        Port pktValid = outbunPkt.getPort(PortType.VALID, Direction.OUTPUT);
+        routerValid.removeWire(pktValid);
+        pktValid.removeWire(routerValid);
+        routerValid.addWire(sendValidOutPort);
+        sendValidOutPort.addWire(routerValid);
+
+        // dest and vc
+        Port modDstPort = outbun.getDstPort();
+        Port modVcPort = outbun.getVcPort();
+        assert modDstPort != null && modVcPort != null : "a master Bundle: (" + outbun.getFullName()
+                + ") that sends to multiple slaves MUST have dest,vc signals";
+        sendDstPort.addWire(modDstPort);
+        modDstPort.addWire(sendDstPort);
+        sendVcPort.addWire(modVcPort);
+        modVcPort.addWire(sendVcPort);
+
+        // send_valid reads the output valid
+        sendValidInPort.addWire(pktValid);
+        pktValid.addWire(sendValidInPort);
+
+        // we track the valid signal going to the depacketizer of that module
+        // to increment the number of credits whenever we get something back
+        Depacketizer inbundepkt = (Depacketizer) inbun.getTranslator();
+        Port depktValid = inbundepkt.getPort(PortType.VALID, Direction.OUTPUT);
+        depktValid.addWire(receiveValidPort);
+        receiveValidPort.addWire(depktValid);
+
+        // sendReadyOut requires undoing a connection between the router and
+        // packetizer -- first: get these two ports
+        Port routerReady = noc.getPort(PortType.READY, Direction.OUTPUT, router);
+        Port pktReady = outbunPkt.getPort(PortType.READY, Direction.INPUT);
+        // second: remove their connection
+        routerReady.removeWire(pktReady);
+        pktReady.removeWire(routerReady);
+        // third: connect the TM
+        routerReady.addWire(sendReadyInPort);
+        sendReadyInPort.addWire(routerReady);
+        pktReady.addWire(sendReadyOutPort);
+        sendReadyOutPort.addWire(pktReady);
+
+        // add to design
+        design.addWrapper(tm);
+    }
+
+    private static void createAndConnectCreditTM(Bundle inbun, Bundle outbun, Design design, Noc noc, int router, int numMasters) {
         // create the credit TM module
         Wrapper tm = new Wrapper("tm_master_credit", outbun.getParentModule().getName() + "_tm", outbun.getParentModule());
 
         log.info("Adding TM " + tm.getName());
 
         // parameters
-        // TODO replace 8 with the ideal number of credits for fair arbitration
-        float idealNumCredits = Math.round((2 * noc.getAverageLatency() + 1) / numSendingMasters);
+        // TODO incorporate slave latency in this computation
+        float idealNumCredits = Math.round((2 * noc.getAverageLatency() + 1) / numMasters);
         int idealNumCreditsInt = (int) Math.ceil(idealNumCredits);
         tm.addParameter(new Parameter("NUM_CREDITS", idealNumCreditsInt));
 

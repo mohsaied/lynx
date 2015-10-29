@@ -95,6 +95,16 @@ public abstract class Module {
         return porList;
     }
 
+    public String getParameterByName(String parName) {
+        for (Parameter par : parameters) {
+            if (par.getName().equals(parName)) {
+                return par.getValue();
+            }
+        }
+        assert false : "Can't find parameter " + parName + " in module " + this.getName();
+        return null;
+    }
+
     @Override
     public String toString() {
         String s = "Module: " + type + " " + name + "\n";

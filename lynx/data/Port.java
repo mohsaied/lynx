@@ -191,6 +191,16 @@ public class Port {
         }
     }
 
+    public Wire getWireByPort(Port por) {
+        for (Wire wire : wires) {
+            if (wire.dstPort == por) {
+                return wire;
+            }
+        }
+        assert false : "Port " + por.getFullNameDot() + " is not connected to " + this.getFullNameDot();
+        return null;
+    }
+
     public boolean isBundled() {
         return isBundled;
     }
