@@ -26,6 +26,7 @@ parameter [VC_ADDR_WIDTH-1:0] i0_VC   = 0,  //vc index that this ora is connecte
 
 parameter o0_NODEP = 1'b0,                  // NODEP = 1 indicates that this via won't wait for a response to send a reply -- it'll just keep sending when it can
 parameter RETURN_TO_SENDER = !o0_NODEP,     // if there is a dependency, then this via replies to the same module that sent stuff to it
+parameter BURST_SIZE = 1,
 
 parameter o0_NUM_DEST = 4,  //number of destinations for output 0
 parameter  [N_ADDR_WIDTH-1:0] o0_DEST [0:o0_NUM_DEST-1] = '{o0_NUM_DEST{1}}, //router index that this tpg sends to
@@ -47,6 +48,9 @@ parameter NUM_TESTS = 1000 // will stop the simulation aafter this many pieces o
     output                     o0_valid_out,
     input                      o0_ready_in
 );
+
+//burst counter
+reg [7:0] burst_counter;
 
 //control and data positions at each input
 //i0 params
@@ -136,6 +140,7 @@ begin
         o0_dstcount     = 0;
         o0_buffered_data_consumed = 0;
         o0_queued_flag = 0;
+        burst_counter = BURST_SIZE;
 	end
 	else
 	begin
@@ -153,9 +158,15 @@ begin
                 o0_vc_reg = i0_returnvc_in;
             end
             
-            o0_dstcount = o0_dstcount + 1;
+            burst_counter = burst_counter - 1;
+            
+            if(burst_counter === 0)
+                o0_dstcount = o0_dstcount + 1;
             if(o0_dstcount == o0_NUM_DEST)
                 o0_dstcount = 0;
+                
+            if(burst_counter === 0)
+                burst_counter = BURST_SIZE;
             
             //synopsys translate off
 	        curr_time = $time;
