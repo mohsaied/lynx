@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import lynx.data.MyEnums.SimModType;
+import lynx.interconnect.HollowSim;
 
 public class PerfAnalysis {
 
@@ -27,7 +28,7 @@ public class PerfAnalysis {
     protected static final int DATA_POS = 5;
     protected static final int SRCMOD_POS = 6;
 
-    private static final int WARMUP_CYCLES = 100;
+    private static final int WARMUP_CYCLES = HollowSim.NUM_TESTS / 10;
 
     protected static final int CLK_PERIOD = 10000;
 

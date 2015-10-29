@@ -37,7 +37,7 @@ public class HollowSim {
     /**
      * will halt the simulation after this many tests
      */
-    private static final int NUM_TESTS = 1000;
+    public static final int NUM_TESTS = 1000;
 
     /**
      * Current src/sink ID
