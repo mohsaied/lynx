@@ -266,7 +266,7 @@ public class Port {
 
     @Override
     public String toString() {
-        String s = "module" + parentModule.getName() + ", port: " + direction + " " + name + "(" + width + "), onNoc = "
+        String s = "module " + parentModule.getName() + ", port: " + direction + " " + name + "(" + width + "), onNoc = "
                 + isGlobalOnNoc();
         return s;
     }

@@ -11,9 +11,7 @@ module packetizer_da
 	parameter WIDTH_IN  = 12,
 	//parameter WIDTH_OUT = ((WIDTH_IN + 3*4 + ADDRESS_WIDTH + 4*VC_ADDRESS_WIDTH + 3)/4) * 4 
 	parameter WIDTH_OUT = 36,
-    parameter PACKETIZER_WIDTH = 1,
-    parameter [ADDRESS_WIDTH-1:0] DEST = 0,
-    parameter [VC_ADDRESS_WIDTH-1:0] VC = 0
+    parameter PACKETIZER_WIDTH = 1
 )
 (
 	//input port
@@ -21,6 +19,8 @@ module packetizer_da
 	input                        valid_in,
 	input  [  ADDRESS_WIDTH-1:0] dst_in,
 	input [VC_ADDRESS_WIDTH-1:0] vc_in,
+	input  [  ADDRESS_WIDTH-1:0] ret_dst_in,
+	input [VC_ADDRESS_WIDTH-1:0] ret_vc_in,
 	output                       ready_out,
 
 	//output port
@@ -44,7 +44,7 @@ always @ (*)
 //synopsys translate on
 
 reg [WIDTH_IN_MOD-1:0] data_dst_vc;
-assign data_dst_vc = {DEST,VC,data_in};
+assign data_dst_vc = {ret_dst_in,ret_vc_in,data_in};
 
 
 //choose the packetizer based on PACKETIZER_WIDTH parameter

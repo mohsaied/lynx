@@ -62,17 +62,24 @@ public final class Packetizer extends Translator {
         this.addParameter(new Parameter("PACKETIZER_WIDTH", numFlitsForThisTranslator));
 
         if (this.getTranslatorType() == TranslatorType.PACKETIZER_DA) {
+
+            assert bundle.getConnectionGroup().isMaster(bundle) : "Packetizer_DA cannot be instantiated for non-master bundles";
+
             // find bundle of same module and also a master but is the input one
-            for (Bundle inbun : parentBundle.getConnectionGroup().getToBundles()) {
-                if (parentBundle.getConnectionGroup().isMaster(inbun)
-                        && inbun.getParentModule() == parentBundle.getParentModule()) {
-                    int dest_in = mapping.getRouter(inbun);
-                    int vc_in = vcMap.getVcForBundle(inbun);
-                    this.addParameter(new Parameter("DEST", dest_in));
-                    this.addParameter(new Parameter("VC", vc_in));
-                    break;
-                }
-            }
+            Bundle inbun = bundle.getSisterBundle();
+
+            int dest_in = mapping.getRouter(inbun);
+            int vc_in = vcMap.getVcForBundle(inbun);
+
+            Port retDstPort = new Port(buildPortName(PortType.RETURNDST, Direction.INPUT), Direction.INPUT,
+                    parentNoc.getAddressWidth(), this);
+            Port retVcPort = new Port(buildPortName(PortType.RETURNVC, Direction.INPUT), Direction.INPUT,
+                    parentNoc.getVcAddressWidth(), this);
+            retDstPort.setConstantValue(dest_in);
+            retVcPort.setConstantValue(vc_in);
+
+            this.addPort(retDstPort);
+            this.addPort(retVcPort);
         }
 
         // ports
@@ -121,8 +128,9 @@ public final class Packetizer extends Translator {
                 pktDstIn.setConstantValue(dest);
                 pktVcIn.setConstantValue(vc);
             } else if (parentBundle.getConnectionGroup().isSlave(parentBundle)) {
-                assert this.getTranslatorType() == TranslatorType.PACKETIZER_STD : "A slave that sends to many masters can only have a std packetizer, not "
-                        + this.getTranslatorType();
+                assert this
+                        .getTranslatorType() == TranslatorType.PACKETIZER_STD : "A slave that sends to many masters can only have a std packetizer, not "
+                                + this.getTranslatorType();
                 // this is the packetizer of a slave that responds to whatever
                 // sent to it -- in this case this packetizer will get its
                 // signals from a dest_appender
