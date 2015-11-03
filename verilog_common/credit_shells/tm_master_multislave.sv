@@ -10,7 +10,7 @@ module tm_master_multislave
     parameter NUM_CREDITS = 32,
     parameter ADDRESS_WIDTH = 4,
     parameter VC_ADDRESS_WIDTH = 2,
-	parameter WIDTH_NOC = 36
+	parameter WIDTH_DATA = 36
 )
 (
 	input clk,
@@ -19,10 +19,16 @@ module tm_master_multislave
     //the sending bundle tells us when it's valid, and we tell it when we're ready to send
     input                           send_valid_in,
     output reg                      send_valid_out,
-    input         [WIDTH_NOC-1 : 0] send_data_in,
-    output reg    [WIDTH_NOC-1 : 0] send_data_out,
-    input     [ADDRESS_WIDTH-1 : 0] send_dest,
-    input  [VC_ADDRESS_WIDTH-1 : 0] send_vc,
+    
+    input        [WIDTH_DATA-1 : 0] send_data_in,
+    output reg   [WIDTH_DATA-1 : 0] send_data_out,
+    
+    input     [ADDRESS_WIDTH-1 : 0] send_dest_in,
+    output    [ADDRESS_WIDTH-1 : 0] send_dest_out,
+    
+    input  [VC_ADDRESS_WIDTH-1 : 0] send_vc_in,
+    output [VC_ADDRESS_WIDTH-1 : 0] send_vc_out,
+    
     input                           send_ready_in,  //coming from NoC
     output reg                      send_ready_out, // going to module
     
@@ -41,12 +47,15 @@ reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] sending_dst;
 reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] main_buffer_dst;
 reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] overflow_buffer_dst;
 
+assign send_dest_out = sending_dst[ADDRESS_WIDTH-1:0];
+assign send_vc_out = sending_dst[ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 -: VC_ADDRESS_WIDTH];
+
 //stall signal because of switching
 reg stall_switch;
 
 //skid buffer to store the data when we aren't allowed to send it
-reg [WIDTH_NOC-1 : 0] main_buffer;
-reg [WIDTH_NOC-1 : 0] overflow_buffer;
+reg [WIDTH_DATA-1 : 0] main_buffer;
+reg [WIDTH_DATA-1 : 0] overflow_buffer;
 //indicates if we have something in the data buffer
 reg main_buffer_valid;
 reg overflow_buffer_valid;
@@ -84,7 +93,7 @@ begin
             begin
                 main_buffer <= send_data_in;
                 main_buffer_valid <= 1;
-                main_buffer_dst <= {send_vc,send_dest};
+                main_buffer_dst <= {send_vc_in,send_dest_in};
                 send_ready_out <= 0; 
             end
         end
@@ -105,7 +114,7 @@ begin
             begin
                 overflow_buffer <= send_data_in;
                 overflow_buffer_valid <= 1;
-                overflow_buffer_dst <= {send_vc,send_dest};
+                overflow_buffer_dst <= {send_vc_in,send_dest_in};
                 send_ready_out <= 0;
             end
         end
@@ -115,7 +124,7 @@ begin
         begin
             main_buffer <= send_data_in;
             main_buffer_valid <= 1;
-            main_buffer_dst <= {send_vc,send_dest};
+            main_buffer_dst <= {send_vc_in,send_dest_in};
             send_ready_out <= 0;
         end
         
@@ -131,7 +140,7 @@ begin
             //synposys translate on
             overflow_buffer <= send_data_in;
             overflow_buffer_valid <= 1;
-            overflow_buffer_dst <= {send_vc,send_dest};
+            overflow_buffer_dst <= {send_vc_in,send_dest_in};
             send_ready_out <= 0;
         end
         
