@@ -54,7 +54,7 @@ fifo_inst
     .clk(clk),
     .clear(rst),
     .i_data_in(send_ret_vc),
-    .i_write_en(send_ready_out),
+    .i_write_en(send_valid_out),
     .i_full_out(),
     .o_data_out(curr_ret_vc),
     .o_read_en(|receive_valid),
@@ -81,6 +81,10 @@ integer i;
 reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] sending_dst;
 reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] main_buffer_dst;
 reg [ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 : 0] overflow_buffer_dst;
+
+
+assign send_dest_out = sending_dst[ADDRESS_WIDTH-1:0];
+assign send_vc_out = sending_dst[ADDRESS_WIDTH+VC_ADDRESS_WIDTH-1 -: VC_ADDRESS_WIDTH];
 
 //skid buffer to store the data when we aren't allowed to send it
 reg [WIDTH_DATA-1 : 0] main_buffer;
@@ -203,18 +207,19 @@ begin
             end
         end
         
+        //is this dest already using a vc?
         ret_vc_assigned = 0;
         for(i=0; i < 4; i++)
         begin
             //a ret VC is already being used for this slaveaddr
-            if(ret_vc_assigned == 0 && ret_vc_used[i] && (main_buffer_dst==ret_vc_slaveaddr) )
+            if(ret_vc_assigned == 0 && ret_vc_used[i] && (main_buffer_dst==ret_vc_slaveaddr[i]) )
             begin
                 send_ret_vc = i;
-                ret_vc_slaveaddr[i] = main_buffer_dst;
                 ret_vc_assigned = 1;
             end
         end
         
+        //do we need to assign a new VC?
         if(~ret_vc_assigned)
         begin
             for(i=0; i < 4; i++)
