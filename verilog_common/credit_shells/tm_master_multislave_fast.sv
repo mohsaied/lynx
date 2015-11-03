@@ -8,7 +8,7 @@
 
 module tm_master_multislave_fast
 #(
-    parameter NUM_CREDITS = 32,
+    parameter NUM_CREDITS = 8, //per slave
     parameter ADDRESS_WIDTH = 4,
     parameter VC_ADDRESS_WIDTH = 2,
 	parameter WIDTH_DATA = 36
@@ -47,7 +47,7 @@ module tm_master_multislave_fast
 fifo_da
 #(
     .WIDTH(VC_ADDRESS_WIDTH),
-    .DEPTH(32) //just has to be bigger than the number of credits
+    .DEPTH(2**($clog2(NUM_CREDITS*4))+2) //just has to be bigger than the number of credits
 )
 fifo_inst
 (
@@ -118,21 +118,26 @@ begin
         for(i=0; i < 4; i++)
         begin
             ret_vc_slaveaddr[i] <= 0;
+            ret_vc_count[i] <= 0;
         end
         ret_vc_used <= 0;
         ret_vc_assigned <= 0;
     end
     else
     begin
-        //we're ready to receive
+        
+        //------------------------------------------------
+        // INPUT STAGE
+        //------------------------------------------------
+        
         if(~overflow_buffer_valid & ~main_buffer_valid)
         begin
             send_ready_out <= 1;
             if(send_valid_in)
             begin
-                main_buffer <= send_data_in;
-                main_buffer_valid <= 1;
-                main_buffer_dst <= {send_vc_in,send_dest_in};
+                main_buffer = send_data_in;
+                main_buffer_valid = 1;
+                main_buffer_dst = {send_vc_in,send_dest_in};
                 send_ready_out <= 0; 
             end
         end
@@ -140,20 +145,20 @@ begin
         //transfer data from overflow_buffer to main buffer and read incoming data
         else if (overflow_buffer_valid & ~main_buffer_valid)
         begin
-            main_buffer <= overflow_buffer;
-            main_buffer_valid <= 1;
-            main_buffer_dst <= overflow_buffer_dst;
+            main_buffer = overflow_buffer;
+            main_buffer_valid = 1;
+            main_buffer_dst = overflow_buffer_dst;
             
-            overflow_buffer <= 0;
-            overflow_buffer_valid <= 0;
-            overflow_buffer_dst <= 0;
+            overflow_buffer = 0;
+            overflow_buffer_valid = 0;
+            overflow_buffer_dst = 0;
             send_ready_out <= 0;
             //if something is coming in, store in overflow
             if(send_valid_in)
             begin
-                overflow_buffer <= send_data_in;
-                overflow_buffer_valid <= 1;
-                overflow_buffer_dst <= {send_vc_in,send_dest_in};
+                overflow_buffer = send_data_in;
+                overflow_buffer_valid = 1;
+                overflow_buffer_dst = {send_vc_in,send_dest_in};
                 send_ready_out <= 0;
             end
         end
@@ -161,9 +166,9 @@ begin
         //read into main buffer
         else if (send_valid_in & ~main_buffer_valid)
         begin
-            main_buffer <= send_data_in;
-            main_buffer_valid <= 1;
-            main_buffer_dst <= {send_vc_in,send_dest_in};
+            main_buffer = send_data_in;
+            main_buffer_valid = 1;
+            main_buffer_dst = {send_vc_in,send_dest_in};
             send_ready_out <= 0;
         end
         
@@ -177,9 +182,9 @@ begin
                 $stop(1);
             end
             //synposys translate on
-            overflow_buffer <= send_data_in;
-            overflow_buffer_valid <= 1;
-            overflow_buffer_dst <= {send_vc_in,send_dest_in};
+            overflow_buffer = send_data_in;
+            overflow_buffer_valid = 1;
+            overflow_buffer_dst = {send_vc_in,send_dest_in};
             send_ready_out <= 0;
         end
         
@@ -196,7 +201,7 @@ begin
         for(i=0; i < 4; i++)
         begin
             //if there are no outstanding requests, set VC as available
-            if(ret_vc_used[i] && ret_vc_count[i]==0 )
+            if(ret_vc_used[i] && ret_vc_count[i]==0)
             begin
                 ret_vc_used[i] = 0;
             end
@@ -240,14 +245,24 @@ begin
         //------------------------------------------------
         
         //are we going to output data?
-        //yes if we aren't switching slaves and have enough credits
         if(main_buffer_valid && ret_vc_assigned && ret_vc_count[send_ret_vc] < NUM_CREDITS && send_ready_in)
         begin
-            send_data_out <= main_buffer;
-            send_valid_out <= 1;
-            main_buffer <= 0;
-            main_buffer_valid <= 0;
-            sending_dst <= main_buffer_dst;
+            send_data_out = main_buffer;
+            send_valid_out = 1;
+            sending_dst = main_buffer_dst;
+            
+            //synopsys translate off
+            if(ret_vc_count[send_ret_vc] === NUM_CREDITS) begin
+                $display("MULTISLAVE COUNTER VC %d OVERFLOW ERROR!",send_ret_vc);
+                $finish(1);
+            end
+            //synopsys translate on
+            ret_vc_count[send_ret_vc] = ret_vc_count[send_ret_vc] + 1;
+            
+            main_buffer = 0;
+            main_buffer_valid = 0;
+            main_buffer_dst = 0;
+            
             send_ready_out <= 1;
         end
         else 
@@ -256,53 +271,23 @@ begin
             send_valid_out <= 0;
         end
         
-    end //non reset
-end
-
-//keep track of the number of outstanding requests
-always @ (posedge clk)
-begin
-	if (rst)
-	begin
-        for(i=0; i < 4; i++)
-        begin
-            ret_vc_count[i] <= 0;
-        end
-        predict_send = 0;
-	end
-	else
-	begin
-        
-        predict_send = main_buffer_valid && ret_vc_assigned && ret_vc_count[send_ret_vc] < NUM_CREDITS && send_ready_in;
-    
-        if(predict_send===1'b1)
-        begin
-            //synopsys translate off
-            if(ret_vc_count[send_ret_vc]  === NUM_CREDITS) begin
-                $display("MULTISLAVE COUNTER VC %d OVERFLOW ERROR!",send_ret_vc);
-                $finish(1);
-            end
-            //synopsys translate on
-            ret_vc_count[send_ret_vc]  = ret_vc_count[send_ret_vc]  + 1;
-        end
-        
+        //update the outstanding count
         for(i=0; i < 4; i++)
         begin
             if(receive_valid[i]===1'b1) 
             begin
                 //synopsys translate off
-                if(ret_vc_count[i]  === 0) begin
+                if(ret_vc_count[i] === 0) begin
                     $display("MULTISLAVE COUNTER VC %d UNDERFLOW ERROR!",i);
                     $finish(1);
                 end
                 //synopsys translate on
-                ret_vc_count[i]  = ret_vc_count[i]  - 1;
+                ret_vc_count[i] = ret_vc_count[i] - 1;
             end
         end
         
-	end
+    end //non reset
 end
-
 
 endmodule
 
