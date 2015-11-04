@@ -110,7 +110,7 @@ begin
         if(curr_ret_vc===i)
         begin
             receive_ready_out = 0;
-            receive_ready_out[i] = receive_ready_in & ~out_buffer_valid[i];
+            receive_ready_out[i] = receive_ready_in & ~aux_buffer_valid[i];
         end
     end //for
 end
@@ -188,6 +188,13 @@ begin
                     receive_data_out = out_buffer[i];
                     out_buffer_valid[i] = 0;
                     receive_valid_out = 1;
+                    if(aux_buffer_valid)
+                    begin
+                        out_buffer[i] = aux_buffer[i];
+                        out_buffer_valid[i] = 1;
+                        aux_buffer[i] = 0;
+                        aux_buffer_valid[i] = 0;
+                    end
                 end
                 
                 else
