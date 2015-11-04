@@ -455,7 +455,7 @@ endmodule
  * source   : asicworld.com
  */
 
-module fifo_msf
+module fifo_da
 #(
 	parameter WIDTH = 4,
 	parameter DEPTH = 4
