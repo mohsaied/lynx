@@ -4,7 +4,7 @@
  * date     : 13-OCT-2015
  */
 
-module depacketizer_dta
+module depacketizer_ta
 #(
 	parameter WIDTH_PKT = 36,
 	parameter WIDTH_DATA = 12,
@@ -18,8 +18,6 @@ module depacketizer_dta
 	output                ready_out,
 	
 	output       [WIDTH_DATA-1:0] data_out,
-	output    [ADDRESS_WIDTH-1:0] dst_out,
-	output [VC_ADDRESS_WIDTH-1:0] vc_out,
 	output        [TAG_WIDTH-1:0] tag_out,
 	output                        valid_out,
 	input                         ready_in
@@ -31,14 +29,10 @@ module depacketizer_dta
 //-------------------------------------------------------------------------
 
 localparam RETURN_TAG_POS = WIDTH_PKT - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH -1;
-localparam RETURN_DEST_POS = RETURN_TAG_POS - TAG_WIDTH;
-localparam RETURN_VC_POS = RETURN_DEST_POS - ADDRESS_WIDTH;
-localparam ORIG_DATA_POS = RETURN_VC_POS - VC_ADDRESS_WIDTH;
+localparam ORIG_DATA_POS = RETURN_TAG_POS - TAG_WIDTH;
 
 //parse out the return dest and vc
 assign tag_out  = data_in[RETURN_TAG_POS -: TAG_WIDTH];
-assign dst_out = data_in[RETURN_DEST_POS -: ADDRESS_WIDTH];
-assign vc_out  = data_in[RETURN_VC_POS -: VC_ADDRESS_WIDTH];
 
 reg [WIDTH_PKT-1:0] data_in_after_extraction;
 assign data_in_after_extraction = {data_in[WIDTH_PKT-1 : RETURN_TAG_POS+1], data_in[ORIG_DATA_POS : 0], {ADDRESS_WIDTH{1'b0}}, {VC_ADDRESS_WIDTH{1'b0}} };
