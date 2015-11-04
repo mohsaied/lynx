@@ -49,8 +49,13 @@ module tm_master_multislave_fast
     output reg        [WIDTH_DATA_IN-1 : 0] receive_data_out  //going to module
 );
 
-
 integer i;
+
+//overflow register to hold data
+reg [WIDTH_DATA_OUT-1 : 0] out_buffer [0:NUM_VC-1];
+reg         [NUM_VC-1 : 0] out_buffer_valid;
+reg [WIDTH_DATA_OUT-1 : 0] aux_buffer [0:NUM_VC-1];
+reg         [NUM_VC-1 : 0] aux_buffer_valid;
 
 //****************************************************************************
 // INBETWEEN PORTION
@@ -62,7 +67,7 @@ reg [VC_ADDRESS_WIDTH-1 : 0] curr_ret_vc_reg;
 fifo_da
 #(
     .WIDTH(VC_ADDRESS_WIDTH),
-    .DEPTH(2**($clog2(NUM_CREDITS*4))+2) //just has to be bigger than the number of credits
+    .DEPTH(2**($clog2(NUM_CREDITS*4))) //just has to be bigger than the number of credits
 )
 fifo_fast
 (
@@ -79,7 +84,7 @@ fifo_fast
 fifo_da
 #(
     .WIDTH(VC_ADDRESS_WIDTH),
-    .DEPTH(2**($clog2(NUM_CREDITS*4))+2) //just has to be bigger than the number of credits
+    .DEPTH(2**($clog2(NUM_CREDITS*4))) //just has to be bigger than the number of credits
 )
 fifo_slow
 (
@@ -89,19 +94,13 @@ fifo_slow
     .i_write_en(send_valid_out),
     .i_full_out(),
     .o_data_out(curr_ret_vc_reg),
-    .o_read_en(receive_valid_out),
+    .o_read_en(out_buffer_valid[curr_ret_vc_reg] | aux_buffer_valid[curr_ret_vc_reg] | receive_valid_in[curr_ret_vc_reg]),
     .o_empty_out()
 );
 
 //****************************************************************************
 // RECEIVE PORTION
 //****************************************************************************
-
-//overflow register to hold data
-reg [WIDTH_DATA_OUT-1 : 0] out_buffer [0:NUM_VC-1];
-reg         [NUM_VC-1 : 0] out_buffer_valid;
-reg [WIDTH_DATA_OUT-1 : 0] aux_buffer [0:NUM_VC-1];
-reg         [NUM_VC-1 : 0] aux_buffer_valid;
 
 //demux for ready_out
 always @(*)
