@@ -29,8 +29,8 @@ module tm_master_multislave_fast_rb
     output reg send_ready_out, // going to module
     
     //recv end
-    input        receive_valid_in,
-    output reg   receive_valid_out,
+    input       receive_valid_in,
+    output reg  receive_valid_out,
     
     input       receive_ready_in,  //coming from module
     output reg  receive_ready_out,  //going to dpkt
@@ -40,6 +40,164 @@ module tm_master_multislave_fast_rb
     input      [WIDTH_DATA_IN-1 : 0] receive_data_in,  //coming from dpkts
     output reg [WIDTH_DATA_IN-1 : 0] receive_data_out  //going to module
 );
+
+assign receive_ready_out = receive_ready_in;
+
+integer i;
+
+localparam COUNTER_WIDTH = $clog2(NUM_CREDITS+1)+1;
+
+//credit counter 
+reg [COUNTER_WIDTH-1:0] credit_counter;
+
+reg [WIDTH_TAG-1:0] curr_tag;
+
+reg found_data;
+
+//-------------------------------------------------------
+// Implementation
+//-------------------------------------------------------
+
+//at the output, we will store incoming data in a buffer, and we are always checking the tag of the buffer, if it matches our current tag, then we found our data, otherwise, we'll increment the read pointer until we find it
+
+reg [WIDTH_DATA_IN+WIDTH_TAG-1:0] storage_buffer [0:NUM_CREDITS];
+reg [NUM_CREDITS:0] storage_buffer_valid;
+reg [WIDTH_DATA_IN-1:0] curr_read_data;
+reg [WIDTH_TAG-1:0] curr_read_tag;
+reg [COUNTER_WIDTH - 1 : 0] next_read_addr;
+reg [COUNTER_WIDTH - 1 : 0] next_write_addr;
+
+//as data is coming in, store in an available storage buffer location
+always@(posedge clk)
+begin
+    if(rst)
+    begin
+        for(i=0;i<=NUM_CREDITS;i++)
+        begin
+            storage_buffer[i] = 0;
+            storage_buffer_valid[i] = 0;
+        end
+        next_read_addr = 0;
+        next_write_addr = 0;
+    end
+    else 
+    begin
+        
+        //write incoming data to the write addr
+        if(receive_valid_in)
+        begin
+            storage_buffer[next_write_addr] = {receive_tag,receive_data_in};
+            storage_buffer_valid[next_write_addr] = 1;
+        end
+        
+        //decide on next place to write -- look for empty location
+        if(storage_buffer_valid[next_write_addr])
+        begin
+            for(i=0;i<=NUM_CREDITS;i++)
+            begin
+                if(~storage_buffer_valid[i])
+                begin
+                    next_write_addr = i;
+                end
+            end
+        end
+        
+        //decide on next place to read -- a valid location
+        next_read_addr = next_read_addr + 1;
+        if(next_read_addr == NUM_CREDITS+1)
+            next_read_addr = 0;
+        for(i=0;i<=NUM_CREDITS;i++)
+        begin
+            if(~storage_buffer_valid[next_read_addr])
+            begin
+                next_read_addr = next_read_addr + 1;
+                if(next_read_addr == NUM_CREDITS+1)
+                    next_read_addr = 0;
+            end
+        end
+        
+        found_data = 0;
+        receive_valid_out = 0;
+        //read incoming data from the read addr
+        if(storage_buffer_valid[next_read_addr])
+        begin
+            {curr_read_tag,curr_read_data} = storage_buffer[next_read_addr];
+            if(curr_read_tag == curr_tag)
+            begin
+                storage_buffer_valid[next_read_addr] = 0;
+                found_data = 1;
+                receive_data_out = curr_read_data;
+                receive_valid_out = 1;
+            end
+        end
+        
+    end
+end
+
+//store the tag in a buffer to know which one to fetch
+fifo_msf
+#(
+    .WIDTH(WIDTH_TAG),
+    .DEPTH(2**($clog2(NUM_CREDITS*2))) 
+)
+fifo_fast
+(
+    .clk(clk),
+    .clear(rst),
+    .i_data_in(send_tag),
+    .i_write_en(send_valid_in),
+    .i_full_out(),
+    .o_data_out(curr_tag),
+    .o_read_en(found_data),
+    .o_empty_out()
+);
+
+
+//increment the tag id whenever we are sending valid data
+always@ (posedge clk)
+begin
+    if(rst)
+        send_tag = 0;
+    else if(send_valid_in)
+        send_tag = send_tag + 1;
+end
+
+
+//track number of credits to know if we can send
+always @ (posedge clk)
+begin
+	if (rst)
+	begin
+        credit_counter = NUM_CREDITS+1;
+	end
+	else
+	begin
+        if(send_valid_in===1'b1)
+        begin
+            //synopsys translate off
+            if(credit_counter == 0) begin
+                $display("CREDIT COUNTER UNDERFLOW ERROR!");
+                $finish(1);
+            end
+            //synopsys translate on
+            credit_counter = credit_counter - 1;
+        end
+        if(receive_valid_out===1'b1) 
+        begin
+            //synopsys translate off
+            if(credit_counter == NUM_CREDITS+1) begin
+                $display("CREDIT COUNTER OVERFLOW ERROR!");
+                $finish(1);
+            end
+            //synopsys translate on
+            credit_counter = credit_counter + 1;
+        end
+	end
+end
+
+// assign the ready signal
+assign send_ready_out = (credit_counter > 1) && send_ready_in===1'b1;
+
 
 
 endmodule

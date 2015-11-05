@@ -11,14 +11,14 @@ module depacketizer_ta
 	parameter VC_ADDRESS_WIDTH = 1,
 	parameter ADDRESS_WIDTH = 4,
     parameter DEPACKETIZER_WIDTH = 4,
-    parameter TAG_WIDTH = 8
+    parameter WIDTH_TAG = 8
 )
 (
 	input [WIDTH_PKT-1:0] data_in,
 	output                ready_out,
 	
 	output       [WIDTH_DATA-1:0] data_out,
-	output        [TAG_WIDTH-1:0] tag_out,
+	output        [WIDTH_TAG-1:0] tag_out,
 	output                        valid_out,
 	input                         ready_in
 );
@@ -28,14 +28,14 @@ module depacketizer_ta
 // Implementation
 //-------------------------------------------------------------------------
 
-localparam RETURN_TAG_POS = WIDTH_PKT - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH -1;
-localparam ORIG_DATA_POS = RETURN_TAG_POS - TAG_WIDTH;
+localparam RETURN_TAG_POS = WIDTH_PKT - 3 - ADDRESS_WIDTH - VC_ADDRESS_WIDTH - 1;
+localparam ORIG_DATA_POS = RETURN_TAG_POS - WIDTH_TAG;
 
 //parse out the return dest and vc
-assign tag_out  = data_in[RETURN_TAG_POS -: TAG_WIDTH];
+assign tag_out  = data_in[RETURN_TAG_POS -: WIDTH_TAG];
 
 reg [WIDTH_PKT-1:0] data_in_after_extraction;
-assign data_in_after_extraction = {data_in[WIDTH_PKT-1 : RETURN_TAG_POS+1], data_in[ORIG_DATA_POS : 0], {ADDRESS_WIDTH{1'b0}}, {VC_ADDRESS_WIDTH{1'b0}} };
+assign data_in_after_extraction = {data_in[WIDTH_PKT-1 : RETURN_TAG_POS+1], data_in[ORIG_DATA_POS : 0], {WIDTH_TAG{1'b0}} };
 
 //choose the depacketizer based on DEPACKETIZER_WIDTH parameter
 generate

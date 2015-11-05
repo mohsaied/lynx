@@ -9,7 +9,7 @@ module dest_tag_appender
 	parameter ADDRESS_WIDTH = 4,
 	parameter VC_ADDRESS_WIDTH = 1,
 	parameter DEPTH = 12, //should be equal to the slave latency
-    parameter TAG_WIDTH = 8
+    parameter WIDTH_TAG = 8
 )
 (
     //clocks and reset
@@ -19,13 +19,13 @@ module dest_tag_appender
 	//input port
 	input    [ADDRESS_WIDTH-1:0] i_dst_in,
 	input [VC_ADDRESS_WIDTH-1:0] i_vc_in,
-	input        [TAG_WIDTH-1:0] i_tag_in,
+	input        [WIDTH_TAG-1:0] i_tag_in,
 	input                        i_valid_in,
     
     //output port
 	output    [ADDRESS_WIDTH-1:0] o_dst_out,
 	output [VC_ADDRESS_WIDTH-1:0] o_vc_out,
-	output        [TAG_WIDTH-1:0] o_tag_out,
+	output        [WIDTH_TAG-1:0] o_tag_out,
 	input                         o_valid_in
 );
 
@@ -46,7 +46,7 @@ always @ (*)
 
 fifo_da
 #(
-    .WIDTH(ADDRESS_WIDTH+VC_ADDRESS_WIDTH+TAG_WIDTH),
+    .WIDTH(ADDRESS_WIDTH+VC_ADDRESS_WIDTH+WIDTH_TAG),
     .DEPTH(DEPTH)
 )
 fifo_inst

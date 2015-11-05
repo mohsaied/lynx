@@ -13,7 +13,7 @@ module packetizer_dta
 	//parameter WIDTH_OUT = ((WIDTH_IN + 3*4 + ADDRESS_WIDTH + 4*VC_ADDRESS_WIDTH + 3)/4) * 4 
 	parameter WIDTH_OUT = 36,
     parameter PACKETIZER_WIDTH = 1,
-    parameter TAG_WIDTH = 8
+    parameter WIDTH_TAG = 8
 )
 (
 	//input port
@@ -23,7 +23,7 @@ module packetizer_dta
 	input [VC_ADDRESS_WIDTH-1:0] vc_in,
 	input  [  ADDRESS_WIDTH-1:0] ret_dst_in,
 	input [VC_ADDRESS_WIDTH-1:0] ret_vc_in,
-	input        [TAG_WIDTH-1:0] tag_in,
+	input        [WIDTH_TAG-1:0] tag_in,
 	output                       ready_out,
 
 	//output port
@@ -36,7 +36,7 @@ module packetizer_dta
 // Implementation
 //-------------------------------------------------------------------------
 
-localparam WIDTH_IN_MOD = WIDTH_IN + ADDRESS_WIDTH + VC_ADDRESS_WIDTH;
+localparam WIDTH_IN_MOD = WIDTH_IN + ADDRESS_WIDTH + VC_ADDRESS_WIDTH + WIDTH_TAG;
 
 //synopsys translate off
 always @ (*)
