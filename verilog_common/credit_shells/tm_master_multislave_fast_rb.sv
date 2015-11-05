@@ -79,6 +79,7 @@ begin
         end
         next_read_addr = 0;
         next_write_addr = 0;
+        curr_tag = 0;
     end
     else 
     begin
@@ -86,10 +87,19 @@ begin
         //write incoming data to the write addr
         if(receive_valid_in)
         begin
+            next_write_addr = receive_tag % (NUM_CREDITS+1);
+            //synposys translate off
+            if(storage_buffer_valid[next_write_addr])
+            begin
+                $display("HASH COLLISION IN ROB ADDR %d!",next_write_addr);
+                $finish(1);
+            end
+            //synposys translate on
             storage_buffer[next_write_addr] = {receive_tag,receive_data_in};
             storage_buffer_valid[next_write_addr] = 1;
         end
         
+        /*
         //decide on next place to write -- look for empty location
         if(storage_buffer_valid[next_write_addr])
         begin
@@ -103,6 +113,7 @@ begin
         end
         
         //decide on next place to read -- a valid location
+        
         next_read_addr = next_read_addr + 1;
         if(next_read_addr == NUM_CREDITS+1)
             next_read_addr = 0;
@@ -115,6 +126,9 @@ begin
                     next_read_addr = 0;
             end
         end
+        */
+        
+        next_read_addr = curr_tag % (NUM_CREDITS+1);
         
         found_data = 0;
         receive_valid_out = 0;
@@ -122,18 +136,18 @@ begin
         if(storage_buffer_valid[next_read_addr])
         begin
             {curr_read_tag,curr_read_data} = storage_buffer[next_read_addr];
-            if(curr_read_tag == curr_tag)
-            begin
-                storage_buffer_valid[next_read_addr] = 0;
-                found_data = 1;
-                receive_data_out = curr_read_data;
-                receive_valid_out = 1;
-            end
+            
+            storage_buffer_valid[next_read_addr] = 0;
+            curr_tag = curr_tag + 1;
+            found_data = 1;
+            receive_data_out = curr_read_data;
+            receive_valid_out = 1;
         end
         
     end
 end
 
+/*
 //store the tag in a buffer to know which one to fetch
 fifo_msf
 #(
@@ -151,7 +165,7 @@ fifo_fast
     .o_read_en(found_data),
     .o_empty_out()
 );
-
+*/
 
 //increment the tag id whenever we are sending valid data
 always@ (posedge clk)
