@@ -37,7 +37,6 @@ public class Main {
         // ReportData.getInstance().writeToRpt(e.getMessage());
         // ReportData.getInstance().closeRpt();
         // }
-
         try {
             if (args.length == 0) { // bring up the GUI
                 Gui gui = new Gui(null);

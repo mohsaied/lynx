@@ -9,7 +9,7 @@ import lynx.data.MyEnums.Direction;
 import lynx.data.MyEnums.PortType;
 
 /**
- * A user-entered Module
+ * A user-entered Module from the XML file. It contains bundles, ports, and parameters that belong to each module.
  * 
  * @author Mohamed
  *

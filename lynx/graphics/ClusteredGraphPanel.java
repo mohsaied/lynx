@@ -26,6 +26,8 @@ public class ClusteredGraphPanel extends JPanel {
 
     Design design;
 
+    //Where is this DesignData variable coming from and how is it different from Design?
+    //Is DesignData the direct conversion of the xml data?
     public ClusteredGraphPanel() {
         super(new GridLayout(1, 1));
         this.design = DesignData.getInstance().getDesign();
@@ -34,7 +36,7 @@ public class ClusteredGraphPanel extends JPanel {
     public void setDesign(Design design) {
         this.design = design;
     }
-
+    
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -43,7 +45,7 @@ public class ClusteredGraphPanel extends JPanel {
     }
 
     private void drawConnectivityGraph(Graphics g) {
-
+    	//Where are the mxGraph functions and instance variables defined?
         mxGraph graph = new mxGraph();
         Object parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
@@ -51,6 +53,7 @@ public class ClusteredGraphPanel extends JPanel {
         // first create the clusters
         List<Object> clusters = new ArrayList<Object>();
         for (int x = 0; x < design.getClusters().size(); x++) {
+        	//What is this vertex object?
             Object vertex = graph.insertVertex(parent, null, "cluster" + x, 0, 0, 200, 200, "fillColor=#A9C9A4;");
             clusters.add(vertex);
         }
@@ -63,7 +66,7 @@ public class ClusteredGraphPanel extends JPanel {
             iArr[i] = 0;
             jArr[i] = 0;
         }
-
+        //What is a design vs what is a designmodule? 
         for (DesignModule mod : design.getDesignModules().values()) {
 
             // look for this module in the clusters list and set the parent

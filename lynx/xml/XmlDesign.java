@@ -32,6 +32,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * This class parses the XML description and populates a "Design" object.
+ * 
+ * @author Chen
+ *
+ */
 public class XmlDesign {
 
     private static final Logger log = Logger.getLogger(XmlDesign.class.getName());

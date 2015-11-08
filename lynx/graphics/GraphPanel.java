@@ -25,7 +25,7 @@ public class GraphPanel extends JPanel {
 
     public GraphPanel() {
         super(new GridLayout(1, 1));
-        this.setSize(700, 700);
+        this.setSize(2000, 700);
         this.design = DesignData.getInstance().getDesign();
     }
 
@@ -47,6 +47,7 @@ public class GraphPanel extends JPanel {
         graph.getModel().beginUpdate();
 
         // populate vertices
+        //is the vertex the vertex of each square?
         Map<String, Object> vertices = new HashMap<String, Object>();
         int i = 0;
         int j = 0;
@@ -64,6 +65,7 @@ public class GraphPanel extends JPanel {
         }
 
         for (DesignModule mod : design.getDesignModules().values()) {
+        	System.out.println("graph modules");
             String fromMod = mod.getName();
             for (Bundle fromBun : mod.getBundles().values()) {
                 if (fromBun.getDirection() == Direction.OUTPUT) {

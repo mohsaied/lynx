@@ -27,10 +27,12 @@ public class Gui extends JFrame {
 
     public Gui(Design design) throws InterruptedException {
         super(MyEnums.NOCLYNX);
+        //System.out.println("gui initialized");
 
         // JFrame.setDefaultLookAndFeelDecorated(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
+        //What's the point of this
         this.setLocationRelativeTo(null);
 
         // create the mainpanel

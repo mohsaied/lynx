@@ -11,7 +11,7 @@ import lynx.nocmapping.Mapping;
 import lynx.vcmapping.VcMap;
 
 /**
- * This singleton class holds all design info for the flow when using an NoC
+ * This singleton class holds references to all the data structures and hence design info for the flow when using an NoC.
  * 
  * @author Mohamed
  *

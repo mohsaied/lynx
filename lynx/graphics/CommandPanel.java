@@ -83,6 +83,7 @@ public class CommandPanel extends JPanel {
      * Constructor for the CommandPanel creates a simple gridlayout and
      * initializes everything
      */
+    //I'm not familiar with GridLayout. Is it easier to use than an Arraylist
     public CommandPanel(MainPanel mainPanel) {
         super(new GridLayout(6, 1));
         this.mainPanel = mainPanel;
@@ -115,6 +116,7 @@ public class CommandPanel extends JPanel {
 
         // then create the text field to show name of opened file
         fileProgress = new JProgressBar();
+        // Why set the string to "no file opened"?
         fileProgress.setString("No File Opened");
         fileProgress.setStringPainted(true);
 
@@ -129,7 +131,8 @@ public class CommandPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Handle open button action.
                 if (e.getSource() == openButton) {
-                    fc.setCurrentDirectory(new File("D:\\Dropbox\\PhD\\Software\\noclynx\\designs"));
+                	//This isn't present on my computer so where does it go?
+                    fc.setCurrentDirectory(new File("/home/min/git/noclynx/designs"));
                     int returnVal = fc.showOpenDialog(CommandPanel.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         openedFile = fc.getSelectedFile();

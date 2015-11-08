@@ -12,6 +12,12 @@ import lynx.analysis.Analysis;
 import lynx.analysis.PerfAnalysis.LatencyStruct;
 import lynx.analysis.PerfAnalysis.ThroughputStruct;
 
+/**
+ * A panel with performance data organized in a table. Shows up in simulation.
+ * 
+ * @author michael
+ *
+ */
 public class PerfPanel extends JScrollPane {
 
     private static final long serialVersionUID = 23184113128666842L;
