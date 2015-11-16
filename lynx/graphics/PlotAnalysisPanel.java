@@ -55,6 +55,9 @@ public class PlotAnalysisPanel extends JScrollPane {
             Map<String, List<Integer>> debugYLatency = analysis.getDebugYLatency();
             Map<String, List<Integer>> debugXLatency = analysis.getDebugXLatency();
             addChart(debugYLatency, debugXLatency, "Latency");
+            Map<String, List<Integer>> debugYQueueTime = analysis.getDebugYQueueTime();
+            Map<String, List<Integer>> debugXQueueTime = analysis.getDebugXQueueTime();
+            addChart(debugYQueueTime, debugXQueueTime, "QueueTime");
         }
     }
 

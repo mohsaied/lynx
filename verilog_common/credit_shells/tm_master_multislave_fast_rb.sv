@@ -1,14 +1,14 @@
 /*
  * function : Logic to regulate the flow out of a master that is sending
- *            to multiple slaves -- we leverage VCs: we can send requests 
- *            with different return VCs and reorder back at the master
+ *            to multiple slaves -- a reorder buffer at the master makes 
+ *            sure results are read in the proper order
  * author   : Mohamed S. Abdelfattah
- * date     : 02-NOV-2015
+ * date     : 05-NOV-2015
  */
 
 module tm_master_multislave_fast_rb
 #(
-    parameter NUM_CREDITS = 8, //per slave
+    parameter NUM_CREDITS = 8, //total
     parameter ADDRESS_WIDTH = 4,
     parameter VC_ADDRESS_WIDTH = 2,
     parameter NUM_VC = 4,

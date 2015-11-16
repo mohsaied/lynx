@@ -24,6 +24,8 @@ public class Analysis {
     Map<String, List<Integer>> debugXThroughput;
     Map<String, List<Integer>> debugYLatency;
     Map<String, List<Integer>> debugXLatency;
+    Map<String, List<Integer>> debugYQueueTime;
+    Map<String, List<Integer>> debugXQueueTime;
 
     public Analysis(int numMods, int numConns) {
         this.latency = new ArrayList<PerfAnalysis.LatencyStruct>();
@@ -34,6 +36,8 @@ public class Analysis {
         this.debugXThroughput = new HashMap<String, List<Integer>>();
         this.debugYLatency = new HashMap<String, List<Integer>>();
         this.debugXLatency = new HashMap<String, List<Integer>>();
+        this.debugYQueueTime = new HashMap<String, List<Integer>>();
+        this.debugXQueueTime = new HashMap<String, List<Integer>>();
     }
 
     public void addLatencyEntry(LatencyStruct entry) {
@@ -100,5 +104,26 @@ public class Analysis {
 
     public Map<String, List<Integer>> getDebugXLatency() {
         return debugXLatency;
+    }
+
+    public void addDebugQueueTime(String conn, int latency, int time) {
+        List<Integer> yList = new ArrayList<Integer>();
+        List<Integer> xList = new ArrayList<Integer>();
+        if (debugYQueueTime.get(conn) != null) {
+            yList = debugYQueueTime.get(conn);
+            xList = debugXQueueTime.get(conn);
+        }
+        yList.add(latency);
+        xList.add(time);
+        debugYQueueTime.put(conn, yList);
+        debugXQueueTime.put(conn, xList);
+    }
+
+    public Map<String, List<Integer>> getDebugYQueueTime() {
+        return debugYQueueTime;
+    }
+
+    public Map<String, List<Integer>> getDebugXQueueTime() {
+        return debugXQueueTime;
     }
 }

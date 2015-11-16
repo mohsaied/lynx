@@ -3,6 +3,7 @@
   <module type="master" name="src1">
 	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
 	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<master>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -13,12 +14,14 @@
 		<port direction="output" width="1" name="o_valid_out" type="valid"/>
 		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
-	</bundle>	
+	</bundle>
+	</master>
   </module>
   
   <module type="master" name="src2">
 	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
 	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<master>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -30,11 +33,13 @@
 		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>	
+	</master>
   </module>
   
   <module type="master" name="src3">
 	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
 	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<master>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -46,11 +51,13 @@
 		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>	
+	</master>
   </module>
   
   <module type="ram" name="dst1">
 	<port direction="input" width="1" name="clk" type="clk" global="clk"/>
 	<port direction="input" width="1" name="rst" type="rst" global="rst"/>
+	<slave>
 	<bundle name="inbun">
 		<port direction="input" width="128" name="i_x" type="data"/>
 		<port direction="input" width="1" name="i_valid_in" type="valid"/>
@@ -62,6 +69,7 @@
 		<port direction="output" width="4" name="o_dest_out" type="dst"/>
 		<port direction="input" width="1" name="o_ready_in" type="ready"/>
 	</bundle>
+	</slave>
   </module>
   
   <!-- Must parse modules before connections, can remove that restriction later -->

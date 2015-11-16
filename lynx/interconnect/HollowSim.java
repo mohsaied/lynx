@@ -447,7 +447,8 @@ public class HollowSim {
         return vcMapClone;
     }
 
-    private static List<ConnectionGroup> cloneCgListSimBundles(Design simulationDesign, Map<Bundle, Bundle> designToSimBundleMap) {
+    private static List<ConnectionGroup> cloneCgListSimBundles(Design simulationDesign,
+            Map<Bundle, Bundle> designToSimBundleMap) {
         List<ConnectionGroup> cgListClone = Elaboration.identifyConnectionGroups(simulationDesign);
 
         return cgListClone;

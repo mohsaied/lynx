@@ -246,7 +246,6 @@ public class Mapping {
                             cost += overutil * (1 + overutil / 25 * 0.1) * 0.5;
                         }
                     }
-
                 }
             }
         }

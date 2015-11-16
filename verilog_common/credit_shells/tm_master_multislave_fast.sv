@@ -27,10 +27,10 @@ module tm_master_multislave_fast
     output reg       [WIDTH_DATA_OUT-1 : 0] send_data_out,
     
     input         [ADDRESS_WIDTH-1 : 0] send_dest_in,
-    input         [ADDRESS_WIDTH-1 : 0] send_dest_out,
+    output         [ADDRESS_WIDTH-1 : 0] send_dest_out,
     
     input      [VC_ADDRESS_WIDTH-1 : 0] send_vc_in,
-    input      [VC_ADDRESS_WIDTH-1 : 0] send_vc_out,
+    output      [VC_ADDRESS_WIDTH-1 : 0] send_vc_out,
     
     output reg [VC_ADDRESS_WIDTH-1 : 0] send_ret_vc,  //this module decides the ret vc and attaches it to the packetizer
     

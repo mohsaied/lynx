@@ -11,7 +11,7 @@ module qsys_master
     parameter [7:0]    SNK_ID     =  3, //unique id associated with each sink
     parameter [7:0]    DST_ID     =  1, //id associated with the destination
     parameter [7:0]    NUM_SLAVES =  0, //Number of slaves we're sending to 
-    parameter [7:0]    BURST_SIZE =  16, //burst length
+    parameter [7:0]    BURST_SIZE =  1, //burst length
     parameter          ADDR_WIDTH = 32  //address width doesn't matter
 )
 (

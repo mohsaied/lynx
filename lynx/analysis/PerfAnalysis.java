@@ -354,6 +354,7 @@ public class PerfAnalysis {
                     sumLatency += latency;
 
                     // debugging for plot
+                    analysis.addDebugQueueTime(connString(srcMod, dstMod), (int) latency, simEntry.time / CLK_PERIOD);
                 }
             }
         }
