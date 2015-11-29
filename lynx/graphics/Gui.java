@@ -15,60 +15,60 @@ import lynx.data.MyEnums;
 
 public class Gui extends JFrame {
 
-    private static final long serialVersionUID = 5661237900482388080L;
+	private static final long serialVersionUID = 5661237900482388080L;
 
-    private final int xSize = 1000;
-    private final int ySize = 900;
-    private final int commandDivLoc = xSize / 4;
-    private final int consoleDivLoc = ySize * 3 / 4;
+	private final int xSize = 1000;
+	private final int ySize = 900;
+	private final int commandDivLoc = xSize / 4;
+	private final int consoleDivLoc = ySize * 3 / 4;
 
-    private MainPanel mainPanel;
-    private CommandPanel commandPanel;
+	private MainPanel mainPanel;
+	private CommandPanel commandPanel;
 
-    public Gui(Design design) throws InterruptedException {
-        super(MyEnums.NOCLYNX);
-        //System.out.println("gui initialized");
+	public Gui(Design design) throws InterruptedException {
+		super(MyEnums.NOCLYNX);
+		// System.out.println("gui initialized");
 
-        // JFrame.setDefaultLookAndFeelDecorated(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.getContentPane().setLayout(new BorderLayout());
-        //What's the point of this
-        this.setLocationRelativeTo(null);
+		// JFrame.setDefaultLookAndFeelDecorated(true);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.getContentPane().setLayout(new BorderLayout());
+		// What's the point of this
+		this.setLocationRelativeTo(null);
 
-        // create the mainpanel
-        mainPanel = new MainPanel(design);
+		// create the mainpanel
+		mainPanel = new MainPanel(design);
 
-        // Console output
-        JTextArea ta = new JTextArea();
-        TextAreaOutputStream taos = new TextAreaOutputStream(ta);
-        PrintStream ps = new PrintStream(taos);
-        System.setOut(ps);
-        System.setErr(ps);
+		// Console output
+		JTextArea ta = new JTextArea();
+		TextAreaOutputStream taos = new TextAreaOutputStream(ta);
+		PrintStream ps = new PrintStream(taos);
+		System.setOut(ps);
+		System.setErr(ps);
 
-        JScrollPane console = new JScrollPane(ta);
-        console.setAutoscrolls(true);
+		JScrollPane console = new JScrollPane(ta);
+		console.setAutoscrolls(true);
 
-        // create the command panel
-        commandPanel = new CommandPanel(mainPanel);
+		// create the command panel
+		commandPanel = new CommandPanel(mainPanel);
 
-        // split the mainpanel and commanpanel
-        JSplitPane commandSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, commandPanel, mainPanel);
-        commandSplit.setOneTouchExpandable(true);
-        commandSplit.setDividerLocation(commandDivLoc);
+		// split the mainpanel and commanpanel
+		JSplitPane commandSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, commandPanel, mainPanel);
+		commandSplit.setOneTouchExpandable(true);
+		commandSplit.setDividerLocation(commandDivLoc);
 
-        // Create a split pane with the two scroll panes in it.
-        JSplitPane consoleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, commandSplit, console);
-        consoleSplit.setOneTouchExpandable(true);
-        consoleSplit.setDividerLocation(consoleDivLoc);
+		// Create a split pane with the two scroll panes in it.
+		JSplitPane consoleSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, commandSplit, console);
+		consoleSplit.setOneTouchExpandable(true);
+		consoleSplit.setDividerLocation(consoleDivLoc);
 
-        this.getContentPane().add(consoleSplit, BorderLayout.CENTER);
+		this.getContentPane().add(consoleSplit, BorderLayout.CENTER);
 
-        this.pack();
-        this.setVisible(true);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setBounds(0, 0, xSize, ySize);
-        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-        this.setVisible(true);
-    }
+		this.pack();
+		this.setVisible(true);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setBounds(0, 0, xSize, ySize);
+		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+		this.setVisible(true);
+	}
 
 }

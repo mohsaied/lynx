@@ -27,259 +27,259 @@ import lynx.nocmapping.Mapping;
 
 public class NocPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final Logger log = Logger.getLogger(NocPanel.class.getName());
+	private static final Logger log = Logger.getLogger(NocPanel.class.getName());
 
-    private static final int routerSpacing = 150;
-    private static final int bunSize = 140;
-    private static final int xOffset = 80;
-    private static final int yOffset = 50;
+	private static final int routerSpacing = 150;
+	private static final int bunSize = 140;
+	private static final int xOffset = 80;
+	private static final int yOffset = 50;
 
-    private Design design;
-    private Noc noc;
-    private int selectedMapping;
-    private int selectedVersion;
+	private Design design;
+	private Noc noc;
+	private int selectedMapping;
+	private int selectedVersion;
 
-    private JPanel controlPanel;
-    JComboBox<Integer> mappingIndex;
-    JComboBox<Integer> versionIndex;
+	private JPanel controlPanel;
+	JComboBox<Integer> mappingIndex;
+	JComboBox<Integer> versionIndex;
 
-    public NocPanel(Design design, Noc noc) {
-        super(new FlowLayout());
-        log.setLevel(Level.ALL);
-        this.design = design;
-        this.noc = noc;
+	public NocPanel(Design design, Noc noc) {
+		super(new FlowLayout());
+		log.setLevel(Level.ALL);
+		this.design = design;
+		this.noc = noc;
 
-        initPane();
-    }
+		initPane();
+	}
 
-    public void setDesign(Design design) {
-        this.design = design;
-        initPane();
-    }
+	public void setDesign(Design design) {
+		this.design = design;
+		initPane();
+	}
 
-    private void initPane() {
+	private void initPane() {
 
-        if (design != null && design.getMappings() != null) {
-            selectedMapping = 0;
-            selectedVersion = 0;
+		if (design != null && design.getMappings() != null) {
+			selectedMapping = 0;
+			selectedVersion = 0;
 
-            controlPanel = new JPanel(new GridLayout(1, 1));
-            controlPanel.setBounds(0, 0, 15, 10);
-            this.add(controlPanel);
+			controlPanel = new JPanel(new GridLayout(1, 1));
+			controlPanel.setBounds(0, 0, 15, 10);
+			this.add(controlPanel);
 
-            int numMappings = design.getMappings().size();
-            int numVersions = design.getMappings().get(selectedMapping).size();
+			int numMappings = design.getMappings().size();
+			int numVersions = design.getMappings().get(selectedMapping).size();
 
-            mappingIndex = new JComboBox<Integer>();
-            for (int i = 0; i < numMappings; i++)
-                mappingIndex.addItem(i);
-            controlPanel.add(mappingIndex);
+			mappingIndex = new JComboBox<Integer>();
+			for (int i = 0; i < numMappings; i++)
+				mappingIndex.addItem(i);
+			controlPanel.add(mappingIndex);
 
-            versionIndex = new JComboBox<Integer>();
-            for (int i = 0; i < numVersions; i++)
-                versionIndex.addItem(i);
-            controlPanel.add(versionIndex);
+			versionIndex = new JComboBox<Integer>();
+			for (int i = 0; i < numVersions; i++)
+				versionIndex.addItem(i);
+			controlPanel.add(versionIndex);
 
-            configureDropDowns();
-        }
-    }
+			configureDropDowns();
+		}
+	}
 
-    private void configureDropDowns() {
-        mappingIndex.setSelectedItem(selectedMapping);
+	private void configureDropDowns() {
+		mappingIndex.setSelectedItem(selectedMapping);
 
-        mappingIndex.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getSource() == mappingIndex && event.getStateChange() == ItemEvent.SELECTED) {
-                    selectedMapping = mappingIndex.getSelectedIndex();
+		mappingIndex.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent event) {
+				if (event.getSource() == mappingIndex && event.getStateChange() == ItemEvent.SELECTED) {
+					selectedMapping = mappingIndex.getSelectedIndex();
 
-                    int numVersions = design.getMappings().get(selectedMapping).size();
-                    versionIndex.removeAllItems();
-                    for (int i = 0; i < numVersions; i++)
-                        versionIndex.addItem(i);
-                    versionIndex.setSelectedItem(0);
+					int numVersions = design.getMappings().get(selectedMapping).size();
+					versionIndex.removeAllItems();
+					for (int i = 0; i < numVersions; i++)
+						versionIndex.addItem(i);
+					versionIndex.setSelectedItem(0);
 
-                    repaint();
+					repaint();
 
-                    compareToBestMappingWithConsolePrint(design, selectedMapping, selectedVersion);
-                }
-            }
-        });
+					compareToBestMappingWithConsolePrint(design, selectedMapping, selectedVersion);
+				}
+			}
+		});
 
-        versionIndex.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getSource() == versionIndex) {
-                    selectedVersion = versionIndex.getSelectedIndex();
-                    repaint();
-                }
-            }
-        });
+		versionIndex.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent event) {
+				if (event.getSource() == versionIndex) {
+					selectedVersion = versionIndex.getSelectedIndex();
+					repaint();
+				}
+			}
+		});
 
-    }
+	}
 
-    protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
-        // TODO compare traffic
+	protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
+		// TODO compare traffic
 
-        Mapping bestMapping = design.getMappings().get(0).get(0);
-        Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
+		Mapping bestMapping = design.getMappings().get(0).get(0);
+		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 
-        List<Connection> connections = design.getConnections();
+		List<Connection> connections = design.getConnections();
 
-        for (Connection con : connections) {
-            int bestLat = bestMapping.getConnectionPath(con).size() - 1;
-            int currLat = currMapping.getConnectionPath(con).size() - 1;
+		for (Connection con : connections) {
+			int bestLat = bestMapping.getConnectionPath(con).size() - 1;
+			int currLat = currMapping.getConnectionPath(con).size() - 1;
 
-            if (bestLat < currLat)
-                log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat + ", instead of "
-                        + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-                        + con.getToModule().getName());
-            else if (bestLat > currLat)
-                log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat + ", instead of "
-                        + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-                        + con.getToModule().getName());
-        }
-    }
+			if (bestLat < currLat)
+				log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat
+						+ ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+						+ con.getToModule().getName());
+			else if (bestLat > currLat)
+				log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat
+						+ ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+						+ con.getToModule().getName());
+		}
+	}
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 
-        if (noc != null)
-            drawNoc(g, noc);
+		if (noc != null)
+			drawNoc(g, noc);
 
-        if (design != null && design.getMappings() != null)
-            drawDesign(g);
-    }
+		if (design != null && design.getMappings() != null)
+			drawDesign(g);
+	}
 
-    private void drawDesign(Graphics g) {
+	private void drawDesign(Graphics g) {
 
-        Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
+		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 
-        int i = 0;
-        for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
-            drawBundles(g, bunSet, i++);
-        }
+		int i = 0;
+		for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
+			drawBundles(g, bunSet, i++);
+		}
 
-        // draw the connections
-        drawConnections(g, currMapping);
-    }
+		// draw the connections
+		drawConnections(g, currMapping);
+	}
 
-    private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
+	private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
 
-        int i = router % noc.getNumRoutersPerDimension();
-        int j = router / noc.getNumRoutersPerDimension();
-        int x = xOffset + 15 + i * routerSpacing;
-        int y = yOffset + 15 + j * routerSpacing;
+		int i = router % noc.getNumRoutersPerDimension();
+		int j = router / noc.getNumRoutersPerDimension();
+		int x = xOffset + 15 + i * routerSpacing;
+		int y = yOffset + 15 + j * routerSpacing;
 
-        int maxPosibleModules = noc.getTdmFactor()
-                + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
+		int maxPosibleModules = noc.getTdmFactor()
+				+ (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
 
-        boolean switchColor = true;
-        System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-        for (Bundle bun : bunSet) {
-            if (switchColor) {
-                g.setColor(Color.CYAN);
-            } else {
-                g.setColor(Color.ORANGE);
-            }
-            switchColor = !switchColor;
-            g.fillRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
-            g.drawRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
-            g.setColor(Color.BLACK);
+		boolean switchColor = true;
+		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+		for (Bundle bun : bunSet) {
+			if (switchColor) {
+				g.setColor(Color.CYAN);
+			} else {
+				g.setColor(Color.ORANGE);
+			}
+			switchColor = !switchColor;
+			g.fillRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
+			g.drawRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
+			g.setColor(Color.BLACK);
 
-            String name = bun.getFullName();
-            if (name.length() > 15) {
-                name = name.substring(0, 8);
-                name += "..";
-            }
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-            g.drawString(name, x + 5, y + bunSize / 2 / maxPosibleModules);
+			String name = bun.getFullName();
+			if (name.length() > 15) {
+				name = name.substring(0, 8);
+				name += "..";
+			}
+			System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			g.drawString(name, x + 5, y + bunSize / 2 / maxPosibleModules);
 
-            y += bunSize / maxPosibleModules;
-        }
-    }
+			y += bunSize / maxPosibleModules;
+		}
+	}
 
-    private void drawConnections(Graphics g, Mapping currMapping) {
+	private void drawConnections(Graphics g, Mapping currMapping) {
 
-        Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
-        double[][] nocLinks = noc.getAdjacencyMatrix();
+		Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
+		double[][] nocLinks = noc.getAdjacencyMatrix();
 
-        // initialize used link indices (none are used at the start)
-        for (int i = 0; i < noc.getNumRouters(); i++) {
-            for (int j = 0; j < noc.getNumRouters(); j++) {
-                if (nocLinks[i][j] == 1.0) {
-                    List<Integer> emptyList = new ArrayList<Integer>();
-                    linkIndices.put(Mapping.linkString(i, j), emptyList);
-                }
-            }
-        }
+		// initialize used link indices (none are used at the start)
+		for (int i = 0; i < noc.getNumRouters(); i++) {
+			for (int j = 0; j < noc.getNumRouters(); j++) {
+				if (nocLinks[i][j] == 1.0) {
+					List<Integer> emptyList = new ArrayList<Integer>();
+					linkIndices.put(Mapping.linkString(i, j), emptyList);
+				}
+			}
+		}
 
-        // loop over all connection paths
-        int x = 0;
-        for (Connection con : design.getConnections()) {
-            List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
+		// loop over all connection paths
+		int x = 0;
+		for (Connection con : design.getConnections()) {
+			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
 
-            // determine connection drawIndex
-            int drawIndex = 0;
-            for (int i = 0; i < path.size() - 1; i++) {
-                int fromRouter = path.get(i);
-                int toRouter = path.get(i + 1);
-                String linkStr = Mapping.linkString(fromRouter, toRouter);
-                while (linkIndices.get(linkStr).contains(drawIndex)) {
-                    drawIndex++;
-                }
-                String oppLinkStr = Mapping.linkString(toRouter, fromRouter);
-                linkIndices.get(linkStr).add(drawIndex);
-                linkIndices.get(oppLinkStr).add(drawIndex);
-            }
-            g.drawString("" + drawIndex, 10 * (++x), 10);
+			// determine connection drawIndex
+			int drawIndex = 0;
+			for (int i = 0; i < path.size() - 1; i++) {
+				int fromRouter = path.get(i);
+				int toRouter = path.get(i + 1);
+				String linkStr = Mapping.linkString(fromRouter, toRouter);
+				while (linkIndices.get(linkStr).contains(drawIndex)) {
+					drawIndex++;
+				}
+				String oppLinkStr = Mapping.linkString(toRouter, fromRouter);
+				linkIndices.get(linkStr).add(drawIndex);
+				linkIndices.get(oppLinkStr).add(drawIndex);
+			}
+			g.drawString("" + drawIndex, 10 * (++x), 10);
 
-            // draw the connection on the links
-            for (int i = 0; i < path.size() - 1; i++) {
-                int fromRouter = path.get(i);
-                int toRouter = path.get(i + 1);
-                int fromX = xOffset + (fromRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
-                int fromY = yOffset + (fromRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
-                int toX = xOffset + (toRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
-                int toY = yOffset + (toRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
-                if (drawIndex % 2 == 0)
-                    g.setColor(Color.RED);
-                else
-                    g.setColor(Color.GREEN);
+			// draw the connection on the links
+			for (int i = 0; i < path.size() - 1; i++) {
+				int fromRouter = path.get(i);
+				int toRouter = path.get(i + 1);
+				int fromX = xOffset + (fromRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
+				int fromY = yOffset + (fromRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
+				int toX = xOffset + (toRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
+				int toY = yOffset + (toRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
+				if (drawIndex % 2 == 0)
+					g.setColor(Color.RED);
+				else
+					g.setColor(Color.GREEN);
 
-                ((Graphics2D) g).setStroke(new BasicStroke(2));
-                g.drawLine(fromX + drawIndex * 5, fromY + drawIndex * 5, toX + drawIndex * 5, toY + drawIndex * 5);
-            }
-        }
-    }
+				((Graphics2D) g).setStroke(new BasicStroke(2));
+				g.drawLine(fromX + drawIndex * 5, fromY + drawIndex * 5, toX + drawIndex * 5, toY + drawIndex * 5);
+			}
+		}
+	}
 
-    private void drawNoc(Graphics g, Noc noc) {
+	private void drawNoc(Graphics g, Noc noc) {
 
-        int numRoutersPerDimension = noc.getNumRoutersPerDimension();
-        int ymin = yOffset;
-        int ymax = yOffset + routerSpacing * (numRoutersPerDimension - 1);
-        int xmin = xOffset;
-        int xmax = xOffset + routerSpacing * (numRoutersPerDimension - 1);
-        int rIndex = 0;
-        for (int j = 0; j < numRoutersPerDimension; j++) {
-            for (int i = 0; i < numRoutersPerDimension; i++) {
-                int x = xOffset + i * routerSpacing;
-                int y = yOffset + j * routerSpacing;
-                g.setColor(Color.BLACK);
-                g.fillOval(x, y, 20, 20);
-                if (j == 0) {
-                    g.drawLine(x + 10, ymin, x + 10, ymax);
-                }
-                if (i == 0) {
-                    g.drawLine(xmin, y + 10, xmax, y + 10);
-                }
-                g.setColor(Color.WHITE);
-                g.drawString(Integer.toString(rIndex), x + 4, y + 15);
-                rIndex++;
-            }
-        }
-    }
+		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
+		int ymin = yOffset;
+		int ymax = yOffset + routerSpacing * (numRoutersPerDimension - 1);
+		int xmin = xOffset;
+		int xmax = xOffset + routerSpacing * (numRoutersPerDimension - 1);
+		int rIndex = 0;
+		for (int j = 0; j < numRoutersPerDimension; j++) {
+			for (int i = 0; i < numRoutersPerDimension; i++) {
+				int x = xOffset + i * routerSpacing;
+				int y = yOffset + j * routerSpacing;
+				g.setColor(Color.BLACK);
+				g.fillOval(x, y, 20, 20);
+				if (j == 0) {
+					g.drawLine(x + 10, ymin, x + 10, ymax);
+				}
+				if (i == 0) {
+					g.drawLine(xmin, y + 10, xmax, y + 10);
+				}
+				g.setColor(Color.WHITE);
+				g.drawString(Integer.toString(rIndex), x + 4, y + 15);
+				rIndex++;
+			}
+		}
+	}
 
 }
