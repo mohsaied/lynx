@@ -132,7 +132,7 @@ public class CommandPanel extends JPanel {
 				// Handle open button action.
 				if (e.getSource() == openButton) {
 					// This isn't present on my computer so where does it go?
-					fc.setCurrentDirectory(new File("/home/min/git/noclynx/designs"));
+					fc.setCurrentDirectory(new File("/home/min/Documents/Eclipse Workspace/noclynx/designs"));
 					int returnVal = fc.showOpenDialog(CommandPanel.this);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						openedFile = fc.getSelectedFile();

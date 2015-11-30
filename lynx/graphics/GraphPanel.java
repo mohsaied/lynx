@@ -2,6 +2,8 @@ package lynx.graphics;
 
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,5 +86,18 @@ public class GraphPanel extends JPanel {
 		lo.setUseBoundingBox(true);
 		lo.execute(graph.getDefaultParent());
 		this.add(graphComponent);
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter()
+        {
+        
+            public void mouseReleased(MouseEvent e)
+            {
+                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+                
+                if (cell != null)
+                {
+                    System.out.println("cell="+graph.getLabel(cell));
+                }
+            }
+        });
 	}
 }
