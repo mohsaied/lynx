@@ -1,6 +1,7 @@
 package lynx.graphics;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -12,7 +13,11 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxPoint;
+
 //disabled edge editing
 import lynx.graphics.mxGraphEdited;
 
@@ -26,6 +31,8 @@ import lynx.main.DesignData;
 public class GraphPanel extends JPanel {
 
     private static final long serialVersionUID = 2L;
+    final int PORT_DIAMETER = 20;
+    final int PORT_RADIUS = PORT_DIAMETER / 2;
 
     Design design;
 
@@ -68,14 +75,25 @@ public class GraphPanel extends JPanel {
              * graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25); }
              */
         }
-
+        
+        mxGeometry geo1 = new mxGeometry(0, 0.5, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        Map<String, Object> modBunMap = new HashMap<String, Object>();
+        for (DesignModule mod : design.getDesignModules().values()) {
+            String fromMod = mod.getName();
+            for (Bundle Bun : mod.getBundles().values()) {
+                mxCell port = new mxCell(Bun.getName(), geo1, "shape=ellipse;perimter=ellipsePerimeter");
+                port.setVertex(true);
+                modBunMap.put(Bun.getFullName(), port);
+            }
+        }
         for (DesignModule mod : design.getDesignModules().values()) {
             String fromMod = mod.getName();
             for (Bundle fromBun : mod.getBundles().values()) {
+                graph.addCell(modBunMap.get(fromBun.getFullName()), vertices.get(fromMod));
                 if (fromBun.getDirection() == Direction.OUTPUT) {
                     for (Bundle toBun : fromBun.getConnections()) {
-                        String toMod = toBun.getParentModule().getName();
-                        graph.insertEdge(parent, null, null, vertices.get(fromMod), vertices.get(toMod));
+                        graph.insertEdge(parent, null, null, modBunMap.get(fromBun.getFullName()), modBunMap.get(toBun.getFullName()));
                     }
                 }
             }
@@ -108,18 +126,18 @@ public class GraphPanel extends JPanel {
                         System.out.println(portName);
                     }
 
-                    /*
-                     * for (String name : mod1.getBundles().keySet()) {
-                     * System.out.println(graph.getLabel(cell) + " " + name);
-                     * Bundle bun = mod1.getBundles().get(name);
-                     * System.out.println("This is the width of " + name + ":" +
-                     * " " + bun.getWidth() + "."); if (bun.getDstPort() !=
-                     * null) { System.out.println("This is the dst port of " +
-                     * name + ":" + " " + bun.getDstPort() + "."); } if
-                     * (bun.getVcPort() != null) { System.out.println(
-                     * "This is the VC port of " + name + ":" + " " +
-                     * bun.getVcPort() + "."); } }
-                     */
+                    for (String name : mod1.getBundles().keySet()) {
+                        System.out.println(graph.getLabel(cell) + " " + name);
+                        Bundle bun = mod1.getBundles().get(name);
+                        System.out.println("This is the width of " + name + ":" + " " + bun.getWidth() + ".");
+                        if (bun.getDstPort() != null) {
+                            System.out.println("This is the dst port of " + name + ":" + " " + bun.getDstPort() + ".");
+                        }
+                        if (bun.getVcPort() != null) {
+                            System.out.println("This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
+                        }
+                    }
+
                 }
             }
         });
