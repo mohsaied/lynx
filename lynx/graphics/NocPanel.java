@@ -177,7 +177,6 @@ public class NocPanel extends JPanel {
 				+ (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
 
 		boolean switchColor = true;
-		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
 		for (Bundle bun : bunSet) {
 			if (switchColor) {
 				g.setColor(Color.CYAN);
@@ -194,7 +193,6 @@ public class NocPanel extends JPanel {
 				name = name.substring(0, 8);
 				name += "..";
 			}
-			System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 			g.drawString(name, x + 5, y + bunSize / 2 / maxPosibleModules);
 
 			y += bunSize / maxPosibleModules;
