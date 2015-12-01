@@ -1,3 +1,4 @@
+
 package lynx.graphics;
 
 import java.awt.Color;
