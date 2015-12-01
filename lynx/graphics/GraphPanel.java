@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
+//disabled edge editing
+import lynx.graphics.mxGraphEdited;
 
 import lynx.data.Bundle;
 import lynx.data.Connection;
@@ -23,7 +24,7 @@ import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
 
 public class GraphPanel extends JPanel {
-
+    
     private static final long serialVersionUID = 2L;
 
     Design design;
@@ -47,12 +48,11 @@ public class GraphPanel extends JPanel {
 
     private void drawConnectivityGraph(Graphics g) {
 
-        mxGraph graph = new mxGraph();
+        mxGraphEdited graph = new mxGraphEdited();
         Object parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
 
         // populate vertices
-        // is the vertex the vertex of each square?
         Map<String, Object> vertices = new HashMap<String, Object>();
         int i = 0;
         int j = 0;
@@ -95,14 +95,35 @@ public class GraphPanel extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
                 if (cell != null) {
+                    
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
+                    if (mod1.getParameters().size() > 0) {
+                        for (lynx.data.Parameter params : mod1.getParameters()) {
+                            System.out.println("These are the parameters of the module: " + params.getName() + ", "
+                                    + params.getValue());
+                        }
+                    }
+                    System.out.println("These are the ports: ");
+                    for(String portName : mod1.getPorts().keySet()) {
+                        System.out.println(portName);
+                    }
+                    
+                    /*
                     for (String name : mod1.getBundles().keySet()) {
                         System.out.println(graph.getLabel(cell) + " " + name);
                         Bundle bun = mod1.getBundles().get(name);
                         System.out.println("This is the width of " + name + ":" + " " + bun.getWidth() + ".");
+                        if (bun.getDstPort() != null) {
+                            System.out.println("This is the dst port of " + name + ":" + " " + bun.getDstPort() + ".");
+                        }
+                        if (bun.getVcPort() != null) {
+                            System.out.println("This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
+                        }
                     }
+                    */
                 }
             }
         });
     }
+    
 }
