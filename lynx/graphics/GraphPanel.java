@@ -24,7 +24,7 @@ import lynx.data.MyEnums.Direction;
 import lynx.main.DesignData;
 
 public class GraphPanel extends JPanel {
-    
+
     private static final long serialVersionUID = 2L;
 
     Design design;
@@ -95,7 +95,7 @@ public class GraphPanel extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
                 if (cell != null) {
-                    
+
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
                     if (mod1.getParameters().size() > 0) {
                         for (lynx.data.Parameter params : mod1.getParameters()) {
@@ -104,26 +104,25 @@ public class GraphPanel extends JPanel {
                         }
                     }
                     System.out.println("These are the ports: ");
-                    for(String portName : mod1.getPorts().keySet()) {
+                    for (String portName : mod1.getPorts().keySet()) {
                         System.out.println(portName);
                     }
-                    
+
                     /*
-                    for (String name : mod1.getBundles().keySet()) {
-                        System.out.println(graph.getLabel(cell) + " " + name);
-                        Bundle bun = mod1.getBundles().get(name);
-                        System.out.println("This is the width of " + name + ":" + " " + bun.getWidth() + ".");
-                        if (bun.getDstPort() != null) {
-                            System.out.println("This is the dst port of " + name + ":" + " " + bun.getDstPort() + ".");
-                        }
-                        if (bun.getVcPort() != null) {
-                            System.out.println("This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
-                        }
-                    }
-                    */
+                     * for (String name : mod1.getBundles().keySet()) {
+                     * System.out.println(graph.getLabel(cell) + " " + name);
+                     * Bundle bun = mod1.getBundles().get(name);
+                     * System.out.println("This is the width of " + name + ":" +
+                     * " " + bun.getWidth() + "."); if (bun.getDstPort() !=
+                     * null) { System.out.println("This is the dst port of " +
+                     * name + ":" + " " + bun.getDstPort() + "."); } if
+                     * (bun.getVcPort() != null) { System.out.println(
+                     * "This is the VC port of " + name + ":" + " " +
+                     * bun.getVcPort() + "."); } }
+                     */
                 }
             }
         });
     }
-    
+
 }
