@@ -1,5 +1,6 @@
 package lynx.graphics;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -69,7 +70,6 @@ public class GraphPanel extends JPanel {
         }
 
         for (DesignModule mod : design.getDesignModules().values()) {
-            System.out.println("graph modules");
             String fromMod = mod.getName();
             for (Bundle fromBun : mod.getBundles().values()) {
                 if (fromBun.getDirection() == Direction.OUTPUT) {
@@ -93,20 +93,13 @@ public class GraphPanel extends JPanel {
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
             public void mouseReleased(MouseEvent e) {
-                /*
-                 * Map<String, Bundle> conBuns = mod.getBundles(); for (Bundle
-                 * bun : conBuns.values()) { if (bun.getDirection() ==
-                 * Direction.OUTPUT) { for (Bundle toBun : bun.getConnections())
-                 * { Connection con = new Connection(bun, toBun, this);
-                 * allConnections.add(con); } } }
-                 */
-                // design.getDesignModules().get("dst1");
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-
                 if (cell != null) {
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
                     for (String name : mod1.getBundles().keySet()) {
-                        System.out.println(graph.getLabel(cell) + "" + name);
+                        System.out.println(graph.getLabel(cell) + " " + name);
+                        Bundle bun = mod1.getBundles().get(name);
+                        System.out.println("This is the width of " + name + ":" + " " + bun.getWidth() + ".");
                     }
                 }
             }
