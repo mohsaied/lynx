@@ -69,55 +69,7 @@ public class NocPanel extends JPanel {
 			controlPanel.setBounds(0, 0, 15, 10);
 			this.add(controlPanel);
 
-			int numMappings = design.getMappings().size();
-			int numVersions = design.getMappings().get(selectedMapping).size();
-
-			mappingIndex = new JComboBox<Integer>();
-			for (int i = 0; i < numMappings; i++)
-				mappingIndex.addItem(i);
-			controlPanel.add(mappingIndex);
-
-			versionIndex = new JComboBox<Integer>();
-			for (int i = 0; i < numVersions; i++)
-				versionIndex.addItem(i);
-			controlPanel.add(versionIndex);
-
-			configureDropDowns();
 		}
-	}
-
-	private void configureDropDowns() {
-		mappingIndex.setSelectedItem(selectedMapping);
-
-		mappingIndex.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent event) {
-				if (event.getSource() == mappingIndex && event.getStateChange() == ItemEvent.SELECTED) {
-					selectedMapping = mappingIndex.getSelectedIndex();
-
-					int numVersions = design.getMappings().get(selectedMapping).size();
-					versionIndex.removeAllItems();
-					for (int i = 0; i < numVersions; i++)
-						versionIndex.addItem(i);
-					versionIndex.setSelectedItem(0);
-
-					repaint();
-
-					compareToBestMappingWithConsolePrint(design, selectedMapping, selectedVersion);
-				}
-			}
-		});
-
-		versionIndex.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent event) {
-				if (event.getSource() == versionIndex) {
-					selectedVersion = versionIndex.getSelectedIndex();
-					repaint();
-				}
-			}
-		});
-
 	}
 
 	protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
@@ -134,12 +86,12 @@ public class NocPanel extends JPanel {
 
 			if (bestLat < currLat)
 				log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat
-						+ ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-						+ con.getToModule().getName());
+				        + ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+				        + con.getToModule().getName());
 			else if (bestLat > currLat)
 				log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat
-						+ ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-						+ con.getToModule().getName());
+				        + ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
+				        + con.getToModule().getName());
 		}
 	}
 
@@ -174,7 +126,7 @@ public class NocPanel extends JPanel {
 		int y = yOffset + 15 + j * routerSpacing;
 
 		int maxPosibleModules = noc.getTdmFactor()
-				+ (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
+		        + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
 
 		boolean switchColor = true;
 		for (Bundle bun : bunSet) {
