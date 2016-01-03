@@ -1,10 +1,16 @@
 package lynx.graphics;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 
 import lynx.analysis.Analysis;
 import lynx.data.Design;
@@ -32,6 +38,12 @@ public class MainPanel extends JPanel {
 	private PlotPanel chartPanel1;
 	private PerfPanel perfPanel;
 	private PlotAnalysisPanel chartPanel2;
+	
+	//text boxes
+	public static JTextArea bundleInfo;
+	private static JTextArea bundleInfoTitle;
+	
+	private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
 
 	public MainPanel(Design design) {
 		super(new GridLayout(1, 1));
@@ -44,10 +56,31 @@ public class MainPanel extends JPanel {
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 
-	public void addGraphTab() {
+	public void addGraphTab() {		
 		// graph of given application
 		graphPanel = new GraphPanel();
-		tabbedPane.addTab("Graph", null, graphPanel, "Visualize the provided connectivity graph");
+		
+		//adding JTextArea for displaying bundle properties
+		bundleInfo = new JTextArea();
+		bundleInfo.setLineWrap(true);
+		bundleInfo.setEditable(false);
+		
+		//adding JTextArea for displaying a title for bundle properties
+		bundleInfoTitle = new JTextArea();
+		Font font = new Font("Verdana", Font.BOLD, 20);
+		bundleInfoTitle.setFont(font);
+		bundleInfoTitle.setText("Selected Bundle Properties");
+		bundleInfoTitle.setLineWrap(true);
+		bundleInfoTitle.setEditable(false);
+
+		JScrollPane titlePane = new JScrollPane(bundleInfoTitle);
+		JScrollPane infoPane = new JScrollPane(bundleInfo);
+		JSplitPane infoSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, titlePane, infoPane);
+		infoSplitPane.setResizeWeight(.05d);
+		JSplitPane graphPanelFinal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, graphPanel, infoSplitPane);
+		graphPanelFinal.setResizeWeight(.85d);
+		
+		tabbedPane.addTab("Graph", null, graphPanelFinal, "Visualize the provided connectivity graph");
 		tabbedPane.setMnemonicAt(GRAPHTABID, KeyEvent.VK_1);
 	}
 
