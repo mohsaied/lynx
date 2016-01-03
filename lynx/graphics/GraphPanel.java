@@ -81,7 +81,6 @@ public class GraphPanel extends JPanel {
         geo1.setRelative(true);
         Map<String, Object> modBunMap = new HashMap<String, Object>();
         for (DesignModule mod : design.getDesignModules().values()) {
-            String fromMod = mod.getName();
             for (Bundle Bun : mod.getBundles().values()) {
                 mxCell port = new mxCell(Bun.getName(), geo1, "shape=ellipse;perimter=ellipsePerimeter");
                 port.setVertex(true);
@@ -129,31 +128,30 @@ public class GraphPanel extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
                 if (cell != null) {
-
+                	MainPanel.bundleInfo.setText("");
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
                     if (mod1 != null) {
                         if (mod1.getParameters().size() > 0) {
                             for (lynx.data.Parameter params : mod1.getParameters()) {
-                                System.out.println("These are the parameters of the module: " + params.getName() + ", "
+                            	MainPanel.bundleInfo.append("These are the parameters of the module: " + params.getName() + ", "
                                         + params.getValue());
                             }
                         }
-                        System.out.println("These are the ports: ");
+                        MainPanel.bundleInfo.append("These are the ports: ");
                         for (String portName : mod1.getPorts().keySet()) {
-                            System.out.println(portName);
+                        	MainPanel.bundleInfo.append("\n" + portName);
                         }
 
                         for (String name : mod1.getBundles().keySet()) {
-                            System.out.println(graph.getLabel(cell) + " " + name);
+                        	MainPanel.bundleInfo.append("\n" + graph.getLabel(cell) + " " + name);
                             Bundle bun = mod1.getBundles().get(name);
-                            System.out.println("This is the width of " + name + ":" + " " + bun.getWidth() + ".");
+                            MainPanel.bundleInfo.append("\n" + "This is the width of " + name + ":" + " " + bun.getWidth() + ".");
                             if (bun.getDstPort() != null) {
-                                System.out.println(
-                                        "This is the dst port of " + name + ":" + " " + bun.getDstPort() + ".");
+                            	MainPanel.bundleInfo.append(
+                                        "\n" + "This is the dst port of " + name + ":" + " " + bun.getDstPort() + ".");
                             }
                             if (bun.getVcPort() != null) {
-                                System.out
-                                        .println("This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
+                            	MainPanel.bundleInfo.append("\n" + "This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
                             }
                         }
                     }

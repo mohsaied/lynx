@@ -40,7 +40,7 @@ public class MainPanel extends JPanel {
 	private PlotAnalysisPanel chartPanel2;
 	
 	//text boxes
-	public static JTextArea bundleInfo;
+	protected static JTextArea bundleInfo;
 	private static JTextArea bundleInfoTitle;
 	
 	private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
@@ -63,7 +63,6 @@ public class MainPanel extends JPanel {
 		//adding JTextArea for displaying bundle properties
 		bundleInfo = new JTextArea();
 		bundleInfo.setLineWrap(true);
-		bundleInfo.setEditable(false);
 		
 		//adding JTextArea for displaying a title for bundle properties
 		bundleInfoTitle = new JTextArea();
@@ -71,7 +70,6 @@ public class MainPanel extends JPanel {
 		bundleInfoTitle.setFont(font);
 		bundleInfoTitle.setText("Selected Bundle Properties");
 		bundleInfoTitle.setLineWrap(true);
-		bundleInfoTitle.setEditable(false);
 
 		JScrollPane titlePane = new JScrollPane(bundleInfoTitle);
 		JScrollPane infoPane = new JScrollPane(bundleInfo);
