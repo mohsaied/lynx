@@ -7,7 +7,9 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,17 +78,46 @@ public class GraphPanel extends JPanel {
              * graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25); }
              */
         }
-
-        mxGeometry geo1 = new mxGeometry(0, 0.5, PORT_DIAMETER, PORT_DIAMETER);
+        
+        // draws the inbun and outbun ports
+        List<mxGeometry> geoList = new ArrayList<mxGeometry>();
+        mxGeometry geo1 = new mxGeometry(0.5, 0, PORT_DIAMETER, PORT_DIAMETER);
         geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 0, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 0.5, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0.5, 1, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0, 1, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0, 0.5, PORT_DIAMETER, PORT_DIAMETER);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        int counter = 0;
+        int numBundles = 0;
         Map<String, Object> modBunMap = new HashMap<String, Object>();
         for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle Bun : mod.getBundles().values()) {
-                mxCell port = new mxCell(Bun.getName(), geo1, "shape=ellipse;perimter=ellipsePerimeter");
+            	numBundles = mod.getBundles().size();
+                mxCell port = new mxCell(Bun.getName(), geoList.get(counter), "shape=ellipse;perimter=ellipsePerimeter");
                 port.setVertex(true);
                 modBunMap.put(Bun.getFullName(), port);
+                counter++;
+                if(counter >= numBundles) {
+                	counter = 0;
+                }
             }
         }
+        // draws the inbun and outbun ports connections
         for (DesignModule mod : design.getDesignModules().values()) {
             String fromMod = mod.getName();
             for (Bundle fromBun : mod.getBundles().values()) {
