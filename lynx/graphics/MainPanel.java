@@ -10,8 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-
 import lynx.analysis.Analysis;
 import lynx.data.Design;
 import lynx.data.Noc;

@@ -1,8 +1,6 @@
 
 package lynx.graphics;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -11,24 +9,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.util.mxPoint;
-
 //disabled edge editing
 import lynx.graphics.mxGraphEdited;
 
 import lynx.data.Bundle;
-import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.MyEnums.Direction;
+import lynx.elaboration.ConnectionGroup;
 import lynx.main.DesignData;
 
 public class GraphPanel extends JPanel {
@@ -80,6 +74,7 @@ public class GraphPanel extends JPanel {
         }
         
         // draws the inbun and outbun ports
+        // sets the 7 possible configurations of the ports (top mid, top right, right mid, bottom right, bot mid, left bottom, left mid)
         List<mxGeometry> geoList = new ArrayList<mxGeometry>();
         mxGeometry geo1 = new mxGeometry(0.5, 0, PORT_DIAMETER, PORT_DIAMETER);
         geo1.setRelative(true);
@@ -102,8 +97,10 @@ public class GraphPanel extends JPanel {
         geo1 = new mxGeometry(0, 0.5, PORT_DIAMETER, PORT_DIAMETER);
         geo1.setRelative(true);
         geoList.add(geo1);
+        // used to select between the 7 possible positions of the ports
         int counter = 0;
         int numBundles = 0;
+        // draws the ports
         Map<String, Object> modBunMap = new HashMap<String, Object>();
         for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle Bun : mod.getBundles().values()) {
@@ -117,6 +114,7 @@ public class GraphPanel extends JPanel {
                 }
             }
         }
+        
         // draws the inbun and outbun ports connections
         for (DesignModule mod : design.getDesignModules().values()) {
             String fromMod = mod.getName();
@@ -130,6 +128,7 @@ public class GraphPanel extends JPanel {
                 }
             }
         }
+        
         // create invisible connections between the modules so that organic
         // layout works
         for (DesignModule mod : design.getDesignModules().values()) {
@@ -152,7 +151,10 @@ public class GraphPanel extends JPanel {
         lo.setUseBoundingBox(true);
         lo.execute(graph.getDefaultParent());
         this.add(graphComponent);
-
+        
+        //connection group to get master-slave relationships
+        
+        
         // mouse listener to obtain additional information about module
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 
@@ -184,7 +186,13 @@ public class GraphPanel extends JPanel {
                             if (bun.getVcPort() != null) {
                             	MainPanel.bundleInfo.append("\n" + "This is the VC port of " + name + ":" + " " + bun.getVcPort() + ".");
                             }
-                        }
+                            if(bun.getConnectionGroup().isMaster(bun)) {
+                            	MainPanel.bundleInfo.append("\n" + "this is master");
+                            }
+                            else if(bun.getConnectionGroup().isSlave(bun)) {
+                            	MainPanel.bundleInfo.append("\n" + "this is slave");
+                            }
+                        }   
                     }
                 }
             }
