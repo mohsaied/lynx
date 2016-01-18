@@ -52,7 +52,13 @@ public class GraphPanel extends JPanel {
 
     private void drawConnectivityGraph(Graphics g) {
 
-        mxGraphEdited graph = new mxGraphEdited();
+        mxGraphEdited graph = new mxGraphEdited(){
+        	public boolean isCellFoldable(Object cell, boolean collapse)
+			{
+				return false;
+			}
+        };
+        
         Object parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
 
