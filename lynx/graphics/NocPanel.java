@@ -102,11 +102,11 @@ public class NocPanel extends JPanel {
 		if (noc != null)
 			drawNoc(g, noc);
 
-		//if (design != null && design.getMappings() != null)
-			//drawDesign(g);
+		if (design != null && design.getMappings() != null)
+			drawDesign(g);
 	}
 
-	/*
+	
 	private void drawDesign(Graphics g) {
 
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
@@ -119,9 +119,9 @@ public class NocPanel extends JPanel {
 		// draw the connections
 		//drawConnections(g, currMapping);
 	}
-	*/
+	
 
-	/*
+	
 	private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
 
 		int i = router % noc.getNumRoutersPerDimension();
@@ -154,7 +154,7 @@ public class NocPanel extends JPanel {
 			y += bunSize / maxPosibleModules;
 		}
 	}
-	*/
+	
 
 	/*
 	private void drawConnections(Graphics g, Mapping currMapping) {
