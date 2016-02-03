@@ -19,6 +19,9 @@ import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
+
 import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.Noc;
@@ -38,8 +41,8 @@ public class NocPanel extends JPanel {
 
 	private Design design;
 	private Noc noc;
-	private int selectedMapping;
-	private int selectedVersion;
+	private int selectedMapping = 0;
+	private int selectedVersion = 0;
 
 	private JPanel controlPanel;
 	JComboBox<Integer> mappingIndex;
@@ -62,9 +65,6 @@ public class NocPanel extends JPanel {
 	private void initPane() {
 
 		if (design != null && design.getMappings() != null) {
-			selectedMapping = 0;
-			selectedVersion = 0;
-
 			controlPanel = new JPanel(new GridLayout(1, 1));
 			controlPanel.setBounds(0, 0, 15, 10);
 			this.add(controlPanel);
@@ -72,6 +72,7 @@ public class NocPanel extends JPanel {
 		}
 	}
 
+	/*
 	protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
 		// TODO compare traffic
 
@@ -94,6 +95,7 @@ public class NocPanel extends JPanel {
 				        + con.getToModule().getName());
 		}
 	}
+	*/
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -101,10 +103,11 @@ public class NocPanel extends JPanel {
 		if (noc != null)
 			drawNoc(g, noc);
 
-		if (design != null && design.getMappings() != null)
-			drawDesign(g);
+		//if (design != null && design.getMappings() != null)
+			//drawDesign(g);
 	}
 
+	/*
 	private void drawDesign(Graphics g) {
 
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
@@ -115,9 +118,11 @@ public class NocPanel extends JPanel {
 		}
 
 		// draw the connections
-		drawConnections(g, currMapping);
+		//drawConnections(g, currMapping);
 	}
+	*/
 
+	/*
 	private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
 
 		int i = router % noc.getNumRoutersPerDimension();
@@ -150,7 +155,9 @@ public class NocPanel extends JPanel {
 			y += bunSize / maxPosibleModules;
 		}
 	}
+	*/
 
+	/*
 	private void drawConnections(Graphics g, Mapping currMapping) {
 
 		Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
@@ -205,6 +212,7 @@ public class NocPanel extends JPanel {
 		}
 	}
 
+*/
 	private void drawNoc(Graphics g, Noc noc) {
 
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
@@ -213,10 +221,17 @@ public class NocPanel extends JPanel {
 		int xmin = xOffset;
 		int xmax = xOffset + routerSpacing * (numRoutersPerDimension - 1);
 		int rIndex = 0;
+		mxGraph graph = new mxGraph();
+		Object parent = graph.getDefaultParent();
+		graph.getModel().beginUpdate();
+		System.out.println(numRoutersPerDimension);
 		for (int j = 0; j < numRoutersPerDimension; j++) {
 			for (int i = 0; i < numRoutersPerDimension; i++) {
 				int x = xOffset + i * routerSpacing;
 				int y = yOffset + j * routerSpacing;
+				graph.insertVertex(parent, null, rIndex, x, y, 20, 20);
+				
+				/*
 				g.setColor(Color.BLACK);
 				g.fillOval(x, y, 20, 20);
 				if (j == 0) {
@@ -227,9 +242,14 @@ public class NocPanel extends JPanel {
 				}
 				g.setColor(Color.WHITE);
 				g.drawString(Integer.toString(rIndex), x + 4, y + 15);
+				*/
 				rIndex++;
+				
 			}
 		}
+		graph.getModel().endUpdate();
+		mxGraphComponent graphComponent = new mxGraphComponent(graph);
+		this.add(graphComponent);
 	}
 
 }
