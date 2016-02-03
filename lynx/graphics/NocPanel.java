@@ -19,7 +19,10 @@ import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 
 import lynx.data.Connection;
@@ -31,6 +34,8 @@ import lynx.nocmapping.Mapping;
 public class NocPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	final int PORT_DIAMETER = 40;
+    final int PORT_RADIUS = 11;
 
 	private static final Logger log = Logger.getLogger(NocPanel.class.getName());
 
@@ -47,12 +52,45 @@ public class NocPanel extends JPanel {
 	private JPanel controlPanel;
 	JComboBox<Integer> mappingIndex;
 	JComboBox<Integer> versionIndex;
+	
+	mxGraph graph;
+	Map<Integer, Object> routerMap;
+	List<mxGeometry> geoList;
 
 	public NocPanel(Design design, Noc noc) {
 		super(new GridLayout(1, 1));
 		log.setLevel(Level.ALL);
 		this.design = design;
 		this.noc = noc;
+		graph = new mxGraph() {
+            public boolean isCellSelectable(Object cell) {
+                return false;
+            }
+        };
+     // sets the 7 possible configurations of the bundles at the routers
+        geoList = new ArrayList<mxGeometry>();
+        mxGeometry geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 0.75, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 0.50, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(1, 0.25, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0, 1, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0, 0.7, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        geo1 = new mxGeometry(0, 0.4, PORT_DIAMETER, PORT_RADIUS);
+        geo1.setRelative(true);
+        geoList.add(geo1);
+        
 		//initPane();
 	}
 
@@ -67,31 +105,6 @@ public class NocPanel extends JPanel {
 			controlPanel = new JPanel(new GridLayout(1, 1));
 			controlPanel.setBounds(0, 0, 15, 10);
 			this.add(controlPanel);
-		}
-	}
-	*/
-
-	/*
-	protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
-		// TODO compare traffic
-
-		Mapping bestMapping = design.getMappings().get(0).get(0);
-		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
-
-		List<Connection> connections = design.getConnections();
-
-		for (Connection con : connections) {
-			int bestLat = bestMapping.getConnectionPath(con).size() - 1;
-			int currLat = currMapping.getConnectionPath(con).size() - 1;
-
-			if (bestLat < currLat)
-				log.warning("Selected Mapping (" + selectedMapping + ") has increased latency " + currLat
-				        + ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-				        + con.getToModule().getName());
-			else if (bestLat > currLat)
-				log.warning("Selected Mapping (" + selectedMapping + ") has decreased latency " + currLat
-				        + ", instead of " + bestLat + " on connection between " + con.getFromModule().getName() + "-->"
-				        + con.getToModule().getName());
 		}
 	}
 	*/
@@ -131,7 +144,11 @@ public class NocPanel extends JPanel {
 
 		int maxPosibleModules = noc.getTdmFactor()
 		        + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
-
+		
+		mxGeometry geo = new mxGeometry(1, 1, PORT_DIAMETER, PORT_DIAMETER);
+		geo.setRelative(true);
+		graph.getModel().beginUpdate();
+        /*
 		boolean switchColor = true;
 		for (Bundle bun : bunSet) {
 			if (switchColor) {
@@ -153,6 +170,18 @@ public class NocPanel extends JPanel {
 
 			y += bunSize / maxPosibleModules;
 		}
+		*/
+		
+		
+		int counter = 0;
+        for (Bundle bun: bunSet) {
+            System.out.println("here");
+            mxCell bundle = new mxCell(bun.getName(), geoList.get(counter), "shape=rectangle;");
+            bundle.setVertex(true);
+            graph.addCell(bundle, routerMap.get(router));
+            counter++;
+        }
+        graph.getModel().endUpdate();
 	}
 	
 
@@ -215,12 +244,7 @@ public class NocPanel extends JPanel {
 	private void drawNoc(Graphics g, Noc noc) {
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
 		int rIndex = 0;
-		Map<Integer, Object> routerMap = new HashMap<Integer, Object>(); 
-		mxGraph graph = new mxGraph() {
-			public boolean isCellSelectable(Object cell) {
-				return false;
-			}
-		};
+		routerMap = new HashMap<Integer, Object>(); 
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
 		// drawing the routers
@@ -228,7 +252,8 @@ public class NocPanel extends JPanel {
 			for (int i = 0; i < numRoutersPerDimension; i++) {
 				int x = xOffset + i * routerSpacing;
 				int y = yOffset + j * routerSpacing;
-				Object router = graph.insertVertex(parent, null, rIndex, x, y, 20, 20, "shape=ellipse");
+				Object router = graph.insertVertex(parent, null, rIndex, x, y, 60, 60, "shape=ellipse");
+				((mxCell) router).getGeometry().setAlternateBounds(new mxRectangle(0.5,0.5,60,60));
 				routerMap.put(rIndex, router);
 				rIndex++;
 			}
