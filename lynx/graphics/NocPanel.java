@@ -53,7 +53,6 @@ public class NocPanel extends JPanel {
 		log.setLevel(Level.ALL);
 		this.design = design;
 		this.noc = noc;
-
 		//initPane();
 	}
 
@@ -64,12 +63,10 @@ public class NocPanel extends JPanel {
 	
 	/*
 	private void initPane() {
-
 		if (design != null && design.getMappings() != null) {
 			controlPanel = new JPanel(new GridLayout(1, 1));
 			controlPanel.setBounds(0, 0, 15, 10);
 			this.add(controlPanel);
-
 		}
 	}
 	*/
@@ -216,43 +213,42 @@ public class NocPanel extends JPanel {
 
 */
 	private void drawNoc(Graphics g, Noc noc) {
-
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
-		
-		int ymin = yOffset;
-		int ymax = yOffset + routerSpacing * (numRoutersPerDimension - 1);
-		int xmin = xOffset;
-		int xmax = xOffset + routerSpacing * (numRoutersPerDimension - 1);
 		int rIndex = 0;
-		mxGraph graph = new mxGraph();
+		Map<Integer, Object> routerMap = new HashMap<Integer, Object>(); 
+		mxGraph graph = new mxGraph() {
+			public boolean isCellSelectable(Object cell) {
+				return false;
+			}
+		};
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
-		System.out.println(numRoutersPerDimension);
+		// drawing the routers
 		for (int j = 0; j < numRoutersPerDimension; j++) {
 			for (int i = 0; i < numRoutersPerDimension; i++) {
 				int x = xOffset + i * routerSpacing;
 				int y = yOffset + j * routerSpacing;
-				graph.insertVertex(parent, null, rIndex, x, y, 20, 20, "shape=ellipse");
-				
-				/*
-				g.setColor(Color.BLACK);
-				g.fillOval(x, y, 20, 20);
-				if (j == 0) {
-					g.drawLine(x + 10, ymin, x + 10, ymax);
-				}
-				if (i == 0) {
-					g.drawLine(xmin, y + 10, xmax, y + 10);
-				}
-				g.setColor(Color.WHITE);
-				g.drawString(Integer.toString(rIndex), x + 4, y + 15);
-				*/
+				Object router = graph.insertVertex(parent, null, rIndex, x, y, 20, 20, "shape=ellipse");
+				routerMap.put(rIndex, router);
 				rIndex++;
-				
+			}
+		}
+		
+		// drawing the links
+		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
+			// drawing horizontal links
+			if(i % numRoutersPerDimension != numRoutersPerDimension - 1) {
+				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
+			}
+			// drawing vertical links
+			if(i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
+				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(numRoutersPerDimension + i), "endArrow=none;");
 			}
 		}
 		graph.getModel().endUpdate();
 		mxGraphComponent graphComponent = new mxGraphComponent(graph);
+		// disabling drag and drop edge creation
+		graphComponent.setConnectable(false);
 		this.add(graphComponent);
 	}
-
 }
