@@ -49,19 +49,20 @@ public class NocPanel extends JPanel {
 	JComboBox<Integer> versionIndex;
 
 	public NocPanel(Design design, Noc noc) {
-		super(new FlowLayout());
+		super(new GridLayout(1, 1));
 		log.setLevel(Level.ALL);
 		this.design = design;
 		this.noc = noc;
 
-		initPane();
+		//initPane();
 	}
 
 	public void setDesign(Design design) {
 		this.design = design;
-		initPane();
+		//initPane();
 	}
-
+	
+	/*
 	private void initPane() {
 
 		if (design != null && design.getMappings() != null) {
@@ -71,6 +72,7 @@ public class NocPanel extends JPanel {
 
 		}
 	}
+	*/
 
 	/*
 	protected void compareToBestMappingWithConsolePrint(Design design, int selectedMapping, int selectedVersion) {
@@ -216,6 +218,7 @@ public class NocPanel extends JPanel {
 	private void drawNoc(Graphics g, Noc noc) {
 
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
+		
 		int ymin = yOffset;
 		int ymax = yOffset + routerSpacing * (numRoutersPerDimension - 1);
 		int xmin = xOffset;
@@ -229,7 +232,7 @@ public class NocPanel extends JPanel {
 			for (int i = 0; i < numRoutersPerDimension; i++) {
 				int x = xOffset + i * routerSpacing;
 				int y = yOffset + j * routerSpacing;
-				graph.insertVertex(parent, null, rIndex, x, y, 20, 20);
+				graph.insertVertex(parent, null, rIndex, x, y, 20, 20, "shape=ellipse");
 				
 				/*
 				g.setColor(Color.BLACK);
