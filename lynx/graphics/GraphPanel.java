@@ -169,7 +169,6 @@ public class GraphPanel extends JPanel {
 
         // mouse listener to obtain additional information about module
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
                 if (cell != null) {

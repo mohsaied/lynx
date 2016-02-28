@@ -40,6 +40,8 @@ public class MainPanel extends JPanel {
     // text boxes
     protected static JTextArea bundleInfo;
     private static JTextArea bundleInfoTitle;
+    protected static JTextArea nocInfo;
+    private static JTextArea nocInfoTitle;
 
     private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
 
@@ -101,11 +103,22 @@ public class MainPanel extends JPanel {
     public void addNoCTabs(Design design, Noc noc) {
         // NoC
         nocPanel = new NocPanel(design, noc);
+        	
+        // adding JTextArea for displaying bundle properties
+        nocInfo = new JTextArea();
+        nocInfo.setLineWrap(true);
 
+        // adding JTextArea for displaying a title for bundle properties
+        nocInfoTitle = new JTextArea();
+        Font font = new Font("Verdana", Font.BOLD, 20);
+        nocInfoTitle.setFont(font);
+        nocInfoTitle.setText("Selected Bundle Properties");
+        nocInfoTitle.setLineWrap(true);
+        
         // adding a split pane to show both the noc + information about specific
         // bundles
-        JScrollPane propertiesHeaderPane = new JScrollPane();
-        JScrollPane propertiesPane = new JScrollPane();
+        JScrollPane propertiesHeaderPane = new JScrollPane(nocInfo);
+        JScrollPane propertiesPane = new JScrollPane(nocInfoTitle);
         JSplitPane sidebarPropertiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propertiesHeaderPane,
                 propertiesPane);
         sidebarPropertiesPane.setResizeWeight(.05d);
@@ -114,7 +127,6 @@ public class MainPanel extends JPanel {
 
         tabbedPane.addTab("NoC", null, nocPanelFinal, "The NoC topology and module placement thereon");
 
-        tabbedPane.addTab("NoC", null, nocPanel, "The NoC topology and module placement thereon");
         tabbedPane.setMnemonicAt(MAPTABID, KeyEvent.VK_1);
 
         // charts
