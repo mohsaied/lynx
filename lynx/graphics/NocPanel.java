@@ -76,25 +76,25 @@ public class NocPanel extends JPanel {
 		};
 		// sets the 7 possible configurations of the bundles at the routers
 		geoList = new ArrayList<mxGeometry>();
-		mxGeometry geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_RADIUS);
-		geo1.setRelative(true);
-		geoList.add(geo1);
-		geo1 = new mxGeometry(1, 0.75, PORT_DIAMETER, PORT_RADIUS);
+		mxGeometry geo1 = new mxGeometry(1, 0.25, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
 		geo1 = new mxGeometry(1, 0.50, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
-		geo1 = new mxGeometry(1, 0.25, PORT_DIAMETER, PORT_RADIUS);
+		geo1 = new mxGeometry(1, 0.75, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
-		geo1 = new mxGeometry(0, 1, PORT_DIAMETER, PORT_RADIUS);
+		geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_RADIUS);;
 		geo1.setRelative(true);
 		geoList.add(geo1);
-		geo1 = new mxGeometry(0, 0.7, PORT_DIAMETER, PORT_RADIUS);
+		geo1 = new mxGeometry(-0.6, 1, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
-		geo1 = new mxGeometry(0, 0.4, PORT_DIAMETER, PORT_RADIUS);
+		geo1 = new mxGeometry(-0.6, 0.75, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(-0.6, 0.50, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
 	}
@@ -122,16 +122,13 @@ public class NocPanel extends JPanel {
 			drawModules(g, bunSet, i++);
 
 		}
-
-		// draw the connections
-		drawConnections(currMapping);
 	}
 
 	private void drawModules(Graphics g, HashSet<Bundle> bunSet, int router) {
 		mxGeometry geo = new mxGeometry(1, 1, PORT_DIAMETER, PORT_DIAMETER);
 		geo.setRelative(true);
 		graph.getModel().beginUpdate();
-		int counter = 0;
+		int counter = 2;
 		List<DesignModule> moduleList = new ArrayList<DesignModule>();
 		for (Bundle bun : bunSet) {
 			DesignModule parentMod = bun.getParentModule();
@@ -140,67 +137,13 @@ public class NocPanel extends JPanel {
 				mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
 				mod.setVertex(true);
 				graph.addCell(mod, routerMap.get(router));
+				System.out.println(counter);
 				counter++;
 			}
 		}
 		routerModMap.put(router, moduleList);
 		graph.getModel().endUpdate();
 	}
-
-	private void drawConnections(Mapping currMapping) {
-
-		Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
-		double[][] nocLinks = noc.getAdjacencyMatrix();
-
-		// initialize used link indices (none are used at the start)
-		for (int i = 0; i < noc.getNumRouters(); i++) {
-			for (int j = 0; j < noc.getNumRouters(); j++) {
-				if (nocLinks[i][j] == 1.0) {
-					List<Integer> emptyList = new ArrayList<Integer>();
-					linkIndices.put(Mapping.linkString(i, j), emptyList);
-				}
-			}
-		}
-
-		// loop over all connection paths
-		int x = 0;
-		for (Connection con : design.getConnections()) {
-			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
-
-			// determine connection drawIndex
-			int drawIndex = 0;
-			for (int i = 0; i < path.size() - 1; i++) {
-				int fromRouter = path.get(i);
-				int toRouter = path.get(i + 1);
-				String linkStr = Mapping.linkString(fromRouter, toRouter);
-				while (linkIndices.get(linkStr).contains(drawIndex)) {
-					drawIndex++;
-				}
-				String oppLinkStr = Mapping.linkString(toRouter, fromRouter);
-				linkIndices.get(linkStr).add(drawIndex);
-				linkIndices.get(oppLinkStr).add(drawIndex);
-			}
-			/*
-			g.drawString("" + drawIndex, 10 * (++x), 10);
-
-			// draw the connection on the links
-			for (int i = 0; i < path.size() - 1; i++) {
-				int fromRouter = path.get(i);
-				int toRouter = path.get(i + 1);
-				int fromX = xOffset + (fromRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
-				int fromY = yOffset + (fromRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
-				int toX = xOffset + (toRouter % noc.getNumRoutersPerDimension()) * routerSpacing;
-				int toY = yOffset + (toRouter / noc.getNumRoutersPerDimension()) * routerSpacing;
-				if (drawIndex % 2 == 0)
-					g.setColor(Color.RED);
-				else
-					g.setColor(Color.GREEN);
-
-				((Graphics2D) g).setStroke(new BasicStroke(2));
-				g.drawLine(fromX + drawIndex * 5, fromY + drawIndex * 5, toX + drawIndex * 5, toY + drawIndex * 5);
-				*/
-			}
-		}
 
 	private void drawNoc(Graphics g, Noc noc) {
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
@@ -219,16 +162,66 @@ public class NocPanel extends JPanel {
 				rIndex++;
 			}
 		}
-
+		
 		// drawing the links
+		Map<String, Integer> linkUsageMap = new HashMap<String, Integer>();
+		for (Connection con : design.getConnections()) {
+			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
+			// determine connection drawIndex
+			for (int i = 0; i < path.size() - 1; i++) {
+				int fromRouter = path.get(i);
+				int toRouter = path.get(i + 1);
+				if(linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter)) != null) {
+					int pathUsage = linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter));
+					pathUsage += 1;
+					linkUsageMap.put(String.valueOf(fromRouter) + " " + String.valueOf(toRouter), pathUsage);	
+				}
+				else {
+					linkUsageMap.put(String.valueOf(fromRouter) + " " + String.valueOf(toRouter), 1);
+				}
+			}
+		}
+	
 		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
 			// drawing horizontal links
 			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
-				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
+				String label = null;
+				if(linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) != null
+						&& linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) != null) {
+					label = String.valueOf(i) + "-" + String.valueOf(i + 1) + ": " + 
+							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) + "\n" +
+							String.valueOf(i + 1) + "-" + String.valueOf(i) + ": " + 
+							linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) + "\n";
+				}
+				else if (linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) != null) {
+					label = String.valueOf(i) + "-" + String.valueOf(i + 1) + ": " + 
+							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1));
+				}
+				else if (linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) != null) {
+					label = String.valueOf(i + 1) + "-" + String.valueOf(i) + ": " + 
+							linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i));
+				}
+				graph.insertEdge(parent, null, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
 			}
 			// drawing vertical links
 			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
+				String label = null;
+				if(linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) != null
+						&& linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) != null) {
+					label = String.valueOf(i) + "-" + String.valueOf(numRoutersPerDimension + i) + ": " + 
+							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) + "\n" +
+							String.valueOf(numRoutersPerDimension + i) + "-" + String.valueOf(i) + ": " + 
+							linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) + "\n";
+				}
+				else if (linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) != null) {
+					label = String.valueOf(i) + "-" + String.valueOf(numRoutersPerDimension + i) + ": " + 
+							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i));
+				}
+				else if (linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) != null) {
+					label = String.valueOf(numRoutersPerDimension + i) + "-" + String.valueOf(i) + ": " + 
+							linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i));
+				}
+				graph.insertEdge(parent, null, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
 						"endArrow=none;");
 			}
 		}
