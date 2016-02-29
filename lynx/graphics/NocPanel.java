@@ -40,7 +40,7 @@ public class NocPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	final int PORT_DIAMETER = 40;
-    final int PORT_RADIUS = 11;
+	final int PORT_RADIUS = 11;
 
 	private static final Logger log = Logger.getLogger(NocPanel.class.getName());
 
@@ -56,14 +56,13 @@ public class NocPanel extends JPanel {
 
 	JComboBox<Integer> mappingIndex;
 	JComboBox<Integer> versionIndex;
-	
-	//additional variables added
+
+	// additional variables added
 	mxGraph graph;
 	Map<Integer, Object> routerMap;
 	Map<Integer, HashSet<Bundle>> routerBunMap;
-	Map<Integer, List<DesignModule>> routerModMap; 
+	Map<Integer, List<DesignModule>> routerModMap;
 	List<mxGeometry> geoList;
-	
 
 	public NocPanel(Design design, Noc noc) {
 		super(new GridLayout(1, 1));
@@ -71,35 +70,33 @@ public class NocPanel extends JPanel {
 		this.design = design;
 		this.noc = noc;
 		graph = new mxGraph() {
-            public boolean isCellSelectable(Object cell) {
-                return false;
-            }
-        };
-     // sets the 7 possible configurations of the bundles at the routers
-        geoList = new ArrayList<mxGeometry>();
-        mxGeometry geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(1, 0.75, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(1, 0.50, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(1, 0.25, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(0, 1, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(0, 0.7, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        geo1 = new mxGeometry(0, 0.4, PORT_DIAMETER, PORT_RADIUS);
-        geo1.setRelative(true);
-        geoList.add(geo1);
-        
-		//initPane();
+			public boolean isCellSelectable(Object cell) {
+				return false;
+			}
+		};
+		// sets the 7 possible configurations of the bundles at the routers
+		geoList = new ArrayList<mxGeometry>();
+		mxGeometry geo1 = new mxGeometry(1, 1, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(1, 0.75, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(1, 0.50, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(1, 0.25, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(0, 1, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(0, 0.7, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
+		geo1 = new mxGeometry(0, 0.4, PORT_DIAMETER, PORT_RADIUS);
+		geo1.setRelative(true);
+		geoList.add(geo1);
 	}
 
 	public void setDesign(Design design) {
@@ -108,15 +105,12 @@ public class NocPanel extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
 		if (noc != null)
 			drawNoc(g, noc);
-
 		if (design != null && design.getMappings() != null)
 			drawDesign(g);
 	}
 
-	
 	private void drawDesign(Graphics g) {
 
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
@@ -126,41 +120,34 @@ public class NocPanel extends JPanel {
 		for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
 			routerBunMap.put(i, bunSet);
 			drawModules(g, bunSet, i++);
-			
+
 		}
 
 		// draw the connections
-		//drawConnections(g, currMapping);
+		drawConnections(currMapping);
 	}
-	
 
-	
 	private void drawModules(Graphics g, HashSet<Bundle> bunSet, int router) {
-
-		int maxPosibleModules = noc.getTdmFactor()
-		        + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
 		mxGeometry geo = new mxGeometry(1, 1, PORT_DIAMETER, PORT_DIAMETER);
 		geo.setRelative(true);
 		graph.getModel().beginUpdate();
 		int counter = 0;
 		List<DesignModule> moduleList = new ArrayList<DesignModule>();
-        for (Bundle bun: bunSet) {
-        	DesignModule parentMod = bun.getParentModule();
-        	if(!moduleList.contains(parentMod)) {
-        		moduleList.add(parentMod);
-        		mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
-        		mod.setVertex(true);
-        		graph.addCell(mod, routerMap.get(router));
-        		counter++;
-        	}
-        }
-        routerModMap.put(router, moduleList);
-        graph.getModel().endUpdate();
+		for (Bundle bun : bunSet) {
+			DesignModule parentMod = bun.getParentModule();
+			if (!moduleList.contains(parentMod)) {
+				moduleList.add(parentMod);
+				mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
+				mod.setVertex(true);
+				graph.addCell(mod, routerMap.get(router));
+				counter++;
+			}
+		}
+		routerModMap.put(router, moduleList);
+		graph.getModel().endUpdate();
 	}
-	
 
-	/*
-	private void drawConnections(Graphics g, Mapping currMapping) {
+	private void drawConnections(Mapping currMapping) {
 
 		Map<String, List<Integer>> linkIndices = new HashMap<String, List<Integer>>();
 		double[][] nocLinks = noc.getAdjacencyMatrix();
@@ -193,6 +180,7 @@ public class NocPanel extends JPanel {
 				linkIndices.get(linkStr).add(drawIndex);
 				linkIndices.get(oppLinkStr).add(drawIndex);
 			}
+			/*
 			g.drawString("" + drawIndex, 10 * (++x), 10);
 
 			// draw the connection on the links
@@ -210,15 +198,14 @@ public class NocPanel extends JPanel {
 
 				((Graphics2D) g).setStroke(new BasicStroke(2));
 				g.drawLine(fromX + drawIndex * 5, fromY + drawIndex * 5, toX + drawIndex * 5, toY + drawIndex * 5);
+				*/
 			}
 		}
-	}
 
-*/
 	private void drawNoc(Graphics g, Noc noc) {
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
 		int rIndex = 0;
-		routerMap = new HashMap<Integer, Object>(); 
+		routerMap = new HashMap<Integer, Object>();
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
 		// drawing the routers
@@ -227,21 +214,22 @@ public class NocPanel extends JPanel {
 				int x = xOffset + i * routerSpacing;
 				int y = yOffset + j * routerSpacing;
 				Object router = graph.insertVertex(parent, null, rIndex, x, y, 60, 60, "shape=ellipse");
-				((mxCell) router).getGeometry().setAlternateBounds(new mxRectangle(0.5,0.5,60,60));
+				((mxCell) router).getGeometry().setAlternateBounds(new mxRectangle(0.5, 0.5, 60, 60));
 				routerMap.put(rIndex, router);
 				rIndex++;
 			}
 		}
-		
+
 		// drawing the links
 		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
 			// drawing horizontal links
-			if(i % numRoutersPerDimension != numRoutersPerDimension - 1) {
+			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
 				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
 			}
 			// drawing vertical links
-			if(i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(numRoutersPerDimension + i), "endArrow=none;");
+			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
+				graph.insertEdge(parent, null, null, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
+						"endArrow=none;");
 			}
 		}
 		graph.getModel().endUpdate();
@@ -249,36 +237,39 @@ public class NocPanel extends JPanel {
 		// disabling drag and drop edge creation
 		graphComponent.setConnectable(false);
 		this.add(graphComponent);
-		
+
 		// mouse listener to obtain additional information about module
-        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
-            public void mouseReleased(MouseEvent e) {
-                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-                if (cell != null) {
-                	MainPanel.nocInfo.setText("");
-                	try {
-                		int routerNum = Integer.parseInt(graph.getLabel(cell));
-                    	Object router = routerMap.get(routerNum);
-                        if (router != null) {
-                        	MainPanel.nocInfo.append("Router Name: " + graph.getLabel(cell));
-                        	MainPanel.nocInfo.append("\nThese are the modules contained in the selected router: ");
-                        	for (DesignModule mod: routerModMap.get(Integer.parseInt(graph.getLabel(cell)))) {
-                        		MainPanel.nocInfo.append("\n" + "Module Name: " + mod.getName());	
-                            }
-                        }
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+				if (cell != null) {
+					MainPanel.nocInfo.setText("");
+					try {
+						int routerNum = Integer.parseInt(graph.getLabel(cell));
+						Object router = routerMap.get(routerNum);
+						if (router != null) {
+							MainPanel.nocInfo.append("Router Name: " + graph.getLabel(cell));
+							MainPanel.nocInfo.append("\nTDM Factor: " + noc.getTdmFactor());
+							MainPanel.nocInfo.append("\nIn Width: " + noc.getNocBundleInWidth());
+							MainPanel.nocInfo.append("\nOut Width: " + noc.getNocBundleOutWidth());
+							MainPanel.nocInfo.append("\nThese are the modules contained in the selected router: ");
+							for (DesignModule mod : routerModMap.get(Integer.parseInt(graph.getLabel(cell)))) {
+								MainPanel.nocInfo.append("\n" + "Module Name: " + mod.getName());
+							}
+						}
 					} catch (Exception e2) {
-	                    DesignModule clickedMod = design.getDesignModules().get(graph.getLabel(cell));
-	                    if(clickedMod != null) {
-	                    	MainPanel.nocInfo.append("Module Name: " + clickedMod.getName());
-	                    	MainPanel.nocInfo.append("\nThese are the bundles contained in the selected module: ");
-	                        for (String name : clickedMod.getBundles().keySet()) {
-	                            MainPanel.nocInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
-	                            
-	                        }
-	                    }
+						DesignModule clickedMod = design.getDesignModules().get(graph.getLabel(cell));
+						if (clickedMod != null) {
+							MainPanel.nocInfo.append("Module Name: " + clickedMod.getName());
+							MainPanel.nocInfo.append("\nThese are the bundles contained in the selected module: ");
+							for (String name : clickedMod.getBundles().keySet()) {
+								MainPanel.nocInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
+
+							}
+						}
 					}
-                }
-            }
-        });
+				}
+			}
+		});
 	}
 }
