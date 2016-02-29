@@ -68,7 +68,7 @@ public class MainPanel extends JPanel {
         bundleInfoTitle = new JTextArea();
         Font font = new Font("Verdana", Font.BOLD, 20);
         bundleInfoTitle.setFont(font);
-        bundleInfoTitle.setText("Selected Bundle Properties");
+        bundleInfoTitle.setText("Selected Component Properties");
         bundleInfoTitle.setLineWrap(true);
 
         JScrollPane titlePane = new JScrollPane(bundleInfoTitle);
@@ -112,18 +112,18 @@ public class MainPanel extends JPanel {
         nocInfoTitle = new JTextArea();
         Font font = new Font("Verdana", Font.BOLD, 20);
         nocInfoTitle.setFont(font);
-        nocInfoTitle.setText("Selected Bundle Properties");
+        nocInfoTitle.setText("Selected Component Properties");
         nocInfoTitle.setLineWrap(true);
         
         // adding a split pane to show both the noc + information about specific
         // bundles
-        JScrollPane propertiesHeaderPane = new JScrollPane(nocInfo);
-        JScrollPane propertiesPane = new JScrollPane(nocInfoTitle);
+        JScrollPane propertiesHeaderPane = new JScrollPane(nocInfoTitle);
+        JScrollPane propertiesPane = new JScrollPane(nocInfo);
         JSplitPane sidebarPropertiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propertiesHeaderPane,
                 propertiesPane);
         sidebarPropertiesPane.setResizeWeight(.05d);
         JSplitPane nocPanelFinal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, nocPanel, sidebarPropertiesPane);
-        nocPanelFinal.setResizeWeight(.85d);
+        nocPanelFinal.setResizeWeight(.90d);
 
         tabbedPane.addTab("NoC", null, nocPanelFinal, "The NoC topology and module placement thereon");
 

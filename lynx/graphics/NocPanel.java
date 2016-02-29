@@ -27,6 +27,7 @@ import com.mxgraph.view.mxGraph;
 
 import lynx.data.Connection;
 import lynx.data.Design;
+import lynx.data.DesignModule;
 import lynx.data.Noc;
 import lynx.data.Bundle;
 import lynx.nocmapping.Mapping;
@@ -96,18 +97,7 @@ public class NocPanel extends JPanel {
 
 	public void setDesign(Design design) {
 		this.design = design;
-		//initPane();
 	}
-	
-	/*
-	private void initPane() {
-		if (design != null && design.getMappings() != null) {
-			controlPanel = new JPanel(new GridLayout(1, 1));
-			controlPanel.setBounds(0, 0, 15, 10);
-			this.add(controlPanel);
-		}
-	}
-	*/
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -124,7 +114,7 @@ public class NocPanel extends JPanel {
 
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 
-		int i = 0;
+		int i = -1;
 		for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
 			drawBundles(g, bunSet, i++);
 		}
@@ -174,12 +164,17 @@ public class NocPanel extends JPanel {
 		
 		
 		int counter = 0;
+		List<String> moduleList = new ArrayList<String>();
         for (Bundle bun: bunSet) {
-            System.out.println("here");
-            mxCell bundle = new mxCell(bun.getName(), geoList.get(counter), "shape=rectangle;");
-            bundle.setVertex(true);
-            graph.addCell(bundle, routerMap.get(router));
-            counter++;
+
+        	DesignModule parentMod = bun.getParentModule();
+        	if(!moduleList.contains(parentMod.getName())) {
+        		moduleList.add(parentMod.getName());
+        		mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
+        		mod.setVertex(true);
+        		graph.addCell(mod, routerMap.get(router));
+        		counter++;
+        	}
         }
         graph.getModel().endUpdate();
 	}
