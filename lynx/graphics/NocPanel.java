@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +20,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+
+import org.jfree.ui.about.SystemPropertiesTableModel;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -50,13 +54,16 @@ public class NocPanel extends JPanel {
 	private int selectedMapping = 0;
 	private int selectedVersion = 0;
 
-	private JPanel controlPanel;
 	JComboBox<Integer> mappingIndex;
 	JComboBox<Integer> versionIndex;
 	
+	//additional variables added
 	mxGraph graph;
 	Map<Integer, Object> routerMap;
+	Map<Integer, HashSet<Bundle>> routerBunMap;
+	Map<Integer, List<DesignModule>> routerModMap; 
 	List<mxGeometry> geoList;
+	
 
 	public NocPanel(Design design, Noc noc) {
 		super(new GridLayout(1, 1));
@@ -113,10 +120,13 @@ public class NocPanel extends JPanel {
 	private void drawDesign(Graphics g) {
 
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
-
-		int i = -1;
+		routerBunMap = new HashMap<Integer, HashSet<Bundle>>();
+		routerModMap = new HashMap<Integer, List<DesignModule>>();
+		int i = 0;
 		for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
-			drawBundles(g, bunSet, i++);
+			routerBunMap.put(i, bunSet);
+			drawModules(g, bunSet, i++);
+			
 		}
 
 		// draw the connections
@@ -125,57 +135,28 @@ public class NocPanel extends JPanel {
 	
 
 	
-	private void drawBundles(Graphics g, HashSet<Bundle> bunSet, int router) {
-
-		int i = router % noc.getNumRoutersPerDimension();
-		int j = router / noc.getNumRoutersPerDimension();
-		int x = xOffset + 15 + i * routerSpacing;
-		int y = yOffset + 15 + j * routerSpacing;
+	private void drawModules(Graphics g, HashSet<Bundle> bunSet, int router) {
 
 		int maxPosibleModules = noc.getTdmFactor()
 		        + (noc.getNumVcs() < noc.getTdmFactor() ? noc.getNumVcs() : noc.getTdmFactor());
-		
 		mxGeometry geo = new mxGeometry(1, 1, PORT_DIAMETER, PORT_DIAMETER);
 		geo.setRelative(true);
 		graph.getModel().beginUpdate();
-        /*
-		boolean switchColor = true;
-		for (Bundle bun : bunSet) {
-			if (switchColor) {
-				g.setColor(Color.CYAN);
-			} else {
-				g.setColor(Color.ORANGE);
-			}
-			switchColor = !switchColor;
-			g.fillRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
-			g.drawRect(x, y, (int) ((float) bunSize * 0.9), bunSize / maxPosibleModules);
-			g.setColor(Color.BLACK);
-
-			String name = bun.getFullName();
-			if (name.length() > 15) {
-				name = name.substring(0, 8);
-				name += "..";
-			}
-			g.drawString(name, x + 5, y + bunSize / 2 / maxPosibleModules);
-
-			y += bunSize / maxPosibleModules;
-		}
-		*/
-		
-		
 		int counter = 0;
-		List<String> moduleList = new ArrayList<String>();
+		List<DesignModule> moduleList = new ArrayList<DesignModule>();
         for (Bundle bun: bunSet) {
 
         	DesignModule parentMod = bun.getParentModule();
         	if(!moduleList.contains(parentMod.getName())) {
-        		moduleList.add(parentMod.getName());
+        		moduleList.add(parentMod);
         		mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
         		mod.setVertex(true);
         		graph.addCell(mod, routerMap.get(router));
+        		System.out.println(counter);
         		counter++;
         	}
         }
+        routerModMap.put(router, moduleList);
         graph.getModel().endUpdate();
 	}
 	
@@ -270,5 +251,36 @@ public class NocPanel extends JPanel {
 		// disabling drag and drop edge creation
 		graphComponent.setConnectable(false);
 		this.add(graphComponent);
+		
+		// mouse listener to obtain additional information about module
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+                if (cell != null) {
+                	MainPanel.nocInfo.setText("");
+                	try {
+                		int routerNum = Integer.parseInt(graph.getLabel(cell));
+                    	Object router = routerMap.get(routerNum);
+                        if (router != null) {
+                        	MainPanel.nocInfo.append("Router Name: " + graph.getLabel(cell));
+                        	MainPanel.nocInfo.append("\nThese are the modules contained in the selected router: ");
+                        	for (DesignModule mod: routerModMap.get(Integer.parseInt(graph.getLabel(cell)))) {
+                        		MainPanel.nocInfo.append("\n" + "Module Name: " + mod.getName());	
+                            }
+                        }
+					} catch (Exception e2) {
+	                    DesignModule clickedMod = design.getDesignModules().get(graph.getLabel(cell));
+	                    if(clickedMod != null) {
+	                    	MainPanel.nocInfo.append("Module Name: " + clickedMod.getName());
+	                    	MainPanel.nocInfo.append("\nThese are the bundles contained in the selected module: ");
+	                        for (String name : clickedMod.getBundles().keySet()) {
+	                            MainPanel.nocInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
+	                            
+	                        }
+	                    }
+					}
+                }
+            }
+        });
 	}
 }

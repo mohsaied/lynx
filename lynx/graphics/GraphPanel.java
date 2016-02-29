@@ -174,7 +174,6 @@ public class GraphPanel extends JPanel {
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
-                modBunMap.get(graph.getLabel(cell));
                 if (cell != null) {
                     MainPanel.bundleInfo.setText("");
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
@@ -183,7 +182,6 @@ public class GraphPanel extends JPanel {
                     	MainPanel.bundleInfo.append("\nThese are the bundles contained in the selected module: ");
                         for (String name : mod1.getBundles().keySet()) {
                             MainPanel.bundleInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
-                            Bundle bun = mod1.getBundles().get(name);
                             
                         }
                         if (mod1.getParameters().size() > 0) {
