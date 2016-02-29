@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
@@ -78,10 +80,6 @@ public class GraphPanel extends JPanel {
                 j++;
                 i = 0;
             }
-            /*
-             * for(Bundle bun:mod.getBundles().values()){ Object bundle =
-             * graph.insertVertex(vertex, null, bun.getName(), 0, 0, 50, 25); }
-             */
         }
 
         // draws the inbun and outbun ports
@@ -113,14 +111,18 @@ public class GraphPanel extends JPanel {
         int counter = 0;
         int numBundles = 0;
         // draws the ports
+        // TODO find out how to not have to use full name
+        
         Map<String, Object> modBunMap = new HashMap<String, Object>();
+        Map<String, Bundle> bunMap = new HashMap<String, Bundle>();
         for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle Bun : mod.getBundles().values()) {
                 numBundles = mod.getBundles().size();
-                mxCell port = new mxCell(Bun.getName(), geoList.get(counter),
+                mxCell port = new mxCell(Bun.getFullName(), geoList.get(counter),
                         "shape=ellipse;perimter=ellipsePerimeter");
                 port.setVertex(true);
                 modBunMap.put(Bun.getFullName(), port);
+                bunMap.put(Bun.getFullName(), Bun);
                 counter++;
                 if (counter >= numBundles) {
                     counter = 0;
@@ -171,6 +173,7 @@ public class GraphPanel extends JPanel {
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 Object cell = graphComponent.getCellAt(e.getX(), e.getY());
+                modBunMap.get(graph.getLabel(cell));
                 if (cell != null) {
                     MainPanel.bundleInfo.setText("");
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
@@ -189,21 +192,26 @@ public class GraphPanel extends JPanel {
                         for (String name : mod1.getBundles().keySet()) {
                             MainPanel.bundleInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
                             Bundle bun = mod1.getBundles().get(name);
-                            MainPanel.bundleInfo.append("\n" + "Master/Slave Status: ");
-                            if (bun.getConnectionGroup().isMaster(bun)) {
-                                MainPanel.bundleInfo.append("Master");
-                            } else if (bun.getConnectionGroup().isSlave(bun)) {
-                                MainPanel.bundleInfo.append("Slave");
-                            } else {
-                                MainPanel.bundleInfo.append("N/A");
-                            }
-                            MainPanel.bundleInfo.append("\n" + "Width: " + bun.getWidth() + ".");
-                            if (bun.getDstPort() != null) {
-                                MainPanel.bundleInfo.append("\n" + "DST Port Name: " + bun.getDstPort() + ".");
-                            }
-                            if (bun.getVcPort() != null) {
-                                MainPanel.bundleInfo.append("\n" + "VC Port Name: " + bun.getVcPort() + ".");
-                            }
+                            
+                        }
+                    }
+                    Bundle clickedBun = bunMap.get(graph.getLabel(cell));
+                    if(clickedBun != null) {
+                    	MainPanel.bundleInfo.append("Bundle Name: " + graph.getLabel(cell));
+                    	MainPanel.bundleInfo.append("\n" + "Master/Slave Status: ");
+                        if (clickedBun.getConnectionGroup().isMaster(clickedBun)) {
+                            MainPanel.bundleInfo.append("Master");
+                        } else if (clickedBun.getConnectionGroup().isSlave(clickedBun)) {
+                            MainPanel.bundleInfo.append("Slave");
+                        } else {
+                            MainPanel.bundleInfo.append("N/A");
+                        }
+                        MainPanel.bundleInfo.append("\n" + "Width: " + clickedBun.getWidth() + ".");
+                        if (clickedBun.getDstPort() != null) {
+                            MainPanel.bundleInfo.append("\n" + "DST Port Name: " + clickedBun.getDstPort() + ".");
+                        }
+                        if (clickedBun.getVcPort() != null) {
+                            MainPanel.bundleInfo.append("\n" + "VC Port Name: " + clickedBun.getVcPort() + ".");
                         }
                     }
                 }
