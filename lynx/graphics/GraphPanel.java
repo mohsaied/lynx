@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sound.sampled.Port;
 import javax.swing.JPanel;
 
 import com.mxgraph.layout.mxFastOrganicLayout;
@@ -178,21 +179,18 @@ public class GraphPanel extends JPanel {
                     MainPanel.bundleInfo.setText("");
                     DesignModule mod1 = design.getDesignModules().get(graph.getLabel(cell));
                     if (mod1 != null) {
+                    	MainPanel.bundleInfo.append("Module Name: " + mod1.getName());
+                    	MainPanel.bundleInfo.append("\nThese are the bundles contained in the selected module: ");
+                        for (String name : mod1.getBundles().keySet()) {
+                            MainPanel.bundleInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
+                            Bundle bun = mod1.getBundles().get(name);
+                            
+                        }
                         if (mod1.getParameters().size() > 0) {
                             for (lynx.data.Parameter params : mod1.getParameters()) {
                                 MainPanel.bundleInfo.append("These are the parameters of the module: "
                                         + params.getName() + ", " + params.getValue());
                             }
-                        }
-                        MainPanel.bundleInfo.append("These are the ports contained in the selected module: " + "\n");
-                        for (String portName : mod1.getPorts().keySet()) {
-                            MainPanel.bundleInfo.append(portName + "\n");
-                        }
-                        MainPanel.bundleInfo.append("\n" + "These are the bundles contained in the selected module: ");
-                        for (String name : mod1.getBundles().keySet()) {
-                            MainPanel.bundleInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
-                            Bundle bun = mod1.getBundles().get(name);
-                            
                         }
                     }
                     Bundle clickedBun = bunMap.get(graph.getLabel(cell));
@@ -207,11 +205,11 @@ public class GraphPanel extends JPanel {
                             MainPanel.bundleInfo.append("N/A");
                         }
                         MainPanel.bundleInfo.append("\n" + "Width: " + clickedBun.getWidth() + ".");
-                        if (clickedBun.getDstPort() != null) {
-                            MainPanel.bundleInfo.append("\n" + "DST Port Name: " + clickedBun.getDstPort() + ".");
-                        }
-                        if (clickedBun.getVcPort() != null) {
-                            MainPanel.bundleInfo.append("\n" + "VC Port Name: " + clickedBun.getVcPort() + ".");
+                        if (clickedBun.getAllPorts() != null) {
+                        	for(lynx.data.Port clickedPort : clickedBun.getAllPorts()) {
+	                            MainPanel.bundleInfo.append("\n" + clickedPort.getTypeString() + " Port Name: " + clickedPort.getName());
+	                            MainPanel.bundleInfo.append("\n" + clickedPort.getTypeString() + " Port Width: " + clickedPort.getWidth());
+                        	}
                         }
                     }
                 }
