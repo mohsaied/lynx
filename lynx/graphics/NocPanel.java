@@ -145,14 +145,12 @@ public class NocPanel extends JPanel {
 		int counter = 0;
 		List<DesignModule> moduleList = new ArrayList<DesignModule>();
         for (Bundle bun: bunSet) {
-
         	DesignModule parentMod = bun.getParentModule();
-        	if(!moduleList.contains(parentMod.getName())) {
+        	if(!moduleList.contains(parentMod)) {
         		moduleList.add(parentMod);
         		mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
         		mod.setVertex(true);
         		graph.addCell(mod, routerMap.get(router));
-        		System.out.println(counter);
         		counter++;
         	}
         }
