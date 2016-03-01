@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import org.jfree.ui.about.SystemPropertiesTableModel;
 
@@ -63,6 +64,7 @@ public class NocPanel extends JPanel {
 	Map<Integer, Object> routerMap;
 	Map<Integer, HashSet<Bundle>> routerBunMap;
 	Map<Integer, List<DesignModule>> routerModMap;
+	Map<String, List<Connection>> linkConnMap;
 	List<mxGeometry> geoList;
 
 	public NocPanel(Design design, Noc noc) {
@@ -103,7 +105,7 @@ public class NocPanel extends JPanel {
 	public void setDesign(Design design) {
 		this.design = design;
 	}
-
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (noc != null)
@@ -121,7 +123,6 @@ public class NocPanel extends JPanel {
 		for (HashSet<Bundle> bunSet : currMapping.getBundlesAtRouters()) {
 			routerBunMap.put(i, bunSet);
 			drawModules(g, bunSet, i++);
-
 		}
 	}
 
@@ -138,7 +139,6 @@ public class NocPanel extends JPanel {
 				mxCell mod = new mxCell(parentMod.getName(), geoList.get(counter), "shape=rectangle;");
 				mod.setVertex(true);
 				graph.addCell(mod, routerMap.get(router));
-				System.out.println(counter);
 				counter++;
 			}
 		}
@@ -186,9 +186,11 @@ public class NocPanel extends JPanel {
 		
 		// drawing the links
 		Map<String, Integer> linkUsageMap = new HashMap<String, Integer>();
+		linkConnMap = new HashMap<String, List<Connection>>();
 		for (Connection con : design.getConnections()) {
 			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
 			// determine connection drawIndex
+			
 			for (int i = 0; i < path.size() - 1; i++) {
 				int fromRouter = path.get(i);
 				int toRouter = path.get(i + 1);
@@ -200,6 +202,14 @@ public class NocPanel extends JPanel {
 				else {
 					linkUsageMap.put(String.valueOf(fromRouter) + " " + String.valueOf(toRouter), 1);
 				}
+				if(linkConnMap.get( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter)) != null) {
+					linkConnMap.get( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter)).add(con);
+				}
+				else {
+					List<Connection> connList = new ArrayList<Connection>();
+					connList.add(con);
+					linkConnMap.put( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter), connList);
+				}
 			}
 		}
 	
@@ -209,13 +219,13 @@ public class NocPanel extends JPanel {
 			String id = null;
 			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
 				label = generateLabel(i, i + 1, linkUsageMap);
-				id = String.valueOf(i) + String.valueOf(i + 1);
+				id = String.valueOf(i) + " " + String.valueOf(i + 1);
 				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
 			}
 			// drawing vertical links
 			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
 				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
-				id = String.valueOf(i) + String.valueOf(numRoutersPerDimension + i);
+				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
 				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
 						"endArrow=none;");
 			}
@@ -257,6 +267,15 @@ public class NocPanel extends JPanel {
 									MainPanel.nocInfo.append("\n" + nocBun.toString());
 								}
 
+							}
+						}
+					}
+					for(String key : linkConnMap.keySet()) {
+						if(key.equals(((mxCell)cell).getId())) {
+							List<Connection> connList = linkConnMap.get(key);
+							MainPanel.nocInfo.append("List of connections using this link");
+							for(Connection con: connList) {
+								MainPanel.nocInfo.append("\n" + con.toString());
 							}
 						}
 					}

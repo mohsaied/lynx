@@ -117,9 +117,10 @@ public class GraphPanel extends JPanel {
         for (DesignModule mod : design.getDesignModules().values()) {
             for (Bundle Bun : mod.getBundles().values()) {
                 numBundles = mod.getBundles().size();
-                mxCell port = new mxCell(Bun.getFullName(), geoList.get(counter),
+                mxCell port = new mxCell(Bun.getName(), geoList.get(counter),
                         "shape=ellipse;perimter=ellipsePerimeter");
                 port.setVertex(true);
+                port.setId(Bun.getFullName());
                 modBunMap.put(Bun.getFullName(), port);
                 bunMap.put(Bun.getFullName(), Bun);
                 counter++;
@@ -191,9 +192,9 @@ public class GraphPanel extends JPanel {
                             }
                         }
                     }
-                    Bundle clickedBun = bunMap.get(graph.getLabel(cell));
+                    Bundle clickedBun = bunMap.get(((mxCell) cell).getId());
                     if(clickedBun != null) {
-                    	MainPanel.bundleInfo.append("Bundle Name: " + graph.getLabel(cell));
+                    	MainPanel.bundleInfo.append("Bundle Name: " + ((mxCell) cell).getId());
                     	MainPanel.bundleInfo.append("\n" + "Master/Slave Status: ");
                         if (clickedBun.getConnectionGroup().isMaster(clickedBun)) {
                             MainPanel.bundleInfo.append("Master");

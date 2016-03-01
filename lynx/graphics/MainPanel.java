@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -117,7 +118,14 @@ public class MainPanel extends JPanel {
         
         // adding a split pane to show both the noc + information about specific
         // bundles
-        JScrollPane propertiesHeaderPane = new JScrollPane(nocInfoTitle);
+        JPanel propertiesHeaderPane = new JPanel(new GridLayout(1, 1));
+        
+        //experiment
+        JComboBox<String >mappingIndex = new JComboBox<String>();
+        mappingIndex.addItem("Hello");
+           
+        propertiesHeaderPane.add(mappingIndex);
+        
         JScrollPane propertiesPane = new JScrollPane(nocInfo);
         JSplitPane sidebarPropertiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propertiesHeaderPane,
                 propertiesPane);
