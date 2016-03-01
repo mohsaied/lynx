@@ -33,6 +33,7 @@ import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.DesignModule;
 import lynx.data.Noc;
+import lynx.data.NocBundle;
 import lynx.data.Bundle;
 import lynx.nocmapping.Mapping;
 
@@ -144,12 +145,32 @@ public class NocPanel extends JPanel {
 		routerModMap.put(router, moduleList);
 		graph.getModel().endUpdate();
 	}
-
+	
+	private String generateLabel(int index1, int index2, Map<String, Integer> linkUsageMap) {
+		String label = null;
+		if(linkUsageMap.get(String.valueOf(index1) + " " + String.valueOf(index2)) != null
+				&& linkUsageMap.get(String.valueOf(index2) + " " + String.valueOf(index1)) != null) {
+			label = "Link Use " + String.valueOf(index1) + "->" + String.valueOf(index2) + ": " + 
+					linkUsageMap.get(String.valueOf(index1) + " " + String.valueOf(index2)) + "\n" +
+					"Link Use " + String.valueOf(index2) + "->" + String.valueOf(index1) + ": " + 
+					linkUsageMap.get(String.valueOf(index2) + " " + String.valueOf(index1)) + "\n";
+		}
+		else if (linkUsageMap.get(String.valueOf(index1) + " " + String.valueOf(index2)) != null) {
+			label = "Link Use " + String.valueOf(index1) + "->" + String.valueOf(index2) + ": " + 
+					linkUsageMap.get(String.valueOf(index1) + " " + String.valueOf(index2));
+		}
+		else if (linkUsageMap.get(String.valueOf(index2) + " " + String.valueOf(index1)) != null) {
+			label = "Link Use " + String.valueOf(index2) + "->" + String.valueOf(index1) + ": " + 
+					linkUsageMap.get(String.valueOf(index2) + " " + String.valueOf(index1));
+		}
+		return label;
+	}
 	private void drawNoc(Graphics g, Noc noc) {
 		int numRoutersPerDimension = noc.getNumRoutersPerDimension();
 		int rIndex = 0;
 		routerMap = new HashMap<Integer, Object>();
 		Object parent = graph.getDefaultParent();
+		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 		graph.getModel().beginUpdate();
 		// drawing the routers
 		for (int j = 0; j < numRoutersPerDimension; j++) {
@@ -184,44 +205,18 @@ public class NocPanel extends JPanel {
 	
 		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
 			// drawing horizontal links
+			String label = null;
+			String id = null;
 			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
-				String label = null;
-				if(linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) != null
-						&& linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) != null) {
-					label = String.valueOf(i) + "-" + String.valueOf(i + 1) + ": " + 
-							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) + "\n" +
-							String.valueOf(i + 1) + "-" + String.valueOf(i) + ": " + 
-							linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) + "\n";
-				}
-				else if (linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1)) != null) {
-					label = String.valueOf(i) + "-" + String.valueOf(i + 1) + ": " + 
-							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(i + 1));
-				}
-				else if (linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i)) != null) {
-					label = String.valueOf(i + 1) + "-" + String.valueOf(i) + ": " + 
-							linkUsageMap.get(String.valueOf(i + 1) + " " + String.valueOf(i));
-				}
-				graph.insertEdge(parent, null, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
+				label = generateLabel(i, i + 1, linkUsageMap);
+				id = String.valueOf(i) + String.valueOf(i + 1);
+				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
 			}
 			// drawing vertical links
 			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				String label = null;
-				if(linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) != null
-						&& linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) != null) {
-					label = String.valueOf(i) + "-" + String.valueOf(numRoutersPerDimension + i) + ": " + 
-							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) + "\n" +
-							String.valueOf(numRoutersPerDimension + i) + "-" + String.valueOf(i) + ": " + 
-							linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) + "\n";
-				}
-				else if (linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i)) != null) {
-					label = String.valueOf(i) + "-" + String.valueOf(numRoutersPerDimension + i) + ": " + 
-							linkUsageMap.get(String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i));
-				}
-				else if (linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i)) != null) {
-					label = String.valueOf(numRoutersPerDimension + i) + "-" + String.valueOf(i) + ": " + 
-							linkUsageMap.get(String.valueOf(numRoutersPerDimension + i) + " " + String.valueOf(i));
-				}
-				graph.insertEdge(parent, null, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
+				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
+				id = String.valueOf(i) + String.valueOf(numRoutersPerDimension + i);
+				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
 						"endArrow=none;");
 			}
 		}
@@ -255,8 +250,12 @@ public class NocPanel extends JPanel {
 						if (clickedMod != null) {
 							MainPanel.nocInfo.append("Module Name: " + clickedMod.getName());
 							MainPanel.nocInfo.append("\nThese are the bundles contained in the selected module: ");
-							for (String name : clickedMod.getBundles().keySet()) {
-								MainPanel.nocInfo.append("\n" + "Bundle Name: " + graph.getLabel(cell) + " " + name);
+							for (Bundle bun : clickedMod.getBundles().values()) {
+								MainPanel.nocInfo.append("\n" + "Bundle Name: " + bun.getFullName());
+								MainPanel.nocInfo.append("\n" + "FPSlots: ");
+								for(NocBundle nocBun : currMapping.getBundleMap().get(bun)) {
+									MainPanel.nocInfo.append("\n" + nocBun.toString());
+								}
 
 							}
 						}

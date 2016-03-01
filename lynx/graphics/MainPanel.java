@@ -123,7 +123,7 @@ public class MainPanel extends JPanel {
                 propertiesPane);
         sidebarPropertiesPane.setResizeWeight(.05d);
         JSplitPane nocPanelFinal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, nocPanel, sidebarPropertiesPane);
-        nocPanelFinal.setResizeWeight(.90d);
+        nocPanelFinal.setResizeWeight(.95d);
 
         tabbedPane.addTab("NoC", null, nocPanelFinal, "The NoC topology and module placement thereon");
 

@@ -18,6 +18,7 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 
 import lynx.data.Bundle;
@@ -55,10 +56,6 @@ public class GraphPanel extends JPanel {
     private void drawConnectivityGraph(Graphics g) {
 
         mxGraph graph = new mxGraph() {
-            public boolean isCellFoldable(Object cell, boolean collapse) {
-                return false;
-            }
-
             public boolean isCellSelectable(Object cell) {
                 if (model.isEdge(cell)) {
                     return false;
@@ -76,6 +73,7 @@ public class GraphPanel extends JPanel {
         int j = 0;
         for (DesignModule mod : design.getDesignModules().values()) {
             Object vertex = graph.insertVertex(parent, null, mod.getName(), 100 + 150 * i++, 100 + 150 * j, 100, 75);
+            ((mxCell) vertex).getGeometry().setAlternateBounds(new mxRectangle(0.5, 0.5, 60, 60));
             vertices.put(mod.getName(), vertex);
             if (i % 3 == 0) {
                 j++;
@@ -166,6 +164,8 @@ public class GraphPanel extends JPanel {
         mxFastOrganicLayout lo = new mxFastOrganicLayout(graph);
         lo.setUseBoundingBox(true);
         lo.execute(graph.getDefaultParent());
+        //disable edge creation
+        graphComponent.setConnectable(false);
         this.add(graphComponent);
 
         // connection group to get master-slave relationships
