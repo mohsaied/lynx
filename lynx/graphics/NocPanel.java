@@ -26,7 +26,9 @@ import org.jfree.ui.about.SystemPropertiesTableModel;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 
@@ -60,11 +62,13 @@ public class NocPanel extends JPanel {
 	JComboBox<Integer> versionIndex;
 
 	// additional variables added
-	mxGraph graph;
+	protected static mxGraph graph;
+	Map<String, Integer> linkUsageMap;
 	Map<Integer, Object> routerMap;
 	Map<Integer, HashSet<Bundle>> routerBunMap;
 	Map<Integer, List<DesignModule>> routerModMap;
 	Map<String, List<Connection>> linkConnMap;
+	protected static Map<String, Object> connLinkMap;
 	List<mxGeometry> geoList;
 
 	public NocPanel(Design design, Noc noc) {
@@ -100,6 +104,7 @@ public class NocPanel extends JPanel {
 		geo1 = new mxGeometry(-0.6, 0.50, PORT_DIAMETER, PORT_RADIUS);
 		geo1.setRelative(true);
 		geoList.add(geo1);
+		
 	}
 
 	public void setDesign(Design design) {
@@ -185,8 +190,29 @@ public class NocPanel extends JPanel {
 		}
 		
 		// drawing the links
-		Map<String, Integer> linkUsageMap = new HashMap<String, Integer>();
+		linkUsageMap = new HashMap<String, Integer>();
 		linkConnMap = new HashMap<String, List<Connection>>();
+		connLinkMap = new HashMap<String, Object>();
+		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
+			// drawing horizontal links
+			String label = null;
+			String id = null;
+			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
+				label = generateLabel(i, i + 1, linkUsageMap);
+				id = String.valueOf(i) + " " + String.valueOf(i + 1);
+				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
+			}
+			// drawing vertical links
+			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
+				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
+				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
+				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
+						"endArrow=none;");
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
+			}
+		}
+		
 		for (Connection con : design.getConnections()) {
 			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
 			// determine connection drawIndex
@@ -194,6 +220,7 @@ public class NocPanel extends JPanel {
 			for (int i = 0; i < path.size() - 1; i++) {
 				int fromRouter = path.get(i);
 				int toRouter = path.get(i + 1);
+				String linkConnMapKey = String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter);
 				if(linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter)) != null) {
 					int pathUsage = linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter));
 					pathUsage += 1;
@@ -202,34 +229,24 @@ public class NocPanel extends JPanel {
 				else {
 					linkUsageMap.put(String.valueOf(fromRouter) + " " + String.valueOf(toRouter), 1);
 				}
-				if(linkConnMap.get( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter)) != null) {
-					linkConnMap.get( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter)).add(con);
+				if(linkConnMap.get( linkConnMapKey) != null) {
+					linkConnMap.get( linkConnMapKey).add(con);
 				}
 				else {
 					List<Connection> connList = new ArrayList<Connection>();
 					connList.add(con);
-					linkConnMap.put( String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter), connList);
+					linkConnMap.put( linkConnMapKey, connList);
 				}
+				System.out.println(con.toString());
+				connLinkMap.put(con.toString(), ((mxGraphModel) graph.getModel()).getCell(linkConnMapKey));
 			}
 		}
 	
-		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
-			// drawing horizontal links
-			String label = null;
-			String id = null;
-			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
-				label = generateLabel(i, i + 1, linkUsageMap);
-				id = String.valueOf(i) + " " + String.valueOf(i + 1);
-				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
-			}
-			// drawing vertical links
-			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
-				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
-				graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
-						"endArrow=none;");
-			}
+		//adding items into drop down menu for each link
+		for(String connString : connLinkMap.keySet()) {
+			MainPanel.mappingIndex.addItem(connString);
 		}
+		
 		graph.getModel().endUpdate();
 		mxGraphComponent graphComponent = new mxGraphComponent(graph);
 		// disabling drag and drop edge creation

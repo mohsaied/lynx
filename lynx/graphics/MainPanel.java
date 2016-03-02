@@ -2,6 +2,8 @@ package lynx.graphics;
 
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 
@@ -11,6 +13,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.view.mxGraph;
+
 import lynx.analysis.Analysis;
 import lynx.data.Design;
 import lynx.data.Noc;
@@ -43,6 +50,9 @@ public class MainPanel extends JPanel {
     private static JTextArea bundleInfoTitle;
     protected static JTextArea nocInfo;
     private static JTextArea nocInfoTitle;
+    
+    //drop down menu
+    protected static JComboBox<String> mappingIndex;
 
     private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
 
@@ -121,9 +131,22 @@ public class MainPanel extends JPanel {
         JPanel propertiesHeaderPane = new JPanel(new GridLayout(1, 1));
         
         //experiment
-        JComboBox<String >mappingIndex = new JComboBox<String>();
-        mappingIndex.addItem("Hello");
-           
+        mappingIndex = new JComboBox<String>();
+          
+        mappingIndex.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getSource() == mappingIndex) {
+                	for(Object c : nocPanel.connLinkMap.values()) {
+                		NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR,"#000000", new Object[]{c});
+                	}
+                    String selectedItem = (String) mappingIndex.getSelectedItem();
+                    Object selectedEdge = NocPanel.connLinkMap.get(selectedItem);
+                    NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR,"#FF0000", new Object[]{selectedEdge});
+                }
+            }
+        });
+        
         propertiesHeaderPane.add(mappingIndex);
         
         JScrollPane propertiesPane = new JScrollPane(nocInfo);
@@ -141,6 +164,7 @@ public class MainPanel extends JPanel {
         chartPanel1 = new PlotPanel(design);
         tabbedPane.addTab("Charts 1", null, chartPanel1, "Charts visualizing the simulated annealing");
         tabbedPane.setMnemonicAt(ANNEALTABID, KeyEvent.VK_1);
+        
     }
 
     public void addPerfTab(Analysis analysis) {
