@@ -176,6 +176,10 @@ public class NocPanel extends JPanel {
 		routerMap = new HashMap<Integer, Object>();
 		Object parent = graph.getDefaultParent();
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
+		linkUsageMap = new HashMap<String, Integer>();
+		linkConnMap = new HashMap<String, List<Connection>>();
+		connLinkMap = new HashMap<String, Object>();
+		
 		graph.getModel().beginUpdate();
 		// drawing the routers
 		for (int j = 0; j < numRoutersPerDimension; j++) {
@@ -189,34 +193,10 @@ public class NocPanel extends JPanel {
 			}
 		}
 		
-		// drawing the links
-		linkUsageMap = new HashMap<String, Integer>();
-		linkConnMap = new HashMap<String, List<Connection>>();
-		connLinkMap = new HashMap<String, Object>();
-		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
-			// drawing horizontal links
-			String label = null;
-			String id = null;
-			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
-				label = generateLabel(i, i + 1, linkUsageMap);
-				id = String.valueOf(i) + " " + String.valueOf(i + 1);
-				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
-			}
-			// drawing vertical links
-			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
-				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
-				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
-						"endArrow=none;");
-				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
-			}
-		}
-		
 		for (Connection con : design.getConnections()) {
 			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
 			// determine connection drawIndex
-			
+			//System.out.println("all cons" + con.toString());
 			for (int i = 0; i < path.size() - 1; i++) {
 				int fromRouter = path.get(i);
 				int toRouter = path.get(i + 1);
@@ -237,7 +217,41 @@ public class NocPanel extends JPanel {
 					connList.add(con);
 					linkConnMap.put( linkConnMapKey, connList);
 				}
+			}
+		}
+		
+		// drawing the links
+		
+		for (int i = 0; i < Math.pow(numRoutersPerDimension, 2); i++) {
+			// drawing horizontal links
+			String label = null;
+			String id = null;
+			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
+				label = generateLabel(i, i + 1, linkUsageMap);
+				id = String.valueOf(i) + " " + String.valueOf(i + 1);
+				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1), "endArrow=none;");
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
+			}
+			// drawing vertical links
+			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
+				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
+				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
+				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(numRoutersPerDimension + i),
+						"endArrow=none;");
+				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[]{cell});
+			}
+		}
+		
+		
+		for (Connection con : design.getConnections()) {
+			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
+			// determine connection drawIndex
+			//System.out.println("all cons" + con.toString());
+			for (int i = 0; i < path.size() - 1; i++) {
 				System.out.println(con.toString());
+				int fromRouter = path.get(i);
+				int toRouter = path.get(i + 1);
+				String linkConnMapKey = String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " " + String.valueOf(fromRouter > toRouter ? fromRouter : toRouter);
 				connLinkMap.put(con.toString(), ((mxGraphModel) graph.getModel()).getCell(linkConnMapKey));
 			}
 		}
