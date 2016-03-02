@@ -252,7 +252,6 @@ public class NocPanel extends JPanel {
 		for (Connection con : design.getConnections()) {
 			List<Integer> path = design.getMappings().get(selectedMapping).get(selectedVersion).getConnectionPath(con);
 			for (int i = 0; i < path.size() - 1; i++) {
-				System.out.println(con.toString());
 				int fromRouter = path.get(i);
 				int toRouter = path.get(i + 1);
 				String linkConnMapKey = String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " "
