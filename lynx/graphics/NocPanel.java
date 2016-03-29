@@ -344,6 +344,7 @@ public class NocPanel extends JPanel {
 								MainPanel.nocInfo.append("List of connections using this link");
 								for (Connection con : connList) {
 									MainPanel.nocInfo.append("\n" + con.toString());
+									MainPanel.nocInfo.append("\n" + "connection type: " + con.getFromBundle().getConnectionGroup().getConnectionType());
 								}
 							}
 							else {
