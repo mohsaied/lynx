@@ -68,10 +68,12 @@ public class NocPanel extends JPanel {
 	// maps to each connection the mxCell edge object that corresponds to the
 	// used noc link
 	protected static Map<String, List<Object>> connLinkMap;
-	// list of all links
-	protected static List<Object> linkList;
 	// list of possible geometries for the modules at each router
 	List<mxGeometry> geoList;
+	// list of all links
+	protected static List<Object> linkList;
+	// map of link (in both directions) to connections
+	protected static Map<String, List<Connection>> bidirectLinkConnMap;
 
 	public NocPanel(Design design, Noc noc) {
 		super(new GridLayout(1, 1));
@@ -187,6 +189,7 @@ public class NocPanel extends JPanel {
 		linkConnMap = new HashMap<String, List<Connection>>();
 		connLinkMap = new HashMap<String, List<Object>>();
 		linkList = new ArrayList<Object>();
+		bidirectLinkConnMap = new HashMap<String, List<Connection>>();
 
 		graph.getModel().beginUpdate();
 		// drawing the routers
@@ -211,6 +214,7 @@ public class NocPanel extends JPanel {
 				int toRouter = path.get(i + 1);
 				String linkConnMapKey = String.valueOf(fromRouter) + " "
 						+ String.valueOf(toRouter);
+				String bidirectLinkConnMapKey = String.valueOf(toRouter) + " " + String.valueOf(fromRouter);
 				if (linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter)) != null) {
 					int pathUsage = linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter));
 					pathUsage += 1;
@@ -220,11 +224,16 @@ public class NocPanel extends JPanel {
 				}
 				if (linkConnMap.get(linkConnMapKey) != null) {
 					linkConnMap.get(linkConnMapKey).add(con);
+					bidirectLinkConnMap.get(linkConnMapKey).add(con);
+					bidirectLinkConnMap.get(bidirectLinkConnMapKey).add(con);
 				} else {
 					List<Connection> connList = new ArrayList<Connection>();
 					connList.add(con);
 					linkConnMap.put(linkConnMapKey, connList);
+					bidirectLinkConnMap.put(linkConnMapKey, connList);
+					bidirectLinkConnMap.put(bidirectLinkConnMapKey, connList);
 				}
+				
 			}
 		}
 
@@ -329,7 +338,7 @@ public class NocPanel extends JPanel {
 					// checking if a link has been clicked
 					for (Object refEdge : linkList) {
 						if (((mxCell)refEdge).getId().equals(((mxCell) cell).getId())) {
-							List<Connection> connList = linkConnMap.get(((mxCell)refEdge).getId());
+							List<Connection> connList = bidirectLinkConnMap.get(((mxCell)refEdge).getId());
 							if(connList != null) {
 								MainPanel.nocInfo.append("List of connections using this link");
 								for (Connection con : connList) {
