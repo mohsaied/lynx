@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JComboBox;
@@ -14,9 +15,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxConstants;
 
 import lynx.analysis.Analysis;
+import lynx.data.Connection;
 import lynx.data.Design;
 import lynx.data.Noc;
 import lynx.main.DesignData;
@@ -142,16 +145,23 @@ public class MainPanel extends JPanel {
 		mappingIndex.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent event) {
+				
 				if (event.getSource() == mappingIndex) {
-					for (Object c : NocPanel.connLinkMap.values()) {
-						// resets all edge colors to black
-						NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { c });
+					for (List c : NocPanel.connLinkMap.values()) {
+						for(Object e: c) {
+							// resets all edge colors to black
+							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { e });
+						}
 					}
 					String selectedItem = (String) mappingIndex.getSelectedItem();
-					Object selectedEdge = NocPanel.connLinkMap.get(selectedItem);
+					List<Object> selectedEdges = NocPanel.connLinkMap.get(selectedItem);
 					// sets edge corresponding to selected edge to red
-					NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000",
-							new Object[] { selectedEdge });
+					for(Object e: selectedEdges) {
+						NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000",
+								new Object[] { e });
+					}
+					nocInfo.setText("");
+					MainPanel.nocInfo.append("This is the path of connection " + selectedItem);
 				}
 			}
 		});

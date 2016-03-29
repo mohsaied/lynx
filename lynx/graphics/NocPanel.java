@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,10 +64,12 @@ public class NocPanel extends JPanel {
 	// maps to each router index a list modules that correspond to it
 	Map<Integer, List<DesignModule>> routerModMap;
 	// maps to each edge of the noc a list of connections that use it
-	Map<String, List<Connection>> linkConnMap;
+	static Map<String, List<Connection>> linkConnMap;
 	// maps to each connection the mxCell edge object that corresponds to the
 	// used noc link
-	protected static Map<String, Object> connLinkMap;
+	protected static Map<String, List<Object>> connLinkMap;
+	// list of all links
+	protected static List<Object> linkList;
 	// list of possible geometries for the modules at each router
 	List<mxGeometry> geoList;
 
@@ -182,7 +185,8 @@ public class NocPanel extends JPanel {
 		Mapping currMapping = design.getMappings().get(selectedMapping).get(selectedVersion);
 		linkUsageMap = new HashMap<String, Integer>();
 		linkConnMap = new HashMap<String, List<Connection>>();
-		connLinkMap = new HashMap<String, Object>();
+		connLinkMap = new HashMap<String, List<Object>>();
+		linkList = new ArrayList<Object>();
 
 		graph.getModel().beginUpdate();
 		// drawing the routers
@@ -205,8 +209,8 @@ public class NocPanel extends JPanel {
 			for (int i = 0; i < path.size() - 1; i++) {
 				int fromRouter = path.get(i);
 				int toRouter = path.get(i + 1);
-				String linkConnMapKey = String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " "
-						+ String.valueOf(fromRouter > toRouter ? fromRouter : toRouter);
+				String linkConnMapKey = String.valueOf(fromRouter) + " "
+						+ String.valueOf(toRouter);
 				if (linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter)) != null) {
 					int pathUsage = linkUsageMap.get(String.valueOf(fromRouter) + " " + String.valueOf(toRouter));
 					pathUsage += 1;
@@ -236,6 +240,7 @@ public class NocPanel extends JPanel {
 						"endArrow=none;");
 				// makes the edge black
 				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { cell });
+				linkList.add(cell);
 			}
 			// drawing vertical links
 			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
@@ -244,6 +249,7 @@ public class NocPanel extends JPanel {
 				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i),
 						routerMap.get(numRoutersPerDimension + i), "endArrow=none;");
 				graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { cell });
+				linkList.add(cell);
 			}
 		}
 
@@ -256,7 +262,15 @@ public class NocPanel extends JPanel {
 				int toRouter = path.get(i + 1);
 				String linkConnMapKey = String.valueOf(fromRouter < toRouter ? fromRouter : toRouter) + " "
 						+ String.valueOf(fromRouter > toRouter ? fromRouter : toRouter);
-				connLinkMap.put(con.toString(), ((mxGraphModel) graph.getModel()).getCell(linkConnMapKey));
+				if (connLinkMap.get(con.toString()) != null) {
+					Object temp = ((mxGraphModel) graph.getModel()).getCell(linkConnMapKey);
+					connLinkMap.get(con.toString()).add(temp);
+				} 
+				else {
+					List<Object> linkList = new ArrayList<Object>();
+					linkList.add(((mxGraphModel) graph.getModel()).getCell(linkConnMapKey));
+					connLinkMap.put(con.toString(), linkList);
+				}
 			}
 		}
 
@@ -278,6 +292,11 @@ public class NocPanel extends JPanel {
 				if (cell != null) {
 					// clearing all text first
 					MainPanel.nocInfo.setText("");
+					
+					for (Object link : linkList ) {
+							// resets all edge colors to black
+						NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { link });
+					}
 					try {
 						// checking if a router has been clicked
 						int routerNum = Integer.parseInt(graph.getLabel(cell));
@@ -308,13 +327,20 @@ public class NocPanel extends JPanel {
 						}
 					}
 					// checking if a link has been clicked
-					for (String key : linkConnMap.keySet()) {
-						if (key.equals(((mxCell) cell).getId())) {
-							List<Connection> connList = linkConnMap.get(key);
-							MainPanel.nocInfo.append("List of connections using this link");
-							for (Connection con : connList) {
-								MainPanel.nocInfo.append("\n" + con.toString());
+					for (Object refEdge : linkList) {
+						if (((mxCell)refEdge).getId().equals(((mxCell) cell).getId())) {
+							List<Connection> connList = linkConnMap.get(((mxCell)refEdge).getId());
+							if(connList != null) {
+								MainPanel.nocInfo.append("List of connections using this link");
+								for (Connection con : connList) {
+									MainPanel.nocInfo.append("\n" + con.toString());
+								}
 							}
+							else {
+								MainPanel.nocInfo.append("\n" + "No connections using this edge");
+							}
+							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000", new Object[] { cell });
+							MainPanel.mappingIndex.setSelectedItem("");
 						}
 					}
 				}
