@@ -147,21 +147,24 @@ public class MainPanel extends JPanel {
 			public void itemStateChanged(ItemEvent event) {
 				
 				if (event.getSource() == mappingIndex) {
-					for (List c : NocPanel.connLinkMap.values()) {
-						for(Object e: c) {
-							// resets all edge colors to black
-							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { e });
-						}
-					}
 					String selectedItem = (String) mappingIndex.getSelectedItem();
-					List<Object> selectedEdges = NocPanel.connLinkMap.get(selectedItem);
-					// sets edge corresponding to selected edge to red
-					for(Object e: selectedEdges) {
-						NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000",
-								new Object[] { e });
+					if(selectedItem != "select a connection") {
+						for (List c : NocPanel.connLinkMap.values()) {
+							for(Object e: c) {
+								// resets all edge colors to black
+								NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000", new Object[] { e });
+							}
+						}
+						
+						List<Object> selectedEdges = NocPanel.connLinkMap.get(selectedItem);
+						// sets edge corresponding to selected edge to red
+						for(Object e: selectedEdges) {
+							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000",
+									new Object[] { e });
+						}
+						nocInfo.setText("");
+						MainPanel.nocInfo.append("The path of connection " + selectedItem + " is highlighted");
 					}
-					nocInfo.setText("");
-					MainPanel.nocInfo.append("This is the path of connection " + selectedItem);
 				}
 			}
 		});

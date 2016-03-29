@@ -243,7 +243,7 @@ public class NocPanel extends JPanel {
 			String label = null;
 			String id = null;
 			if (i % numRoutersPerDimension != numRoutersPerDimension - 1) {
-				label = generateLabel(i, i + 1, linkUsageMap);
+				//label = generateLabel(i, i + 1, linkUsageMap);
 				id = String.valueOf(i) + " " + String.valueOf(i + 1);
 				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i), routerMap.get(i + 1),
 						"endArrow=none;");
@@ -253,7 +253,7 @@ public class NocPanel extends JPanel {
 			}
 			// drawing vertical links
 			if (i <= numRoutersPerDimension * (numRoutersPerDimension - 1)) {
-				label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
+				//label = generateLabel(i, numRoutersPerDimension + i, linkUsageMap);
 				id = String.valueOf(i) + " " + String.valueOf(numRoutersPerDimension + i);
 				mxCell cell = (mxCell) graph.insertEdge(parent, id, label, routerMap.get(i),
 						routerMap.get(numRoutersPerDimension + i), "endArrow=none;");
@@ -284,6 +284,7 @@ public class NocPanel extends JPanel {
 		}
 
 		// adding items into drop down menu for each link
+		MainPanel.mappingIndex.addItem("select a connection");
 		for (String connString : connLinkMap.keySet()) {
 			MainPanel.mappingIndex.addItem(connString);
 		}
