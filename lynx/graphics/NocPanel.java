@@ -2,6 +2,8 @@ package lynx.graphics;
 
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
@@ -13,8 +15,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.xml.bind.Marshaller.Listener;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -48,6 +52,8 @@ public class NocPanel extends JPanel {
 	private Noc noc;
 	private int selectedMapping = 0;
 	private int selectedVersion = 0;
+	
+	private ItemListener checkBoxListener;
 
 	JComboBox<Integer> mappingIndex;
 	JComboBox<Integer> versionIndex;
@@ -283,11 +289,52 @@ public class NocPanel extends JPanel {
 			}
 		}
 
-		// adding items into drop down menu for each link
-		MainPanel.mappingIndex.addItem("select a connection");
+		// adding items into checkbox menu for each link
+		
+		Map<String, Integer> highlightedMap = new HashMap<String, Integer>();
+
+		checkBoxListener = new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				System.out.println(((JCheckBox)(e.getItem())).getText());
+				String selectedItem = ((JCheckBox)(e.getItem())).getText();
+				List<Object> selectedEdges = connLinkMap.get(selectedItem);
+				if(!((JCheckBox)e.getItem()).isSelected()) {
+					// sets edge corresponding to deselected edge to black
+					for(Object link: selectedEdges) {
+						int highlights = highlightedMap.get(((mxCell)link).getId());
+						highlightedMap.put(((mxCell)link).getId(), highlights - 1);
+						if(highlights == 1) {
+							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#000000",
+									new Object[] { link });
+						}
+					}
+					
+				}
+				else {
+					// sets edge corresponding to selected edge to red
+					for(Object link: selectedEdges) {
+						if(highlightedMap.get(((mxCell)link).getId()) == null) {
+							highlightedMap.put(((mxCell)link).getId(), 1);
+						}
+						else {
+							int highlights = highlightedMap.get(((mxCell)link).getId());
+							highlightedMap.put(((mxCell)link).getId(), highlights + 1);
+						}
+						NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000",
+								new Object[] { link });
+					}
+				}
+				MainPanel.nocInfo.setText("");
+				MainPanel.nocInfo.append("The path of connection " + selectedItem + " is highlighted");
+			}
+		};
 		for (String connString : connLinkMap.keySet()) {
-			MainPanel.mappingIndex.addItem(connString);
+			JCheckBox button = new JCheckBox(connString);
+			button.addItemListener(checkBoxListener);
+			MainPanel.checkPanel.add(button);
 		}
+		
 		graph.getModel().endUpdate();
 
 		mxGraphComponent graphComponent = new mxGraphComponent(graph);
@@ -351,7 +398,7 @@ public class NocPanel extends JPanel {
 								MainPanel.nocInfo.append("\n" + "No connections using this edge");
 							}
 							NocPanel.graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, "#FF0000", new Object[] { cell });
-							MainPanel.mappingIndex.setSelectedItem("");
+							//MainPanel.mappingIndex.setSelectedItem("");
 						}
 					}
 				}

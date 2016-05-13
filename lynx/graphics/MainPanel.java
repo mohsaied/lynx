@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,8 +54,10 @@ public class MainPanel extends JPanel {
 	private static JTextArea nocInfoTitle;
 
 	// drop down menu for nocPanel when selecting edges
-	protected static JComboBox<String> mappingIndex;
-
+	//protected static JComboBox<String> mappingIndex;
+	protected static JCheckBox connCheckBox;
+	protected static JPanel checkPanel;
+	
 	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(CommandPanel.class.getName());
 
@@ -141,6 +144,7 @@ public class MainPanel extends JPanel {
 
 		// adding listener to drop down menu in nocPanel to change color of
 		// edges when items are selected
+		/*
 		mappingIndex = new JComboBox<String>();
 		mappingIndex.addItemListener(new ItemListener() {
 			@Override
@@ -169,9 +173,14 @@ public class MainPanel extends JPanel {
 			}
 		});
 		propertiesHeaderPane.add(mappingIndex);
+		*/
+		
+		checkPanel = new JPanel(new GridLayout(0, 1));
+		propertiesHeaderPane.add(checkPanel);
+		
 
 		JScrollPane propertiesPane = new JScrollPane(nocInfo);
-		JSplitPane sidebarPropertiesPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propertiesHeaderPane,
+		JSplitPane sidebarPropertiesPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, propertiesHeaderPane,
 				propertiesPane);
 
 		// sets the default proportion of the panel given to the properties and
